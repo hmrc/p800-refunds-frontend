@@ -1,5 +1,6 @@
 package uk.gov.hmrc.p800refundsfrontend.controllers
 
+import controllers.HelloWorldController
 import org.scalatest.matchers.should.Matchers
 import org.scalatest.wordspec.AnyWordSpec
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
@@ -13,7 +14,7 @@ class HelloWorldControllerSpec extends AnyWordSpec with Matchers with GuiceOneAp
   override def fakeApplication(): Application =
     new GuiceApplicationBuilder()
       .configure(
-        "metrics.jvm"     -> false,
+        "metrics.jvm" -> false,
         "metrics.enabled" -> false
       )
       .build()
@@ -31,7 +32,7 @@ class HelloWorldControllerSpec extends AnyWordSpec with Matchers with GuiceOneAp
     "return HTML" in {
       val result = controller.helloWorld(fakeRequest)
       contentType(result) shouldBe Some("text/html")
-      charset(result)     shouldBe Some("utf-8")
+      charset(result) shouldBe Some("utf-8")
     }
   }
 }

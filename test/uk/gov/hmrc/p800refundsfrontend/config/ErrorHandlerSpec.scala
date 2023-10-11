@@ -1,5 +1,6 @@
 package uk.gov.hmrc.p800refundsfrontend.config
 
+import config.ErrorHandler
 import org.scalatest.matchers.should.Matchers
 import org.scalatest.wordspec.AnyWordSpec
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
@@ -14,7 +15,7 @@ class ErrorHandlerSpec extends AnyWordSpec
   override def fakeApplication(): Application =
     new GuiceApplicationBuilder()
       .configure(
-        "metrics.jvm"     -> false,
+        "metrics.jvm" -> false,
         "metrics.enabled" -> false
       )
       .build()

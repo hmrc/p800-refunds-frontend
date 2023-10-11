@@ -10,13 +10,13 @@ import play.api.libs.ws.WSClient
 
 class HealthEndpointIntegrationSpec
   extends AnyWordSpec
-     with Matchers
-     with ScalaFutures
-     with IntegrationPatience
-     with GuiceOneServerPerSuite {
+  with Matchers
+  with ScalaFutures
+  with IntegrationPatience
+  with GuiceOneServerPerSuite {
 
   private val wsClient = app.injector.instanceOf[WSClient]
-  private val baseUrl  = s"http://localhost:$port"
+  private val baseUrl = s"http://localhost:$port"
 
   override def fakeApplication(): Application =
     GuiceApplicationBuilder()
