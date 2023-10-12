@@ -14,24 +14,13 @@
  * limitations under the License.
  */
 
-package config
+package models
 
-import com.google.inject.{AbstractModule, Provides, Singleton}
-import play.api.i18n.{I18nSupport, MessagesApi}
+import play.api.libs.json.{Format, Json}
 
-import java.time.{Clock, ZoneOffset}
+final case class SessionId(value: String) extends AnyVal
 
-class Module extends AbstractModule {
-
-  override def configure(): Unit = ()
-
-  @Provides
-  @Singleton
-  def clock(): Clock = Clock.systemDefaultZone.withZone(ZoneOffset.UTC)
-
-  @Provides
-  @Singleton
-  def i18nSupport(api: MessagesApi): I18nSupport = new I18nSupport {
-    override def messagesApi: MessagesApi = api
-  }
+object SessionId {
+  implicit val format: Format[SessionId] = Json.valueFormat
 }
+

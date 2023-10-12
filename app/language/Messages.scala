@@ -19,8 +19,18 @@ package language
 object Messages {
 
   val `Example message.`: Message = Message(
-    english = "Example message.",
-    welsh   = "Example welsh message."
+    english = "Example message",
+    welsh   = "Example welsh message"
+  )
+
+  val `Another example message`: Message = Message(
+    english = "Another example message",
+    welsh   = "Another welsh example message"
+  )
+
+  val `Final example message`: Message = Message(
+    english = "Final example message",
+    welsh   = "Final example message in welsh"
   )
 
   object CommonMessages {

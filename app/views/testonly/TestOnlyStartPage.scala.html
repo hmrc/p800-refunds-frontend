@@ -15,9 +15,8 @@
  *@
 
 @import views.html.templates.Layout
-@import language.Messages
 @import views.ViewsHelpers
-@import uk.gov.hmrc.govukfrontend.views.Aliases.{Button, Text}
+@import language.TestOnlyMessages
 
 @this(layout: Layout, viewsHelpers: ViewsHelpers)
 
@@ -25,11 +24,6 @@
 
 @import viewsHelpers.requestSupport._
 
-@layout(pageTitle = Some(Messages.`Example message.`.show)) {
-    <h1 class="govuk-heading-xl">@{Messages.`Example message.`.show}</h1>
-    <p class="govuk-body">@{Messages.`Another example message`.show}</p>
-    @viewsHelpers.govukButton(Button(
-     content = Text(Messages.`Final example message`.show),
-     id = Some("example-id")
-    ))
+@layout(pageTitle = Some(TestOnlyMessages.`Example test only message`.show)) {
+    <h1 class="govuk-heading-xl">@{TestOnlyMessages.`Example test only message`.show}</h1>
 }

@@ -14,24 +14,11 @@
  * limitations under the License.
  */
 
-package config
+package pagespecs.pagesupport
 
-import com.google.inject.{AbstractModule, Provides, Singleton}
-import play.api.i18n.{I18nSupport, MessagesApi}
+import org.openqa.selenium.WebDriver
 
-import java.time.{Clock, ZoneOffset}
-
-class Module extends AbstractModule {
-
-  override def configure(): Unit = ()
-
-  @Provides
-  @Singleton
-  def clock(): Clock = Clock.systemDefaultZone.withZone(ZoneOffset.UTC)
-
-  @Provides
-  @Singleton
-  def i18nSupport(api: MessagesApi): I18nSupport = new I18nSupport {
-    override def messagesApi: MessagesApi = api
-  }
+class Endpoint(baseUrl: String, val path: String)(implicit webDriver: WebDriver) {
+  final def url: String = baseUrl + path
+  final def open(): Unit = webDriver.get(url)
 }

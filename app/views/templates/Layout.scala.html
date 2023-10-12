@@ -29,14 +29,13 @@
 @this(
         govukLayout: GovukLayout,
         govukPhaseBanner : GovukPhaseBanner,
-        govukBackLink: GovukBackLink,
         hmrcHead: HmrcHead,
         hmrcStandardHeader: HmrcStandardHeader,
         hmrcStandardFooter: HmrcStandardFooter,
         hmrcScripts: HmrcScripts,
-        hmrcLanguageSelectHelper: HmrcLanguageSelectHelper,
+        //hmrcLanguageSelectHelper: HmrcLanguageSelectHelper, // add this back in when we support welsh
         hmrcReportTechnicalIssueHelper: HmrcReportTechnicalIssueHelper,
-        requestSupport: RequestSupport
+        viewsHelpers: views.ViewsHelpers
 )
 
 @(
@@ -49,7 +48,7 @@
         showServiceNameInHeader: Boolean = true
 )(contentBlock: Html)(implicit request: Request[_])
 
-@import requestSupport._
+@import viewsHelpers.requestSupport._
 
 @head = {
     @headBlock.getOrElse(Html(""))
@@ -69,14 +68,14 @@
    )),
    content = HtmlContent(Messages.ServicePhase.bannerText("").show)
   ))
-
+@* add this back in when we support welsh
   @hmrcLanguageSelectHelper()
-
+*@
   @{
    if(showBackLink) {
     backLinkUrlOverride.fold(
-     govukBackLink(BackLink(href = "#", classes = "js-visible", content = Text(Messages.CommonMessages.back.show)))
-    )(url => govukBackLink(BackLink(href = url, content = Text(Messages.CommonMessages.back.show))))
+     viewsHelpers.govukBackLink(BackLink(href = "#", classes = "js-visible", content = Text(Messages.CommonMessages.back.show)))
+    )(url => viewsHelpers.govukBackLink(BackLink(href = url, content = Text(Messages.CommonMessages.back.show))))
    }
   }
  </div>
@@ -108,7 +107,7 @@
  hmrcStandardHeader(
   serviceName = if(showServiceNameInHeader) Some(serviceName) else None,
   serviceUrl = Some(routes.HelloWorldController.helloWorld.url),
-  signOutUrl = if(requests.RequestSupport.isLoggedIn) Some("sign-out-eventually") else None
+  signOutUrl = if(RequestSupport.isLoggedIn) Some("sign-out-eventually") else None
  )
 }
 

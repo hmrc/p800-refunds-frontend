@@ -14,24 +14,16 @@
  * limitations under the License.
  */
 
-package config
+package testsupport.wiremock
 
-import com.google.inject.{AbstractModule, Provides, Singleton}
-import play.api.i18n.{I18nSupport, MessagesApi}
+import com.github.tomakehurst.wiremock.stubbing.Scenario
 
-import java.time.{Clock, ZoneOffset}
+object WireMockStates {
+  def state(index: Int): String = if (index == 0) Scenario.STARTED else index.toString
+  def nextState(index: Int): String = (index + 1).toString
+  def endState(index: Int, size: Int): String = if (size == 1) Scenario.STARTED else (if (index + 1 >= size) index else index + 1).toString
 
-class Module extends AbstractModule {
-
-  override def configure(): Unit = ()
-
-  @Provides
-  @Singleton
-  def clock(): Clock = Clock.systemDefaultZone.withZone(ZoneOffset.UTC)
-
-  @Provides
-  @Singleton
-  def i18nSupport(api: MessagesApi): I18nSupport = new I18nSupport {
-    override def messagesApi: MessagesApi = api
-  }
+  val tpsBackendUpsert: String = "tps-payments-backend-upsert"
+  val tpsBackendFind: String = "tps-payments-backend-find"
 }
+

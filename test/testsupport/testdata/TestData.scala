@@ -14,24 +14,17 @@
  * limitations under the License.
  */
 
-package config
+package testsupport.testdata
 
-import com.google.inject.{AbstractModule, Provides, Singleton}
-import play.api.i18n.{I18nSupport, MessagesApi}
+import java.time.{Instant, LocalDateTime, ZoneOffset}
+import java.time.format.DateTimeFormatter
 
-import java.time.{Clock, ZoneOffset}
-
-class Module extends AbstractModule {
-
-  override def configure(): Unit = ()
-
-  @Provides
-  @Singleton
-  def clock(): Clock = Clock.systemDefaultZone.withZone(ZoneOffset.UTC)
-
-  @Provides
-  @Singleton
-  def i18nSupport(api: MessagesApi): I18nSupport = new I18nSupport {
-    override def messagesApi: MessagesApi = api
+object TestData {
+  lazy val dateString: String = "2059-11-25"
+  lazy val timeString: String = s"${dateString}T16:33:51.880"
+  lazy val localDateTime: LocalDateTime = {
+    //the frozen time has to be in future otherwise the journeys will disappear from mongodb because of expiry index
+    LocalDateTime.parse(timeString, DateTimeFormatter.ISO_DATE_TIME)
   }
+  lazy val instant: Instant = localDateTime.toInstant(ZoneOffset.UTC)
 }

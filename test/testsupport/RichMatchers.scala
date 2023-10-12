@@ -14,24 +14,24 @@
  * limitations under the License.
  */
 
-package config
+package testsupport
 
-import com.google.inject.{AbstractModule, Provides, Singleton}
-import play.api.i18n.{I18nSupport, MessagesApi}
+import org.scalatest._
+import org.scalatest.concurrent.{Eventually, IntegrationPatience, ScalaFutures}
+import org.scalatest.matchers.should.Matchers
+import org.scalatest.diagrams.Diagrams
 
-import java.time.{Clock, ZoneOffset}
+object RichMatchers extends RichMatchers
 
-class Module extends AbstractModule {
-
-  override def configure(): Unit = ()
-
-  @Provides
-  @Singleton
-  def clock(): Clock = Clock.systemDefaultZone.withZone(ZoneOffset.UTC)
-
-  @Provides
-  @Singleton
-  def i18nSupport(api: MessagesApi): I18nSupport = new I18nSupport {
-    override def messagesApi: MessagesApi = api
-  }
-}
+trait RichMatchers
+  extends Matchers
+  with Diagrams
+  with TryValues
+  with EitherValues
+  with OptionValues
+  with AppendedClues
+  with ScalaFutures
+  with StreamlinedXml
+  with Inside
+  with Eventually
+  with IntegrationPatience

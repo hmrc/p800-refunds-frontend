@@ -16,10 +16,12 @@
 
 package views
 
-import views.html.HelloWorldPage
-
 import javax.inject.Inject
 
 class Views @Inject() (
-    val helloWorldPage: HelloWorldPage
+    val helloWorldPage: views.html.HelloWorldPage
+)
+
+class TestOnlyViews @Inject() (
+    val testOnlyStartPage: views.html.testonly.TestOnlyStartPage
 )

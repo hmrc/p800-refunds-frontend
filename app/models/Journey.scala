@@ -14,24 +14,25 @@
  * limitations under the License.
  */
 
-package config
+package models
 
-import com.google.inject.{AbstractModule, Provides, Singleton}
-import play.api.i18n.{I18nSupport, MessagesApi}
+import java.time.{Clock, Instant}
 
-import java.time.{Clock, ZoneOffset}
+sealed trait Journey {
+  def _id: JourneyId
 
-class Module extends AbstractModule {
+  def createdOn: Instant
 
-  override def configure(): Unit = ()
+  val lastUpdated: Instant = Instant.now(Clock.systemUTC())
 
-  @Provides
-  @Singleton
-  def clock(): Clock = Clock.systemDefaultZone.withZone(ZoneOffset.UTC)
+  def sessionId: SessionId
 
-  @Provides
-  @Singleton
-  def i18nSupport(api: MessagesApi): I18nSupport = new I18nSupport {
-    override def messagesApi: MessagesApi = api
-  }
+  /* derived stuff: */
+
+  def id: JourneyId = _id
+
+  def journeyId: JourneyId = _id
+
+  val traceId: TraceId = TraceId(journeyId)
+
 }
