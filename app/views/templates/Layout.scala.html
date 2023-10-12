@@ -1,0 +1,121 @@
+@*
+ * Copyright 2023 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import requests.RequestSupport
+@import controllers.routes
+@import views.html.helper.CSPNonce
+@import uk.gov.hmrc.govukfrontend.views.html.components.BackLink
+@import uk.gov.hmrc.govukfrontend.views.html.components._
+@import uk.gov.hmrc.hmrcfrontend.views.html.helpers._
+@import language.Messages
+@import util.SafeEquals._
+
+@import play.api.mvc.Request
+@import play.twirl.api.Html
+
+@this(
+        govukLayout: GovukLayout,
+        govukPhaseBanner : GovukPhaseBanner,
+        hmrcHead: HmrcHead,
+        hmrcStandardHeader: HmrcStandardHeader,
+        hmrcStandardFooter: HmrcStandardFooter,
+        hmrcScripts: HmrcScripts,
+        //hmrcLanguageSelectHelper: HmrcLanguageSelectHelper, // add this back in when we support welsh
+        hmrcReportTechnicalIssueHelper: HmrcReportTechnicalIssueHelper,
+        viewsHelpers: views.ViewsHelpers
+)
+
+@(
+        pageTitle: Option[String] = None,
+        headBlock: Option[Html] = None,
+        additionalScripts: Option[Html] = None,
+        showBackLink: Boolean = true,
+        backLinkUrlOverride: Option[String] = None,
+        hasErrors: Boolean = false,
+        showServiceNameInHeader: Boolean = true
+)(contentBlock: Html)(implicit request: Request[_])
+
+@import viewsHelpers.requestSupport._
+
+@head = {
+    @headBlock.getOrElse(Html(""))
+    @Html(s"""<link rel="stylesheet" media="screen" href="${controllers.routes.Assets.versioned("stylesheets/application.css").toString}" ${CSPNonce.attr.toString}>""")
+}
+
+@scripts = {
+    <script src="@{controllers.routes.Assets.versioned("javascripts/application.js")}" @{CSPNonce.attr}></script>
+    @additionalScripts.getOrElse(Html(""))
+}
+
+@beforeContentBlock = {
+ <div class="govuk-!-display-none-print">
+  @govukPhaseBanner(PhaseBanner(
+   tag = Some(Tag(
+    content = Text(Messages.ServicePhase.beta.show)
+   )),
+   content = HtmlContent(Messages.ServicePhase.bannerText("").show)
+  ))
+@* add this back in when we support welsh
+  @hmrcLanguageSelectHelper()
+*@
+  @{
+   if(showBackLink) {
+    backLinkUrlOverride.fold(
+     viewsHelpers.govukBackLink(BackLink(href = "#", classes = "js-visible", content = Text(Messages.CommonMessages.back.show)))
+    )(url => viewsHelpers.govukBackLink(BackLink(href = url, content = Text(Messages.CommonMessages.back.show))))
+   }
+  }
+ </div>
+}
+
+@content = {
+ <div class="govuk-!-margin-bottom-6">
+ @contentBlock
+ </div>
+
+ <div class="govuk-!-display-none-print">
+ @hmrcReportTechnicalIssueHelper()
+ </div>
+}
+
+@serviceName = @{
+ Messages.ServicePhase.serviceName.show
+}
+
+@serviceNameAndTitle = @{
+ pageTitle.fold(serviceName)(t => if(t === serviceName) t else  s"$t - $serviceName")
+}
+
+@govTitle = @{serviceNameAndTitle + " - GOV.UK"}
+
+@documentTitle = @{if(hasErrors) { s"${Messages.CommonMessages.error.show} $govTitle" } else { govTitle }}
+
+@header = @{
+ hmrcStandardHeader(
+  serviceName = if(showServiceNameInHeader) Some(serviceName) else None,
+  serviceUrl = Some(routes.HelloWorldController.helloWorld.url),
+  signOutUrl = if(RequestSupport.isLoggedIn) Some("sign-out-eventually") else None
+ )
+}
+
+@govukLayout(
+ pageTitle = Some(documentTitle),
+ headBlock = Some(hmrcHead(headBlock = Some(head))),
+ headerBlock = Some(header),
+ scriptsBlock = Some(hmrcScripts(scriptsBlock = Some(scripts))),
+ beforeContentBlock = Some(beforeContentBlock),
+ footerBlock = Some(hmrcStandardFooter())
+)(content)

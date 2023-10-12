@@ -1,0 +1,95 @@
+/*
+ * Copyright 2023 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package testsupport
+
+import com.google.inject.AbstractModule
+import models.JourneyId
+import org.openqa.selenium.WebDriver
+import org.openqa.selenium.htmlunit.HtmlUnitDriver
+import org.scalatest.BeforeAndAfterEach
+import org.scalatest.freespec.AnyFreeSpecLike
+import org.scalatest.matchers.should.Matchers
+import org.scalatest.time.{Millis, Seconds, Span}
+import org.scalatestplus.play.guice.GuiceOneServerPerSuite
+import pagespecs.pagesupport.Pages
+import play.api.inject.guice.{GuiceApplicationBuilder, GuiceableModule}
+import play.api.test.{DefaultTestServerFactory, RunningServer}
+import play.api.{Application, Mode}
+import play.core.server.ServerConfig
+import testsupport.testdata.TestData
+import testsupport.wiremock.WireMockSupport
+
+import java.time.{Clock, Instant, ZoneId}
+
+trait ItSpec extends AnyFreeSpecLike
+  with RichMatchers
+  with BeforeAndAfterEach
+  with GuiceOneServerPerSuite
+  with WireMockSupport
+  with Matchers {
+
+  override implicit val patienceConfig: PatienceConfig = PatienceConfig(timeout  = scaled(Span(3, Seconds)), interval = scaled(Span(300, Millis)))
+  private val testServerPort = 19001
+  private val baseUrl: String = s"http://localhost:${testServerPort.toString}"
+  lazy val webdriverUrl: String = s"http://localhost:${port.toString}"
+  lazy val frozenInstant: Instant = TestData.instant
+  lazy val clock: Clock = Clock.fixed(frozenInstant, ZoneId.of("UTC"))
+
+  protected implicit val webDriver: WebDriver = new HtmlUnitDriver()
+
+  protected lazy val configMap: Map[String, Any] = Map[String, Any](
+    "play.http.router" -> "testOnlyDoNotUseInAppConf.Routes",
+    "auditing.consumer.baseUri.port" -> WireMockSupport.port,
+    "auditing.enabled" -> false,
+    "auditing.traceRequests" -> false
+  )
+
+  lazy val overridingsModule: AbstractModule = new AbstractModule {
+    override def configure(): Unit = bind(classOf[Clock]).toInstance(clock)
+  }
+
+  override def fakeApplication(): Application = new GuiceApplicationBuilder()
+    .overrides(GuiceableModule.fromGuiceModules(Seq(overridingsModule)))
+    .configure(configMap).build()
+
+  override implicit protected lazy val runningServer: RunningServer =
+    TestServerFactory.start(app)
+
+  object TestServerFactory extends DefaultTestServerFactory {
+    override protected def serverConfig(app: Application): ServerConfig = {
+      val sc = ServerConfig(port    = Some(testServerPort), sslPort = Some(0), mode = Mode.Test, rootDir = app.path)
+      sc.copy(configuration = sc.configuration.withFallback(overrideServerConfiguration(app)))
+    }
+  }
+
+  override def beforeEach(): Unit = {
+    super.beforeEach()
+    webDriver.manage().deleteAllCookies()
+  }
+
+  def goToViaPath(path: String): Unit = webDriver.get(s"$webdriverUrl$path")
+
+  def addJourneyIdToSession(journeyId: JourneyId): Unit = {
+    val url = s"""/get-an-income-tax-refund/test-only/add-journey-id-to-session/${journeyId.value}"""
+    goToViaPath(url)
+    webDriver.getCurrentUrl should endWith(url) withClue "assert the endpoint worked fine"
+    ()
+  }
+
+  lazy val pages = new Pages(baseUrl)
+
+}

@@ -1,2 +1,5 @@
+###################################################
+# We do not use this, we favour type safe         #
+# implementation in app/language/Message.scala    #
+###################################################
 service.name = p800-refunds-frontend
-service.text = This is your new service
