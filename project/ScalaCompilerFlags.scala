@@ -1,5 +1,14 @@
 object ScalaCompilerFlags {
-  lazy val scalaCompilerOptions: Seq[String] = Seq(
+
+  val scalaCompilerOptions: Seq[String] = Seq(
+    "-language:implicitConversions",
+    "-language:reflectiveCalls",
+    // required in place of silencer plugin
+    "-Wconf:cat=unused-imports&src=html/.*:s",
+    "-Wconf:src=routes/.*:s"
+  )
+
+  val strictScalaCompilerOptions: Seq[String] = Seq(
     "-Xfatal-warnings",
     "-Xlint:-missing-interpolator,_",
     "-Xlint:adapted-args",
@@ -13,11 +22,7 @@ object ScalaCompilerFlags {
     "-Ywarn-dead-code",
     "-deprecation",
     "-feature",
-    "-unchecked",
-    "-language:implicitConversions",
-    // required in place of silencer plugin
-    "-Wconf:cat=unused-imports&src=html/.*:s",
-    "-Wconf:src=routes/.*:s"
+    "-unchecked"
   )
 
 }

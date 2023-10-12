@@ -1,4 +1,8 @@
 
+val strictBuilding: SettingKey[Boolean] = StrictBuilding.strictBuilding //defining here so it can be set before running sbt like `sbt 'set Global / strictBuilding := true' ...`
+StrictBuilding.strictBuildingSetting
+
+
 lazy val microservice = Project("p800-refunds-frontend", file("."))
   .enablePlugins(play.sbt.PlayScala, SbtDistributablesPlugin)
   .settings(
@@ -6,11 +10,14 @@ lazy val microservice = Project("p800-refunds-frontend", file("."))
     scalaVersion        := "2.13.8",
     libraryDependencies ++= AppDependencies.compile ++ AppDependencies.test,
     scalacOptions ++= ScalaCompilerFlags.scalaCompilerOptions,
+    scalacOptions ++= {
+          if (StrictBuilding.strictBuilding.value) ScalaCompilerFlags.strictScalaCompilerOptions else Nil
+    },
     pipelineStages := Seq(gzip),
   )
   .settings(resolvers += Resolver.jcenterRepo)
   .settings(CodeCoverageSettings.settings: _*)
-  .settings(commands += SbtCommands.runTestOnlyCommand)
+  .settings(commands ++= SbtCommands.commands)
   .settings(ScalariformSettings.scalariformSettings: _*)
   .settings(SbtUpdatesSettings.sbtUpdatesSettings: _*)
   .settings(CodeCoverageSettings.settings: _*)

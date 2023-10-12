@@ -9,7 +9,7 @@ object WartRemoverSettings {
   val wartRemoverSettings =
     Seq(
       (Compile / compile / wartremoverErrors) ++= {
-        Warts.allBut(
+        if (StrictBuilding.strictBuilding.value) Warts.allBut(
           Wart.DefaultArguments,
           Wart.ImplicitConversion,
           Wart.ImplicitParameter,
@@ -23,7 +23,7 @@ object WartRemoverSettings {
           Wart.Product,
           Wart.JavaSerializable,
           Wart.Serializable
-        )
+        ) else Nil
       },
       Test / compile / wartremoverErrors --= Seq(
         Wart.Any,
