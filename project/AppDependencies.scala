@@ -26,7 +26,7 @@ object AppDependencies {
     "org.scalatest"           %% "scalatest"                  % "3.2.17",
     "com.vladsch.flexmark"    %  "flexmark-all"               % "0.62.2",
     "org.pegdown"             %  "pegdown"                    % "1.6.0",
-    "org.seleniumhq.selenium" %  "selenium-java"              % "4.14.0",
+    "org.seleniumhq.selenium" %  "selenium-java"              % "4.14.1",
     "org.seleniumhq.selenium" %  "htmlunit-driver"            % "4.13.0",
     "com.github.tomakehurst"  %  "wiremock-standalone"        % "3.0.1",
     "org.scalatestplus.play"  %% "scalatestplus-play"         % "5.1.0"
