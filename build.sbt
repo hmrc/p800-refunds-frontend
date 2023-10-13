@@ -5,6 +5,7 @@ StrictBuilding.strictBuildingSetting
 
 lazy val microservice = Project("p800-refunds-frontend", file("."))
   .enablePlugins(play.sbt.PlayScala, SbtDistributablesPlugin)
+  .disablePlugins(JUnitXmlReportPlugin)
   .settings(
     majorVersion        := 0,
     scalaVersion        := "2.13.8",
@@ -14,6 +15,7 @@ lazy val microservice = Project("p800-refunds-frontend", file("."))
           if (StrictBuilding.strictBuilding.value) ScalaCompilerFlags.strictScalaCompilerOptions else Nil
     },
     pipelineStages := Seq(gzip),
+    Compile / scalacOptions -= "utf8"
   )
   .settings(resolvers += Resolver.jcenterRepo)
   .settings(CodeCoverageSettings.settings: _*)
