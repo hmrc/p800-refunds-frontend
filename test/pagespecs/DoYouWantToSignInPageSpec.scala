@@ -1,4 +1,4 @@
-@*
+/*
  * Copyright 2023 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -12,21 +12,16 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *@
+ */
 
-@import views.html.templates.Layout
-@import views.ViewsHelpers
-@import language.TestOnlyMessages
+package pagespecs
 
-@this(layout: Layout, viewsHelpers: ViewsHelpers)
+import testsupport.ItSpec
 
-@()(implicit request: Request[_])
+class DoYouWantToSignInPageSpec extends ItSpec {
 
-@import viewsHelpers.requestSupport._
-
-@startJourneyLink = @{controllers.routes.JourneyController.start.url}
-
-@layout(pageTitle = Some(TestOnlyMessages.`Test only page`.show)) {
-    <h1 class="govuk-heading-xl">@{TestOnlyMessages.`Test only page`.show}</h1>
-    <p id="start" class="govuk-link"><a href="@{startJourneyLink}">@{startJourneyLink}</a></p>
+  "navigating to /start redirects to /do-you-want-to-sign-in" in {
+    pages.startEndpoint.open()
+    pages.doYouWantToSignInPage.assertPageIsDisplayed()
+  }
 }

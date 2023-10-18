@@ -17,11 +17,12 @@
 package pagespecs.pagesupport
 
 import org.openqa.selenium.WebDriver
-import pagespecs.pages.HelloWorldExamplePage
+import pagespecs.pages.{HelloWorldExamplePage, DoYouWantToSignInPage}
 
 class Pages(baseUrl: String)(implicit webDriver: WebDriver) {
 
   val startEndpoint: Endpoint = new Endpoint(baseUrl = baseUrl, path = "/get-an-income-tax-refund/start")
 
   val helloWorldExamplePage = new HelloWorldExamplePage(baseUrl = baseUrl)
+  val doYouWantToSignInPage = new DoYouWantToSignInPage(baseUrl = baseUrl)
 }

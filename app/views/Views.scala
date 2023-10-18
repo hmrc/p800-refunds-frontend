@@ -19,7 +19,8 @@ package views
 import javax.inject.Inject
 
 class Views @Inject() (
-    val helloWorldPage: views.html.HelloWorldPage
+    val helloWorldPage:        views.html.HelloWorldPage,
+    val doYouWantToSignInPage: views.html.DoYouWantToSignInPage
 )
 
 class TestOnlyViews @Inject() (
