@@ -17,7 +17,7 @@
 package language
 
 object TestOnlyMessages {
-  val `Example test only message`: Message = Message(
-    english = "Example test only message"
+  val `Test only page`: Message = Message(
+    english = "Test only page"
   )
 }

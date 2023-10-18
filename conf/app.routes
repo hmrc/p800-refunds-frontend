@@ -4,3 +4,7 @@
 GET        /assets/*file            controllers.Assets.versioned(path = "/public", file: Asset)
 
 GET        /                        controllers.HelloWorldController.helloWorld
+
+GET        /start                   controllers.JourneyController.start
+
+GET        /do-you-want-to-sign-in  controllers.FrontendActionsController.getDoYouWantToSignIn

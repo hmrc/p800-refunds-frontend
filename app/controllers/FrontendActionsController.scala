@@ -1,4 +1,4 @@
-@*
+/*
  * Copyright 2023 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -12,21 +12,24 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *@
+ */
 
-@import views.html.templates.Layout
-@import views.ViewsHelpers
-@import language.TestOnlyMessages
+package controllers
 
-@this(layout: Layout, viewsHelpers: ViewsHelpers)
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
+import views.Views
 
-@()(implicit request: Request[_])
+import javax.inject.{Inject, Singleton}
 
-@import viewsHelpers.requestSupport._
+//todo call this something else eventually
+@Singleton
+class FrontendActionsController @Inject() (
+    mcc:   MessagesControllerComponents,
+    views: Views
+) extends FrontendController(mcc) {
 
-@startJourneyLink = @{controllers.routes.JourneyController.start.url}
-
-@layout(pageTitle = Some(TestOnlyMessages.`Test only page`.show)) {
-    <h1 class="govuk-heading-xl">@{TestOnlyMessages.`Test only page`.show}</h1>
-    <p id="start" class="govuk-link"><a href="@{startJourneyLink}">@{startJourneyLink}</a></p>
+  val getDoYouWantToSignIn: Action[AnyContent] = Action { implicit request =>
+    Ok(views.doYouWantToSignInPage())
+  }
 }

@@ -23,7 +23,8 @@ object WartRemoverSettings {
           Wart.Product,
           Wart.JavaSerializable,
           Wart.Serializable
-        ) else Nil
+        )
+        else Nil
       },
       Test / compile / wartremoverErrors --= Seq(
         Wart.Any,
