@@ -16,7 +16,7 @@
 
 package specs
 
-import models.journeymodels.{Journey, Stage}
+import models.journeymodels.Journey
 import play.api.mvc.AnyContentAsEmpty
 import play.api.test.FakeRequest
 import services.JourneyService
@@ -41,7 +41,6 @@ class JourneyServiceSpec extends ItSpec {
     val createdJourney: Journey = journeyService.newJourney().futureValue
     createdJourney.stage shouldBe Stage.AfterStarted.Started
     createdJourney.sessionId should not be (sessionId)
-
   }
 
 }

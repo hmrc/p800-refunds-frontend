@@ -3,6 +3,10 @@
 
 This is a placeholder README.md for a new repository
 
+# Project setup in intellij
+
+![img.png](readme/intellij-sbt-setup.png)
+
 ## Project specific sbt commands
 
 ### Turn off strict building

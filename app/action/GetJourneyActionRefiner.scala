@@ -16,36 +16,44 @@
 
 package action
 
-import models.journeymodels.Journey
-import play.api.Logger
-import play.api.mvc.{ActionRefiner, Request, Result, Results}
-import requests.RequestSupport._
+import config.AppConfig
+import controllers.JourneyController
+import models.journeymodels.JourneyId
+import play.api.mvc.Results.Redirect
+import play.api.mvc.{ActionRefiner, Request, Result}
 import services.JourneyService
+import util.JourneyLogger
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class GetJourneyActionRefiner @Inject() (journeyService: JourneyService)(
-    implicit
-    ec: ExecutionContext
-) extends ActionRefiner[Request, JourneyRequest] {
-
-  private val logger = Logger(getClass)
+class GetJourneyActionRefiner @Inject() (
+    journeyService: JourneyService,
+    appConfig:      AppConfig
+)(implicit ec: ExecutionContext) extends ActionRefiner[Request, JourneyRequest] {
 
   override protected def refine[A](request: Request[A]): Future[Either[Result, JourneyRequest[A]]] = {
     implicit val r: Request[A] = request
+    val redirectToStart: Either[Result, JourneyRequest[A]] = Left(Redirect(appConfig.govUkRouteIn))
 
-    for {
-      maybeJourney: Option[Journey] <- journeyService.findLatestJourneyUsingSessionId
-    } yield maybeJourney match {
-      case Some(journey) => Right(new JourneyRequest(journey, request))
+    request.session.get(JourneyController.journeyIdKey).map(JourneyId.apply) match {
+      case Some(journeyId) =>
+        for {
+          maybeJourney <- journeyService.find(journeyId)
+        } yield {
+          maybeJourney match {
+            case Some(journey) => Right(new JourneyRequest(journey, request))
+            case None =>
+              JourneyLogger.error(s"Journey not found based on the journeyId from session, redirecting to the start page [journeyIdFromSession:${journeyId.value}]")
+              redirectToStart
+          }
+        }
       case None =>
-        logger.error(s"No journey found for sessionId: [ ${hc.sessionId.toString} ]")
-        Left(Results.Redirect(controllers.routes.JourneyController.start))
+        JourneyLogger.error(s"There was missing journeyId in the play session. Redirecting to the start page")
+        Future.successful(redirectToStart)
     }
   }
 
   override protected def executionContext: ExecutionContext = ec
-
 }

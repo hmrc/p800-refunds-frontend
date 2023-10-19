@@ -16,25 +16,44 @@
 
 package controllers
 
+import action.Actions
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.JourneyService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
+import views.Views
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.ExecutionContext
 
+object JourneyController {
+
+  val journeyIdKey: String = "p800-refunds-frontend.journeyId"
+
+}
 /**
  * Controller to contain actions responsible for journey
  */
 @Singleton
 class JourneyController @Inject() (
     mcc:            MessagesControllerComponents,
-    journeyService: JourneyService
+    journeyService: JourneyService,
+    views:          Views,
+    actions:        Actions
 )(implicit ec: ExecutionContext) extends FrontendController(mcc) {
 
   val start: Action[AnyContent] = Action.async { implicit request =>
     journeyService
       .newJourney()
-      .map(_ => Redirect(routes.FrontendActionsController.getDoYouWantToSignIn))
+      .map(journey => Redirect(
+        routes.JourneyController.doYouWantToSignIn
+      ).addingToSession(JourneyController.journeyIdKey -> journey.id.value))
+  }
+
+  val doYouWantToSignIn: Action[AnyContent] = actions.journeyAction { implicit request =>
+    Ok(views.doYouWantToSignInPage())
+  }
+
+  val dummy: Action[AnyContent] = actions.default { implicit request =>
+    Ok(views.underConstructionPage())
   }
 }

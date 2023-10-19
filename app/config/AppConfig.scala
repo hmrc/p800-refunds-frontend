@@ -16,14 +16,17 @@
 
 package config
 
+import play.api.Configuration
+
 import javax.inject.{Inject, Singleton}
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 
 import java.util.concurrent.TimeUnit
 import scala.concurrent.duration.FiniteDuration
+import scala.util.Try
 
 @Singleton
-class AppConfig @Inject() (servicesConfig: ServicesConfig) {
+class AppConfig @Inject() (servicesConfig: ServicesConfig, configuration: Configuration) {
 
   private def configFiniteDuration(key: String): FiniteDuration = {
     val duration = servicesConfig.getDuration(key)
@@ -33,4 +36,20 @@ class AppConfig @Inject() (servicesConfig: ServicesConfig) {
 
   val welshLanguageSupportEnabled: Boolean = servicesConfig.getBoolean("features.welsh-language-support")
   val journeyRepoTtl: FiniteDuration = configFiniteDuration("journey.repoTtl")
+
+  val govUkRouteIn: String = readConfigAsValidUrlString("urls.govuk-routein")
+
+  /**
+   * The application loads the configuration from the provided `configPath` and checks if it's a valid URL.
+   * If it's not a valid URL, an exception is thrown.
+   * This exception is triggered early during the application's startup to highlight a malformed configuration,
+   * thus increasing the chances of it being rectified promptly.
+   */
+  private def readConfigAsValidUrlString(configPath: String): String = {
+    val url: String = configuration.get[String](configPath)
+    Try(new java.net.URL(url)).fold[String](
+      e => throw new RuntimeException(s"Invalid URL in config under [$configPath]", e),
+      _ => url
+    )
+  }
 }

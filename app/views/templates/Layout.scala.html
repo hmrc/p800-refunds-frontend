@@ -25,6 +25,7 @@
 
 @import play.api.mvc.Request
 @import play.twirl.api.Html
+@import config.AppConfig
 
 @this(
         govukLayout: GovukLayout,
@@ -35,7 +36,8 @@
         hmrcScripts: HmrcScripts,
         //hmrcLanguageSelectHelper: HmrcLanguageSelectHelper, // add this back in when we support welsh
         hmrcReportTechnicalIssueHelper: HmrcReportTechnicalIssueHelper,
-        viewsHelpers: views.ViewsHelpers
+        viewsHelpers: views.ViewsHelpers,
+        appConfig: AppConfig
 )
 
 @(
@@ -106,7 +108,7 @@
 @header = @{
  hmrcStandardHeader(
   serviceName = if(showServiceNameInHeader) Some(serviceName) else None,
-  serviceUrl = Some(routes.HelloWorldController.helloWorld.url),
+  serviceUrl = Some(appConfig.govUkRouteIn),
   signOutUrl = if(RequestSupport.isLoggedIn) Some("sign-out-eventually") else None
  )
 }

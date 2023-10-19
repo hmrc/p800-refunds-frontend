@@ -16,14 +16,14 @@
 
 package testsupport.testdata
 
-import models.journeymodels.{JourneyId, SessionId}
+import models.journeymodels.JourneyId
 import play.api.mvc.AnyContentAsEmpty
 import play.api.test.FakeRequest
 import testsupport.TdRequest.FakeRequestOps
 import uk.gov.hmrc.http.Authorization
 
-import java.time.{Instant, LocalDateTime, ZoneOffset}
 import java.time.format.DateTimeFormatter
+import java.time.{Instant, LocalDateTime, ZoneOffset}
 
 object TestData {
   lazy val dateString: String = "2059-11-25"
@@ -35,7 +35,6 @@ object TestData {
   lazy val instant: Instant = localDateTime.toInstant(ZoneOffset.UTC)
 
   def journeyId: JourneyId = JourneyId("b6217497-ab5b-4e93-855a-afc9f9e933b6")
-  def sessionId: SessionId = SessionId("session-2082fcd4-70f6-49cc-a4bf-845917981cd7")
   def authorization: Authorization = Authorization("Bearer xyz")
 
   def request: FakeRequest[AnyContentAsEmpty.type] = FakeRequest()

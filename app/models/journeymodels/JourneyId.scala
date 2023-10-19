@@ -29,3 +29,4 @@ object JourneyId {
 }
 
 final case class JourneyId(value: String)
+

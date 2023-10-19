@@ -16,7 +16,7 @@
 
 package services
 
-import models.journeymodels.{Journey, SessionId, Stage}
+import models.journeymodels.{Journey, JourneyStarted}
 
 import java.time.{Clock, Instant}
 import javax.inject.{Inject, Singleton}
@@ -27,12 +27,9 @@ class JourneyFactory @Inject() (
     clock:              Clock
 ) {
 
-  // create a new journey with bare-bones info, in started stage
-  def makeNewJourney(sessionId: SessionId): Journey =
-    Journey.JourneyStages.Started(
-      _id       = journeyIdGenerator.nextJourneyId(),
-      createdOn = Instant.now(clock),
-      sessionId = sessionId,
-      stage     = Stage.AfterStarted.Started
-    )
+  def makeNewJourney(): Journey = JourneyStarted(
+    _id       = journeyIdGenerator.nextJourneyId(),
+    createdAt = Instant.now(clock)
+  )
+
 }

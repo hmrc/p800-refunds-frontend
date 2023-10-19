@@ -14,13 +14,18 @@
  * limitations under the License.
  */
 
-package models.journeymodels
+package models
 
-import play.api.libs.json.{Format, Json}
+import julienrf.json.derived
+import play.api.libs.json.OFormat
 
-final case class SessionId(value: String) extends AnyVal
+sealed trait IsThisCorrect
 
-object SessionId {
-  implicit val format: Format[SessionId] = Json.valueFormat
+object IsThisCorrect {
+  case object Yes extends IsThisCorrect
+  case object No extends IsThisCorrect
+
+  @SuppressWarnings(Array("org.wartremover.warts.Any"))
+  implicit val format: OFormat[IsThisCorrect] = derived.oformat[IsThisCorrect]()
 }
 

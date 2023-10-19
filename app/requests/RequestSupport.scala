@@ -17,15 +17,12 @@
 package requests
 
 import language.Language
-import models.journeymodels.SessionId
 import play.api.i18n._
 import play.api.mvc.{Request, RequestHeader}
 import uk.gov.hmrc.http.{HeaderCarrier, SessionKeys}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendHeaderCarrierProvider
-import util.Errors
 
 import javax.inject.Inject
-import scala.concurrent.Future
 
 /**
  * I'm repeating a pattern which was brought originally by play-framework
@@ -65,13 +62,6 @@ object RequestSupport {
    */
   private object HcProvider extends FrontendHeaderCarrierProvider {
     def headerCarrier(implicit request: RequestHeader): HeaderCarrier = hc(request)
-  }
-
-  def getSessionId()(implicit request: Request[_]): Future[SessionId] = Future.successful {
-    hc
-      .sessionId
-      .map(s => SessionId(s.value))
-      .getOrElse(Errors.throwBadRequestException("Session id must be provided"))
   }
 
 }

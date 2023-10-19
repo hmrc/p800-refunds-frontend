@@ -14,16 +14,13 @@
  * limitations under the License.
  */
 
-package views
+package models
 
-import javax.inject.Inject
+import play.api.libs.json.{Format, Json}
 
-class Views @Inject() (
-    //TODO: remove once all pages are developed
-    val underConstructionPage: views.html.UnderConstructionPage,
-    val doYouWantToSignInPage: views.html.DoYouWantToSignInPage
-)
+final case class HowManyAttempts(value: Int)
 
-class TestOnlyViews @Inject() (
-    val testOnlyStartPage: views.html.testonly.TestOnlyStartPage
-)
+object HowManyAttempts {
+
+  implicit val format: Format[HowManyAttempts] = Json.valueFormat[HowManyAttempts]
+}

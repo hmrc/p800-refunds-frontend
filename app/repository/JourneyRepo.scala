@@ -17,9 +17,8 @@
 package repository
 
 import config.AppConfig
-import models.journeymodels.{Journey, JourneyId, SessionId}
-import org.mongodb.scala.bson.BsonDocument
-import org.mongodb.scala.model.{Filters, IndexModel, IndexOptions, Indexes}
+import models.journeymodels.{Journey, JourneyId}
+import org.mongodb.scala.model.{IndexModel, IndexOptions, Indexes}
 import repository.JourneyRepo._
 import repository.Repo.{Id, IdExtractor}
 import uk.gov.hmrc.mongo.MongoComponent
@@ -27,8 +26,8 @@ import uk.gov.hmrc.mongo.play.json.Codecs
 
 import java.util.concurrent.TimeUnit
 import javax.inject.{Inject, Singleton}
+import scala.concurrent.ExecutionContext
 import scala.concurrent.duration.FiniteDuration
-import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 final class JourneyRepo @Inject() (
@@ -42,15 +41,6 @@ final class JourneyRepo @Inject() (
     extraCodecs    = Codecs.playFormatSumCodecs(Journey.format),
     replaceIndexes = true
   ) {
-
-  /**
-   * Find the latest journey for given sessionId.
-   */
-  def findLatestJourney(sessionId: SessionId): Future[Option[Journey]] =
-    collection
-      .find(filter = Filters.eq("sessionId", sessionId.value))
-      .sort(BsonDocument("createdAt" -> -1))
-      .headOption()
 
 }
 

@@ -29,4 +29,5 @@
 @layout(pageTitle = Some(TestOnlyMessages.`Test only page`.show)) {
     <h1 class="govuk-heading-xl">@{TestOnlyMessages.`Test only page`.show}</h1>
     <p id="start" class="govuk-link"><a href="@{startJourneyLink}">@{startJourneyLink}</a></p>
+    <p id="show-journey" class="govuk-link"><a href="@{controllers.testonly.routes.TestOnlyController.showJourney.url}">show journey</a></p>
 }

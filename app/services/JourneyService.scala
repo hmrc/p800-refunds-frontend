@@ -16,12 +16,9 @@
 
 package services
 
-import models.journeymodels.{Journey, JourneyId, SessionId}
+import models.journeymodels.{Journey, JourneyId}
 import play.api.mvc.Request
 import repository.JourneyRepo
-import requests.RequestSupport
-import uk.gov.hmrc.http.HeaderCarrier
-import requests.RequestSupport._
 import util.JourneyLogger
 
 import javax.inject.{Inject, Singleton}
@@ -31,33 +28,23 @@ import scala.concurrent.{ExecutionContext, Future}
 class JourneyService @Inject() (journeyRepo: JourneyRepo, journeyFactory: JourneyFactory)(implicit ec: ExecutionContext) {
 
   def newJourney()(implicit request: Request[_]): Future[Journey] = {
-    for {
-      sessionId <- RequestSupport.getSessionId()
-      journey: Journey = journeyFactory.makeNewJourney(sessionId)
-      _ <- journeyRepo.upsert(journey)
-    } yield {
-      JourneyLogger.info(s"Started new journey [journeyId:${journey.id.toString}]")
-      journey
-    }
-  }
-
-  def findLatestJourneyUsingSessionId(implicit request: Request[_]): Future[Option[Journey]] = {
-    val sessionId: SessionId = implicitly[HeaderCarrier]
-      .sessionId
-      .map(x => SessionId(x.value))
-      .getOrElse(throw new RuntimeException("Missing required 'SessionId'"))
-
-    journeyRepo.findLatestJourney(sessionId)
+    val journey: Journey = journeyFactory.makeNewJourney()
+    journeyRepo
+      .upsert(journey)
+      .map{ _ =>
+        JourneyLogger.info(s"Started new journey [journeyId:${journey.id.value}]")
+        journey
+      }
   }
 
   def get(journeyId: JourneyId)(implicit request: Request[_]): Future[Journey] = find(journeyId).map { maybeJourney =>
-    maybeJourney.getOrElse(throw new RuntimeException(s"Expected journey to be found ${request.path}"))
+    maybeJourney.getOrElse(throw new RuntimeException(s"Expected journey to be found ${request.path} [journeyId:${journeyId.value}]"))
   }
 
   def upsert(journey: Journey)(implicit request: Request[_]): Future[Journey] = {
-    JourneyLogger.debug("Upserting new journey")
+    JourneyLogger.debug(s"Upserting new journey [journeyId:${journey.journeyId.value}]")
     journeyRepo.upsert(journey).map(_ => journey)
   }
 
-  private def find(journeyId: JourneyId): Future[Option[Journey]] = journeyRepo.findById(journeyId)
+  def find(journeyId: JourneyId): Future[Option[Journey]] = journeyRepo.findById(journeyId)
 }

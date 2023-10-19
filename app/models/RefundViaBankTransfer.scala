@@ -14,23 +14,18 @@
  * limitations under the License.
  */
 
-package controllers
+package models
 
-import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import views.Views
+import julienrf.json.derived
+import play.api.libs.json.OFormat
 
-import javax.inject.{Inject, Singleton}
-import scala.concurrent.Future
+sealed trait RefundViaBankTransfer
 
-@Singleton
-class HelloWorldController @Inject() (
-    mcc:   MessagesControllerComponents,
-    views: Views
-) extends FrontendController(mcc) {
+object RefundViaBankTransfer {
+  case object Yes extends RefundViaBankTransfer
+  case object No extends RefundViaBankTransfer
 
-  val helloWorld: Action[AnyContent] = Action.async { implicit request =>
-    Future.successful(Ok(views.helloWorldPage()))
-  }
-
+  @SuppressWarnings(Array("org.wartremover.warts.Any"))
+  implicit val format: OFormat[RefundViaBankTransfer] = derived.oformat[RefundViaBankTransfer]()
 }
+

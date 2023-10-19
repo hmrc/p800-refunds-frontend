@@ -14,25 +14,18 @@
  * limitations under the License.
  */
 
-package controllers
+package models
 
-import action.Actions
-import views.Views
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
+import julienrf.json.derived
+import play.api.libs.json.OFormat
 
-import javax.inject.{Inject, Singleton}
+sealed trait DoYouWantToSignIn
 
-//todo call this something else eventually
-@Singleton
-class FrontendActionsController @Inject() (
-    mcc:     MessagesControllerComponents,
-    actions: Actions,
-    views:   Views
-) extends FrontendController(mcc) {
+object DoYouWantToSignIn {
+  case object Yes extends DoYouWantToSignIn
+  case object No extends DoYouWantToSignIn
 
-  val getDoYouWantToSignIn: Action[AnyContent] = actions.journeyAction { implicit request =>
-    Ok(views.doYouWantToSignInPage())
-  }
-
+  @SuppressWarnings(Array("org.wartremover.warts.Any"))
+  implicit val format: OFormat[DoYouWantToSignIn] = derived.oformat[DoYouWantToSignIn]()
 }
+
