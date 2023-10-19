@@ -18,14 +18,14 @@ object SbtCommands {
     "relax"
   ) { state =>
       state.globalLogging.full.info("Ok, I'll turn a blind eye to some shortcomings. Remember, I won't be so lenient on Jenkins!")
-      s"""set Global / strictBuilding := false"""
-      state
+      s"""set Global / strictBuilding := false""" ::
+        state
     }
 
   val strictBuilding: Command = Command.command("strictBuilding") { state =>
     state.globalLogging.full.info("Turning on strict building")
-    s"""set Global / strictBuilding := true"""
-    state
+    s"""set Global / strictBuilding := true""" ::
+      state
   }
 
   val commands: Seq[Command] = Seq(
