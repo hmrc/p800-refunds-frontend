@@ -16,7 +16,7 @@
 
 package util
 
-import actionsmodel.JourneyRequest
+import action.JourneyRequest
 import play.api.Logger
 import play.api.mvc.RequestHeader
 import uk.gov.hmrc.http.CookieNames

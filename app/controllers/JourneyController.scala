@@ -16,28 +16,25 @@
 
 package controllers
 
-import play.api.Logger
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import services.JourneyService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
 import javax.inject.{Inject, Singleton}
-import scala.concurrent.Future
+import scala.concurrent.ExecutionContext
 
 /**
  * Controller to contain actions responsible for journey
  */
 @Singleton
 class JourneyController @Inject() (
-    mcc: MessagesControllerComponents
-) extends FrontendController(mcc) {
+    mcc:            MessagesControllerComponents,
+    journeyService: JourneyService
+)(implicit ec: ExecutionContext) extends FrontendController(mcc) {
 
-  //todo remove this and utilise journey logger perhaps, once we have journey up and running.
-  val logger: Logger = Logger("journeyLogger")
-
-  val start: Action[AnyContent] = Action.async { _ =>
-    //todo remove this and utilise journey logger perhaps, once we have journey up and running.
-    logger.info("Start endpoint called journey starting")
-    //todo start an actual journey at this point
-    Future.successful(Redirect(routes.FrontendActionsController.getDoYouWantToSignIn))
+  val start: Action[AnyContent] = Action.async { implicit request =>
+    journeyService
+      .newJourney()
+      .map(_ => Redirect(routes.FrontendActionsController.getDoYouWantToSignIn))
   }
 }

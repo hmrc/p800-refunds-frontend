@@ -12,6 +12,7 @@ object ScalaCompilerFlags {
     "-Xfatal-warnings",
     "-Xlint:-missing-interpolator,_",
     "-Xlint:adapted-args",
+    "-Xlint:-byname-implicit",
     "-Ywarn-unused:implicits",
     "-Ywarn-unused:imports",
     "-Ywarn-unused:locals",

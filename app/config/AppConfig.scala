@@ -17,10 +17,20 @@
 package config
 
 import javax.inject.{Inject, Singleton}
-import play.api.Configuration
+import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
+
+import java.util.concurrent.TimeUnit
+import scala.concurrent.duration.FiniteDuration
 
 @Singleton
-class AppConfig @Inject() (config: Configuration) {
-  val welshLanguageSupportEnabled: Boolean = config.getOptional[Boolean]("features.welsh-language-support").getOrElse(false)
+class AppConfig @Inject() (servicesConfig: ServicesConfig) {
 
+  private def configFiniteDuration(key: String): FiniteDuration = {
+    val duration = servicesConfig.getDuration(key)
+    if (duration.isFinite) FiniteDuration(duration.toNanos, TimeUnit.NANOSECONDS)
+    else sys.error(s"Duration ${duration.toString} for key $key was not finite")
+  }
+
+  val welshLanguageSupportEnabled: Boolean = servicesConfig.getBoolean("features.welsh-language-support")
+  val journeyRepoTtl: FiniteDuration = configFiniteDuration("journey.repoTtl")
 }

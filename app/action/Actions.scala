@@ -14,13 +14,21 @@
  * limitations under the License.
  */
 
-package models
+package action
 
-import play.api.libs.json.{Format, Json}
+import play.api.mvc.{ActionBuilder, AnyContent, DefaultActionBuilder, Request}
 
-final case class SessionId(value: String) extends AnyVal
+import javax.inject.{Inject, Singleton}
 
-object SessionId {
-  implicit val format: Format[SessionId] = Json.valueFormat
+@Singleton
+class Actions @Inject() (
+    actionBuilder:           DefaultActionBuilder,
+    getJourneyActionRefiner: GetJourneyActionRefiner
+) {
+
+  val default: ActionBuilder[Request, AnyContent] = actionBuilder
+
+  @SuppressWarnings(Array("org.wartremover.warts.Any"))
+  val journeyAction: ActionBuilder[JourneyRequest, AnyContent] = actionBuilder.andThen(getJourneyActionRefiner)
+
 }
-

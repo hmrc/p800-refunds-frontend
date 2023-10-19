@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-package actionsmodel
+package action
 
-import models.{Journey, JourneyId}
+import models.journeymodels.{Journey, JourneyId}
 import play.api.mvc.{Request, WrappedRequest}
 
 class JourneyRequest[A](

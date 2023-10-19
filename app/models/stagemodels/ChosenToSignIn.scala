@@ -14,25 +14,6 @@
  * limitations under the License.
  */
 
-package controllers
+package models.stagemodels
 
-import action.Actions
-import views.Views
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
-
-import javax.inject.{Inject, Singleton}
-
-//todo call this something else eventually
-@Singleton
-class FrontendActionsController @Inject() (
-    mcc:     MessagesControllerComponents,
-    actions: Actions,
-    views:   Views
-) extends FrontendController(mcc) {
-
-  val getDoYouWantToSignIn: Action[AnyContent] = actions.journeyAction { implicit request =>
-    Ok(views.doYouWantToSignInPage())
-  }
-
-}
+final case class ChosenToSignIn(value: Boolean) extends AnyVal

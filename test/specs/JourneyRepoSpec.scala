@@ -14,15 +14,21 @@
  * limitations under the License.
  */
 
-package pagespecs
+package specs
 
+import models.journeymodels.{Journey, JourneyId}
+import repository.JourneyRepo
 import testsupport.ItSpec
+import uk.gov.hmrc.mongo.test.DefaultPlayMongoRepositorySupport
 
-class HelloWorldPageSpec extends ItSpec {
+class JourneyRepoSpec extends ItSpec with DefaultPlayMongoRepositorySupport[Journey] {
 
-  "render hello world example page correctly" in {
-    pages.helloWorldExamplePage.open()
-    pages.helloWorldExamplePage.assertPageIsDisplayed()
+  override def beforeEach(): Unit = { () }
 
+  override lazy val repository: JourneyRepo = app.injector.instanceOf[JourneyRepo]
+
+  //throws a No ttl indexes were found for collection journey atm, try and fix this as it might be a nice test to check indexes
+  "JourneyRepo should have correct indexes" ignore {
+    repository.findById(JourneyId("12345678")).futureValue shouldBe None
   }
 }

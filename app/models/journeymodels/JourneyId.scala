@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package models
+package models.journeymodels
 
 import play.api.libs.json.{Format, Json}
 import play.api.mvc.PathBindable

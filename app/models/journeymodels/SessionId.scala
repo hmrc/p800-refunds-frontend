@@ -14,25 +14,13 @@
  * limitations under the License.
  */
 
-package models
+package models.journeymodels
 
-import java.time.{Clock, Instant}
+import play.api.libs.json.{Format, Json}
 
-sealed trait Journey {
-  def _id: JourneyId
+final case class SessionId(value: String) extends AnyVal
 
-  def createdOn: Instant
-
-  val lastUpdated: Instant = Instant.now(Clock.systemUTC())
-
-  def sessionId: SessionId
-
-  /* derived stuff: */
-
-  def id: JourneyId = _id
-
-  def journeyId: JourneyId = _id
-
-  val traceId: TraceId = TraceId(journeyId)
-
+object SessionId {
+  implicit val format: Format[SessionId] = Json.valueFormat
 }
+

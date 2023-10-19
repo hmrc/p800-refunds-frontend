@@ -14,25 +14,25 @@
  * limitations under the License.
  */
 
-package controllers
+package services
 
-import action.Actions
-import views.Views
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
+import models.journeymodels.{Journey, SessionId, Stage}
 
+import java.time.{Clock, Instant}
 import javax.inject.{Inject, Singleton}
 
-//todo call this something else eventually
 @Singleton
-class FrontendActionsController @Inject() (
-    mcc:     MessagesControllerComponents,
-    actions: Actions,
-    views:   Views
-) extends FrontendController(mcc) {
+class JourneyFactory @Inject() (
+    journeyIdGenerator: JourneyIdGenerator,
+    clock:              Clock
+) {
 
-  val getDoYouWantToSignIn: Action[AnyContent] = actions.journeyAction { implicit request =>
-    Ok(views.doYouWantToSignInPage())
-  }
-
+  // create a new journey with bare-bones info, in started stage
+  def makeNewJourney(sessionId: SessionId): Journey =
+    Journey.JourneyStages.Started(
+      _id       = journeyIdGenerator.nextJourneyId(),
+      createdOn = Instant.now(clock),
+      sessionId = sessionId,
+      stage     = Stage.AfterStarted.Started
+    )
 }

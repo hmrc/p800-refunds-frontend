@@ -17,7 +17,7 @@
 package testsupport
 
 import com.google.inject.AbstractModule
-import models.JourneyId
+import models.journeymodels.JourneyId
 import org.openqa.selenium.WebDriver
 import org.openqa.selenium.htmlunit.HtmlUnitDriver
 import org.scalatest.BeforeAndAfterEach
@@ -45,6 +45,7 @@ trait ItSpec extends AnyFreeSpecLike
   override implicit val patienceConfig: PatienceConfig = PatienceConfig(timeout  = scaled(Span(3, Seconds)), interval = scaled(Span(300, Millis)))
   private val testServerPort = 19001
   private val baseUrl: String = s"http://localhost:${testServerPort.toString}"
+  private val databaseName: String = "p800-refunds-frontend-it"
   lazy val webdriverUrl: String = s"http://localhost:${port.toString}"
   lazy val frozenInstant: Instant = TestData.instant
   lazy val clock: Clock = Clock.fixed(frozenInstant, ZoneId.of("UTC"))
@@ -52,6 +53,7 @@ trait ItSpec extends AnyFreeSpecLike
   protected implicit val webDriver: WebDriver = new HtmlUnitDriver()
 
   protected lazy val configMap: Map[String, Any] = Map[String, Any](
+    "mongodb.uri" -> s"mongodb://localhost:27017/$databaseName",
     "play.http.router" -> "testOnlyDoNotUseInAppConf.Routes",
     "auditing.consumer.baseUri.port" -> WireMockSupport.port,
     "auditing.enabled" -> false,
