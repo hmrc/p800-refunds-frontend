@@ -16,7 +16,7 @@
 
 package models.journeymodels
 
-import models.{HowManyAttempts, IsThisCorrect, P800Reference, RefundViaBankTransfer}
+import models.{P800Reference, P800ReferenceValidation, RefundViaBankTransfer}
 import play.api.libs.json.OFormat
 
 import java.time.{Clock, Instant}
@@ -27,7 +27,6 @@ sealed trait Journey {
 
   val lastUpdated: Instant = Instant.now(Clock.systemUTC())
 
-  val state: State
   /* derived stuff: */
   def id: JourneyId = _id
   def journeyId: JourneyId = _id
@@ -48,30 +47,24 @@ object Journey {
 final case class JourneyStarted(
     override val _id:       JourneyId,
     override val createdAt: Instant
-) extends Journey {
-  override val state: State.Started.type = State.Started
-}
+) extends Journey
 
 final case class JourneyDoYouWantToSignInYes(
     override val _id:       JourneyId,
-    override val createdAt: Instant,
-    override val state:     State.JourneyDoYouWantToSignInYes.type = State.JourneyDoYouWantToSignInYes
+    override val createdAt: Instant
 ) extends Journey
 
 final case class JourneyWhatIsYourP800Reference(
     override val _id:       JourneyId,
     override val createdAt: Instant,
-    override val state:     State.WhatIsYourP800ReferenceState,
     p800Reference:          P800Reference,
-    howManyAttempts:        HowManyAttempts //initially 0
+    //isThisCorrect: IsThisCorrect, //I believe this is not needed, based on selection user will be navigated only
+    p800ReferenceValidation: P800ReferenceValidation
 ) extends Journey
 
 final case class JourneyDoYouWantYourRefundViaBankTransfer(
     override val _id:       JourneyId,
     override val createdAt: Instant,
-    override val state:     State.DoYouWantYourRefundViaBankTransfer.type = State.DoYouWantYourRefundViaBankTransfer,
-    p800Reference:          P800Reference,
-    isThisCorrect:          IsThisCorrect,
-    howManyAttempts:        HowManyAttempts,
+    p800Reference:          P800Reference, //the reference has been already validated
     refundViaBankTransfer:  RefundViaBankTransfer
 ) extends Journey

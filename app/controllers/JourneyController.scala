@@ -25,14 +25,6 @@ import views.Views
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.ExecutionContext
 
-object JourneyController {
-
-  val journeyIdKey: String = "p800-refunds-frontend.journeyId"
-
-}
-/**
- * Controller to contain actions responsible for journey
- */
 @Singleton
 class JourneyController @Inject() (
     mcc:            MessagesControllerComponents,
@@ -53,7 +45,12 @@ class JourneyController @Inject() (
     Ok(views.doYouWantToSignInPage())
   }
 
-  val dummy: Action[AnyContent] = actions.default { implicit request =>
+  //TODO: remove once we have all pages
+  val underConstruction: Action[AnyContent] = actions.default { implicit request =>
     Ok(views.underConstructionPage())
   }
+}
+
+object JourneyController {
+  val journeyIdKey: String = "p800-refunds-frontend.journeyId"
 }

@@ -14,15 +14,13 @@
  * limitations under the License.
  */
 
-package pagespecs
+package testdata
 
-import testsupport.ItSpec
+object TdAll extends TdAll
 
-class HelloWorldPageSpec extends ItSpec {
+trait TdAll
+  extends AnyRef
+  with TdBase
+  with TdRequest
+  with TdJourney
 
-  "render hello world example page correctly" in {
-    pages.helloWorldExamplePage.open()
-    pages.helloWorldExamplePage.assertPageIsDisplayed()
-
-  }
-}

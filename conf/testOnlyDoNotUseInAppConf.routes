@@ -15,3 +15,8 @@ GET        /get-an-income-tax-refund/test-only                                co
 
 GET        /get-an-income-tax-refund/test-only/show-journey                   controllers.testonly.TestOnlyController.showJourney
 GET        /get-an-income-tax-refund/test-only/show-journey/:journeyId        controllers.testonly.TestOnlyController.showJourneyById(journeyId: JourneyId)
+
+
+#utilised in tests:
+GET        /get-an-income-tax-refund/test-only/add-journey-id-to-session/:journeyId controllers.testonly.TestOnlyController.addJourneyIdToSession(journeyId: JourneyId)
+

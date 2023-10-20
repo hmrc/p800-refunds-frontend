@@ -51,6 +51,10 @@ class TestOnlyController @Inject() (
     showJourney(journeyId)
   }
 
+  def addJourneyIdToSession(journeyId: JourneyId): Action[AnyContent] = as.default { implicit request =>
+    Ok(s"${journeyId.value} added to session").addingToSession(JourneyController.journeyIdKey -> journeyId.value)
+  }
+
   private def showJourney(journeyId: JourneyId): Future[Result] = {
     for {
       maybeJourney: Option[Journey] <- journeyService.find(journeyId)

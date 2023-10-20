@@ -30,7 +30,7 @@ import play.api.inject.guice.{GuiceApplicationBuilder, GuiceableModule}
 import play.api.test.{DefaultTestServerFactory, RunningServer}
 import play.api.{Application, Mode}
 import play.core.server.ServerConfig
-import testsupport.testdata.TestData
+import testdata.TdAll
 import testsupport.wiremock.WireMockSupport
 
 import java.time.{Clock, Instant, ZoneId}
@@ -47,7 +47,7 @@ trait ItSpec extends AnyFreeSpecLike
   private val baseUrl: String = s"http://localhost:${testServerPort.toString}"
   private val databaseName: String = "p800-refunds-frontend-it"
   lazy val webdriverUrl: String = s"http://localhost:${port.toString}"
-  lazy val frozenInstant: Instant = TestData.instant
+  lazy val frozenInstant: Instant = TdAll.instant
   lazy val clock: Clock = Clock.fixed(frozenInstant, ZoneId.of("UTC"))
 
   protected implicit val webDriver: WebDriver = new HtmlUnitDriver()
@@ -89,6 +89,7 @@ trait ItSpec extends AnyFreeSpecLike
     val url = s"""/get-an-income-tax-refund/test-only/add-journey-id-to-session/${journeyId.value}"""
     goToViaPath(url)
     webDriver.getCurrentUrl should endWith(url) withClue "assert the endpoint worked fine"
+    webDriver.getPageSource should include(s"${journeyId.value} added to session") withClue "assert the endpoint worked fine"
     ()
   }
 

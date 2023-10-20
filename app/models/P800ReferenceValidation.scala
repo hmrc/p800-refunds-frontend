@@ -19,14 +19,17 @@ package models
 import julienrf.json.derived
 import play.api.libs.json.OFormat
 
-sealed trait IsThisCorrect
+/**
+ * P800 reference is going to be validated in external system
+ * Those cases represent in what state that reference is.
+ */
+sealed trait P800ReferenceValidation
 
-object IsThisCorrect {
-  case object Unanswered extends IsThisCorrect
-  case object Yes extends IsThisCorrect
-  case object No extends IsThisCorrect
+object P800ReferenceValidation {
+  case object NotValidatedYet extends P800ReferenceValidation
+  case object Invalid extends P800ReferenceValidation
+  //  case object Valid extends P800ReferenceValidation no need for that, the journey itself will be promoted to next state
 
   @SuppressWarnings(Array("org.wartremover.warts.Any"))
-  implicit val format: OFormat[IsThisCorrect] = derived.oformat[IsThisCorrect]()
+  implicit val format: OFormat[P800ReferenceValidation] = derived.oformat[P800ReferenceValidation]()
 }
-

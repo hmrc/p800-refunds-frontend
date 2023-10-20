@@ -14,18 +14,15 @@
  * limitations under the License.
  */
 
-package testsupport.testdata
+package testdata
 
-import models.journeymodels.JourneyId
-import play.api.mvc.AnyContentAsEmpty
-import play.api.test.FakeRequest
-import testsupport.TdRequest.FakeRequestOps
-import uk.gov.hmrc.http.Authorization
+import models.P800Reference
 
-import java.time.format.DateTimeFormatter
 import java.time.{Instant, LocalDateTime, ZoneOffset}
+import java.time.format.DateTimeFormatter
 
-object TestData {
+trait TdBase {
+
   lazy val dateString: String = "2059-11-25"
   lazy val timeString: String = s"${dateString}T16:33:51.880"
   lazy val localDateTime: LocalDateTime = {
@@ -33,16 +30,7 @@ object TestData {
     LocalDateTime.parse(timeString, DateTimeFormatter.ISO_DATE_TIME)
   }
   lazy val instant: Instant = localDateTime.toInstant(ZoneOffset.UTC)
+  lazy val newInstant: Instant = instant.plusSeconds(20) //used when a new journey is created from existing one
 
-  def journeyId: JourneyId = JourneyId("b6217497-ab5b-4e93-855a-afc9f9e933b6")
-  def authorization: Authorization = Authorization("Bearer xyz")
-
-  def request: FakeRequest[AnyContentAsEmpty.type] = FakeRequest()
-    .withSessionId()
-    .withAuthToken()
-    .withAkamaiReputationHeader()
-    .withRequestId()
-    .withTrueClientIp()
-    .withTrueClientPort()
-    .withDeviceId()
+  lazy val p800Reference: P800Reference = P800Reference("ma000003AP8002022")
 }
