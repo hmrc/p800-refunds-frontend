@@ -1,7 +1,11 @@
 
 # p800-refunds-frontend
 
-This is a placeholder README.md for a new repository
+This service allows taxpayers to request refunds for overpaid tax.
+
+:construction:
+The application is currently being developed.
+
 
 # Project setup in intellij
 
