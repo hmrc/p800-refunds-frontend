@@ -18,7 +18,6 @@ package models.journeymodels
 
 import models.{P800Reference, P800ReferenceValidation, RefundViaBankTransfer}
 import play.api.libs.json.OFormat
-
 import java.time.{Clock, Instant}
 
 sealed trait Journey {
@@ -49,7 +48,7 @@ final case class JourneyStarted(
     override val createdAt: Instant
 ) extends Journey
 
-final case class JourneyDoYouWantToSignInYes(
+final case class JourneyDoYouWantToSignInNo(
     override val _id:       JourneyId,
     override val createdAt: Instant
 ) extends Journey

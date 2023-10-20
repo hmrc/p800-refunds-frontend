@@ -17,7 +17,7 @@
 package testdata
 
 import models.P800ReferenceValidation
-import models.journeymodels.{JourneyDoYouWantToSignInYes, JourneyId, JourneyStarted, JourneyWhatIsYourP800Reference}
+import models.journeymodels.{JourneyDoYouWantToSignInNo, JourneyId, JourneyStarted, JourneyWhatIsYourP800Reference}
 
 /**
  * Test Datat (Td) Journey. It has journey examples in all possible states.
@@ -31,7 +31,7 @@ trait TdJourney { dependencies: TdBase =>
     createdAt = dependencies.instant
   )
 
-  lazy val journeyDoYouWantToSignInYes: JourneyDoYouWantToSignInYes = JourneyDoYouWantToSignInYes(
+  lazy val journeyDoYouWantToSignInYes: JourneyDoYouWantToSignInNo = JourneyDoYouWantToSignInNo(
     _id       = journeyId,
     createdAt = dependencies.instant
   )
