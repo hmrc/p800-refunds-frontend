@@ -17,9 +17,8 @@
 @import forms.DoYouWantToSignInForm
 @import language.{LangMessages, ErrorMessages}
 @import uk.gov.hmrc.govukfrontend.views.html.components._
-@import uk.gov.hmrc.govukfrontend.views.html.components.implicits._
 @import uk.gov.hmrc.govukfrontend.views.html.components.implicits.RichRadios
-@import views.ViewsHelpers.makeTitle
+@import uk.gov.hmrc.govukfrontend.views.html.components.implicits._
 @import views.html.templates.Layout
 
 @this(
@@ -34,7 +33,7 @@
 
 @import viewsHelpers.requestSupport._
 
-@layout(pageTitle = Some(makeTitle(LangMessages.doYouWantToSignInH1.show))) {
+@layout(pageTitle = Some(LangMessages.doYouWantToSignInH1.show), backLinkUrlOverride = Some("/get-an-income-tax-refund/test-only")) {
     @if(form.errors.nonEmpty) {
         @viewsHelpers.govukErrorSummary(ErrorSummary(errorList = form.errors.asTextErrorLinks, title = Text(ErrorMessages.problem.show)))
     }
@@ -51,8 +50,8 @@
             )),
             name = "sign-in",
             items = Seq(
-                RadioItem(content = Text(LangMessages.`Yes, sign in`.show), id = Some("radio-yes"), value = Some("sign-in")),
-                RadioItem(content = Text(LangMessages.`No, continue without signing in`.show), id = Some("radio-no"), value = Some("do-not-sign-in"))
+                RadioItem(content = Text(LangMessages.`Yes, sign in`.show), id = Some("radio-sign-in"), value = Some("sign-in")),
+                RadioItem(content = Text(LangMessages.`No, continue without signing in`.show), id = Some("radio-do-not-sign-in"), value = Some("do-not-sign-in"))
             )
         ).withFormField(form("sign-in")))
 

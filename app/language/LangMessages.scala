@@ -17,9 +17,6 @@
 package language
 
 object LangMessages {
-  val `Claim an income tax refund`: Message = Message(
-    english = "Claim an income tax refund"
-  )
 
   val doYouWantToSignInH1: Message = Message(
     english = "Do you want to sign in?"

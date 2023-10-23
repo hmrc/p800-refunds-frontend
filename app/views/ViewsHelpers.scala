@@ -16,7 +16,6 @@
 
 package views
 
-import language.{LangMessages, Language}
 import requests.RequestSupport
 import uk.gov.hmrc.govukfrontend.views.html.components._
 
@@ -39,8 +38,3 @@ class ViewsHelpers @Inject() (
     val govukInput:        GovukInput,
     val govukErrorSummary: GovukErrorSummary
 )
-
-object ViewsHelpers {
-  def makeTitle(h1: String)(implicit language: Language): String =
-    h1 + " - " + LangMessages.`Claim an income tax refund`.show
-}
