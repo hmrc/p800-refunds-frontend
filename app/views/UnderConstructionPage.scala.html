@@ -15,21 +15,15 @@
  *@
 
 @import views.html.templates.Layout
-@import language.Messages
-@import views.ViewsHelpers
-@import uk.gov.hmrc.govukfrontend.views.Aliases.{Button, Text}
 
-@this(layout: Layout, viewsHelpers: ViewsHelpers)
+@this(layout: Layout)
 
 @()(implicit request: Request[_])
 
-@import viewsHelpers.requestSupport._
+@heading = @{"Under Construction"}
 
-@layout(pageTitle = Some(Messages.`Example message.`.show)) {
-    <h1 class="govuk-heading-xl">@{Messages.`Example message.`.show}</h1>
-    <p class="govuk-body">@{Messages.`Another example message`.show}</p>
-    @viewsHelpers.govukButton(Button(
-     content = Text(Messages.`Final example message`.show),
-     id = Some("example-id")
-    ))
+@layout(pageTitle = Some(heading)) {
+   <h1 class="govuk-heading-xl">@heading</h1>
+   <p>This page has not been developed yet</p>
+   <a href="@{controllers.testonly.routes.TestOnlyController.getTestOnlyLanding.url}">test-only</a>
 }

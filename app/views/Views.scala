@@ -19,7 +19,8 @@ package views
 import javax.inject.Inject
 
 class Views @Inject() (
-    val helloWorldPage:        views.html.HelloWorldPage,
+    //TODO: remove once all pages are developed
+    val underConstructionPage: views.html.UnderConstructionPage,
     val doYouWantToSignInPage: views.html.DoYouWantToSignInPage
 )
 

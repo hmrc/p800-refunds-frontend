@@ -14,22 +14,21 @@
  * limitations under the License.
  */
 
-package controllers
+package action
 
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
-import views.Views
+import play.api.mvc.{ActionBuilder, AnyContent, DefaultActionBuilder, Request}
 
 import javax.inject.{Inject, Singleton}
 
-//todo call this something else eventually
 @Singleton
-class FrontendActionsController @Inject() (
-    mcc:   MessagesControllerComponents,
-    views: Views
-) extends FrontendController(mcc) {
+class Actions @Inject() (
+    actionBuilder:           DefaultActionBuilder,
+    getJourneyActionRefiner: GetJourneyActionRefiner
+) {
 
-  val getDoYouWantToSignIn: Action[AnyContent] = Action { implicit request =>
-    Ok(views.doYouWantToSignInPage())
-  }
+  val default: ActionBuilder[Request, AnyContent] = actionBuilder
+
+  @SuppressWarnings(Array("org.wartremover.warts.Any"))
+  val journeyAction: ActionBuilder[JourneyRequest, AnyContent] = actionBuilder.andThen(getJourneyActionRefiner)
+
 }

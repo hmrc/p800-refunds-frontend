@@ -14,23 +14,19 @@
  * limitations under the License.
  */
 
-package controllers
+package models.journeymodels
 
-import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import views.Views
+import play.api.libs.json.{Format, Json}
+import play.api.mvc.PathBindable
 
-import javax.inject.{Inject, Singleton}
-import scala.concurrent.Future
+object JourneyId {
+  implicit val format: Format[JourneyId] = Json.valueFormat
 
-@Singleton
-class HelloWorldController @Inject() (
-    mcc:   MessagesControllerComponents,
-    views: Views
-) extends FrontendController(mcc) {
-
-  val helloWorld: Action[AnyContent] = Action.async { implicit request =>
-    Future.successful(Ok(views.helloWorldPage()))
-  }
-
+  /**
+   * Allows JourneyId final case class to be used as a query parameter in controllers
+   */
+  implicit val journeyIdBinder: PathBindable[JourneyId] = util.ValueClassBinder.valueClassBinder(_.value)
 }
+
+final case class JourneyId(value: String)
+

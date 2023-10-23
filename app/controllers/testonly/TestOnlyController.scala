@@ -16,20 +16,52 @@
 
 package controllers.testonly
 
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import action.Actions
+import controllers.JourneyController
+import models.journeymodels.{Journey, JourneyId}
+import play.api.libs.json.Json
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
+import services.JourneyService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import views.TestOnlyViews
 
 import javax.inject.{Inject, Singleton}
+import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class TestOnlyController @Inject() (
-    mcc:           MessagesControllerComponents,
-    testOnlyViews: TestOnlyViews
-) extends FrontendController(mcc) {
+    mcc:            MessagesControllerComponents,
+    testOnlyViews:  TestOnlyViews,
+    journeyService: JourneyService,
+    as:             Actions
+)(implicit ec: ExecutionContext) extends FrontendController(mcc) {
 
-  val getTestOnlyLanding: Action[AnyContent] = Action { implicit request =>
+  val getTestOnlyLanding: Action[AnyContent] = as.default { implicit request =>
     Ok(testOnlyViews.testOnlyStartPage())
   }
 
+  val showJourney: Action[AnyContent] = as.default.async { implicit request =>
+    request.session.get(JourneyController.journeyIdKey).map(JourneyId.apply) match {
+      case None            => Future.successful(Ok(s"No ${JourneyController.journeyIdKey} in play session"))
+      case Some(journeyId) => showJourney(journeyId)
+    }
+  }
+
+  def showJourneyById(journeyId: JourneyId): Action[AnyContent] = as.default.async { _ =>
+    showJourney(journeyId)
+  }
+
+  def addJourneyIdToSession(journeyId: JourneyId): Action[AnyContent] = as.default { implicit request =>
+    Ok(s"${journeyId.value} added to session").addingToSession(JourneyController.journeyIdKey -> journeyId.value)
+  }
+
+  private def showJourney(journeyId: JourneyId): Future[Result] = {
+    for {
+      maybeJourney: Option[Journey] <- journeyService.find(journeyId)
+    } yield Ok(
+      maybeJourney
+        .map(journey => Json.prettyPrint(Json.toJson(journey)))
+        .getOrElse(s"No Journey in mongo with journeyId: [${journeyId.value}]")
+    )
+  }
 }

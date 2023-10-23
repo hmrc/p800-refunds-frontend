@@ -17,7 +17,7 @@
 package testsupport
 
 import com.google.inject.AbstractModule
-import models.JourneyId
+import models.journeymodels.JourneyId
 import org.openqa.selenium.WebDriver
 import org.openqa.selenium.htmlunit.HtmlUnitDriver
 import org.scalatest.BeforeAndAfterEach
@@ -30,7 +30,7 @@ import play.api.inject.guice.{GuiceApplicationBuilder, GuiceableModule}
 import play.api.test.{DefaultTestServerFactory, RunningServer}
 import play.api.{Application, Mode}
 import play.core.server.ServerConfig
-import testsupport.testdata.TestData
+import testdata.TdAll
 import testsupport.wiremock.WireMockSupport
 
 import java.time.{Clock, Instant, ZoneId}
@@ -45,13 +45,15 @@ trait ItSpec extends AnyFreeSpecLike
   override implicit val patienceConfig: PatienceConfig = PatienceConfig(timeout  = scaled(Span(3, Seconds)), interval = scaled(Span(300, Millis)))
   private val testServerPort = 19001
   private val baseUrl: String = s"http://localhost:${testServerPort.toString}"
+  private val databaseName: String = "p800-refunds-frontend-it"
   lazy val webdriverUrl: String = s"http://localhost:${port.toString}"
-  lazy val frozenInstant: Instant = TestData.instant
+  lazy val frozenInstant: Instant = TdAll.instant
   lazy val clock: Clock = Clock.fixed(frozenInstant, ZoneId.of("UTC"))
 
   protected implicit val webDriver: WebDriver = new HtmlUnitDriver()
 
   protected lazy val configMap: Map[String, Any] = Map[String, Any](
+    "mongodb.uri" -> s"mongodb://localhost:27017/$databaseName",
     "play.http.router" -> "testOnlyDoNotUseInAppConf.Routes",
     "auditing.consumer.baseUri.port" -> WireMockSupport.port,
     "auditing.enabled" -> false,
@@ -87,6 +89,7 @@ trait ItSpec extends AnyFreeSpecLike
     val url = s"""/get-an-income-tax-refund/test-only/add-journey-id-to-session/${journeyId.value}"""
     goToViaPath(url)
     webDriver.getCurrentUrl should endWith(url) withClue "assert the endpoint worked fine"
+    webDriver.getPageSource should include(s"${journeyId.value} added to session") withClue "assert the endpoint worked fine"
     ()
   }
 

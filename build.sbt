@@ -17,6 +17,11 @@ lazy val microservice = Project("p800-refunds-frontend", file("."))
     pipelineStages := Seq(gzip),
     Compile / scalacOptions -= "utf8"
   )
+  .settings(
+      routesImport ++= Seq(
+          "language.Language",
+          "models.journeymodels.JourneyId"
+      ))
   .settings(resolvers += Resolver.jcenterRepo)
   .settings(CodeCoverageSettings.settings: _*)
   .settings(commands ++= SbtCommands.commands)

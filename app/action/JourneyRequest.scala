@@ -14,14 +14,15 @@
  * limitations under the License.
  */
 
-package pagespecs
+package action
 
-import testsupport.ItSpec
+import models.journeymodels.{Journey, JourneyId}
+import play.api.mvc.{Request, WrappedRequest}
 
-class HelloWorldPageSpec extends ItSpec {
+class JourneyRequest[A](
+    val journey: Journey,
+    val request: Request[A]
+) extends WrappedRequest[A](request) {
 
-  "render hello world example page correctly" in {
-    pages.helloWorldExamplePage.open()
-    pages.helloWorldExamplePage.assertPageIsDisplayed()
-  }
+  val journeyId: JourneyId = journey._id
 }

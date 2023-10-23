@@ -23,6 +23,7 @@ class DoYouWantToSignInPage(baseUrl: String)(implicit webDriver: WebDriver) exte
   baseUrl,
   path = "/get-an-income-tax-refund/do-you-want-to-sign-in"
 ) {
+
   def assertPageIsDisplayed(): Unit = withPageClue {
     val h1: String = "This is where the do you want to sign in page will go"
     PageUtil.assertPage(

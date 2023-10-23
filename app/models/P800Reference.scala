@@ -18,9 +18,9 @@ package models
 
 import play.api.libs.json.{Format, Json}
 
-final case class SessionId(value: String) extends AnyVal
+final case class P800Reference(value: String)
 
-object SessionId {
-  implicit val format: Format[SessionId] = Json.valueFormat
+object P800Reference {
+  implicit val formats: Format[P800Reference] = Json.valueFormat[P800Reference]
 }
 

@@ -16,23 +16,16 @@
 
 package models
 
-import java.time.{Clock, Instant}
+import julienrf.json.derived
+import play.api.libs.json.OFormat
 
-sealed trait Journey {
-  def _id: JourneyId
+sealed trait RefundViaBankTransfer
 
-  def createdOn: Instant
+object RefundViaBankTransfer {
+  case object Yes extends RefundViaBankTransfer
+  case object No extends RefundViaBankTransfer
 
-  val lastUpdated: Instant = Instant.now(Clock.systemUTC())
-
-  def sessionId: SessionId
-
-  /* derived stuff: */
-
-  def id: JourneyId = _id
-
-  def journeyId: JourneyId = _id
-
-  val traceId: TraceId = TraceId(journeyId)
-
+  @SuppressWarnings(Array("org.wartremover.warts.Any"))
+  implicit val format: OFormat[RefundViaBankTransfer] = derived.oformat[RefundViaBankTransfer]()
 }
+

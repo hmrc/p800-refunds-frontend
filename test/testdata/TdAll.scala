@@ -14,15 +14,13 @@
  * limitations under the License.
  */
 
-package actionsmodel
+package testdata
 
-import models.{Journey, JourneyId}
-import play.api.mvc.{Request, WrappedRequest}
+object TdAll extends TdAll
 
-class JourneyRequest[A](
-    val journey: Journey,
-    val request: Request[A]
-) extends WrappedRequest[A](request) {
+trait TdAll
+  extends AnyRef
+  with TdBase
+  with TdRequest
+  with TdJourney
 
-  val journeyId: JourneyId = journey._id
-}

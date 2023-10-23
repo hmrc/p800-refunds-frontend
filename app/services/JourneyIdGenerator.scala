@@ -14,17 +14,14 @@
  * limitations under the License.
  */
 
-package testsupport.testdata
+package services
 
-import java.time.{Instant, LocalDateTime, ZoneOffset}
-import java.time.format.DateTimeFormatter
+import models.journeymodels.JourneyId
+import org.bson.types.ObjectId
 
-object TestData {
-  lazy val dateString: String = "2059-11-25"
-  lazy val timeString: String = s"${dateString}T16:33:51.880"
-  lazy val localDateTime: LocalDateTime = {
-    //the frozen time has to be in future otherwise the journeys will disappear from mongodb because of expiry index
-    LocalDateTime.parse(timeString, DateTimeFormatter.ISO_DATE_TIME)
-  }
-  lazy val instant: Instant = localDateTime.toInstant(ZoneOffset.UTC)
+import javax.inject.Singleton
+
+@Singleton
+class JourneyIdGenerator {
+  def nextJourneyId(): JourneyId = JourneyId(ObjectId.get().toHexString)
 }

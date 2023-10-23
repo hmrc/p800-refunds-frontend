@@ -14,18 +14,22 @@
  * limitations under the License.
  */
 
-package models
+package services
 
-import play.api.libs.json.{Format, Json}
-import play.api.mvc.PathBindable
+import models.journeymodels.{Journey, JourneyStarted}
 
-object JourneyId {
-  implicit val format: Format[JourneyId] = Json.valueFormat
+import java.time.{Clock, Instant}
+import javax.inject.{Inject, Singleton}
 
-  /**
-   * Allows JourneyId final case class to be used as a query parameter in controllers
-   */
-  implicit val journeyIdBinder: PathBindable[JourneyId] = util.ValueClassBinder.valueClassBinder(_.value)
+@Singleton
+class JourneyFactory @Inject() (
+    journeyIdGenerator: JourneyIdGenerator,
+    clock:              Clock
+) {
+
+  def makeNewJourney(): Journey = JourneyStarted(
+    _id       = journeyIdGenerator.nextJourneyId(),
+    createdAt = Instant.now(clock)
+  )
+
 }
-
-final case class JourneyId(value: String)

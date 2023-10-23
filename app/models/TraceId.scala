@@ -16,6 +16,7 @@
 
 package models
 
+import models.journeymodels.JourneyId
 import play.api.libs.json.{Format, Json}
 import play.api.mvc.{PathBindable, QueryStringBindable}
 
