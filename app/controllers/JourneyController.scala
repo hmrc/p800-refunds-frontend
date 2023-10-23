@@ -17,21 +17,26 @@
 package controllers
 
 import action.Actions
+import forms.DoYouWantToSignInForm
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import requests.RequestSupport
 import services.JourneyService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import views.Views
 
 import javax.inject.{Inject, Singleton}
-import scala.concurrent.ExecutionContext
+import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class JourneyController @Inject() (
     mcc:            MessagesControllerComponents,
+    requestSupport: RequestSupport,
     journeyService: JourneyService,
     views:          Views,
     actions:        Actions
 )(implicit ec: ExecutionContext) extends FrontendController(mcc) {
+
+  import requestSupport._
 
   val start: Action[AnyContent] = Action.async { implicit request =>
     journeyService
@@ -42,7 +47,14 @@ class JourneyController @Inject() (
   }
 
   val doYouWantToSignIn: Action[AnyContent] = actions.journeyAction { implicit request =>
-    Ok(views.doYouWantToSignInPage())
+    Ok(views.doYouWantToSignInPage(DoYouWantToSignInForm.form, controllers.routes.JourneyController.doYouWantToSignInSubmit))
+  }
+
+  val doYouWantToSignInSubmit: Action[AnyContent] = actions.journeyAction.async { implicit request =>
+    DoYouWantToSignInForm.form.bindFromRequest().fold(
+      formWithErrors => Future.successful(BadRequest(views.doYouWantToSignInPage(formWithErrors, controllers.routes.JourneyController.doYouWantToSignInSubmit))),
+      _ => Future.successful(Redirect(controllers.routes.JourneyController.underConstruction))
+    )
   }
 
   //TODO: remove once we have all pages
