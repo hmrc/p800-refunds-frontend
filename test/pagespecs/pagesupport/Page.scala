@@ -18,6 +18,7 @@ package pagespecs.pagesupport
 
 import org.openqa.selenium.WebDriver
 import org.scalatestplus.selenium.WebBrowser._
+import testsupport.RichMatchers._
 
 abstract class Page(
     baseUrl:           String,
@@ -62,6 +63,16 @@ abstract class Page(
                           |""".stripMargin
       )
     )
+    ()
+  }
+
+  def urlShouldBe(expected: String): Unit = withPageClue {
+    webDriver.getCurrentUrl shouldBe expected
+    ()
+  }
+
+  def pathShouldBe(expected: String): Unit = withPageClue {
+    PageUtil.readPath() shouldBe expected
     ()
   }
 

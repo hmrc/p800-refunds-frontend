@@ -29,7 +29,7 @@ class DoYouWantToSignInPageSpec extends ItSpec {
     pages.startEndpoint.open()
     pages.doYouWantToSignInPage.assertPageIsDisplayed()
     pages.doYouWantToSignInPage.selectRadioItemAndContinue("radio-sign-in")
-    pages.doYouWantToSignInPage.urlShouldBe("https://www.gov.uk/personal-tax-account/prove-identity")
+    pages.doYouWantToSignInPage.urlShouldBe("https://www.access.service.gov.uk/login/signin/creds")
   }
 
   "Selecting 'No, continue without signing in' redirects to 'What is your P800 Reference' page" in {
@@ -52,6 +52,4 @@ class DoYouWantToSignInPageSpec extends ItSpec {
     pages.doYouWantToSignInPage.clickContinue()
     pages.doYouWantToSignInPage.assertPageShowsError()
   }
-
-  // BONUS: validate database journey is valid JourneyDoNotSignIn
 }

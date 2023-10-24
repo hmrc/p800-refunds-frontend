@@ -17,6 +17,7 @@
 package controllers
 
 import action.Actions
+import config.AppConfig
 import forms.DoYouWantToSignInForm
 import models.journeymodels._
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -35,7 +36,8 @@ class JourneyController @Inject() (
     requestSupport: RequestSupport,
     journeyService: JourneyService,
     views:          Views,
-    actions:        Actions
+    actions:        Actions,
+    appConfig:      AppConfig
 )(implicit ec: ExecutionContext) extends FrontendController(mcc) {
 
   import requestSupport._
@@ -57,7 +59,7 @@ class JourneyController @Inject() (
       formWithErrors => Future.successful(BadRequest(views.doYouWantToSignInPage(formWithErrors, controllers.routes.JourneyController.doYouWantToSignInSubmit))),
       form => {
         form.signIn match {
-          case Some("sign-in") => Future.successful(Redirect("https://www.tax.service.gov.uk/personal-account"))
+          case Some("sign-in") => Future.successful(Redirect(appConfig.ptaSignInUrl))
           case Some("do-not-sign-in") =>
             journeyService.upsert(request.journey.transformInto[JourneyDoYouWantToSignInNo]).map(_ =>
               Redirect(controllers.routes.JourneyController.whatIsYourP800Reference))

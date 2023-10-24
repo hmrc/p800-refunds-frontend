@@ -18,7 +18,6 @@ package pagespecs.pages
 
 import org.openqa.selenium.WebDriver
 import pagespecs.pagesupport.{ContentExpectation, Page, PageUtil}
-import testsupport.RichMatchers._
 
 class DoYouWantToSignInPage(baseUrl: String)(implicit webDriver: WebDriver) extends Page(
   baseUrl,
@@ -64,16 +63,6 @@ class DoYouWantToSignInPage(baseUrl: String)(implicit webDriver: WebDriver) exte
   def selectRadioItemAndContinue(radioItemId: String): Unit = withPageClue {
     PageUtil.clickByIdOrName(radioItemId)
     clickContinue()
-    ()
-  }
-
-  def urlShouldBe(expected: String): Unit = withPageClue {
-    webDriver.getCurrentUrl shouldBe expected
-    ()
-  }
-
-  def pathShouldBe(expected: String): Unit = withPageClue {
-    PageUtil.readPath() shouldBe expected
     ()
   }
 }

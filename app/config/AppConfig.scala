@@ -21,6 +21,7 @@ import play.api.Configuration
 import javax.inject.{Inject, Singleton}
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 
+import java.net.URL
 import java.util.concurrent.TimeUnit
 import scala.concurrent.duration.FiniteDuration
 import scala.util.Try
@@ -38,6 +39,9 @@ class AppConfig @Inject() (servicesConfig: ServicesConfig, configuration: Config
   val journeyRepoTtl: FiniteDuration = configFiniteDuration("journey.repoTtl")
 
   val govUkRouteIn: String = readConfigAsValidUrlString("urls.govuk-routein")
+  val govUkRouteInPath: String = new URL(govUkRouteIn).getPath
+
+  val ptaSignInUrl: String = readConfigAsValidUrlString("urls.pta-sign-in")
 
   /**
    * The application loads the configuration from the provided `configPath` and checks if it's a valid URL.

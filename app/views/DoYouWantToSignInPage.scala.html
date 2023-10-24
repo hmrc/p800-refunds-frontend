@@ -14,6 +14,7 @@
  * limitations under the License.
  *@
 
+@import config.AppConfig
 @import forms.DoYouWantToSignInForm
 @import language.{LangMessages, ErrorMessages}
 @import uk.gov.hmrc.govukfrontend.views.html.components._
@@ -23,6 +24,7 @@
 
 @this(
     layout: Layout,
+    appConfig: AppConfig,
     viewsHelpers: views.ViewsHelpers
 )
 
@@ -33,7 +35,7 @@
 
 @import viewsHelpers.requestSupport._
 
-@layout(pageTitle = Some(LangMessages.doYouWantToSignInH1.show), backLinkUrlOverride = Some("/get-an-income-tax-refund/test-only")) {
+@layout(pageTitle = Some(LangMessages.doYouWantToSignInH1.show), backLinkUrlOverride = Some(appConfig.govUkRouteInPath)) {
     @if(form.errors.nonEmpty) {
         @viewsHelpers.govukErrorSummary(ErrorSummary(errorList = form.errors.asTextErrorLinks, title = Text(ErrorMessages.problem.show)))
     }
