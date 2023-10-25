@@ -18,12 +18,12 @@ package language
 
 object LangMessages {
 
-  val doYouWantToSignInH1: Message = Message(
+  val `Do you want to sign in?`: Message = Message(
     english = "Do you want to sign in?"
   )
 
-  val doYouWantToSignInHint: Message = Message(
-    english = "Sign in with your Government Gateway user ID. You'll have fewer details to enter this way."
+  val `Sign in with your Government Gateway user ID.`: Message = Message(
+    english = "Sign in with your Government Gateway user ID. You’ll have fewer details to enter this way."
   )
 
   val `Yes, sign in`: Message = Message(

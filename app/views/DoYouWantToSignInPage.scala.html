@@ -16,9 +16,8 @@
 
 @import config.AppConfig
 @import forms.DoYouWantToSignInForm
-@import language.{LangMessages, ErrorMessages}
+@import language.{ErrorMessages, LangMessages}
 @import uk.gov.hmrc.govukfrontend.views.html.components._
-@import uk.gov.hmrc.govukfrontend.views.html.components.implicits.RichRadios
 @import uk.gov.hmrc.govukfrontend.views.html.components.implicits._
 @import views.html.templates.Layout
 
@@ -35,25 +34,25 @@
 
 @import viewsHelpers.requestSupport._
 
-@layout(pageTitle = Some(LangMessages.doYouWantToSignInH1.show), backLinkUrlOverride = Some(appConfig.govUkRouteInPath)) {
+@layout(pageTitle = Some(LangMessages.`Do you want to sign in?`.show), backLinkUrlOverride = Some(appConfig.govUkRouteInPath)) {
     @if(form.errors.nonEmpty) {
-        @viewsHelpers.govukErrorSummary(ErrorSummary(errorList = form.errors.asTextErrorLinks, title = Text(ErrorMessages.problem.show)))
+        @viewsHelpers.govukErrorSummary(ErrorSummary(errorList = form.errors.asTextErrorLinks, title = Text(ErrorMessages.`There is a problem`.show)))
     }
 
     @viewsHelpers.formWithCsrf(action = submitUrl, Symbol("autocomplete") -> "off") {
         @viewsHelpers.govukRadios(Radios(
-            hint = Some(Hint(content = Text(LangMessages.doYouWantToSignInHint.show))),
+            hint = Some(Hint(content = Text(LangMessages.`Sign in with your Government Gateway user ID.`.show))),
             fieldset = Some(Fieldset(
                 legend = Some(Legend(
-                    content = Text(LangMessages.doYouWantToSignInH1.show),
+                    content = Text(LangMessages.`Do you want to sign in?`.show),
                     classes = "govuk-fieldset__legend--l",
                     isPageHeading = true
                 ))
             )),
             name = "sign-in",
             items = Seq(
-                RadioItem(content = Text(LangMessages.`Yes, sign in`.show), id = Some("radio-sign-in"), value = Some("sign-in")),
-                RadioItem(content = Text(LangMessages.`No, continue without signing in`.show), id = Some("radio-do-not-sign-in"), value = Some("do-not-sign-in"))
+                RadioItem(content = Text(LangMessages.`Yes, sign in`.show), id = Some("radio-sign-in"), value = Some("true")),
+                RadioItem(content = Text(LangMessages.`No, continue without signing in`.show), id = Some("radio-do-not-sign-in"), value = Some("false"))
             )
         ).withFormField(form("sign-in")))
 

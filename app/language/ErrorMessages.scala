@@ -17,12 +17,12 @@
 package language
 
 object ErrorMessages {
-  val problem: Message = Message(
+  val `There is a problem`: Message = Message(
     english = "There is a problem",
     welsh   = "Mae problem wedi codi"
   )
 
-  val error_sign_in_required: Message = Message(
+  val `Select yes if you want to sign in to your tax account`: Message = Message(
     english = "Select yes if you want to sign in to your tax account"
   )
 }

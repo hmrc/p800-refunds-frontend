@@ -35,7 +35,7 @@ class DoYouWantToSignInPage(baseUrl: String)(implicit webDriver: WebDriver) exte
         expectedLines =
           """
             |Do you want to sign in?
-            |Sign in with your Government Gateway user ID. You'll have fewer details to enter this way.
+            |Sign in with your Government Gateway user ID. You’ll have fewer details to enter this way.
             |""".stripMargin
       ),
     )

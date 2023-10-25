@@ -58,12 +58,11 @@ class JourneyController @Inject() (
     DoYouWantToSignInForm.form.bindFromRequest().fold(
       formWithErrors => Future.successful(BadRequest(views.doYouWantToSignInPage(formWithErrors, controllers.routes.JourneyController.doYouWantToSignInSubmit))),
       form => {
-        form.signIn match {
-          case Some("sign-in") => Future.successful(Redirect(appConfig.ptaSignInUrl))
-          case Some("do-not-sign-in") =>
-            journeyService.upsert(request.journey.transformInto[JourneyDoYouWantToSignInNo]).map(_ =>
-              Redirect(controllers.routes.JourneyController.whatIsYourP800Reference))
-          case _ => throw new Exception("Invalid case - This should not be possible!")
+        if (form.signIn) {
+          Future.successful(Redirect(appConfig.ptaSignInUrl))
+        } else {
+          journeyService.upsert(request.journey.transformInto[JourneyDoYouWantToSignInNo]).map(_ =>
+            Redirect(controllers.routes.JourneyController.whatIsYourP800Reference))
         }
       }
     )

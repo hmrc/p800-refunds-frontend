@@ -17,17 +17,17 @@
 package forms
 
 import language.{ErrorMessages, Language}
-import play.api.data.Forms.{mapping, optional, text}
 import play.api.data.Form
+import play.api.data.Forms.{boolean, mapping, optional}
 
-final case class DoYouWantToSignInForm(
-    signIn: Option[String]
-)
+final case class DoYouWantToSignInForm(signIn: Boolean)
 
 object DoYouWantToSignInForm {
   def form(implicit language: Language): Form[DoYouWantToSignInForm] = Form(
     mapping = mapping(
-      "sign-in" -> optional(text).verifying(ErrorMessages.error_sign_in_required.show, _.nonEmpty)
+      "sign-in" -> optional(boolean)
+        .verifying(ErrorMessages.`Select yes if you want to sign in to your tax account`.show, _.isDefined)
+        .transform[Boolean](_.getOrElse(throw new Exception("Unexpected None value for Option, this should never happen!")), Some(_))
     )(DoYouWantToSignInForm.apply)(DoYouWantToSignInForm.unapply)
   )
 }
