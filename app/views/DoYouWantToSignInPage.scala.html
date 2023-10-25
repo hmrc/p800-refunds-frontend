@@ -15,8 +15,8 @@
  *@
 
 @import config.AppConfig
-@import forms.DoYouWantToSignInForm
-@import language.{ErrorMessages, LangMessages}
+@import language.Messages
+@import models.forms.enumsforforms.DoYouWantToSignInFormValue
 @import uk.gov.hmrc.govukfrontend.views.html.components._
 @import uk.gov.hmrc.govukfrontend.views.html.components.implicits._
 @import views.html.templates.Layout
@@ -28,34 +28,53 @@
 )
 
 @(
-    form: Form[DoYouWantToSignInForm],
+    form: Form[DoYouWantToSignInFormValue],
     submitUrl: Call
 )(implicit request: Request[_])
 
 @import viewsHelpers.requestSupport._
 
-@layout(pageTitle = Some(LangMessages.`Do you want to sign in?`.show), backLinkUrlOverride = Some(appConfig.govUkRouteInPath)) {
+@key = @{
+    "sign-in"
+}
+
+@title = @{
+    Messages.DoYouWantToSignInMessages.`Do you want to sign in?`.show
+}
+
+@layout(pageTitle = Some(title), backLinkUrlOverride = Some(appConfig.govUkRouteInPath)) {
     @if(form.errors.nonEmpty) {
-        @viewsHelpers.govukErrorSummary(ErrorSummary(errorList = form.errors.asTextErrorLinks, title = Text(ErrorMessages.`There is a problem`.show)))
+        @viewsHelpers.govukErrorSummary(ErrorSummary(errorList = form.errors.asTextErrorLinks, title = Text(Messages.CommonMessages.`There is a problem`.show)))
     }
 
     @viewsHelpers.formWithCsrf(action = submitUrl, Symbol("autocomplete") -> "off") {
         @viewsHelpers.govukRadios(Radios(
-            hint = Some(Hint(content = Text(LangMessages.`Sign in with your Government Gateway user ID.`.show))),
             fieldset = Some(Fieldset(
                 legend = Some(Legend(
-                    content = Text(LangMessages.`Do you want to sign in?`.show),
+                    content = Text(Messages.DoYouWantToSignInMessages.`Do you want to sign in?`.show),
                     classes = "govuk-fieldset__legend--l",
                     isPageHeading = true
                 ))
             )),
-            name = "sign-in",
+            hint = Some(Hint(
+                content = Text(Messages.DoYouWantToSignInMessages.`Sign in with your Government Gateway user ID.`.show)
+            )),
+            idPrefix = Some(key),
+            name = key,
             items = Seq(
-                RadioItem(content = Text(LangMessages.`Yes, sign in`.show), id = Some("radio-sign-in"), value = Some("true")),
-                RadioItem(content = Text(LangMessages.`No, continue without signing in`.show), id = Some("radio-do-not-sign-in"), value = Some("false"))
-            )
-        ).withFormField(form("sign-in")))
+                RadioItem(
+                    content = Text(Messages.DoYouWantToSignInMessages.`Yes, sign in`.show),
+                    value = Some("Yes"),
+                    checked = form.data.values.toList.contains("Yes")
+                ),
+                RadioItem(
+                    content = Text(Messages.DoYouWantToSignInMessages.`No, continue without signing in`.show),
+                    value = Some("No"),
+                    checked = form.data.values.toList.contains("No")
+                )
+            ),
+        ).withFormField(form(key)))
 
-        @viewsHelpers.govukButton(Button(content = Text(LangMessages.continue.show), attributes = Map("id" -> "next")))
+        @viewsHelpers.govukButton(Button(content = Text(Messages.CommonMessages.continue.show), attributes = Map("id" -> "next")))
     }
 }

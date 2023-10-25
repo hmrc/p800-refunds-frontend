@@ -18,13 +18,14 @@ package controllers
 
 import action.Actions
 import config.AppConfig
-import forms.DoYouWantToSignInForm
 import models.journeymodels._
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import requests.RequestSupport
 import services.JourneyService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import io.scalaland.chimney.dsl._
+import models.forms.DoYouWantToSignInForm
+import models.forms.enumsforforms.DoYouWantToSignInFormValue
 import views.Views
 
 import javax.inject.{Inject, Singleton}
@@ -57,13 +58,10 @@ class JourneyController @Inject() (
   val doYouWantToSignInSubmit: Action[AnyContent] = actions.journeyAction.async { implicit request =>
     DoYouWantToSignInForm.form.bindFromRequest().fold(
       formWithErrors => Future.successful(BadRequest(views.doYouWantToSignInPage(formWithErrors, controllers.routes.JourneyController.doYouWantToSignInSubmit))),
-      form => {
-        if (form.signIn) {
-          Future.successful(Redirect(appConfig.ptaSignInUrl))
-        } else {
-          journeyService.upsert(request.journey.transformInto[JourneyDoYouWantToSignInNo]).map(_ =>
-            Redirect(controllers.routes.JourneyController.whatIsYourP800Reference))
-        }
+      {
+        case DoYouWantToSignInFormValue.Yes => Future.successful(Redirect(appConfig.ptaSignInUrl))
+        case DoYouWantToSignInFormValue.No => journeyService.upsert(request.journey.transformInto[JourneyDoYouWantToSignInNo]).map(_ =>
+          Redirect(controllers.routes.JourneyController.whatIsYourP800Reference))
       }
     )
   }

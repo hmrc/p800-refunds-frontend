@@ -14,6 +14,7 @@ object AppDependencies {
     "uk.gov.hmrc.mongo" %% "hmrc-mongo-play-28"         % hmrcMongoVersion,
     "uk.gov.hmrc"       %% "play-frontend-hmrc"         % "7.23.0-play-28",
     "com.beachape"      %% "enumeratum-play"            % "1.7.3",
+    "org.typelevel"     %% "cats-core"                  % "2.10.0",
     "org.julienrf"      %% "play-json-derived-codecs"   % "7.0.0", //choose carefully
     "io.scalaland"      %% "chimney"                    % "0.8.0"
   // format: ON

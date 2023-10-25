@@ -14,28 +14,15 @@
  * limitations under the License.
  */
 
-package language
+package models.forms.enumsforforms
 
-object LangMessages {
+import enumeratum.Enum
+import scala.collection.immutable.IndexedSeq
 
-  val `Do you want to sign in?`: Message = Message(
-    english = "Do you want to sign in?"
-  )
+sealed trait DoYouWantToSignInFormValue extends enumeratum.EnumEntry
 
-  val `Sign in with your Government Gateway user ID.`: Message = Message(
-    english = "Sign in with your Government Gateway user ID. You’ll have fewer details to enter this way."
-  )
-
-  val `Yes, sign in`: Message = Message(
-    english = "Yes, sign in"
-  )
-
-  val `No, continue without signing in`: Message = Message(
-    english = "No, continue without signing in"
-  )
-
-  val continue: Message = Message(
-    english = "Continue",
-    welsh   = "Yn eich blaen"
-  )
+object DoYouWantToSignInFormValue extends Enum[DoYouWantToSignInFormValue] {
+  case object Yes extends DoYouWantToSignInFormValue
+  case object No extends DoYouWantToSignInFormValue
+  override def values: IndexedSeq[DoYouWantToSignInFormValue] = findValues
 }
