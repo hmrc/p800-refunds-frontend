@@ -14,14 +14,67 @@
  * limitations under the License.
  *@
 
+@import config.AppConfig
+@import language.Messages
+@import models.forms.enumsforforms.DoYouWantToSignInFormValue
+@import uk.gov.hmrc.govukfrontend.views.html.components._
+@import uk.gov.hmrc.govukfrontend.views.html.components.implicits._
 @import views.html.templates.Layout
 
-@this(layout: Layout)
+@this(
+    layout: Layout,
+    appConfig: AppConfig,
+    viewsHelpers: views.ViewsHelpers
+)
 
-@()(implicit request: Request[_])
+@(
+    form: Form[DoYouWantToSignInFormValue],
+    submitUrl: Call
+)(implicit request: Request[_])
 
-@heading = @{"This is where the do you want to sign in page will go"}
+@import viewsHelpers.requestSupport._
 
-@layout(pageTitle = Some(heading)) {
-    <h1 class="govuk-heading-xl">@heading</h1>
+@key = @{
+    "sign-in"
+}
+
+@title = @{
+    Messages.DoYouWantToSignInMessages.`Do you want to sign in?`.show
+}
+
+@layout(pageTitle = Some(title), backLinkUrlOverride = Some(appConfig.govUkRouteInPath)) {
+    @if(form.errors.nonEmpty) {
+        @viewsHelpers.govukErrorSummary(ErrorSummary(errorList = form.errors.asTextErrorLinks, title = Text(Messages.CommonMessages.`There is a problem`.show)))
+    }
+
+    @viewsHelpers.formWithCsrf(action = submitUrl, Symbol("autocomplete") -> "off") {
+        @viewsHelpers.govukRadios(Radios(
+            fieldset = Some(Fieldset(
+                legend = Some(Legend(
+                    content = Text(Messages.DoYouWantToSignInMessages.`Do you want to sign in?`.show),
+                    classes = "govuk-fieldset__legend--l",
+                    isPageHeading = true
+                ))
+            )),
+            hint = Some(Hint(
+                content = Text(Messages.DoYouWantToSignInMessages.`Sign in with your Government Gateway user ID.`.show)
+            )),
+            idPrefix = Some(key),
+            name = key,
+            items = Seq(
+                RadioItem(
+                    content = Text(Messages.DoYouWantToSignInMessages.`Yes, sign in`.show),
+                    value = Some("Yes"),
+                    checked = form.data.values.toList.contains("Yes")
+                ),
+                RadioItem(
+                    content = Text(Messages.DoYouWantToSignInMessages.`No, continue without signing in`.show),
+                    value = Some("No"),
+                    checked = form.data.values.toList.contains("No")
+                )
+            ),
+        ).withFormField(form(key)))
+
+        @viewsHelpers.govukButton(Button(content = Text(Messages.CommonMessages.continue.show), attributes = Map("id" -> "next")))
+    }
 }

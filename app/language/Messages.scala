@@ -18,21 +18,6 @@ package language
 
 object Messages {
 
-  val `Example message.`: Message = Message(
-    english = "Example message",
-    welsh   = "Example welsh message"
-  )
-
-  val `Another example message`: Message = Message(
-    english = "Another example message",
-    welsh   = "Another welsh example message"
-  )
-
-  val `Final example message`: Message = Message(
-    english = "Final example message",
-    welsh   = "Final example message in welsh"
-  )
-
   object CommonMessages {
     val back: Message = Message(
       english = "Back",
@@ -42,6 +27,38 @@ object Messages {
     val error: Message = Message(
       english = "Error: ",
       welsh   = "Gwall: "
+    )
+
+    val continue: Message = Message(
+      english = "Continue",
+      welsh   = "Yn eich blaen"
+    )
+
+    val `There is a problem`: Message = Message(
+      english = "There is a problem",
+      welsh   = "Mae problem wedi codi"
+    )
+  }
+
+  object DoYouWantToSignInMessages {
+    val `Do you want to sign in?`: Message = Message(
+      english = "Do you want to sign in?"
+    )
+
+    val `Sign in with your Government Gateway user ID.`: Message = Message(
+      english = "Sign in with your Government Gateway user ID. You’ll have fewer details to enter this way."
+    )
+
+    val `Yes, sign in`: Message = Message(
+      english = "Yes, sign in"
+    )
+
+    val `No, continue without signing in`: Message = Message(
+      english = "No, continue without signing in"
+    )
+
+    val `Select yes if you want to sign in to your tax account`: Message = Message(
+      english = "Select yes if you want to sign in to your tax account"
     )
   }
 

@@ -25,7 +25,7 @@ class DoYouWantToSignInPage(baseUrl: String)(implicit webDriver: WebDriver) exte
 ) {
 
   def assertPageIsDisplayed(): Unit = withPageClue {
-    val h1: String = "This is where the do you want to sign in page will go"
+    val h1: String = "Do you want to sign in?"
     PageUtil.assertPage(
       path  = path,
       h1    = h1,
@@ -34,10 +34,35 @@ class DoYouWantToSignInPage(baseUrl: String)(implicit webDriver: WebDriver) exte
         atXpath       = PageUtil.Xpath.mainContent,
         expectedLines =
           """
-            |This is where the do you want to sign in page will go
+            |Do you want to sign in?
+            |Sign in with your Government Gateway user ID. You’ll have fewer details to enter this way.
             |""".stripMargin
       ),
     )
+    ()
+  }
+
+  def assertPageShowsError(): Unit = withPageClue {
+    val h1: String = "Do you want to sign in?"
+    PageUtil.assertPage(
+      path  = path,
+      h1    = h1,
+      title = PageUtil.standardTitle(h1),
+      ContentExpectation(
+        atXpath       = PageUtil.Xpath.mainContent,
+        expectedLines =
+          """
+            |There is a problem
+            |Select yes if you want to sign in to your tax account
+            |""".stripMargin
+      ),
+    )
+    ()
+  }
+
+  def selectRadioItemAndContinue(radioItemId: String): Unit = withPageClue {
+    PageUtil.clickByIdOrName(radioItemId)
+    clickContinue()
     ()
   }
 }

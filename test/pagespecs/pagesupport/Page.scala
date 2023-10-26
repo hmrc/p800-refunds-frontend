@@ -18,6 +18,7 @@ package pagespecs.pagesupport
 
 import org.openqa.selenium.WebDriver
 import org.scalatestplus.selenium.WebBrowser._
+import testsupport.RichMatchers._
 
 abstract class Page(
     baseUrl:           String,
@@ -29,6 +30,7 @@ abstract class Page(
   def clickWelshLink()(implicit webDriver: WebDriver): Unit = click on xpath("""//a[@hreflang="cy"]""")
   def clickBackButton()(implicit webDriver: WebDriver): Unit = click on xpath("""/html/body//a[@class="govuk-back-link"]""")
   def clickSignOut()(implicit webDriver: WebDriver): Unit = PageUtil.clickByClassName("hmrc-sign-out-nav__link")
+  def clickContinue()(implicit webDriver: WebDriver): Unit = PageUtil.clickByIdOrName("next")
 
   protected def withPageClue[A](testF: => A)(implicit webDriver: WebDriver): A = PageUtil.withPageClue(path)(testF)
 
@@ -61,6 +63,16 @@ abstract class Page(
                           |""".stripMargin
       )
     )
+    ()
+  }
+
+  def urlShouldBe(expected: String): Unit = withPageClue {
+    webDriver.getCurrentUrl shouldBe expected
+    ()
+  }
+
+  def pathShouldBe(expected: String): Unit = withPageClue {
+    PageUtil.readPath() shouldBe expected
     ()
   }
 

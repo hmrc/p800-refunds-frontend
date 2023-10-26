@@ -24,4 +24,32 @@ class DoYouWantToSignInPageSpec extends ItSpec {
     pages.startEndpoint.open()
     pages.doYouWantToSignInPage.assertPageIsDisplayed()
   }
+
+  "Selecting 'Yes, sign in' redirects to personal tax account" in {
+    pages.startEndpoint.open()
+    pages.doYouWantToSignInPage.assertPageIsDisplayed()
+    pages.doYouWantToSignInPage.selectRadioItemAndContinue("sign-in")
+    pages.doYouWantToSignInPage.urlShouldBe("https://www.access.service.gov.uk/login/signin/creds")
+  }
+
+  "Selecting 'No, continue without signing in' redirects to 'What is your P800 Reference' page" in {
+    pages.startEndpoint.open()
+    pages.doYouWantToSignInPage.assertPageIsDisplayed()
+    pages.doYouWantToSignInPage.selectRadioItemAndContinue("sign-in-2")
+    pages.doYouWantToSignInPage.pathShouldBe("/get-an-income-tax-refund/what-is-your-p800-reference")
+  }
+
+  "Clicking 'Back' redirects back to start page" in {
+    pages.startEndpoint.open()
+    pages.doYouWantToSignInPage.assertPageIsDisplayed()
+    pages.doYouWantToSignInPage.clickBackButton()
+    pages.doYouWantToSignInPage.pathShouldBe("/get-an-income-tax-refund/test-only")
+  }
+
+  "Selecting nothing and clicking continue shows error" in {
+    pages.startEndpoint.open()
+    pages.doYouWantToSignInPage.assertPageIsDisplayed()
+    pages.doYouWantToSignInPage.clickContinue()
+    pages.doYouWantToSignInPage.assertPageShowsError()
+  }
 }
