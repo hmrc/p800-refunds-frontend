@@ -61,7 +61,7 @@ class JourneyController @Inject() (
       {
         case DoYouWantToSignInFormValue.Yes => Future.successful(Redirect(appConfig.ptaSignInUrl))
         case DoYouWantToSignInFormValue.No => journeyService.upsert(request.journey.transformInto[JourneyDoYouWantToSignInNo]).map(_ =>
-          Redirect(controllers.routes.JourneyController.whatIsYourP800Reference))
+          Redirect(controllers.routes.JourneyController.enterP800Reference))
       }
     )
   }
@@ -71,7 +71,7 @@ class JourneyController @Inject() (
     Ok(views.underConstructionPage())
   }
 
-  val whatIsYourP800Reference: Action[AnyContent] = underConstruction
+  val enterP800Reference: Action[AnyContent] = underConstruction
 }
 
 object JourneyController {

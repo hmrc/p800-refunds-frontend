@@ -36,7 +36,7 @@ class DoYouWantToSignInPageSpec extends ItSpec {
     pages.startEndpoint.open()
     pages.doYouWantToSignInPage.assertPageIsDisplayed()
     pages.doYouWantToSignInPage.selectRadioItemAndContinue("sign-in-2")
-    pages.doYouWantToSignInPage.pathShouldBe("/get-an-income-tax-refund/what-is-your-p800-reference")
+    pages.doYouWantToSignInPage.pathShouldBe("/get-an-income-tax-refund/enter-P800-reference")
   }
 
   "Clicking 'Back' redirects back to start page" in {
@@ -49,7 +49,7 @@ class DoYouWantToSignInPageSpec extends ItSpec {
   "Selecting nothing and clicking continue shows error" in {
     pages.startEndpoint.open()
     pages.doYouWantToSignInPage.assertPageIsDisplayed()
-    pages.doYouWantToSignInPage.clickContinue()
+    pages.doYouWantToSignInPage.clickSubmit()
     pages.doYouWantToSignInPage.assertPageShowsError()
   }
 }

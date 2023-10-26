@@ -62,7 +62,7 @@ class DoYouWantToSignInPage(baseUrl: String)(implicit webDriver: WebDriver) exte
 
   def selectRadioItemAndContinue(radioItemId: String): Unit = withPageClue {
     PageUtil.clickByIdOrName(radioItemId)
-    clickContinue()
+    clickSubmit()
     ()
   }
 }
