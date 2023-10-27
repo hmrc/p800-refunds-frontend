@@ -20,7 +20,7 @@ import models.P800ReferenceValidation
 import models.journeymodels.{JourneyDoYouWantToSignInNo, JourneyId, JourneyStarted, JourneyWhatIsYourP800Reference}
 
 /**
- * Test Datat (Td) Journey. It has journey examples in all possible states.
+ * Test Data (Td) Journey. It has journey examples in all possible states.
  */
 trait TdJourney { dependencies: TdBase =>
 
@@ -31,7 +31,7 @@ trait TdJourney { dependencies: TdBase =>
     createdAt = dependencies.instant
   )
 
-  lazy val journeyDoYouWantToSignInYes: JourneyDoYouWantToSignInNo = JourneyDoYouWantToSignInNo(
+  lazy val journeyDoYouWantToSignInNo: JourneyDoYouWantToSignInNo = JourneyDoYouWantToSignInNo(
     _id       = journeyId,
     createdAt = dependencies.instant
   )

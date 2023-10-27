@@ -24,45 +24,45 @@ class DoYouWantToSignInPage(baseUrl: String)(implicit webDriver: WebDriver) exte
   path = "/get-an-income-tax-refund/do-you-want-to-sign-in"
 ) {
 
-  def assertPageIsDisplayed(): Unit = withPageClue {
+  def assertPageIsDisplayed(errors: ContentExpectation*): Unit = withPageClue {
     val h1: String = "Do you want to sign in?"
+    val contentExpectations: Seq[ContentExpectation] = Seq(ContentExpectation(
+      atXpath       = PageUtil.Xpath.mainContent,
+      expectedLines =
+        """
+          |Do you want to sign in?
+          |Sign in with your Government Gateway user ID. You’ll have fewer details to enter this way.
+          |""".stripMargin
+    )) ++ errors
+
     PageUtil.assertPage(
-      path  = path,
-      h1    = h1,
-      title = PageUtil.standardTitle(h1),
-      ContentExpectation(
-        atXpath       = PageUtil.Xpath.mainContent,
-        expectedLines =
-          """
-            |Do you want to sign in?
-            |Sign in with your Government Gateway user ID. You’ll have fewer details to enter this way.
-            |""".stripMargin
-      ),
+      path                = path,
+      h1                  = h1,
+      title               = PageUtil.standardTitle(h1),
+      contentExpectations = contentExpectations: _*
     )
     ()
   }
 
   def assertPageShowsError(): Unit = withPageClue {
-    val h1: String = "Do you want to sign in?"
-    PageUtil.assertPage(
-      path  = path,
-      h1    = h1,
-      title = PageUtil.standardTitle(h1),
-      ContentExpectation(
-        atXpath       = PageUtil.Xpath.mainContent,
-        expectedLines =
-          """
-            |There is a problem
-            |Select yes if you want to sign in to your tax account
-            |""".stripMargin
-      ),
+    ContentExpectation(
+      atXpath       = PageUtil.Xpath.mainContent,
+      expectedLines =
+        """
+          |There is a problem
+          |Select yes if you want to sign in to your tax account
+          |""".stripMargin
     )
     ()
   }
 
-  def selectRadioItemAndContinue(radioItemId: String): Unit = withPageClue {
-    PageUtil.clickByIdOrName(radioItemId)
-    clickSubmit()
+  def selectYes(): Unit = withPageClue {
+    PageUtil.clickByIdOrName("sign-in")
+    ()
+  }
+
+  def selectNo(): Unit = withPageClue {
+    PageUtil.clickByIdOrName("sign-in-2")
     ()
   }
 }

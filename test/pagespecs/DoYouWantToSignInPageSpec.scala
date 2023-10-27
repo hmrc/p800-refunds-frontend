@@ -16,38 +16,43 @@
 
 package pagespecs
 
+import testdata.TdAll
 import testsupport.ItSpec
 
 class DoYouWantToSignInPageSpec extends ItSpec {
 
-  "navigating to /start redirects to /do-you-want-to-sign-in" in {
-    pages.startEndpoint.open()
-    pages.doYouWantToSignInPage.assertPageIsDisplayed()
+  override def beforeEach(): Unit = {
+    super.beforeEach()
+
+    addJourneyIdToSession(TdAll.journeyId)
+    addJourneyToDatabase(TdAll.journeyStarted)
   }
 
   "Selecting 'Yes, sign in' redirects to personal tax account" in {
-    pages.startEndpoint.open()
+    pages.doYouWantToSignInPage.open()
     pages.doYouWantToSignInPage.assertPageIsDisplayed()
-    pages.doYouWantToSignInPage.selectRadioItemAndContinue("sign-in")
-    pages.doYouWantToSignInPage.urlShouldBe("https://www.access.service.gov.uk/login/signin/creds")
+    pages.doYouWantToSignInPage.selectYes()
+    pages.doYouWantToSignInPage.clickSubmit()
+    pages.ptaSignInPage.assertPageIsDisplayed()
   }
 
   "Selecting 'No, continue without signing in' redirects to 'What is your P800 Reference' page" in {
-    pages.startEndpoint.open()
+    pages.doYouWantToSignInPage.open()
     pages.doYouWantToSignInPage.assertPageIsDisplayed()
-    pages.doYouWantToSignInPage.selectRadioItemAndContinue("sign-in-2")
-    pages.doYouWantToSignInPage.pathShouldBe("/get-an-income-tax-refund/enter-P800-reference")
+    pages.doYouWantToSignInPage.selectNo()
+    pages.doYouWantToSignInPage.clickSubmit()
+    pages.enterP800ReferencePage.assertPageIsDisplayed()
   }
 
   "Clicking 'Back' redirects back to start page" in {
-    pages.startEndpoint.open()
+    pages.doYouWantToSignInPage.open()
     pages.doYouWantToSignInPage.assertPageIsDisplayed()
     pages.doYouWantToSignInPage.clickBackButton()
-    pages.doYouWantToSignInPage.pathShouldBe("/get-an-income-tax-refund/test-only")
+    pages.govUkRouteInPage.assertPageIsDisplayed()
   }
 
   "Selecting nothing and clicking continue shows error" in {
-    pages.startEndpoint.open()
+    pages.doYouWantToSignInPage.open()
     pages.doYouWantToSignInPage.assertPageIsDisplayed()
     pages.doYouWantToSignInPage.clickSubmit()
     pages.doYouWantToSignInPage.assertPageShowsError()

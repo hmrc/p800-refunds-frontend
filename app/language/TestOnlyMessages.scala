@@ -20,4 +20,16 @@ object TestOnlyMessages {
   val `Test only page`: Message = Message(
     english = "Test only page"
   )
+
+  val `Personal tax account page`: Message = Message(
+    english = "Personal tax account sign in"
+  )
+
+  val `Income tax general enquiries`: Message = Message(
+    english = "Income tax general enquiries"
+  )
+
+  val `This page is used for testing`: Message = Message(
+    english = "This page is used for testing"
+  )
 }
