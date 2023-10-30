@@ -11,9 +11,7 @@ POST       /do-you-want-to-sign-in  controllers.JourneyController.doYouWantToSig
 GET        /enter-P800-reference  controllers.JourneyController.enterP800Reference
 POST       /enter-P800-reference  controllers.JourneyController.enterP800ReferenceSubmit
 
-GET        /check-your-reference  controllers.JourneyController.underConstruction
-
-GET        /we-cannot-confirm-your-reference  controllers.JourneyController.underConstruction
+GET        /we-cannot-confirm-your-reference  controllers.JourneyController.cannotConfirmReference
 
 GET        /do-you-want-your-refund-via-bank-transfer  controllers.JourneyController.underConstruction
 

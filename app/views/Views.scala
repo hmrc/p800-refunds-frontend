@@ -20,9 +20,10 @@ import javax.inject.Inject
 
 class Views @Inject() (
     //TODO: remove once all pages are developed
-    val underConstructionPage:  views.html.UnderConstructionPage,
-    val doYouWantToSignInPage:  views.html.DoYouWantToSignInPage,
-    val enterP800ReferencePage: views.html.EnterP800ReferencePage
+    val underConstructionPage:      views.html.UnderConstructionPage,
+    val doYouWantToSignInPage:      views.html.DoYouWantToSignInPage,
+    val enterP800ReferencePage:     views.html.EnterP800ReferencePage,
+    val cannotConfirmReferencePage: views.html.CannotConfirmReferencePage
 )
 
 class TestOnlyViews @Inject() (
