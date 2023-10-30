@@ -17,11 +17,17 @@
 package pagespecs.pagesupport
 
 import org.openqa.selenium.WebDriver
-import pagespecs.pages.DoYouWantToSignInPage
+import pagespecs.pages.{DoYouWantToSignInPage, EnterP800ReferencePage, GeneralIncomeTaxEnquiriesPage, GovUkRouteInPage, PtaSignInPage}
 
 class Pages(baseUrl: String)(implicit webDriver: WebDriver) {
 
   val startEndpoint: Endpoint = new Endpoint(baseUrl = baseUrl, path = "/get-an-income-tax-refund/start")
 
   val doYouWantToSignInPage = new DoYouWantToSignInPage(baseUrl = baseUrl)
+  val enterP800ReferencePage = new EnterP800ReferencePage(baseUrl = baseUrl)
+
+  // Page Stubs
+  val govUkRouteInPage = new GovUkRouteInPage(baseUrl = baseUrl)
+  val ptaSignInPage = new PtaSignInPage(baseUrl = baseUrl)
+  val generalIncomeTaxEnquiries = new GeneralIncomeTaxEnquiriesPage(baseUrl = baseUrl)
 }

@@ -20,3 +20,5 @@ GET        /get-an-income-tax-refund/test-only/show-journey/:journeyId        co
 #utilised in tests:
 GET        /get-an-income-tax-refund/test-only/add-journey-id-to-session/:journeyId controllers.testonly.TestOnlyController.addJourneyIdToSession(journeyId: JourneyId)
 
+GET        /get-an-income-tax-refund/test-only/pta-sign-in controllers.testonly.TestOnlyController.ptaSignIn()
+GET        /get-an-income-tax-refund/test-only/income-tax-general-enquiries controllers.testonly.TestOnlyController.incomeTaxGeneralEnquiries()

@@ -9,6 +9,7 @@ GET        /do-you-want-to-sign-in  controllers.JourneyController.doYouWantToSig
 POST       /do-you-want-to-sign-in  controllers.JourneyController.doYouWantToSignInSubmit
 
 GET        /enter-P800-reference  controllers.JourneyController.enterP800Reference
+POST       /enter-P800-reference  controllers.JourneyController.enterP800ReferenceSubmit
 
 GET        /check-your-reference  controllers.JourneyController.underConstruction
 

@@ -14,18 +14,14 @@
  * limitations under the License.
  */
 
-package views
+package pagespecs
 
-import javax.inject.Inject
+import testsupport.ItSpec
 
-class Views @Inject() (
-    //TODO: remove once all pages are developed
-    val underConstructionPage:  views.html.UnderConstructionPage,
-    val doYouWantToSignInPage:  views.html.DoYouWantToSignInPage,
-    val enterP800ReferencePage: views.html.EnterP800ReferencePage
-)
+class StartEndpointPageSpec extends ItSpec {
 
-class TestOnlyViews @Inject() (
-    val testOnlyStartPage: views.html.testonly.TestOnlyStartPage,
-    val testOnlyStubPage:  views.html.testonly.TestOnlyStubPage
-)
+  "navigating to /start redirects to /do-you-want-to-sign-in" in {
+    pages.startEndpoint.open()
+    pages.doYouWantToSignInPage.assertPageIsDisplayed()
+  }
+}

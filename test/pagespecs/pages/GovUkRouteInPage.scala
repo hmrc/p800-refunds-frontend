@@ -14,18 +14,17 @@
  * limitations under the License.
  */
 
-package views
+package pagespecs.pages
 
-import javax.inject.Inject
+import org.openqa.selenium.WebDriver
+import pagespecs.pagesupport.Page
 
-class Views @Inject() (
-    //TODO: remove once all pages are developed
-    val underConstructionPage:  views.html.UnderConstructionPage,
-    val doYouWantToSignInPage:  views.html.DoYouWantToSignInPage,
-    val enterP800ReferencePage: views.html.EnterP800ReferencePage
-)
+class GovUkRouteInPage(baseUrl: String)(implicit webDriver: WebDriver) extends Page(
+  baseUrl,
+  path = "/get-an-income-tax-refund/test-only/route-in"
+) {
 
-class TestOnlyViews @Inject() (
-    val testOnlyStartPage: views.html.testonly.TestOnlyStartPage,
-    val testOnlyStubPage:  views.html.testonly.TestOnlyStubPage
-)
+  def assertPageIsDisplayed(): Unit = withPageClue {
+    ()
+  }
+}

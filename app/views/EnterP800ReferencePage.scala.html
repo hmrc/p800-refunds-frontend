@@ -16,7 +16,7 @@
 
 @import config.AppConfig
 @import language.Messages
-@import models.forms.enumsforforms.DoYouWantToSignInFormValue
+@import models.P800Reference
 @import uk.gov.hmrc.govukfrontend.views.html.components._
 @import uk.gov.hmrc.govukfrontend.views.html.components.implicits._
 @import views.html.templates.Layout
@@ -28,52 +28,47 @@
 )
 
 @(
-    form: Form[DoYouWantToSignInFormValue],
+    form: Form[P800Reference],
     submitUrl: Call
 )(implicit request: Request[_])
 
 @import viewsHelpers.requestSupport._
 
 @key = @{
-    "sign-in"
+    "reference"
 }
 
 @title = @{
-    Messages.DoYouWantToSignInMessages.`Do you want to sign in?`.show
+    Messages.EnterP800ReferenceMessages.`What is your P800 reference?`.show
 }
 
-@layout(pageTitle = Some(title), backLinkUrlOverride = Some(appConfig.govUkRouteIn)) {
+@layout(pageTitle = Some(title), backLinkUrlOverride = Some(controllers.routes.JourneyController.doYouWantToSignIn.url)) {
     @if(form.errors.nonEmpty) {
         @viewsHelpers.govukErrorSummary(ErrorSummary(errorList = form.errors.asTextErrorLinks, title = Text(Messages.CommonMessages.`There is a problem`.show)))
     }
 
     @viewsHelpers.formWithCsrf(action = submitUrl, Symbol("autocomplete") -> "off") {
-        @viewsHelpers.govukRadios(Radios(
-            fieldset = Some(Fieldset(
-                legend = Some(Legend(
-                    content = Text(Messages.DoYouWantToSignInMessages.`Do you want to sign in?`.show),
-                    classes = "govuk-fieldset__legend--xl",
-                    isPageHeading = true
-                ))
-            )),
-            hint = Some(Hint(
-                content = Text(Messages.DoYouWantToSignInMessages.`Sign in with your Government Gateway user ID.`.show)
-            )),
-            idPrefix = Some(key),
+        @viewsHelpers.govukInput(Input(
+            id = key,
             name = key,
-            items = Seq(
-                RadioItem(
-                    content = Text(Messages.DoYouWantToSignInMessages.`Yes, sign in`.show),
-                    value = Some("Yes"),
-                    checked = form.data.values.toList.contains("Yes")
-                ),
-                RadioItem(
-                    content = Text(Messages.DoYouWantToSignInMessages.`No, continue without signing in`.show),
-                    value = Some("No"),
-                    checked = form.data.values.toList.contains("No")
-                )
+            label = Label(
+              content = Text(title),
+              isPageHeading = true,
+              classes = "govuk-label--xl"
             ),
-        ).withFormField(form(key)))
+            hint = Some(Hint(
+                content = Text(Messages.EnterP800ReferenceMessages.`It's on the letter HMRC sent you about your tax calculation, also known as a 'P800'.`.show)
+            ))
+          ).withFormField(form(key)))
+
+          <h1 class="govuk-heading-s">@{Messages.EnterP800ReferenceMessages.`If you do not know your P800 reference`.show}</h1>
+
+          <p class="govuk-body">
+            @{Html(Messages.EnterP800ReferenceMessages.`Sign in or create a personal tax account to claim your refund.`(appConfig.ptaSignInUrl).show)}
+          </p>
+          <p class="govuk-body">
+            @{Html(Messages.EnterP800ReferenceMessages.`Call or write to the Income Tax helpline (opens in new tab) if you cannot create a personal tax account.`(appConfig.incomeTaxGeneralEnquiriesUrl).show)}
+          </p>
 
         @viewsHelpers.govukButton(Button(content = Text(Messages.CommonMessages.continue.show), attributes = Map("id" -> "submit")))
     }

@@ -18,6 +18,7 @@ package controllers.testonly
 
 import action.Actions
 import controllers.JourneyController
+import language.TestOnlyMessages
 import models.journeymodels.{Journey, JourneyId}
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
@@ -53,6 +54,14 @@ class TestOnlyController @Inject() (
 
   def addJourneyIdToSession(journeyId: JourneyId): Action[AnyContent] = as.default { implicit request =>
     Ok(s"${journeyId.value} added to session").addingToSession(JourneyController.journeyIdKey -> journeyId.value)
+  }
+
+  def ptaSignIn(): Action[AnyContent] = as.default { implicit request =>
+    Ok(testOnlyViews.testOnlyStubPage(TestOnlyMessages.`Personal tax account page`))
+  }
+
+  def incomeTaxGeneralEnquiries(): Action[AnyContent] = as.default { implicit request =>
+    Ok(testOnlyViews.testOnlyStubPage(TestOnlyMessages.`Income tax general enquiries`))
   }
 
   private def showJourney(journeyId: JourneyId): Future[Result] = {

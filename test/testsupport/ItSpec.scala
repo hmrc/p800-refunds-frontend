@@ -17,7 +17,7 @@
 package testsupport
 
 import com.google.inject.AbstractModule
-import models.journeymodels.JourneyId
+import models.journeymodels.{Journey, JourneyId}
 import org.openqa.selenium.WebDriver
 import org.openqa.selenium.htmlunit.HtmlUnitDriver
 import org.scalatest.BeforeAndAfterEach
@@ -30,6 +30,7 @@ import play.api.inject.guice.{GuiceApplicationBuilder, GuiceableModule}
 import play.api.test.{DefaultTestServerFactory, RunningServer}
 import play.api.{Application, Mode}
 import play.core.server.ServerConfig
+import repository.JourneyRepo
 import testdata.TdAll
 import testsupport.wiremock.WireMockSupport
 
@@ -57,7 +58,10 @@ trait ItSpec extends AnyFreeSpecLike
     "play.http.router" -> "testOnlyDoNotUseInAppConf.Routes",
     "auditing.consumer.baseUri.port" -> WireMockSupport.port,
     "auditing.enabled" -> false,
-    "auditing.traceRequests" -> false
+    "auditing.traceRequests" -> false,
+    "urls.govuk-routein" -> s"http://localhost:${testServerPort.toString}/get-an-income-tax-refund/test-only",
+    "urls.pta-sign-in" -> s"http://localhost:${testServerPort.toString}/get-an-income-tax-refund/test-only/pta-sign-in",
+    "urls.income-tax-general-enquiries" -> s"http://localhost:${testServerPort.toString}/get-an-income-tax-refund/test-only/income-tax-general-enquiries"
   )
 
   lazy val overridingsModule: AbstractModule = new AbstractModule {
@@ -90,6 +94,17 @@ trait ItSpec extends AnyFreeSpecLike
     goToViaPath(url)
     webDriver.getCurrentUrl should endWith(url) withClue "assert the endpoint worked fine"
     webDriver.getPageSource should include(s"${journeyId.value} added to session") withClue "assert the endpoint worked fine"
+    ()
+  }
+
+  def addJourneyToDatabase(journey: Journey): Unit = {
+    val journeyRepo: JourneyRepo = app.injector.instanceOf[JourneyRepo]
+    journeyRepo.upsert(journey)
+    ()
+  }
+
+  def switchToTab(handle: String): Unit = {
+    webDriver.switchTo().window(handle)
     ()
   }
 

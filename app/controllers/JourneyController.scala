@@ -16,7 +16,7 @@
 
 package controllers
 
-import action.Actions
+import action.{Actions, JourneyRequest}
 import config.AppConfig
 import models.journeymodels._
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -24,7 +24,8 @@ import requests.RequestSupport
 import services.JourneyService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import io.scalaland.chimney.dsl._
-import models.forms.DoYouWantToSignInForm
+import models.{P800Reference, P800ReferenceValidation}
+import models.forms.{DoYouWantToSignInForm, EnterP800ReferenceForm}
 import models.forms.enumsforforms.DoYouWantToSignInFormValue
 import views.Views
 
@@ -66,12 +67,30 @@ class JourneyController @Inject() (
     )
   }
 
+  val enterP800Reference: Action[AnyContent] = actions.journeyAction { implicit request =>
+    Ok(views.enterP800ReferencePage(EnterP800ReferenceForm.form, controllers.routes.JourneyController.enterP800ReferenceSubmit))
+  }
+
+  val enterP800ReferenceSubmit: Action[AnyContent] = actions.journeyAction.async { implicit request =>
+    EnterP800ReferenceForm.form.bindFromRequest().fold(
+      formWithErrors => Future.successful(BadRequest(views.enterP800ReferencePage(formWithErrors, controllers.routes.JourneyController.enterP800ReferenceSubmit))),
+      p800Reference => {
+        journeyService.upsert(journeyFromDoYouWantToSignInNoToWhatIsYourP800Reference(p800Reference)).map(_ =>
+          Redirect(controllers.routes.JourneyController.underConstruction))
+      }
+    )
+  }
+
+  private def journeyFromDoYouWantToSignInNoToWhatIsYourP800Reference(p800Reference: P800Reference)(implicit request: JourneyRequest[AnyContent]) =
+    request.journey.into[JourneyWhatIsYourP800Reference]
+      .withFieldConst(_.p800Reference, p800Reference)
+      .withFieldConst(_.p800ReferenceValidation, P800ReferenceValidation.NotValidatedYet)
+      .transform
+
   //TODO: remove once we have all pages
   val underConstruction: Action[AnyContent] = actions.default { implicit request =>
     Ok(views.underConstructionPage())
   }
-
-  val enterP800Reference: Action[AnyContent] = underConstruction
 }
 
 object JourneyController {
