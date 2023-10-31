@@ -81,6 +81,10 @@ class JourneyController @Inject() (
     )
   }
 
+  val cannotConfirmReference: Action[AnyContent] = actions.default { implicit request =>
+    Ok(views.cannotConfirmReferencePage())
+  }
+
   private def journeyFromDoYouWantToSignInNoToWhatIsYourP800Reference(p800Reference: P800Reference)(implicit request: JourneyRequest[AnyContent]) =
     request.journey.into[JourneyWhatIsYourP800Reference]
       .withFieldConst(_.p800Reference, p800Reference)
