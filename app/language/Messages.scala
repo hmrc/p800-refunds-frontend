@@ -40,8 +40,7 @@ object Messages {
     )
 
     val `Try again`: Message = Message(
-      english = "Try again",
-      welsh   = "Try again"
+      english = "Try again"
     )
   }
 
