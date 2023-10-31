@@ -26,22 +26,25 @@ class EnterP800ReferencePage(baseUrl: String)(implicit webDriver: WebDriver) ext
   path = "/get-an-income-tax-refund/enter-P800-reference"
 ) {
 
-  def enterInvalidRef(): Unit = withPageClue {
-    PageUtil.setTextFieldById("reference", "this is a really long and invalid reference")
-  }
+  override def expectedH1: String = "What is your P800 reference?"
+
+  private val p800ReferenceFieldId: String = "reference"
+
+  def enterP800Reference(p800Reference: String): Unit = PageUtil.setTextFieldById(p800ReferenceFieldId, p800Reference)
 
   def clickPtaSignInLink(): Unit = PageUtil.clickByIdOrName("personal-tax-account-sign-in")
 
   def clickIncomeTaxGeneralEnquiriesLink(): String = {
-    val handleBefore = webDriver.getWindowHandle
+    val handleBefore: String = webDriver.getWindowHandle
     PageUtil.clickByIdOrName("income-tax-general-enquiries")
-    (webDriver.getWindowHandles.asScala diff Set(handleBefore)).headOption
+    webDriver.getWindowHandles.asScala
+      .diff(Set(handleBefore))
+      .headOption
       .getOrElse(throw new Exception("Expecting at least one window handle"))
   }
 
-  def assertPageIsDisplayed(errors: ContentExpectation*): Unit = withPageClue {
-    val h1: String = "What is your P800 reference?"
-    val contentExpectations = Seq(
+  def assertPageIsDisplayed(potentialErrors: ContentExpectation*): Unit = withPageClue {
+    val contentExpectations: Seq[ContentExpectation] = Seq(
       ContentExpectation(
         atXpath       = PageUtil.Xpath.mainContent,
         expectedLines =
@@ -51,15 +54,14 @@ class EnterP800ReferencePage(baseUrl: String)(implicit webDriver: WebDriver) ext
             |If you do not know your P800 reference
             |""".stripMargin
       )
-    ) ++ errors
+    ) ++ potentialErrors
 
     PageUtil.assertPage(
       path                = path,
-      h1                  = h1,
-      title               = PageUtil.standardTitle(h1),
+      h1                  = expectedH1,
+      title               = PageUtil.standardTitle(expectedH1),
       contentExpectations = contentExpectations: _*
     )
-    ()
   }
 
   def assertPageShowsErrorRequired(): Unit = withPageClue {
@@ -73,7 +75,6 @@ class EnterP800ReferencePage(baseUrl: String)(implicit webDriver: WebDriver) ext
             |""".stripMargin
       )
     )
-    ()
   }
 
   def assertPageShowsErrorReferenceFormat(): Unit = withPageClue {
@@ -87,6 +88,5 @@ class EnterP800ReferencePage(baseUrl: String)(implicit webDriver: WebDriver) ext
             |""".stripMargin
       )
     )
-    ()
   }
 }

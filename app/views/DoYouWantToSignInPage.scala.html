@@ -47,7 +47,7 @@
         @viewsHelpers.govukErrorSummary(ErrorSummary(errorList = form.errors.asTextErrorLinks, title = Text(Messages.CommonMessages.`There is a problem`.show)))
     }
 
-    @viewsHelpers.formWithCsrf(action = submitUrl, Symbol("autocomplete") -> "off") {
+    @viewsHelpers.formWithCsrf(action = submitUrl) {
         @viewsHelpers.govukRadios(Radios(
             fieldset = Some(Fieldset(
                 legend = Some(Legend(
@@ -72,7 +72,7 @@
                     value = Some("No"),
                     checked = form.data.values.toList.contains("No")
                 )
-            ),
+            )
         ).withFormField(form(key)))
 
         @viewsHelpers.govukButton(Button(content = Text(Messages.CommonMessages.continue.show), attributes = Map("id" -> "submit")))

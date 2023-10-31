@@ -37,7 +37,7 @@ class AppConfig @Inject() (servicesConfig: ServicesConfig, configuration: Config
   val welshLanguageSupportEnabled: Boolean = servicesConfig.getBoolean("features.welsh-language-support")
   val journeyRepoTtl: FiniteDuration = configFiniteDuration("journey.repoTtl")
 
-  val govUkRouteIn: String = readConfigAsValidUrlString("urls.govuk-routein")
+  val govUkRouteIn: String = readConfigAsValidUrlString("urls.govuk-route-in")
 
   val ptaSignInUrl: String = readConfigAsValidUrlString("urls.pta-sign-in")
   val incomeTaxGeneralEnquiriesUrl: String = readConfigAsValidUrlString("urls.income-tax-general-enquiries")
