@@ -107,7 +107,7 @@ object Messages {
     )
 
     def `You have X more attempts`(attempts: String): Message = Message(
-      english = s"""You have <strong>$attempts more attempts</strong> to request a bank transfer this way.."""
+      english = s"""You have <strong>$attempts more attempts</strong> to request a bank transfer this way."""
     )
 
     val `Or you can sign in to request your refund`: Message = Message(

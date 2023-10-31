@@ -16,7 +16,7 @@ object AppDependencies {
     "com.beachape"      %% "enumeratum-play"            % "1.7.3",
     "org.typelevel"     %% "cats-core"                  % "2.10.0",
     "org.julienrf"      %% "play-json-derived-codecs"   % "7.0.0", //choose carefully
-    "io.scalaland"      %% "chimney"                    % "0.8.0"
+    "io.scalaland"      %% "chimney"                    % "0.8.1"
   // format: ON
   )
 
