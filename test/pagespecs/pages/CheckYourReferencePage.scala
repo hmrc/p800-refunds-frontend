@@ -19,27 +19,31 @@ package pagespecs.pages
 import org.openqa.selenium.WebDriver
 import pagespecs.pagesupport.{ContentExpectation, Page, PageUtil}
 
-class GeneralIncomeTaxEnquiriesPage(baseUrl: String)(implicit webDriver: WebDriver) extends Page(
+class CheckYourReferencePage(baseUrl: String)(implicit webDriver: WebDriver) extends Page(
   baseUrl,
-  path = "/get-an-income-tax-refund/test-only/income-tax-general-enquiries"
+  path = "/get-an-income-tax-refund/check-your-reference"
 ) {
 
-  override def expectedH1: String = "Income tax general enquiries"
+  override def expectedH1: String = "Under Construction"
 
-  def assertPageIsDisplayed(): Unit = withPageClue {
-    PageUtil.assertPage(
-      path  = path,
-      h1    = expectedH1,
-      title = PageUtil.standardTitle(expectedH1),
+  def assertPageIsDisplayed(potentialErrors: ContentExpectation*): Unit = withPageClue {
+    val contentExpectations: Seq[ContentExpectation] = Seq(
       ContentExpectation(
         atXpath       = PageUtil.Xpath.mainContent,
         expectedLines =
           """
-            |Income tax general enquiries
-            |This page is used for testing
+            |Under Construction
+            |This page has not been developed yet
             |""".stripMargin
       )
+    ) ++ potentialErrors
+
+    PageUtil.assertPage(
+      path                = path,
+      h1                  = expectedH1,
+      title               = PageUtil.standardTitle(expectedH1),
+      contentExpectations = contentExpectations: _*
     )
-    ()
   }
+
 }

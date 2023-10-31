@@ -104,6 +104,7 @@ object PageUtil {
       title:               String,
       contentExpectations: ContentExpectation*
   )(implicit webDriver: WebDriver): Unit = withPageClue(path) {
+    readPageServiceName() shouldBe serviceName
     readPath() shouldBe path
     readH1() shouldBe h1
     pageTitle shouldBe title
@@ -111,6 +112,8 @@ object PageUtil {
   }
 
   private def readH1()(implicit webDriver: WebDriver): String = xpath("""//*[@id="main-content"]//h1""").element.text.stripSpaces()
+
+  private def readPageServiceName()(implicit webDriver: WebDriver): String = className("hmrc-header__service-name").element.text
 
   /**
    * Runs test using `testF` and reports page related information if the test fails.
@@ -129,6 +132,7 @@ object PageUtil {
          |""".stripMargin
     }
 
+  private val serviceName: String = "Claim an income tax refund"
   def standardTitle(h1: String): String = s"$h1 - Claim an income tax refund - GOV.UK"
   def standardTitleInWelsh(h1: String): String = s"$h1 - Claim an income tax refund - GOV.UK"
 

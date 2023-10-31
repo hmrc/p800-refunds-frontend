@@ -18,7 +18,7 @@ package models
 
 import play.api.libs.json.{Format, Json}
 
-final case class P800Reference(value: String)
+final case class P800Reference(value: String) extends AnyVal
 
 object P800Reference {
   implicit val formats: Format[P800Reference] = Json.valueFormat[P800Reference]

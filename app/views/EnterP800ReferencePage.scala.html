@@ -47,7 +47,7 @@
         @viewsHelpers.govukErrorSummary(ErrorSummary(errorList = form.errors.asTextErrorLinks, title = Text(Messages.CommonMessages.`There is a problem`.show)))
     }
 
-    @viewsHelpers.formWithCsrf(action = submitUrl, Symbol("autocomplete") -> "off") {
+    @viewsHelpers.formWithCsrf(action = submitUrl) {
         @viewsHelpers.govukInput(Input(
             id = key,
             name = key,
@@ -59,10 +59,12 @@
             ),
             hint = Some(Hint(
                 content = Text(Messages.EnterP800ReferenceMessages.`It's on the letter HMRC sent you about your tax calculation, also known as a 'P800'.`.show)
-            ))
+            )),
+            autocomplete = Some("off"),
+            spellcheck = Some(false)
           ).withFormField(form(key)))
 
-          <h1 class="govuk-heading-s">@{Messages.EnterP800ReferenceMessages.`If you do not know your P800 reference`.show}</h1>
+          <h2 class="govuk-heading-s">@{Messages.EnterP800ReferenceMessages.`If you do not know your P800 reference`.show}</h2>
 
           <p class="govuk-body">
             @{Html(Messages.EnterP800ReferenceMessages.`Sign in or create a personal tax account to claim your refund.`(appConfig.ptaSignInUrl).show)}
