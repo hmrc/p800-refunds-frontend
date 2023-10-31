@@ -30,7 +30,7 @@ class GovUkRouteInPage(baseUrl: String)(implicit webDriver: WebDriver) extends P
     PageUtil.assertPage(
       path                = path,
       h1                  = expectedH1,
-      title               = PageUtil.standardTitle(expectedH1),
+      title               = PageUtil.standardTitleForTestOnlyPages(expectedH1),
       contentExpectations = ContentExpectation(
         atXpath       = PageUtil.Xpath.mainContent,
         expectedLines =

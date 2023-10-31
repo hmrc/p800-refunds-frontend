@@ -134,6 +134,7 @@ object PageUtil {
 
   private val serviceName: String = "Claim an income tax refund"
   def standardTitle(h1: String): String = s"$h1 - Claim an income tax refund - GOV.UK"
+  def standardTitleForTestOnlyPages(h1: String): String = s"$h1 - Test Only - Claim an income tax refund - GOV.UK"
   def standardTitleInWelsh(h1: String): String = s"$h1 - Claim an income tax refund - GOV.UK"
 
   val standardHeader: String =

@@ -30,7 +30,7 @@ class PtaSignInPage(baseUrl: String)(implicit webDriver: WebDriver) extends Page
     PageUtil.assertPage(
       path  = path,
       h1    = expectedH1,
-      title = PageUtil.standardTitle(expectedH1),
+      title = PageUtil.standardTitleForTestOnlyPages(expectedH1),
       ContentExpectation(
         atXpath       = PageUtil.Xpath.mainContent,
         expectedLines =
