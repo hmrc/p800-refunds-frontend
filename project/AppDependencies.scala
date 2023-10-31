@@ -22,7 +22,7 @@ object AppDependencies {
 
   val test: Seq[ModuleID] = Seq(
     // format: OFF
-    "uk.gov.hmrc"             %% "bootstrap-test-play-28"     % bootstrapVersion,
+    "uk.gov.hmrc"             %% "bootstrap-test-play-28"     % bootstrapVersion exclude("com.github.tomakehurst", "wiremock-jre8"),
     "uk.gov.hmrc.mongo"       %% "hmrc-mongo-test-play-28"    % hmrcMongoVersion,
     "org.jsoup"               %  "jsoup"                      % "1.16.2",
     "com.github.tomakehurst"  %  "wiremock-standalone"        % "3.0.1",
@@ -31,7 +31,7 @@ object AppDependencies {
     "org.pegdown"             %  "pegdown"                    % "1.6.0",
     "org.seleniumhq.selenium" %  "selenium-java"              % "4.14.1",
     "org.seleniumhq.selenium" %  "htmlunit-driver"            % "4.13.0",
-    "com.github.tomakehurst"  %  "wiremock-standalone"        % "3.0.1",
+    "org.wiremock"            %  "wiremock-standalone"        % "3.2.0",
     "org.scalatestplus.play"  %% "scalatestplus-play"         % "5.1.0"
   // format: ON
   ).map(_ % Test)
