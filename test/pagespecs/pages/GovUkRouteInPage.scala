@@ -17,14 +17,22 @@
 package pagespecs.pages
 
 import org.openqa.selenium.WebDriver
-import pagespecs.pagesupport.Page
+import pagespecs.pagesupport.{ContentExpectation, Page, PageUtil}
 
 class GovUkRouteInPage(baseUrl: String)(implicit webDriver: WebDriver) extends Page(
   baseUrl,
-  path = "/get-an-income-tax-refund/test-only/route-in"
+  path = "/get-an-income-tax-refund/test-only"
 ) {
 
+  override def expectedH1: String = "Test only page"
+
   def assertPageIsDisplayed(): Unit = withPageClue {
-    ()
+    PageUtil.assertPage(
+      path                = path,
+      h1                  = expectedH1,
+      title               = PageUtil.standardTitle(expectedH1),
+      contentExpectations = Seq.empty[ContentExpectation]: _*
+    )
   }
+
 }

@@ -1,38 +1,38 @@
 # microservice specific routes
 
-->         /hmrc-frontend           hmrcfrontend.Routes
-GET        /assets/*file            controllers.Assets.versioned(path = "/public", file: Asset)
+->         /hmrc-frontend                                                                   hmrcfrontend.Routes
+GET        /assets/*file                                                                    controllers.Assets.versioned(path = "/public", file: Asset)
 
-GET        /start                   controllers.JourneyController.start
+GET        /start                                                                           controllers.JourneyController.start
 
-GET        /do-you-want-to-sign-in  controllers.JourneyController.doYouWantToSignIn
-POST       /do-you-want-to-sign-in  controllers.JourneyController.doYouWantToSignInSubmit
+GET        /do-you-want-to-sign-in                                                          controllers.JourneyController.doYouWantToSignIn
+POST       /do-you-want-to-sign-in                                                          controllers.JourneyController.doYouWantToSignInSubmit
 
-GET        /enter-P800-reference  controllers.JourneyController.enterP800Reference
-POST       /enter-P800-reference  controllers.JourneyController.enterP800ReferenceSubmit
+GET        /enter-P800-reference                                                            controllers.JourneyController.enterP800Reference
+POST       /enter-P800-reference                                                            controllers.JourneyController.enterP800ReferenceSubmit
 
-GET        /check-your-reference  controllers.JourneyController.underConstruction
+GET        /check-your-reference                                                            controllers.JourneyController.underConstruction
 
-GET        /we-cannot-confirm-your-reference  controllers.JourneyController.underConstruction
+GET        /we-cannot-confirm-your-reference                                                controllers.JourneyController.underConstruction
 
-GET        /do-you-want-your-refund-via-bank-transfer  controllers.JourneyController.underConstruction
+GET        /do-you-want-your-refund-via-bank-transfer                                       controllers.JourneyController.underConstruction
 
 
 #we-need-you-to-confirm-your-identity:
 
-GET        /we-need-you-to-confirm-your-identity  controllers.JourneyController.underConstruction
-GET        /we-need-you-to-confirm-your-identity/what-is-your-full-name  controllers.JourneyController.underConstruction
-GET        /we-need-you-to-confirm-your-identity/what-is-your-date-of-birth  controllers.JourneyController.underConstruction
-GET        /we-need-you-to-confirm-your-identity/what-is-your-address  controllers.JourneyController.underConstruction
-GET        /we-need-you-to-confirm-your-identity/what-was-your-most-recent-salary-payment  controllers.JourneyController.underConstruction
-GET        /we-need-you-to-confirm-your-identity/check-your-answers  controllers.JourneyController.underConstruction
-GET        /we-need-you-to-confirm-your-identity/we-have-confirmed-your-identity  controllers.JourneyController.underConstruction
+GET        /we-need-you-to-confirm-your-identity                                            controllers.JourneyController.underConstruction
+GET        /we-need-you-to-confirm-your-identity/what-is-your-full-name                     controllers.JourneyController.underConstruction
+GET        /we-need-you-to-confirm-your-identity/what-is-your-date-of-birth                 controllers.JourneyController.underConstruction
+GET        /we-need-you-to-confirm-your-identity/what-is-your-address                       controllers.JourneyController.underConstruction
+GET        /we-need-you-to-confirm-your-identity/what-was-your-most-recent-salary-payment   controllers.JourneyController.underConstruction
+GET        /we-need-you-to-confirm-your-identity/check-your-answers                         controllers.JourneyController.underConstruction
+GET        /we-need-you-to-confirm-your-identity/we-have-confirmed-your-identity            controllers.JourneyController.underConstruction
 
 
 #bank account name and consent:
 #TODO
 
 #check
-GET        /cheque/your-cheque-will-be-posted-to-you  controllers.JourneyController.underConstruction
-GET        /cheque/request-received  controllers.JourneyController.underConstruction
+GET        /cheque/your-cheque-will-be-posted-to-you                                        controllers.JourneyController.underConstruction
+GET        /cheque/request-received                                                         controllers.JourneyController.underConstruction
 

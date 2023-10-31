@@ -28,9 +28,12 @@ class EnterP800ReferencePageSpec extends ItSpec {
     addJourneyToDatabase(TdAll.journeyDoYouWantToSignInNo)
   }
 
-  "Selecting no on /do-you-want-to-sign-in redirects to you /enter-P800-reference" in {
+  "Entering valid p800 reference and clicking Continue redirects to /check-your-reference" in {
     pages.enterP800ReferencePage.open()
     pages.enterP800ReferencePage.assertPageIsDisplayed()
+    pages.enterP800ReferencePage.enterP800Reference("VALIDP800REF")
+    pages.enterP800ReferencePage.clickSubmit()
+    pages.checkYourReferencePage.assertPageIsDisplayed()
   }
 
   "Clicking Continue with empty text input shows error" in {
@@ -43,7 +46,7 @@ class EnterP800ReferencePageSpec extends ItSpec {
   "Clicking Continue with invalid reference shows error" in {
     pages.enterP800ReferencePage.open()
     pages.enterP800ReferencePage.assertPageIsDisplayed()
-    pages.enterP800ReferencePage.enterInvalidRef()
+    pages.enterP800ReferencePage.enterP800Reference("this is a really long and invalid reference")
     pages.enterP800ReferencePage.clickSubmit()
     pages.enterP800ReferencePage.assertPageShowsErrorReferenceFormat()
   }
@@ -55,7 +58,7 @@ class EnterP800ReferencePageSpec extends ItSpec {
     pages.ptaSignInPage.assertPageIsDisplayed()
   }
 
-  "Clicking 'call or write to the income tax helpline' link opens correctly" in {
+  "Clicking 'Call or write to the income tax helpline' link opens correctly" in {
     pages.enterP800ReferencePage.open()
     pages.enterP800ReferencePage.assertPageIsDisplayed()
     val newTabHandle = pages.enterP800ReferencePage.clickIncomeTaxGeneralEnquiriesLink()

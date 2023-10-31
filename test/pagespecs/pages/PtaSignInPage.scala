@@ -24,12 +24,13 @@ class PtaSignInPage(baseUrl: String)(implicit webDriver: WebDriver) extends Page
   path = "/get-an-income-tax-refund/test-only/pta-sign-in"
 ) {
 
+  override def expectedH1: String = "Personal tax account sign in"
+
   def assertPageIsDisplayed(): Unit = withPageClue {
-    val h1 = "Personal tax account sign in"
     PageUtil.assertPage(
       path  = path,
-      h1    = h1,
-      title = PageUtil.standardTitle(h1),
+      h1    = expectedH1,
+      title = PageUtil.standardTitle(expectedH1),
       ContentExpectation(
         atXpath       = PageUtil.Xpath.mainContent,
         expectedLines =
