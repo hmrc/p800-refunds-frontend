@@ -16,6 +16,8 @@
 
 package views
 
+import views.html.testonly.{GovUkStubPage, IncomeTaxGeneralEnquiriesStubPage, PtaSignInStubPage}
+
 import javax.inject.Inject
 
 class Views @Inject() (
@@ -25,7 +27,9 @@ class Views @Inject() (
     val enterP800ReferencePage: views.html.EnterP800ReferencePage
 )
 
-class TestOnlyViews @Inject() (
-    val testOnlyStartPage: views.html.testonly.TestOnlyStartPage,
-    val testOnlyStubPage:  views.html.testonly.TestOnlyStubPage
+class ViewsTestOnly @Inject() (
+    val landingTestOnlyPage:               views.html.testonly.LandingTestOnlyPage,
+    val incomeTaxGeneralEnquiriesStubPage: IncomeTaxGeneralEnquiriesStubPage,
+    val govUkStubPage:                     GovUkStubPage,
+    val ptaSignInStubPage:                 PtaSignInStubPage
 )

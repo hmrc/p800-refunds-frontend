@@ -36,7 +36,7 @@ class GeneralIncomeTaxEnquiriesPage(baseUrl: String)(implicit webDriver: WebDriv
         expectedLines =
           """
             |Income tax general enquiries
-            |This page is used for testing
+            |I'm the stub page representing tax general enquiries (Income Tax helpline page).
             |""".stripMargin
       )
     )

@@ -14,16 +14,13 @@
  * limitations under the License.
  *@
 
-@import views.html.templates.Layout
+@import views.ViewsHelpers
 
-@this(layout: Layout)
+@this(testOnlyLayout: TestOnlyLayout)
 
 @()(implicit request: Request[_])
 
-@heading = @{"Under Construction"}
-
-@layout(pageTitle = Some(heading)) {
-   <h1 class="govuk-heading-xl">@heading</h1>
-   <p>This page has not been developed yet</p>
-   <a href="@{controllers.testonly.routes.TestOnlyController.landing.url}">test-only</a>
+@testOnlyLayout {
+  <h1 class="govuk-heading-xl">Personal tax account sign in</h1>
+  <p>I'm a stub representing Personal tax account sign in page.</p>
 }

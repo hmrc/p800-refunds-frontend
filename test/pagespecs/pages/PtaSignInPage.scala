@@ -36,7 +36,7 @@ class PtaSignInPage(baseUrl: String)(implicit webDriver: WebDriver) extends Page
         expectedLines =
           """
             |Personal tax account sign in
-            |This page is used for testing
+            |I'm a stub representing Personal tax account sign in page.
             |""".stripMargin
       )
     )

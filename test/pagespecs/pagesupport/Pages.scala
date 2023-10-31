@@ -30,5 +30,5 @@ class Pages(baseUrl: String)(implicit webDriver: WebDriver) {
   // Page Stubs
   val govUkRouteInPage = new GovUkRouteInPage(baseUrl = baseUrl)
   val ptaSignInPage = new PtaSignInPage(baseUrl = baseUrl)
-  val generalIncomeTaxEnquiries = new GeneralIncomeTaxEnquiriesPage(baseUrl = baseUrl)
+  val generalIncomeTaxEnquiriesPage = new GeneralIncomeTaxEnquiriesPage(baseUrl = baseUrl)
 }

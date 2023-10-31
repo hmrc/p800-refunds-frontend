@@ -1,4 +1,4 @@
-/*
+@*
  * Copyright 2023 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -12,24 +12,21 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- */
+ *@
 
-package language
+@import views.ViewsHelpers
 
-object TestOnlyMessages {
-  val `Test only page`: Message = Message(
-    english = "Test only page"
-  )
+@this(testOnlyLayout: TestOnlyLayout)
 
-  val `Personal tax account page`: Message = Message(
-    english = "Personal tax account sign in"
-  )
+@()(implicit request: Request[_])
 
-  val `Income tax general enquiries`: Message = Message(
-    english = "Income tax general enquiries"
-  )
 
-  val `This page is used for testing`: Message = Message(
-    english = "This page is used for testing"
-  )
+@testOnlyLayout {
+ <h1 class="govuk-heading-xl">Income Tax General Enquiries</h1>
+ <p>
+  I'm the stub page representing tax general enquiries (Income Tax helpline page).
+  <a href="https://www.gov.uk/government/organisations/hm-revenue-customs/contact/income-tax-enquiries-for-individuals-pensioners-and-employees">
+    https://www.gov.uk/government/organisations/hm-revenue-customs/contact/income-tax-enquiries-for-individuals-pensioners-and-employees
+  </a>
+ </p>
 }

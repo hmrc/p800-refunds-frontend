@@ -1,0 +1,22 @@
+pre.testonly-inline-pre {
+  display: inline-block;
+  margin: 0;
+  padding: 0;
+  white-space: pre-wrap;
+}
+
+
+.testonly-group {
+  //padding-left: 1em;
+  margin-bottom: 1em;
+  //border-left: 1px dotted #2e3133;
+}
+
+.testonly-nav {
+  display: flex;
+  flex-direction: row;
+  gap: 1em;
+}
+
+.testonly-jsonform {
+}

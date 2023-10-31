@@ -14,20 +14,14 @@
  * limitations under the License.
  *@
 
-@import views.html.templates.Layout
 @import views.ViewsHelpers
-@import language.TestOnlyMessages
 
-@this(layout: Layout, viewsHelpers: ViewsHelpers)
+@this(testOnlyLayout: TestOnlyLayout, viewsHelpers: ViewsHelpers)
 
 @()(implicit request: Request[_])
 
 @import viewsHelpers.requestSupport._
 
-@startJourneyLink = @{controllers.routes.JourneyController.start.url}
-
-@layout(pageTitle = Some(TestOnlyMessages.`Test only page`.show)) {
-    <h1 class="govuk-heading-xl">@{TestOnlyMessages.`Test only page`.show}</h1>
-    <p id="start" class="govuk-link"><a href="@{startJourneyLink}">@{startJourneyLink}</a></p>
-    <p id="show-journey" class="govuk-link"><a href="@{controllers.testonly.routes.TestOnlyController.showJourney.url}">show journey</a></p>
+@testOnlyLayout {
+  <h1 class="govuk-heading-xl"> Test Only Landing Page </h1>
 }

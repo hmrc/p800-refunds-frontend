@@ -11,7 +11,8 @@
 
 # Add all the application routes to the prod.routes file
 ->         /                                                                            prod.Routes
-GET        /get-an-income-tax-refund/test-only                                          controllers.testonly.TestOnlyController.getTestOnlyLanding
+
+GET        /get-an-income-tax-refund/test-only                                          controllers.testonly.TestOnlyController.landing
 
 GET        /get-an-income-tax-refund/test-only/show-journey                             controllers.testonly.TestOnlyController.showJourney
 GET        /get-an-income-tax-refund/test-only/show-journey/:journeyId                  controllers.testonly.TestOnlyController.showJourneyById(journeyId: JourneyId)
@@ -20,5 +21,6 @@ GET        /get-an-income-tax-refund/test-only/show-journey/:journeyId          
 #utilised in tests:
 GET        /get-an-income-tax-refund/test-only/add-journey-id-to-session/:journeyId     controllers.testonly.TestOnlyController.addJourneyIdToSession(journeyId: JourneyId)
 
-GET        /get-an-income-tax-refund/test-only/pta-sign-in                              controllers.testonly.TestOnlyController.ptaSignIn()
-GET        /get-an-income-tax-refund/test-only/income-tax-general-enquiries             controllers.testonly.TestOnlyController.incomeTaxGeneralEnquiries()
+GET        /get-an-income-tax-refund/test-only/gov-uk-route-in                          controllers.testonly.TestOnlyController.govUkRouteIn
+GET        /get-an-income-tax-refund/test-only/pta-sign-in                              controllers.testonly.TestOnlyController.ptaSignIn
+GET        /get-an-income-tax-refund/test-only/income-tax-general-enquiries             controllers.testonly.TestOnlyController.incomeTaxGeneralEnquiries

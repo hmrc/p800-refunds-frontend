@@ -21,17 +21,24 @@ import pagespecs.pagesupport.{ContentExpectation, Page, PageUtil}
 
 class GovUkRouteInPage(baseUrl: String)(implicit webDriver: WebDriver) extends Page(
   baseUrl,
-  path = "/get-an-income-tax-refund/test-only"
+  path = "/get-an-income-tax-refund/test-only/gov-uk-route-in"
 ) {
 
-  override def expectedH1: String = "Test only page"
+  override def expectedH1: String = "Tax overpayments and underpayments"
 
   def assertPageIsDisplayed(): Unit = withPageClue {
     PageUtil.assertPage(
       path                = path,
       h1                  = expectedH1,
       title               = PageUtil.standardTitle(expectedH1),
-      contentExpectations = Seq.empty[ContentExpectation]: _*
+      contentExpectations = ContentExpectation(
+        atXpath       = PageUtil.Xpath.mainContent,
+        expectedLines =
+          """
+            |Tax overpayments and underpayments
+            |I'm the stub for Gov UK page where you can start the journey.
+            |""".stripMargin
+      )
     )
   }
 

@@ -17,29 +17,22 @@
 package config
 
 import play.api.Configuration
-
-import javax.inject.{Inject, Singleton}
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 
-import java.util.concurrent.TimeUnit
+import javax.inject.{Inject, Singleton}
+import scala.concurrent.duration.Duration.Infinite
 import scala.concurrent.duration.FiniteDuration
 import scala.util.Try
 
 @Singleton
 class AppConfig @Inject() (servicesConfig: ServicesConfig, configuration: Configuration) {
 
-  private def configFiniteDuration(key: String): FiniteDuration = {
-    val duration = servicesConfig.getDuration(key)
-    if (duration.isFinite) FiniteDuration(duration.toNanos, TimeUnit.NANOSECONDS)
-    else sys.error(s"Duration ${duration.toString} for key $key was not finite")
-  }
-
-  val welshLanguageSupportEnabled: Boolean = servicesConfig.getBoolean("features.welsh-language-support")
-  val journeyRepoTtl: FiniteDuration = configFiniteDuration("journey.repoTtl")
+  val journeyRepoTtl: FiniteDuration = readFiniteDuration("mongodb.journey-repo-ttl")
 
   val govUkRouteIn: String = readConfigAsValidUrlString("urls.govuk-route-in")
 
   val ptaSignInUrl: String = readConfigAsValidUrlString("urls.pta-sign-in")
+
   val incomeTaxGeneralEnquiriesUrl: String = readConfigAsValidUrlString("urls.income-tax-general-enquiries")
 
   /**
@@ -55,4 +48,12 @@ class AppConfig @Inject() (servicesConfig: ServicesConfig, configuration: Config
       _ => url
     )
   }
+
+  private def readFiniteDuration(configPath: String): FiniteDuration = {
+    servicesConfig.getDuration(configPath) match {
+      case d: FiniteDuration => d
+      case _: Infinite       => throw new RuntimeException(s"Infinite Duration in config for the key [$configPath]")
+    }
+  }
+
 }
