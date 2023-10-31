@@ -18,7 +18,7 @@ package pagespecs.pagesupport
 
 import org.openqa.selenium.WebDriver
 
-import pagespecs.pages.{CannotConfirmReferencePage, DoYouWantToSignInPage, EnterP800ReferencePage, GeneralIncomeTaxEnquiriesPage, GovUkRouteInPage, PtaSignInPage}
+import pagespecs.pages.{CannotConfirmReferencePage,CheckYourReferencePage, DoYouWantToSignInPage, EnterP800ReferencePage, GeneralIncomeTaxEnquiriesPage, GovUkRouteInPage, PtaSignInPage}
 
 
 class Pages(baseUrl: String)(implicit webDriver: WebDriver) {
