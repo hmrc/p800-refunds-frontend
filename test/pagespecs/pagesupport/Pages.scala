@@ -18,8 +18,7 @@ package pagespecs.pagesupport
 
 import org.openqa.selenium.WebDriver
 
-import pagespecs.pages.{CannotConfirmReferencePage,CheckYourReferencePage, DoYouWantToSignInPage, EnterP800ReferencePage, GeneralIncomeTaxEnquiriesPage, GovUkRouteInPage, PtaSignInPage}
-
+import pagespecs.pages.{CannotConfirmReferencePage, CheckYourReferencePage, DoYouWantToSignInPage, EnterP800ReferencePage, GeneralIncomeTaxEnquiriesPage, GovUkRouteInPage, PtaSignInPage}
 
 class Pages(baseUrl: String)(implicit webDriver: WebDriver) {
 
@@ -29,7 +28,6 @@ class Pages(baseUrl: String)(implicit webDriver: WebDriver) {
   val enterP800ReferencePage = new EnterP800ReferencePage(baseUrl = baseUrl)
   val cannotConfirmReferencePage = new CannotConfirmReferencePage(baseUrl = baseUrl)
   val checkYourReferencePage = new CheckYourReferencePage(baseUrl = baseUrl)
-
 
   // Page Stubs
   val govUkRouteInPage = new GovUkRouteInPage(baseUrl = baseUrl)

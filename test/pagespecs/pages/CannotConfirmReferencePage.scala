@@ -23,9 +23,9 @@ class CannotConfirmReferencePage(baseUrl: String)(implicit webDriver: WebDriver)
   baseUrl,
   path = "/get-an-income-tax-refund/we-cannot-confirm-your-reference"
 ) {
-
+  override def expectedH1: String = "We cannot confirm your reference"
   def assertPageIsDisplayed(errors: ContentExpectation*): Unit = withPageClue {
-    val h1: String = "We cannot confirm your reference"
+
     val contentExpectations: Seq[ContentExpectation] = Seq(ContentExpectation(
       atXpath       = PageUtil.Xpath.mainContent,
       expectedLines =
@@ -39,8 +39,8 @@ class CannotConfirmReferencePage(baseUrl: String)(implicit webDriver: WebDriver)
 
     PageUtil.assertPage(
       path                = path,
-      h1                  = h1,
-      title               = PageUtil.standardTitle(h1),
+      h1                  = expectedH1,
+      title               = PageUtil.standardTitle(expectedH1),
       contentExpectations = contentExpectations: _*
     )
     ()
