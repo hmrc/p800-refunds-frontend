@@ -31,26 +31,26 @@ import scala.concurrent.{ExecutionContext, Future}
 @Singleton
 class TestOnlyController @Inject() (
     mcc:            MessagesControllerComponents,
-    testOnlyViews:  ViewsTestOnly,
+    viewsTestOnly:  ViewsTestOnly,
     journeyService: JourneyService,
     as:             Actions
 )(implicit ec: ExecutionContext) extends FrontendController(mcc) {
 
   val landing: Action[AnyContent] = as.default { implicit request =>
-    Ok(testOnlyViews.landingTestOnlyPage())
+    Ok(viewsTestOnly.landingTestOnlyPage())
   }
 
   val govUkRouteIn: Action[AnyContent] = as.default { implicit request =>
-    Ok(testOnlyViews.govUkStubPage())
+    Ok(viewsTestOnly.govUkStubPage())
   }
 
   val ptaSignIn: Action[AnyContent] = as.default { implicit request =>
-    Ok(testOnlyViews.ptaSignInStubPage())
+    Ok(viewsTestOnly.ptaSignInStubPage())
       .withNewSession //Pro TIP: this represents current behaviour of sign in page on the production...
   }
 
   val incomeTaxGeneralEnquiries: Action[AnyContent] = as.default { implicit request =>
-    Ok(testOnlyViews.incomeTaxGeneralEnquiriesStubPage())
+    Ok(viewsTestOnly.incomeTaxGeneralEnquiriesStubPage())
   }
 
   val showJourney: Action[AnyContent] = as.default.async { implicit request =>
