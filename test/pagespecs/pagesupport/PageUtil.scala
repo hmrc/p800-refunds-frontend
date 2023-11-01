@@ -102,14 +102,32 @@ object PageUtil {
       path:                String,
       h1:                  String,
       title:               String,
+      serviceName:         String,
       contentExpectations: ContentExpectation*
   )(implicit webDriver: WebDriver): Unit = withPageClue(path) {
-    readPageServiceName() shouldBe serviceName
-    readPath() shouldBe path
-    readH1() shouldBe h1
-    pageTitle shouldBe title
+    readPageServiceName() shouldBe serviceName withClue "serviceName"
+    readPath() shouldBe path withClue "path"
+    readH1() shouldBe h1 withClue "h1"
+    pageTitle shouldBe title withClue "pageTitle"
     assertContentByXpath(contentExpectations: _*)
   }
+
+  /**
+   * Utility method to help implement assertPageIsDisplayed* related methods in `Page` subclasses.
+   * It asserts various elements like path, h1 and content making a good quality page assertion
+   */
+  def assertPage(
+      path:                String,
+      h1:                  String,
+      title:               String,
+      contentExpectations: ContentExpectation*
+  )(implicit webDriver: WebDriver): Unit = assertPage(
+    path                = path,
+    h1                  = h1,
+    title               = title,
+    serviceName         = "Claim an income tax refund",
+    contentExpectations = contentExpectations: _*
+  )
 
   private def readH1()(implicit webDriver: WebDriver): String = xpath("""//*[@id="main-content"]//h1""").element.text.stripSpaces()
 
@@ -125,6 +143,8 @@ object PageUtil {
          |>>>the page: ${this.getClass.getSimpleName}
          |>>>url was: ${webDriver.getCurrentUrl}
          |>>>path is supposed to be: $pathHint
+         |>>>serviceName: ${Try(readPageServiceName()).fold(_.toString, identity)}
+         |>>>h1: ${Try(readH1()).fold(_.toString, identity)}
          |>>>title was: ${Try(pageTitle).fold(_.toString, identity)}
          |>>>page body was:
          |${Try(webDriver.findElement(By.tagName("body")).getText).fold(_ => webDriver.getPageSource, identity)}
@@ -132,8 +152,8 @@ object PageUtil {
          |""".stripMargin
     }
 
-  private val serviceName: String = "Claim an income tax refund"
   def standardTitle(h1: String): String = s"$h1 - Claim an income tax refund - GOV.UK"
+  val standardTitleForTestOnlyPages: String = s"Test Only - Claim an income tax refund - GOV.UK"
   def standardTitleInWelsh(h1: String): String = s"$h1 - Claim an income tax refund - GOV.UK"
 
   val standardHeader: String =

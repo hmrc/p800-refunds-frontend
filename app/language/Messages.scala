@@ -121,6 +121,10 @@ object Messages {
       english = "Claim an income tax refund"
     )
 
+    val serviceNameTestOnly: Message = Message(
+      english = "Test Only - Claim an income tax refund"
+    )
+
     val beta: Message = Message(
       english = "beta",
       welsh   = "beta"

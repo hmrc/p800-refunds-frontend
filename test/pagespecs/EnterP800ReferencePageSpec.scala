@@ -63,7 +63,7 @@ class EnterP800ReferencePageSpec extends ItSpec {
     pages.enterP800ReferencePage.assertPageIsDisplayed()
     val newTabHandle = pages.enterP800ReferencePage.clickIncomeTaxGeneralEnquiriesLink()
     switchToTab(newTabHandle)
-    pages.generalIncomeTaxEnquiries.assertPageIsDisplayed()
+    pages.generalIncomeTaxEnquiriesPage.assertPageIsDisplayed()
   }
 
   "Clicking on back button redirects back to 'Do you want to sign in?' page" in {

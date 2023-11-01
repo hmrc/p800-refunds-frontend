@@ -18,13 +18,12 @@ package controllers.testonly
 
 import action.Actions
 import controllers.JourneyController
-import language.TestOnlyMessages
 import models.journeymodels.{Journey, JourneyId}
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import services.JourneyService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
-import views.TestOnlyViews
+import views.ViewsTestOnly
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
@@ -32,13 +31,26 @@ import scala.concurrent.{ExecutionContext, Future}
 @Singleton
 class TestOnlyController @Inject() (
     mcc:            MessagesControllerComponents,
-    testOnlyViews:  TestOnlyViews,
+    viewsTestOnly:  ViewsTestOnly,
     journeyService: JourneyService,
     as:             Actions
 )(implicit ec: ExecutionContext) extends FrontendController(mcc) {
 
-  val getTestOnlyLanding: Action[AnyContent] = as.default { implicit request =>
-    Ok(testOnlyViews.testOnlyStartPage())
+  val landing: Action[AnyContent] = as.default { implicit request =>
+    Ok(viewsTestOnly.landingTestOnlyPage())
+  }
+
+  val govUkRouteIn: Action[AnyContent] = as.default { implicit request =>
+    Ok(viewsTestOnly.govUkStubPage())
+  }
+
+  val ptaSignIn: Action[AnyContent] = as.default { implicit request =>
+    Ok(viewsTestOnly.ptaSignInStubPage())
+      .withNewSession //Pro TIP: this represents current behaviour of sign in page on the production...
+  }
+
+  val incomeTaxGeneralEnquiries: Action[AnyContent] = as.default { implicit request =>
+    Ok(viewsTestOnly.incomeTaxGeneralEnquiriesStubPage())
   }
 
   val showJourney: Action[AnyContent] = as.default.async { implicit request =>
@@ -54,14 +66,6 @@ class TestOnlyController @Inject() (
 
   def addJourneyIdToSession(journeyId: JourneyId): Action[AnyContent] = as.default { implicit request =>
     Ok(s"${journeyId.value} added to session").addingToSession(JourneyController.journeyIdKey -> journeyId.value)
-  }
-
-  def ptaSignIn(): Action[AnyContent] = as.default { implicit request =>
-    Ok(testOnlyViews.testOnlyStubPage(TestOnlyMessages.`Personal tax account page`))
-  }
-
-  def incomeTaxGeneralEnquiries(): Action[AnyContent] = as.default { implicit request =>
-    Ok(testOnlyViews.testOnlyStubPage(TestOnlyMessages.`Income tax general enquiries`))
   }
 
   private def showJourney(journeyId: JourneyId): Future[Result] = {

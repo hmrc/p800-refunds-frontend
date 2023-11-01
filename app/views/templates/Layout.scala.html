@@ -45,9 +45,10 @@
         headBlock: Option[Html] = None,
         additionalScripts: Option[Html] = None,
         showBackLink: Boolean = true,
+        customBeforeContentBlock: Option[Html] = None,
         backLinkUrlOverride: Option[String] = None,
         hasErrors: Boolean = false,
-        showServiceNameInHeader: Boolean = true
+        customServiceName: Option[String] = None
 )(contentBlock: Html)(implicit request: Request[_])
 
 @import viewsHelpers.requestSupport._
@@ -63,24 +64,26 @@
 }
 
 @beforeContentBlock = {
- <div class="govuk-!-display-none-print">
-  @govukPhaseBanner(PhaseBanner(
-   tag = Some(Tag(
-    content = Text(Messages.ServicePhase.beta.show)
-   )),
-   content = HtmlContent(Messages.ServicePhase.bannerText("").show)
-  ))
-@* add this back in when we support welsh
-  @hmrcLanguageSelectHelper()
-*@
-  @{
-   if(showBackLink) {
-    backLinkUrlOverride.fold(
-     viewsHelpers.govukBackLink(BackLink(href = "#", classes = "js-visible", content = Text(Messages.CommonMessages.back.show)))
-    )(url => viewsHelpers.govukBackLink(BackLink(href = url, content = Text(Messages.CommonMessages.back.show))))
-   }
+  @customBeforeContentBlock.getOrElse {
+    <div class="govuk-!-display-none-print">
+      @govukPhaseBanner(
+        PhaseBanner(
+          tag = Some(Tag(content = Text(Messages.ServicePhase.beta.show))),
+          content = HtmlContent(Messages.ServicePhase.bannerText("").show)
+        )
+      )
+      @* add this back in when we support welsh
+      @hmrcLanguageSelectHelper()
+      *@
+      @{
+        if(showBackLink) {
+          backLinkUrlOverride.fold(
+            viewsHelpers.govukBackLink(BackLink(href = "#", classes = "js-visible", content = Text(Messages.CommonMessages.back.show)))
+          )(url => viewsHelpers.govukBackLink(BackLink(href = url, content = Text(Messages.CommonMessages.back.show))))
+        }
+      }
+    </div>
   }
- </div>
 }
 
 @content = {
@@ -94,7 +97,7 @@
 }
 
 @serviceName = @{
- Messages.ServicePhase.serviceName.show
+  customServiceName.getOrElse(Messages.ServicePhase.serviceName.show)
 }
 
 @serviceNameAndTitle = @{
@@ -107,7 +110,7 @@
 
 @header = @{
  hmrcStandardHeader(
-  serviceName = if(showServiceNameInHeader) Some(serviceName) else None,
+  serviceName = Some(serviceName),
   serviceUrl = Some(appConfig.govUkRouteIn),
   signOutUrl = if(RequestSupport.isLoggedIn) Some("sign-out-eventually") else None
  )

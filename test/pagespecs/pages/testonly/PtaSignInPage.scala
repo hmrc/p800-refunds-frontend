@@ -14,29 +14,30 @@
  * limitations under the License.
  */
 
-package pagespecs.pages
+package pagespecs.pages.testonly
 
 import org.openqa.selenium.WebDriver
 import pagespecs.pagesupport.{ContentExpectation, Page, PageUtil}
 
-class GeneralIncomeTaxEnquiriesPage(baseUrl: String)(implicit webDriver: WebDriver) extends Page(
+class PtaSignInPage(baseUrl: String)(implicit webDriver: WebDriver) extends Page(
   baseUrl,
-  path = "/get-an-income-tax-refund/test-only/income-tax-general-enquiries"
+  path = "/get-an-income-tax-refund/test-only/pta-sign-in"
 ) {
 
-  override def expectedH1: String = "Income tax general enquiries"
+  override def expectedH1: String = "Personal tax account sign in"
 
   def assertPageIsDisplayed(): Unit = withPageClue {
     PageUtil.assertPage(
-      path  = path,
-      h1    = expectedH1,
-      title = PageUtil.standardTitle(expectedH1),
+      path        = path,
+      h1          = expectedH1,
+      title       = PageUtil.standardTitleForTestOnlyPages,
+      serviceName = "Test Only - Claim an income tax refund",
       ContentExpectation(
         atXpath       = PageUtil.Xpath.mainContent,
         expectedLines =
           """
-            |Income tax general enquiries
-            |This page is used for testing
+            |Personal tax account sign in
+            |I'm a stub representing Personal tax account sign in page.
             |""".stripMargin
       )
     )
