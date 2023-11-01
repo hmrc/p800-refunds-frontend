@@ -143,7 +143,8 @@ object PageUtil {
          |>>>the page: ${this.getClass.getSimpleName}
          |>>>url was: ${webDriver.getCurrentUrl}
          |>>>path is supposed to be: $pathHint
-         |>>>title was: ${Try(pageTitle).fold(_.toString, identity)}
+         |>>>serviceName: ${Try(readPageServiceName()).fold(_.toString, identity)}
+         |>>>h1: ${Try(readH1()).fold(_.toString, identity)}
          |>>>title was: ${Try(pageTitle).fold(_.toString, identity)}
          |>>>page body was:
          |${Try(webDriver.findElement(By.tagName("body")).getText).fold(_ => webDriver.getPageSource, identity)}
