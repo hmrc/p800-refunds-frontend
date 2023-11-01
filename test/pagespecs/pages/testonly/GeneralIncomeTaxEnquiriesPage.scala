@@ -14,17 +14,17 @@
  * limitations under the License.
  */
 
-package pagespecs.pages
+package pagespecs.pages.testonly
 
 import org.openqa.selenium.WebDriver
 import pagespecs.pagesupport.{ContentExpectation, Page, PageUtil}
 
-class PtaSignInPage(baseUrl: String)(implicit webDriver: WebDriver) extends Page(
+class GeneralIncomeTaxEnquiriesPage(baseUrl: String)(implicit webDriver: WebDriver) extends Page(
   baseUrl,
-  path = "/get-an-income-tax-refund/test-only/pta-sign-in"
+  path = "/get-an-income-tax-refund/test-only/income-tax-general-enquiries"
 ) {
 
-  override def expectedH1: String = "Personal tax account sign in"
+  override def expectedH1: String = "Income Tax General Enquiries"
 
   def assertPageIsDisplayed(): Unit = withPageClue {
     PageUtil.assertPage(
@@ -36,8 +36,8 @@ class PtaSignInPage(baseUrl: String)(implicit webDriver: WebDriver) extends Page
         atXpath       = PageUtil.Xpath.mainContent,
         expectedLines =
           """
-            |Personal tax account sign in
-            |I'm a stub representing Personal tax account sign in page.
+            |Income Tax General Enquiries
+            |I'm the stub page representing tax general enquiries (Income Tax helpline page).
             |""".stripMargin
       )
     )

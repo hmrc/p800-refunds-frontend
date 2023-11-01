@@ -14,33 +14,33 @@
  * limitations under the License.
  */
 
-package pagespecs.pages
+package pagespecs.pages.testonly
 
 import org.openqa.selenium.WebDriver
 import pagespecs.pagesupport.{ContentExpectation, Page, PageUtil}
 
-class GeneralIncomeTaxEnquiriesPage(baseUrl: String)(implicit webDriver: WebDriver) extends Page(
+class GovUkRouteInPage(baseUrl: String)(implicit webDriver: WebDriver) extends Page(
   baseUrl,
-  path = "/get-an-income-tax-refund/test-only/income-tax-general-enquiries"
+  path = "/get-an-income-tax-refund/test-only/gov-uk-route-in"
 ) {
 
-  override def expectedH1: String = "Income Tax General Enquiries"
+  override def expectedH1: String = "Tax overpayments and underpayments"
 
   def assertPageIsDisplayed(): Unit = withPageClue {
     PageUtil.assertPage(
-      path        = path,
-      h1          = expectedH1,
-      title       = PageUtil.standardTitleForTestOnlyPages,
-      serviceName = "Test Only - Claim an income tax refund",
-      ContentExpectation(
+      path                = path,
+      h1                  = expectedH1,
+      title               = PageUtil.standardTitleForTestOnlyPages,
+      serviceName         = "Test Only - Claim an income tax refund",
+      contentExpectations = ContentExpectation(
         atXpath       = PageUtil.Xpath.mainContent,
         expectedLines =
           """
-            |Income Tax General Enquiries
-            |I'm the stub page representing tax general enquiries (Income Tax helpline page).
+            |Tax overpayments and underpayments
+            |I'm the stub for Gov UK page where you can start the journey.
             |""".stripMargin
       )
     )
-    ()
   }
+
 }
