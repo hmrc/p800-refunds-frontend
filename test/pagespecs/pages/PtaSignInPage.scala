@@ -28,9 +28,10 @@ class PtaSignInPage(baseUrl: String)(implicit webDriver: WebDriver) extends Page
 
   def assertPageIsDisplayed(): Unit = withPageClue {
     PageUtil.assertPage(
-      path  = path,
-      h1    = expectedH1,
-      title = PageUtil.standardTitleForTestOnlyPages(expectedH1),
+      path        = path,
+      h1          = expectedH1,
+      title       = PageUtil.standardTitleForTestOnlyPages,
+      serviceName = "Test Only - Claim an income tax refund",
       ContentExpectation(
         atXpath       = PageUtil.Xpath.mainContent,
         expectedLines =

@@ -59,7 +59,7 @@ trait ItSpec extends AnyFreeSpecLike
     "auditing.consumer.baseUri.port" -> WireMockSupport.port,
     "auditing.enabled" -> false,
     "auditing.traceRequests" -> false,
-    "urls.govuk-route-in" -> s"http://localhost:${testServerPort.toString}/get-an-income-tax-refund/test-only",
+    "urls.govuk-route-in" -> s"http://localhost:${testServerPort.toString}/get-an-income-tax-refund/test-only/gov-uk-route-in",
     "urls.pta-sign-in" -> s"http://localhost:${testServerPort.toString}/get-an-income-tax-refund/test-only/pta-sign-in",
     "urls.income-tax-general-enquiries" -> s"http://localhost:${testServerPort.toString}/get-an-income-tax-refund/test-only/income-tax-general-enquiries"
   )

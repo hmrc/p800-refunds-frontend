@@ -30,7 +30,7 @@ class GeneralIncomeTaxEnquiriesPage(baseUrl: String)(implicit webDriver: WebDriv
     PageUtil.assertPage(
       path  = path,
       h1    = expectedH1,
-      title = PageUtil.standardTitleForTestOnlyPages(expectedH1),
+      title = PageUtil.standardTitleForTestOnlyPages,
       ContentExpectation(
         atXpath       = PageUtil.Xpath.mainContent,
         expectedLines =
