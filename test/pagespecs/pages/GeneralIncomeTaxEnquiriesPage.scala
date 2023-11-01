@@ -24,18 +24,19 @@ class GeneralIncomeTaxEnquiriesPage(baseUrl: String)(implicit webDriver: WebDriv
   path = "/get-an-income-tax-refund/test-only/income-tax-general-enquiries"
 ) {
 
-  override def expectedH1: String = "Income tax general enquiries"
+  override def expectedH1: String = "Income Tax General Enquiries"
 
   def assertPageIsDisplayed(): Unit = withPageClue {
     PageUtil.assertPage(
-      path  = path,
-      h1    = expectedH1,
-      title = PageUtil.standardTitleForTestOnlyPages,
+      path        = path,
+      h1          = expectedH1,
+      title       = PageUtil.standardTitleForTestOnlyPages,
+      serviceName = "Test Only - Claim an income tax refund",
       ContentExpectation(
         atXpath       = PageUtil.Xpath.mainContent,
         expectedLines =
           """
-            |Income tax general enquiries
+            |Income Tax General Enquiries
             |I'm the stub page representing tax general enquiries (Income Tax helpline page).
             |""".stripMargin
       )

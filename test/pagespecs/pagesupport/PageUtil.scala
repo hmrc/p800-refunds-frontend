@@ -144,6 +144,7 @@ object PageUtil {
          |>>>url was: ${webDriver.getCurrentUrl}
          |>>>path is supposed to be: $pathHint
          |>>>title was: ${Try(pageTitle).fold(_.toString, identity)}
+         |>>>title was: ${Try(pageTitle).fold(_.toString, identity)}
          |>>>page body was:
          |${Try(webDriver.findElement(By.tagName("body")).getText).fold(_ => webDriver.getPageSource, identity)}
          |${if (showPageSource) ">>>page source was:\n" + webDriver.getPageSource else ""}
