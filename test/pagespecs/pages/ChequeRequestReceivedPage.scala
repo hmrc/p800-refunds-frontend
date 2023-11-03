@@ -19,32 +19,30 @@ package pagespecs.pages
 import org.openqa.selenium.WebDriver
 import pagespecs.pagesupport.{ContentExpectation, Page, PageUtil}
 
-class CannotConfirmReferencePage(baseUrl: String)(implicit webDriver: WebDriver) extends Page(
+class ChequeRequestReceivedPage(baseUrl: String)(implicit webDriver: WebDriver) extends Page(
   baseUrl,
-  path = "/get-an-income-tax-refund/we-cannot-confirm-your-reference"
+  path = "/get-an-income-tax-refund/request-received"
 ) {
 
-  override def expectedH1: String = "We cannot confirm your reference"
+  override def expectedH1: String = "Under Construction"
 
-  def assertPageIsDisplayed(errors: ContentExpectation*): Unit = withPageClue {
+  def assertPageIsDisplayed(): Unit = withPageClue {
 
-    val contentExpectations: Seq[ContentExpectation] = Seq(ContentExpectation(
+    val contentExpectation: ContentExpectation = ContentExpectation(
       atXpath       = PageUtil.Xpath.mainContent,
       expectedLines =
         """
-          |We cannot confirm your reference
-          |You can find it on your P800 letter.
-          |You have 2 more attempts to request a bank transfer this way.
-          |Or you can sign in to request your refund.
+          |Under Construction
           |""".stripMargin
-    )) ++ errors
+    )
 
     PageUtil.assertPage(
       path                = path,
       h1                  = expectedH1,
       title               = PageUtil.standardTitle(expectedH1),
-      contentExpectations = contentExpectations: _*
+      contentExpectations = contentExpectation
     )
+
   }
 
 }

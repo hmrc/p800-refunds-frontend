@@ -87,16 +87,16 @@ object Messages {
       english = s"""<a id="income-tax-general-enquiries" class="govuk-link" href="$link" rel="noreferrer noopener" target="_blank">Call or write to the Income Tax helpline (opens in new tab)</a> if you cannot create a personal tax account."""
     )
 
-    def `Enter your P800 reference`: Message = Message(
+    val `Enter your P800 reference`: Message = Message(
       english = "Enter your P800 reference"
     )
 
-    def `Enter your P800 reference in the correct format`: Message = Message(
+    val `Enter your P800 reference in the correct format`: Message = Message(
       english = "Enter your P800 reference in the correct format"
     )
   }
 
-  object cannotConfirmReference {
+  object CannotConfirmReference {
     val `We cannot confirm your reference`: Message = Message(
       english = "We cannot confirm your reference"
     )
@@ -113,6 +113,40 @@ object Messages {
       english = "Or you can sign in to request your refund."
     )
 
+  }
+
+  object YourChequeWillBePostedToYou {
+    val `Your cheque will be posted to you`: Message = Message(
+      english = "Your cheque will be posted to you"
+    )
+
+    val `Your cheque will be sent to the same address as your p800 letter.`: Message = Message(
+      english = "Your cheque will be sent to the same address as your p800 letter."
+    )
+
+    val `My cheque needs to go to a different address`: Message = Message(
+      english = "My cheque needs to go to a different address"
+    )
+
+    val `To update your address you need to:`: Message = Message(
+      english = "To update your address you need to:"
+    )
+
+    def `Contact HMRC to tell us that you have changed address.`(contactHmrcLink: String): Message = Message(
+      english = s"""<a id="contact-hmrc-link" href="$contactHmrcLink" class="govuk-link">Contact HMRC</a> to tell us that you have changed address."""
+    )
+
+    val `Wait two days for HMRC to update your details.`: Message = Message(
+      english = "Wait two days for HMRC to update your details."
+    )
+
+    val `Restart your refund request.`: Message = Message(
+      english = "Restart your refund request."
+    )
+
+    val `Submit refund request`: Message = Message(
+      english = "Submit refund request"
+    )
   }
 
   object ServicePhase {

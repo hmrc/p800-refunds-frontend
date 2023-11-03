@@ -32,9 +32,10 @@ class ViewsHelpers @Inject() (
     val govukButton:       GovukButton,
     val govukCheckboxes:   GovukCheckboxes,
     val govukCookieBanner: GovukCookieBanner,
+    val govukDetails:      GovukDetails,
+    val govukErrorSummary: GovukErrorSummary,
     val govukHint:         GovukHint,
-    val govukRadios:       GovukRadios,
-    val govukSelect:       GovukSelect,
     val govukInput:        GovukInput,
-    val govukErrorSummary: GovukErrorSummary
+    val govukRadios:       GovukRadios,
+    val govukSelect:       GovukSelect
 )

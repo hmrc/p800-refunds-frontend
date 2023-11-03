@@ -14,11 +14,8 @@
  * limitations under the License.
  *@
 
-@import config.AppConfig
 @import language.Messages
-@import models.P800Reference
 @import uk.gov.hmrc.govukfrontend.views.html.components._
-@import uk.gov.hmrc.govukfrontend.views.html.components.implicits._
 @import views.html.templates.Layout
 
 @this(
@@ -26,34 +23,33 @@
     viewsHelpers: views.ViewsHelpers
 )
 
-@(
-
-)(implicit request: Request[_])
+@()(implicit request: Request[_])
 
 @import viewsHelpers.requestSupport._
 
-
-
 @title = @{
-    Messages.cannotConfirmReference.`We cannot confirm your reference`.show
+    Messages.CannotConfirmReference.`We cannot confirm your reference`.show
 }
 
 @layout(pageTitle = Some(title), backLinkUrlOverride = Some(controllers.routes.JourneyController.doYouWantToSignIn.url)) {
 
-    <h1 class="govuk-heading-xl">@{Messages.cannotConfirmReference.`We cannot confirm your reference`.show}</h1>
+    <h1 class="govuk-heading-xl">@title</h1>
 
     <p class="govuk-body">
-        @{Html(Messages.cannotConfirmReference.`You can find it on your P800 letter`.show)}
+        @{Messages.CannotConfirmReference.`You can find it on your P800 letter`.show}
     </p>
 
     <p class="govuk-body">
-        @{Html(Messages.cannotConfirmReference.`You have X more attempts`("2").show)}
+        @{Html(Messages.CannotConfirmReference.`You have X more attempts`("2").show)}
     </p>
 
     <p class="govuk-body">
-        @{Html(Messages.cannotConfirmReference.`Or you can sign in to request your refund`.show)}
+        @{Messages.CannotConfirmReference.`Or you can sign in to request your refund`.show}
     </p>
 
-    @viewsHelpers.govukButton(Button(content = Text(Messages.CommonMessages.`Try again`.show), attributes = Map("id" -> "submit")))
+    @viewsHelpers.govukButton(Button(
+        content = Text(Messages.CommonMessages.`Try again`.show),
+        id      = Some("submit")
+    ))
 
 }

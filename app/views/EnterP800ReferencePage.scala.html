@@ -73,6 +73,9 @@
             @{Html(Messages.EnterP800ReferenceMessages.`Call or write to the Income Tax helpline (opens in new tab) if you cannot create a personal tax account.`(appConfig.incomeTaxGeneralEnquiriesUrl).show)}
           </p>
 
-        @viewsHelpers.govukButton(Button(content = Text(Messages.CommonMessages.continue.show), attributes = Map("id" -> "submit")))
+        @viewsHelpers.govukButton(Button(
+            content = Text(Messages.CommonMessages.continue.show),
+            id      = Some("submit")
+        ))
     }
 }
