@@ -12,7 +12,7 @@ object AppDependencies {
     // format: OFF
     "uk.gov.hmrc"       %% "bootstrap-frontend-play-28" % bootstrapVersion,
     "uk.gov.hmrc.mongo" %% "hmrc-mongo-play-28"         % hmrcMongoVersion,
-    "uk.gov.hmrc"       %% "play-frontend-hmrc"         % "7.25.0-play-28",
+    "uk.gov.hmrc"       %% "play-frontend-hmrc"         % "7.26.0-play-28",
     "com.beachape"      %% "enumeratum-play"            % "1.7.3",
     "org.typelevel"     %% "cats-core"                  % "2.10.0",
     "org.julienrf"      %% "play-json-derived-codecs"   % "7.0.0", //choose carefully
@@ -31,7 +31,7 @@ object AppDependencies {
     "org.pegdown"             %  "pegdown"                    % "1.6.0",
     "org.seleniumhq.selenium" %  "selenium-java"              % "4.15.0",
     "org.seleniumhq.selenium" %  "htmlunit-driver"            % "4.13.0",
-    "org.wiremock"            %  "wiremock-standalone"        % "3.2.0",
+    "org.wiremock"            %  "wiremock-standalone"        % "3.3.1",
     "org.scalatestplus.play"  %% "scalatestplus-play"         % "5.1.0"
   // format: ON
   ).map(_ % Test)
