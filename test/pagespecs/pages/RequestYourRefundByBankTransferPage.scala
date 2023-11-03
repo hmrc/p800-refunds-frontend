@@ -19,12 +19,12 @@ package pagespecs.pages
 import org.openqa.selenium.WebDriver
 import pagespecs.pagesupport.{ContentExpectation, Page, PageUtil}
 
-class CheckYourReferencePage(baseUrl: String)(implicit webDriver: WebDriver) extends Page(
+class RequestYourRefundByBankTransferPage(baseUrl: String)(implicit webDriver: WebDriver) extends Page(
   baseUrl,
-  path = "/get-an-income-tax-refund/check-your-reference"
+  path = "/get-an-income-tax-refund/request-your-refund-by-bank-transfer"
 ) {
 
-  override def expectedH1: String = "Check your reference"
+  override def expectedH1: String = "Under Construction"
 
   def assertPageIsDisplayed(potentialErrors: ContentExpectation*): Unit = withPageClue {
     val contentExpectations: Seq[ContentExpectation] = Seq(
@@ -32,9 +32,8 @@ class CheckYourReferencePage(baseUrl: String)(implicit webDriver: WebDriver) ext
         atXpath       = PageUtil.Xpath.mainContent,
         expectedLines =
           """
-            |Check your reference
-            |You entered P800REFNO1
-            |Is this correct?
+            |Under Construction
+            |This page has not been developed yet
             |""".stripMargin
       )
     ) ++ potentialErrors
@@ -45,26 +44,5 @@ class CheckYourReferencePage(baseUrl: String)(implicit webDriver: WebDriver) ext
       title               = PageUtil.standardTitle(expectedH1),
       contentExpectations = contentExpectations: _*
     )
-  }
-
-  def assertPageShowsWithErrors(): Unit = withPageClue {
-    assertPageIsDisplayed(
-      ContentExpectation(
-        atXpath       = PageUtil.Xpath.mainContent,
-        expectedLines =
-          """
-            |There is a problem
-            |Select yes if you entered the correct reference
-            |""".stripMargin
-      )
-    )
-  }
-
-  def selectYes(): Unit = withPageClue {
-    PageUtil.clickByIdOrName("reference-check")
-  }
-
-  def selectNo(): Unit = withPageClue {
-    PageUtil.clickByIdOrName("reference-check-2")
   }
 }

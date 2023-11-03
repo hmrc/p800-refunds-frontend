@@ -25,8 +25,8 @@ import services.JourneyService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import io.scalaland.chimney.dsl._
 import models.{AmountInPence, P800Reference, P800ReferenceValidation}
-import models.forms.{DoYouWantToSignInForm, EnterP800ReferenceForm}
-import models.forms.enumsforforms.DoYouWantToSignInFormValue
+import models.forms.{CheckYourReferenceForm, DoYouWantToSignInForm, EnterP800ReferenceForm}
+import models.forms.enumsforforms.{CheckYourReferenceFormValue, DoYouWantToSignInFormValue}
 import views.Views
 
 import javax.inject.{Inject, Singleton}
@@ -89,21 +89,53 @@ class JourneyController @Inject() (
       ))),
       p800Reference => {
         journeyService
-          .upsert(journeyIntoWhatIsYourP800Reference(p800Reference))
-          .map(_ => Redirect(controllers.routes.JourneyController.underConstruction))
+          .upsert(journeyFromDoYouWantToSignInNoToWhatIsYourP800Reference(p800Reference))
+          .map(_ => Redirect(controllers.routes.JourneyController.checkYourReference))
       }
     )
+  }
+
+  private def journeyFromDoYouWantToSignInNoToWhatIsYourP800Reference(p800Reference: P800Reference)(implicit request: JourneyRequest[AnyContent]) =
+    request.journey.into[JourneyWhatIsYourP800Reference]
+      .withFieldConst(_.p800Reference, p800Reference)
+      .withFieldConst(_.p800ReferenceValidation, P800ReferenceValidation.NotValidatedYet)
+      .transform
+
+  val checkYourReference: Action[AnyContent] = actions.journeyAction { implicit request =>
+    request.journey match {
+      case j: JourneyWhatIsYourP800Reference =>
+        Ok(views.checkYourReferencePage(j.p800Reference.value, CheckYourReferenceForm.form, controllers.routes.JourneyController.checkYourReferenceSubmit))
+      case _ =>
+        Redirect(controllers.testonly.routes.TestOnlyController.govUkRouteIn)
+    }
+  }
+
+  val checkYourReferenceSubmit: Action[AnyContent] = actions.journeyAction.async { implicit request =>
+    request.journey match {
+      case j: JourneyWhatIsYourP800Reference =>
+        CheckYourReferenceForm.form.bindFromRequest().fold(
+          formWithErrors =>
+            Future.successful(BadRequest(views.checkYourReferencePage(j.p800Reference.value, formWithErrors, controllers.routes.JourneyController.checkYourReferenceSubmit))),
+          {
+            case CheckYourReferenceFormValue.Yes =>
+              // TODO: Check reference here
+              Future.successful(Redirect(controllers.routes.JourneyController.requestRefundByBankTransfer))
+            case CheckYourReferenceFormValue.No =>
+              Future.successful(Redirect(controllers.routes.JourneyController.enterP800Reference))
+          }
+        )
+      case _ =>
+        Future.successful(Redirect(controllers.testonly.routes.TestOnlyController.govUkRouteIn))
+    }
   }
 
   val cannotConfirmReference: Action[AnyContent] = actions.default { implicit request =>
     Ok(views.cannotConfirmReferencePage())
   }
 
-  private def journeyIntoWhatIsYourP800Reference(p800Reference: P800Reference)(implicit request: JourneyRequest[AnyContent]): JourneyWhatIsYourP800Reference =
-    request.journey.into[JourneyWhatIsYourP800Reference]
-      .withFieldConst(_.p800Reference, p800Reference)
-      .withFieldConst(_.p800ReferenceValidation, P800ReferenceValidation.NotValidatedYet)
-      .transform
+  val requestRefundByBankTransfer: Action[AnyContent] = actions.default { implicit request =>
+    Ok(views.underConstructionPage())
+  }
 
   val yourChequeWillBePostedToYou: Action[AnyContent] = actions.default { implicit request =>
     Ok(views.yourChequeWillBePostedToYouPage())
