@@ -1,0 +1,74 @@
+@*
+ * Copyright 2023 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import language.Messages
+@import uk.gov.hmrc.govukfrontend.views.html.components._
+@import views.html.templates.Layout
+@import config.AppConfig
+@import views.html.helper.CSPNonce
+
+@this(
+        layout: Layout,
+        viewsHelpers: views.ViewsHelpers,
+        appConfig: AppConfig
+)
+
+@(p800Reference: P800Reference, refundAmountInPence: AmountInPence)(implicit request: Request[_])
+
+@import viewsHelpers.requestSupport._
+
+@title = @{
+    Messages.ChequeRequestReceived.`Request received`.show
+}
+
+@additionalScript = { <script src="@{controllers.routes.Assets.versioned("javascripts/print-dialogue.js")}" @{CSPNonce.attr}></script> }
+
+@layout(
+    pageTitle         = Some(title),
+    showBackLink      = false,
+    additionalScripts = Some(additionalScript)
+) {
+
+    @viewsHelpers.govukPanel(Panel(
+        headingLevel = 1,
+        title        = Text(title),
+        classes      = "govuk-!-margin-bottom-7",
+        content      = HtmlContent(s"""${Messages.ChequeRequestReceived.`P800 reference`.show}<br><strong>${p800Reference.value}</strong>""")
+    ))
+
+    <p class="govuk-body">
+        @{Html(Messages.ChequeRequestReceived.`Your refund of £x.xx will now be processed.`(refundAmountInPence).show)}
+    </p>
+
+    <p class="govuk-body">
+        @{Messages.ChequeRequestReceived.`You should allow up to 6 weeks for your cheque to arrive in the post.`.show}
+    </p>
+
+    <p class="govuk-body js-visible">
+        <a id="print-page" class="govuk-link" href="#print-dialogue">
+            @{Messages.ChequeRequestReceived.`Print this page`.show}
+        </a>
+    </p>
+
+    <h2 class="govuk-heading-s">
+        @{Messages.ChequeRequestReceived.`What happens next`.show}
+    </h2>
+
+    <p class="govuk-body">
+        @{Html(Messages.ChequeRequestReceived.`If you don’t receive your refund you can call or write...`(appConfig.generalEnquiriesUrl).show)}
+    </p>
+
+}

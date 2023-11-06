@@ -37,5 +37,6 @@ class ViewsHelpers @Inject() (
     val govukHint:         GovukHint,
     val govukInput:        GovukInput,
     val govukRadios:       GovukRadios,
-    val govukSelect:       GovukSelect
+    val govukSelect:       GovukSelect,
+    val govukPanel:        GovukPanel
 )

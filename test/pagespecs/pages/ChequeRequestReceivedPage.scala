@@ -18,13 +18,14 @@ package pagespecs.pages
 
 import org.openqa.selenium.WebDriver
 import pagespecs.pagesupport.{ContentExpectation, Page, PageUtil}
+import testsupport.RichMatchers.convertToAnyShouldWrapper
 
 class ChequeRequestReceivedPage(baseUrl: String)(implicit webDriver: WebDriver) extends Page(
   baseUrl,
   path = "/get-an-income-tax-refund/request-received"
 ) {
 
-  override def expectedH1: String = "Under Construction"
+  override def expectedH1: String = "Request received"
 
   def assertPageIsDisplayed(): Unit = withPageClue {
 
@@ -32,7 +33,17 @@ class ChequeRequestReceivedPage(baseUrl: String)(implicit webDriver: WebDriver) 
       atXpath       = PageUtil.Xpath.mainContent,
       expectedLines =
         """
-          |Under Construction
+          |Request received
+          |P800 reference
+          |P800REFNO1
+          |Your refund of £231.60 will now be processed.
+          |
+          |You should allow up to 6 weeks for your cheque to arrive in the post.
+          |
+          |Print this page
+          |
+          |What happens next
+          |If you don’t receive your refund you can call or write to the Income Tax helpline (opens in new tab). You will need your P800 reference.
           |""".stripMargin
     )
 
@@ -43,6 +54,13 @@ class ChequeRequestReceivedPage(baseUrl: String)(implicit webDriver: WebDriver) 
       contentExpectations = contentExpectation
     )
 
+    generalEnquiriesHref() shouldBe "https://www.gov.uk/government/organisations/hm-revenue-customs/contact/income-tax-enquiries-for-individuals-pensioners-and-employees"
+    PageUtil.elementDisplayedByClassName("govuk-back-link") shouldBe false
+    ()
   }
+
+  private def generalEnquiriesHref(): String = PageUtil.getHrefById("general-enquiries-link")
+
+  def clickPrintThisPage(): Unit = PageUtil.clickByIdOrName("print-page")
 
 }
