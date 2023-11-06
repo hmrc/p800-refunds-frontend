@@ -16,6 +16,7 @@
 
 package pagespecs
 
+import pagespecs.pagesupport.PageUtil
 import testdata.TdAll
 import testsupport.ItSpec
 
@@ -62,7 +63,7 @@ class EnterP800ReferencePageSpec extends ItSpec {
     pages.enterP800ReferencePage.open()
     pages.enterP800ReferencePage.assertPageIsDisplayed()
     val newTabHandle = pages.enterP800ReferencePage.clickIncomeTaxGeneralEnquiriesLink()
-    switchToTab(newTabHandle)
+    PageUtil.switchToTab(newTabHandle)
     pages.generalIncomeTaxEnquiriesPage.assertPageIsDisplayed()
   }
 

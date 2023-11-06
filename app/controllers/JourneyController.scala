@@ -53,30 +53,44 @@ class JourneyController @Inject() (
   }
 
   val doYouWantToSignIn: Action[AnyContent] = actions.journeyAction { implicit request =>
-    Ok(views.doYouWantToSignInPage(DoYouWantToSignInForm.form, controllers.routes.JourneyController.doYouWantToSignInSubmit))
+    Ok(views.doYouWantToSignInPage(
+      form      = DoYouWantToSignInForm.form,
+      submitUrl = controllers.routes.JourneyController.doYouWantToSignInSubmit
+    ))
   }
 
   val doYouWantToSignInSubmit: Action[AnyContent] = actions.journeyAction.async { implicit request =>
     DoYouWantToSignInForm.form.bindFromRequest().fold(
-      formWithErrors => Future.successful(BadRequest(views.doYouWantToSignInPage(formWithErrors, controllers.routes.JourneyController.doYouWantToSignInSubmit))),
-      {
+      formWithErrors => Future.successful(BadRequest(views.doYouWantToSignInPage(
+        form      = formWithErrors,
+        submitUrl = controllers.routes.JourneyController.doYouWantToSignInSubmit
+      ))), {
         case DoYouWantToSignInFormValue.Yes => Future.successful(Redirect(appConfig.ptaSignInUrl))
-        case DoYouWantToSignInFormValue.No => journeyService.upsert(request.journey.transformInto[JourneyDoYouWantToSignInNo]).map(_ =>
-          Redirect(controllers.routes.JourneyController.enterP800Reference))
+        case DoYouWantToSignInFormValue.No =>
+          journeyService
+            .upsert(request.journey.transformInto[JourneyDoYouWantToSignInNo])
+            .map(_ => Redirect(controllers.routes.JourneyController.enterP800Reference))
       }
     )
   }
 
   val enterP800Reference: Action[AnyContent] = actions.journeyAction { implicit request =>
-    Ok(views.enterP800ReferencePage(EnterP800ReferenceForm.form, controllers.routes.JourneyController.enterP800ReferenceSubmit))
+    Ok(views.enterP800ReferencePage(
+      form      = EnterP800ReferenceForm.form,
+      submitUrl = controllers.routes.JourneyController.enterP800ReferenceSubmit
+    ))
   }
 
   val enterP800ReferenceSubmit: Action[AnyContent] = actions.journeyAction.async { implicit request =>
     EnterP800ReferenceForm.form.bindFromRequest().fold(
-      formWithErrors => Future.successful(BadRequest(views.enterP800ReferencePage(formWithErrors, controllers.routes.JourneyController.enterP800ReferenceSubmit))),
+      formWithErrors => Future.successful(BadRequest(views.enterP800ReferencePage(
+        form      = formWithErrors,
+        submitUrl = controllers.routes.JourneyController.enterP800ReferenceSubmit
+      ))),
       p800Reference => {
-        journeyService.upsert(journeyFromDoYouWantToSignInNoToWhatIsYourP800Reference(p800Reference)).map(_ =>
-          Redirect(controllers.routes.JourneyController.underConstruction))
+        journeyService
+          .upsert(journeyIntoWhatIsYourP800Reference(p800Reference))
+          .map(_ => Redirect(controllers.routes.JourneyController.underConstruction))
       }
     )
   }
@@ -85,11 +99,19 @@ class JourneyController @Inject() (
     Ok(views.cannotConfirmReferencePage())
   }
 
-  private def journeyFromDoYouWantToSignInNoToWhatIsYourP800Reference(p800Reference: P800Reference)(implicit request: JourneyRequest[AnyContent]) =
+  private def journeyIntoWhatIsYourP800Reference(p800Reference: P800Reference)(implicit request: JourneyRequest[AnyContent]): JourneyWhatIsYourP800Reference =
     request.journey.into[JourneyWhatIsYourP800Reference]
       .withFieldConst(_.p800Reference, p800Reference)
       .withFieldConst(_.p800ReferenceValidation, P800ReferenceValidation.NotValidatedYet)
       .transform
+
+  val yourChequeWillBePostedToYou: Action[AnyContent] = actions.default { implicit request =>
+    Ok(views.yourChequeWillBePostedToYouPage())
+  }
+
+  val chequeRequestReceived: Action[AnyContent] = actions.default { implicit request =>
+    Ok(views.underConstructionPage())
+  }
 
   //TODO: remove once we have all pages
   val underConstruction: Action[AnyContent] = actions.default { implicit request =>

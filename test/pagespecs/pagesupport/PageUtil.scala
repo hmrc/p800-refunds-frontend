@@ -52,12 +52,27 @@ object PageUtil {
       .getOrElse(s"Element with id=[$idOrName] didn't have attribute 'value' ${e.toString()}")
   }
 
+  /**
+   * Gets the href attribute of element identified by id or name
+   */
+  def getHrefById(idOrName: String)(implicit webDriver: WebDriver): String = {
+    val e: WebBrowser.Element = findElement(idOrName)
+    e
+      .attribute("href")
+      .getOrElse(s"Element with id=[$idOrName] didn't have attribute 'href' ${e.toString()}")
+  }
+
   def findElement(idOrName: String)(implicit webDriver: WebDriver): Element = {
     WebBrowser.find(idOrName).getOrElse(throw new RuntimeException(s"Could not find element by id or name: [$idOrName]"))
   }
 
   def findElementByClassName(className: String)(implicit webDriver: WebDriver): Element = {
     WebBrowser.find(ClassNameQuery(className)).getOrElse(throw new RuntimeException(s"Could not find element by classname: [$className]"))
+  }
+
+  def switchToTab(handle: String)(implicit webDriver: WebDriver): Unit = {
+    webDriver.switchTo().window(handle)
+    ()
   }
 
   /**

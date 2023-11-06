@@ -18,6 +18,8 @@ GET        /check-your-reference                                                
 
 GET        /do-you-want-your-refund-via-bank-transfer                                       controllers.JourneyController.underConstruction
 
+GET        /your-cheque-will-be-posted-to-you                                               controllers.JourneyController.yourChequeWillBePostedToYou
+GET        /request-received                                                                controllers.JourneyController.chequeRequestReceived
 
 #we-need-you-to-confirm-your-identity:
 

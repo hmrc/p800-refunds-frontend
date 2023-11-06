@@ -103,11 +103,6 @@ trait ItSpec extends AnyFreeSpecLike
     ()
   }
 
-  def switchToTab(handle: String): Unit = {
-    webDriver.switchTo().window(handle)
-    ()
-  }
-
   lazy val pages = new Pages(baseUrl)
 
 }

@@ -1,0 +1,69 @@
+@*
+ * Copyright 2023 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import language.Messages
+@import uk.gov.hmrc.govukfrontend.views.html.components._
+@import views.html.templates.Layout
+@import config.AppConfig
+
+@this(
+        layout: Layout,
+        viewsHelpers: views.ViewsHelpers,
+        appConfig: AppConfig
+)
+
+@()(implicit request: Request[_])
+
+@import viewsHelpers.requestSupport._
+
+@title = @{
+    Messages.YourChequeWillBePostedToYou.`Your cheque will be posted to you`.show
+}
+
+@progressiveRevealHtmlContent = {
+    <p class="govuk-body">@{Messages.YourChequeWillBePostedToYou.`To update your address you need to:`.show}</p>
+    <ol>
+        <li>@{Html(Messages.YourChequeWillBePostedToYou.`Contact HMRC to tell us that you have changed address.`(appConfig.contactHmrcChangeDetailsUrl).show)}</li>
+        <li>@{Messages.YourChequeWillBePostedToYou.`Wait two days for HMRC to update your details.`.show}</li>
+        <li>@{Messages.YourChequeWillBePostedToYou.`Restart your refund request.`.show}</li>
+    </ol>
+}
+
+@* todo update the back link, Pawel working on that page atm *@
+@layout(pageTitle = Some(title), backLinkUrlOverride = Some(controllers.routes.JourneyController.doYouWantToSignIn.url)) {
+
+    <h1 class="govuk-heading-xl">@{title}</h1>
+
+    <p class="govuk-body">
+        @{Messages.YourChequeWillBePostedToYou.`Your cheque will be sent to the same address as your p800 letter.`.show}
+    </p>
+
+    @viewsHelpers.govukDetails(
+        Details(
+            id      = Some("different-address-reveal"),
+            open    = false,
+            summary = Text(Messages.YourChequeWillBePostedToYou.`My cheque needs to go to a different address`.show),
+            content = HtmlContent(progressiveRevealHtmlContent)
+        )
+    )
+
+    @viewsHelpers.govukButton(Button(
+        content = Text(Messages.YourChequeWillBePostedToYou.`Submit refund request`.show),
+        id      = Some("submit-refund-request"),
+        href    = Some(routes.JourneyController.chequeRequestReceived.url)
+    ))
+
+}

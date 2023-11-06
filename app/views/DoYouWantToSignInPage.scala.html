@@ -51,7 +51,7 @@
         @viewsHelpers.govukRadios(Radios(
             fieldset = Some(Fieldset(
                 legend = Some(Legend(
-                    content = Text(Messages.DoYouWantToSignInMessages.`Do you want to sign in?`.show),
+                    content = Text(title),
                     classes = "govuk-fieldset__legend--xl",
                     isPageHeading = true
                 ))
@@ -75,6 +75,9 @@
             )
         ).withFormField(form(key)))
 
-        @viewsHelpers.govukButton(Button(content = Text(Messages.CommonMessages.continue.show), attributes = Map("id" -> "submit")))
+        @viewsHelpers.govukButton(Button(
+            content = Text(Messages.CommonMessages.continue.show),
+            id      = Some("submit")
+        ))
     }
 }

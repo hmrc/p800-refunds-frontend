@@ -35,6 +35,8 @@ class AppConfig @Inject() (servicesConfig: ServicesConfig, configuration: Config
 
   val incomeTaxGeneralEnquiriesUrl: String = readConfigAsValidUrlString("urls.income-tax-general-enquiries")
 
+  val contactHmrcChangeDetailsUrl: String = readConfigAsValidUrlString("urls.contact-hmrc-change-details")
+
   /**
    * The application loads the configuration from the provided `configPath` and checks if it's a valid URL.
    * If it's not a valid URL, an exception is thrown.
