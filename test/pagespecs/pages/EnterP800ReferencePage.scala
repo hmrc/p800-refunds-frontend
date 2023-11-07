@@ -49,8 +49,8 @@ class EnterP800ReferencePage(baseUrl: String)(implicit webDriver: WebDriver) ext
         atXpath       = PageUtil.Xpath.mainContent,
         expectedLines =
           """
-            |It’s on the letter HMRC sent you about your tax calculation, also known as a ‘P800’.
-            |For example, ‘P800REFNO1’.
+            |It’s on the letter HMRC sent you about your tax calculation, also known as a ’P800’.
+            |For example, ’P800REFNO1’.
             |If you do not know your P800 reference
             |""".stripMargin
       )

@@ -16,6 +16,8 @@
 
 package language
 
+import models.AmountInPence
+
 object Messages {
 
   object CommonMessages {
@@ -71,8 +73,8 @@ object Messages {
       english = "What is your P800 reference?"
     )
 
-    val `It's on the letter HMRC sent you about your tax calculation, also known as a 'P800'.`: Message = Message(
-      english = "It’s on the letter HMRC sent you about your tax calculation, also known as a ‘P800’. For example, ‘P800REFNO1’."
+    val `It’s on the letter HMRC sent you about your tax calculation, also known as a ’P800’.`: Message = Message(
+      english = "It’s on the letter HMRC sent you about your tax calculation, also known as a ’P800’. For example, ’P800REFNO1’."
     )
 
     val `If you do not know your P800 reference`: Message = Message(
@@ -146,6 +148,38 @@ object Messages {
 
     val `Submit refund request`: Message = Message(
       english = "Submit refund request"
+    )
+  }
+
+  object ChequeRequestReceived {
+    val `Request received`: Message = Message(
+      english = "Request received"
+    )
+
+    val `P800 reference`: Message = Message(
+      english = "P800 reference"
+    )
+
+    def `Your refund of £x.xx will now be processed.`(amountInPence: AmountInPence): Message = Message(
+      english = s"Your refund of <strong>${amountInPence.gdsFormatInPounds}</strong> will now be processed."
+    )
+
+    val `You should allow up to 6 weeks for your cheque to arrive in the post.`: Message = Message(
+      english = "You should allow up to 6 weeks for your cheque to arrive in the post."
+    )
+
+    val `Print this page`: Message = Message(
+      english = "Print this page"
+    )
+
+    val `What happens next`: Message = Message(
+      english = "What happens next"
+    )
+
+    def `If you don’t receive your refund you can call or write...`(generalEnquiriesLink: String): Message = Message(
+      english =
+        s"""If you don’t receive your refund you can <a id="general-enquiries-link" class="govuk-link" href="$generalEnquiriesLink">
+           |call or write to the Income Tax helpline (opens in new tab)</a>. You will need your P800 reference.""".stripMargin
     )
   }
 

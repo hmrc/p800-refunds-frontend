@@ -24,7 +24,7 @@ import requests.RequestSupport
 import services.JourneyService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import io.scalaland.chimney.dsl._
-import models.{P800Reference, P800ReferenceValidation}
+import models.{AmountInPence, P800Reference, P800ReferenceValidation}
 import models.forms.{DoYouWantToSignInForm, EnterP800ReferenceForm}
 import models.forms.enumsforforms.DoYouWantToSignInFormValue
 import views.Views
@@ -110,7 +110,9 @@ class JourneyController @Inject() (
   }
 
   val chequeRequestReceived: Action[AnyContent] = actions.default { implicit request =>
-    Ok(views.underConstructionPage())
+    //todo get these from journey
+    val (dummyP800Ref, refundAmountInPence) = P800Reference("P800REFNO1") -> AmountInPence(231.60)
+    Ok(views.chequeRequestReceivedPage(dummyP800Ref, refundAmountInPence))
   }
 
   //TODO: remove once we have all pages

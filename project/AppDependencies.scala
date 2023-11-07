@@ -5,7 +5,7 @@ import sbt._
 
 object AppDependencies {
 
-  private val bootstrapVersion = "7.22.0"
+  private val bootstrapVersion = "7.23.0"
   private val hmrcMongoVersion = "1.3.0"
 
   val compile: Seq[ModuleID] = Seq(
@@ -16,7 +16,7 @@ object AppDependencies {
     "com.beachape"      %% "enumeratum-play"            % "1.7.3",
     "org.typelevel"     %% "cats-core"                  % "2.10.0",
     "org.julienrf"      %% "play-json-derived-codecs"   % "7.0.0", //choose carefully
-    "io.scalaland"      %% "chimney"                    % "0.8.1"
+    "io.scalaland"      %% "chimney"                    % "0.8.2"
   // format: ON
   )
 

@@ -70,6 +70,14 @@ object PageUtil {
     WebBrowser.find(ClassNameQuery(className)).getOrElse(throw new RuntimeException(s"Could not find element by classname: [$className]"))
   }
 
+  def elementDisplayed(idOrName: String)(implicit webDriver: WebDriver): Boolean = {
+    WebBrowser.find(idOrName).isDefined
+  }
+
+  def elementDisplayedByClassName(className: String)(implicit webDriver: WebDriver): Boolean = {
+    WebBrowser.find(ClassNameQuery(className)).isDefined
+  }
+
   def switchToTab(handle: String)(implicit webDriver: WebDriver): Unit = {
     webDriver.switchTo().window(handle)
     ()
