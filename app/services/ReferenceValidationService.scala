@@ -32,7 +32,7 @@ class ReferenceValidationService @Inject() (
 )(implicit ec: ExecutionContext) {
 
   def validateReference(p800Reference: P800Reference)(implicit requestHeader: RequestHeader): Future[ReferenceValidationResponse] = {
-    val request = ReferenceValidationRequest(p800Reference.value)
+    val request: ReferenceValidationRequest = ReferenceValidationRequest(p800Reference.value)
 
     referenceValidationConnector.validateReference(request).map { httpResponse: HttpResponse =>
       httpResponse.status match {

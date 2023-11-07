@@ -56,7 +56,7 @@ class CheckYourReferencePageSpec extends ItSpec {
     pages.enterP800ReferencePage.assertPageIsDisplayed()
   }
 
-  "Clicking 'Back' redirects back to start page" in {
+  "Clicking 'Back' redirects back to 'What is your P800 Reference' page" in {
     pages.checkYourReferencePage.open()
     pages.checkYourReferencePage.assertPageIsDisplayed()
     pages.checkYourReferencePage.clickBackButton()

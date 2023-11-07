@@ -47,4 +47,6 @@ class CannotConfirmReferencePage(baseUrl: String)(implicit webDriver: WebDriver)
     )
   }
 
+  def clickTryAgain(): Unit = PageUtil.clickByIdOrName("try-again")
+
 }
