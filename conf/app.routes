@@ -11,11 +11,10 @@ POST       /do-you-want-to-sign-in                                              
 GET        /enter-P800-reference                                                            controllers.JourneyController.enterP800Reference
 POST       /enter-P800-reference                                                            controllers.JourneyController.enterP800ReferenceSubmit
 
-
-GET        /we-cannot-confirm-your-reference                                                controllers.JourneyController.cannotConfirmReference
-
 GET        /check-your-reference                                                            controllers.JourneyController.checkYourReference
 POST       /check-your-reference                                                            controllers.JourneyController.checkYourReferenceSubmit
+
+GET        /we-cannot-confirm-your-reference                                                controllers.JourneyController.cannotConfirmReference
 
 GET        /request-your-refund-by-bank-transfer                                            controllers.JourneyController.requestRefundByBankTransfer
 
