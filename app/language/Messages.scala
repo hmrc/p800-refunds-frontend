@@ -97,6 +97,7 @@ object Messages {
       english = "Enter your P800 reference in the correct format"
     )
   }
+
   object CheckYourReferenceMessages {
     val `Check your reference`: Message = Message(
       english = "Check your reference"
@@ -122,6 +123,7 @@ object Messages {
       english = "Select yes if you entered the correct reference"
     )
   }
+
   object CannotConfirmReference {
     val `We cannot confirm your reference`: Message = Message(
       english = "We cannot confirm your reference"

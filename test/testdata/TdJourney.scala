@@ -43,7 +43,7 @@ trait TdJourney { dependencies: TdBase =>
     p800ReferenceValidation = P800ReferenceValidation.NotValidatedYet
   )
 
-  lazy val journeyWhatIsYourP800ReferenceInvalid: JourneyWhatIsYourP800Reference = JourneyWhatIsYourP800Reference(
+  lazy val journeyWhatIsYourP800InvalidReference: JourneyWhatIsYourP800Reference = JourneyWhatIsYourP800Reference(
     _id                     = journeyId,
     createdAt               = dependencies.instant,
     p800Reference           = dependencies.p800Reference,

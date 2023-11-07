@@ -18,6 +18,7 @@ package pagespecs
 
 import testdata.TdAll
 import testsupport.ItSpec
+import testsupport.stubs.ReferenceValidationConnectorStub
 
 class CheckYourReferencePageSpec extends ItSpec {
 
@@ -28,11 +29,23 @@ class CheckYourReferencePageSpec extends ItSpec {
   }
 
   "Selecting 'Yes' with a valid reference redirects to 'Do you want your refund via bank transfer?' page" in {
+    ReferenceValidationConnectorStub.validateReference2xxValid
+
     pages.checkYourReferencePage.open()
     pages.checkYourReferencePage.assertPageIsDisplayed()
     pages.checkYourReferencePage.selectYes()
     pages.checkYourReferencePage.clickSubmit()
     pages.requestYourRefundByBankTransferPage.assertPageIsDisplayed()
+  }
+
+  "Selecting 'Yes' with an invalid reference redirects to 'We cannot confirm your reference' page" in {
+    ReferenceValidationConnectorStub.validateReference2xxInvalid
+
+    pages.checkYourReferencePage.open()
+    pages.checkYourReferencePage.assertPageIsDisplayed()
+    pages.checkYourReferencePage.selectYes()
+    pages.checkYourReferencePage.clickSubmit()
+    pages.cannotConfirmReferencePage.assertPageIsDisplayed()
   }
 
   "Selecting 'No, I need to change it' redirects to 'What is your P800 Reference' page" in {

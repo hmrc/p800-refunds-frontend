@@ -14,8 +14,18 @@
  * limitations under the License.
  */
 
-package testsupport.stubs
+package models
 
-object ExampleStub {
+import play.api.libs.json.{OFormat, Json}
 
+final case class ReferenceValidationRequest(reference: String)
+
+object ReferenceValidationRequest {
+  implicit val format: OFormat[ReferenceValidationRequest] = Json.format[ReferenceValidationRequest]
+}
+
+final case class ReferenceValidationResponse(isValid: Boolean)
+
+object ReferenceValidationResponse {
+  implicit val format: OFormat[ReferenceValidationResponse] = Json.format[ReferenceValidationResponse]
 }

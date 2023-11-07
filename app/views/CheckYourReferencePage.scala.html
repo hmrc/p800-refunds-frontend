@@ -70,6 +70,9 @@
             )
         ).withFormField(form(key)))
 
-        @viewsHelpers.govukButton(Button(content = Text(Messages.CommonMessages.continue.show), attributes = Map("id" -> "submit")))
+        @viewsHelpers.govukButton(Button(
+            content = Text(Messages.CommonMessages.continue.show),
+            id = Some("submit")
+        ))
     }
 }
