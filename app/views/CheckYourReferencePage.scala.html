@@ -1,0 +1,78 @@
+@*
+ * Copyright 2023 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import language.Messages
+@import models.forms.enumsforforms.CheckYourReferenceFormValue
+@import uk.gov.hmrc.govukfrontend.views.Implicits.{RichRadios, RichFormErrors}
+@import uk.gov.hmrc.govukfrontend.views.html.components._
+@import views.ViewsHelpers
+@import views.html.templates.Layout
+
+@this(
+    layout: Layout,
+    viewsHelpers: ViewsHelpers
+)
+
+@(
+    reference: String,
+    form: Form[CheckYourReferenceFormValue],
+    submitUrl: Call
+)(implicit request: Request[_])
+
+@import viewsHelpers.requestSupport._
+
+@heading = @{
+    Messages.CheckYourReferenceMessages.`Check your reference`.show
+}
+
+@key = @{
+    "reference-check"
+}
+
+@layout(pageTitle = Some(heading), backLinkUrlOverride = Some(controllers.routes.JourneyController.enterP800Reference.url)) {
+    @if(form.errors.nonEmpty) {
+        @viewsHelpers.govukErrorSummary(ErrorSummary(errorList = form.errors.asTextErrorLinks, title = Text(Messages.CommonMessages.`There is a problem`.show)))
+    }
+
+    <h1 class="govuk-heading-xl">@heading</h1>
+    <p class="govuk-body">@{Html(Messages.CheckYourReferenceMessages.`You entered X`(reference).show)}</p>
+
+    <h2 class="govuk-heading-m">@{Messages.CheckYourReferenceMessages.`Is this correct?`.show}</h2>
+
+    @viewsHelpers.formWithCsrf(action = submitUrl) {
+        @viewsHelpers.govukRadios(Radios(
+            idPrefix = Some(key),
+            name = key,
+            items = Seq(
+                RadioItem(
+                    content = Text(Messages.CheckYourReferenceMessages.`Yes`.show),
+                    value = Some("Yes"),
+                    checked = form.data.values.toList.contains("Yes")
+                ),
+                RadioItem(
+                    content = Text(Messages.CheckYourReferenceMessages.`No, I need to change it`.show),
+                    value = Some("No"),
+                    checked = form.data.values.toList.contains("No")
+                )
+            )
+        ).withFormField(form(key)))
+
+        @viewsHelpers.govukButton(Button(
+            content = Text(Messages.CommonMessages.continue.show),
+            id = Some("submit")
+        ))
+    }
+}

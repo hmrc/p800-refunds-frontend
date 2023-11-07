@@ -98,6 +98,32 @@ object Messages {
     )
   }
 
+  object CheckYourReferenceMessages {
+    val `Check your reference`: Message = Message(
+      english = "Check your reference"
+    )
+
+    def `You entered X`(reference: String): Message = Message(
+      english = s"You entered <strong>$reference</strong>."
+    )
+
+    val `Is this correct?`: Message = Message(
+      english = "Is this correct?"
+    )
+
+    val `Yes`: Message = Message(
+      english = "Yes"
+    )
+
+    val `No, I need to change it`: Message = Message(
+      english = "No, I need to change it"
+    )
+
+    val `Select yes if you entered the correct reference`: Message = Message(
+      english = "Select yes if you entered the correct reference"
+    )
+  }
+
   object CannotConfirmReference {
     val `We cannot confirm your reference`: Message = Message(
       english = "We cannot confirm your reference"

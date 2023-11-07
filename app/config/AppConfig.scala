@@ -39,6 +39,8 @@ class AppConfig @Inject() (servicesConfig: ServicesConfig, configuration: Config
 
   val generalEnquiriesUrl: String = readConfigAsValidUrlString("urls.general-enquiries")
 
+  val p800RefundsStubsUrl: String = servicesConfig.baseUrl("p800-refunds-stubs")
+
   /**
    * The application loads the configuration from the provided `configPath` and checks if it's a valid URL.
    * If it's not a valid URL, an exception is thrown.
