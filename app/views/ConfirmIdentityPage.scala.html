@@ -1,0 +1,63 @@
+@*
+ * Copyright 2023 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import language.Messages
+@import uk.gov.hmrc.govukfrontend.views.html.components._
+@import views.html.templates.Layout
+
+@this(
+    layout: Layout,
+    viewsHelpers: views.ViewsHelpers
+)
+
+@()(implicit request: Request[_])
+
+@import viewsHelpers.requestSupport._
+
+@title = @{
+    Messages.ConfirmIdentity.`We need you to confirm your identity`.show
+}
+
+@layout(pageTitle = Some(title), backLinkUrlOverride = Some(controllers.routes.JourneyController.doYouWantToSignIn.url)) {
+
+    <h1 class="govuk-heading-xl">@title</h1>
+
+    <p class="govuk-body">
+        @{Messages.ConfirmIdentity.`Before we pay your refund`.show}
+    </p>
+
+    <p class="govuk-body">
+        @{Messages.ConfirmIdentity.`We will need to ask you for your`.show}
+    </p>
+
+    <ul  class="govuk-list govuk-list--bullet">
+        <li>@{Messages.ConfirmIdentity.`name`.show}</li>
+        <li>@{Messages.ConfirmIdentity.`address`.show}</li>
+        <li>@{Messages.ConfirmIdentity.`date of birth`.show}</li>
+        <li>@{Messages.ConfirmIdentity.`National Insurance number`.show}</li>
+    </ul>
+
+    <p class="govuk-body">
+        @{Messages.ConfirmIdentity.`We do this to protect your security`.show}
+    </p>
+
+
+    @viewsHelpers.govukButton(Button(
+        content = Text(Messages.CommonMessages.`continue`.show),
+        id      = Some("submit")
+    ))
+
+}

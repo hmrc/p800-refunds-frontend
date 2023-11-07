@@ -23,7 +23,7 @@ GET        /request-received                                                    
 
 #we-need-you-to-confirm-your-identity:
 
-GET        /we-need-you-to-confirm-your-identity                                            controllers.JourneyController.underConstruction
+GET        /we-need-you-to-confirm-your-identity                                            controllers.JourneyController.confirmIdentity
 GET        /we-need-you-to-confirm-your-identity/what-is-your-full-name                     controllers.JourneyController.underConstruction
 GET        /we-need-you-to-confirm-your-identity/what-is-your-date-of-birth                 controllers.JourneyController.underConstruction
 GET        /we-need-you-to-confirm-your-identity/what-is-your-address                       controllers.JourneyController.underConstruction
