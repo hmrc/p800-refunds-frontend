@@ -28,7 +28,8 @@ class Views @Inject() (
     val checkYourReferencePage:          views.html.CheckYourReferencePage,
     val cannotConfirmReferencePage:      views.html.CannotConfirmReferencePage,
     val yourChequeWillBePostedToYouPage: views.html.chequejourney.YourChequeWillBePostedToYouPage,
-    val chequeRequestReceivedPage:       views.html.chequejourney.ChequeRequestReceivedPage
+    val chequeRequestReceivedPage:       views.html.chequejourney.ChequeRequestReceivedPage,
+    val confirmIdentityPage:             views.html.ConfirmIdentityPage
 )
 
 class ViewsTestOnly @Inject() (

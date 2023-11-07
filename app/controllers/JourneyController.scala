@@ -163,6 +163,10 @@ class JourneyController @Inject() (
     Ok(views.chequeRequestReceivedPage(dummyP800Ref, refundAmountInPence))
   }
 
+  val confirmIdentity: Action[AnyContent] = actions.default { implicit request =>
+    Ok(views.confirmIdentityPage())
+  }
+
   //TODO: remove once we have all pages
   val underConstruction: Action[AnyContent] = actions.default { implicit request =>
     Ok(views.underConstructionPage())

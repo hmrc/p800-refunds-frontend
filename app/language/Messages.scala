@@ -143,6 +143,41 @@ object Messages {
 
   }
 
+  object ConfirmIdentity {
+    val `We need you to confirm your identity`: Message = Message(
+      english = "We need you to confirm your identity"
+    )
+
+    val `Before we pay your refund`: Message = Message(
+      english = "Before we pay your refund, we need to ask you some security questions to confirm your identity."
+    )
+
+    val `We will need to ask you for your`: Message = Message(
+      english = "We will need to ask you for your:"
+    )
+
+    val `name`: Message = Message(
+      english = "name"
+    )
+
+    val `address`: Message = Message(
+      english = "address"
+    )
+
+    val `date of birth`: Message = Message(
+      english = "date of birth"
+    )
+
+    val `National Insurance number`: Message = Message(
+      english = "National Insurance number"
+    )
+
+    val `We do this to protect your security`: Message = Message(
+      english = "We do this to protect your security."
+    )
+
+  }
+
   object YourChequeWillBePostedToYou {
     val `Your cheque will be posted to you`: Message = Message(
       english = "Your cheque will be posted to you"
