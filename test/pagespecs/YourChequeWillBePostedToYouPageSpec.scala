@@ -16,6 +16,7 @@
 
 package pagespecs
 
+import testdata.TdAll
 import testsupport.ItSpec
 
 class YourChequeWillBePostedToYouPageSpec extends ItSpec {
@@ -34,9 +35,11 @@ class YourChequeWillBePostedToYouPageSpec extends ItSpec {
   }
 
   "back button sends user to do you want your refund via bank transfer page" in {
+    addJourneyIdToSession(TdAll.journeyId)
+    upsertJourneyToDatabase(TdAll.journeyCheckYourReferenceValid)
     pages.yourChequeWillBePostedToYouPage.open()
     pages.yourChequeWillBePostedToYouPage.assertPageIsDisplayed()
     pages.yourChequeWillBePostedToYouPage.clickBackButton()
-    //pawel working on this page atm. todo add assertion once he's done.
+    pages.doYouWantYourRefundViaBankTransferPage.assertPageIsDisplayed()
   }
 }
