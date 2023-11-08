@@ -149,7 +149,7 @@ object Messages {
     )
 
     val `Enter your name as it appears on your tax calculation`: Message = Message(
-      english = "Enter your name as it appears on your tax calculation letter or 'P800'."
+      english = "Enter your name as it appears on your tax calculation letter or ‘P800’."
     )
 
   }
