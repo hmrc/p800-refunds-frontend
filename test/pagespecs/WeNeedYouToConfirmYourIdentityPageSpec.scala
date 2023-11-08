@@ -18,11 +18,11 @@ package pagespecs
 
 import testsupport.ItSpec
 
-class ConfirmIdentityPageSpec extends ItSpec {
+class WeNeedYouToConfirmYourIdentityPageSpec extends ItSpec {
 
   "/request-received renders the cheque request received page" in {
-    pages.confirmIdentityPage.open()
-    pages.confirmIdentityPage.assertPageIsDisplayed()
+    pages.weNeedYouToConfirmYourIdentityPage.open()
+    pages.weNeedYouToConfirmYourIdentityPage.assertPageIsDisplayed()
   }
 
 }

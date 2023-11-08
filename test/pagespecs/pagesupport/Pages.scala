@@ -27,9 +27,9 @@ class Pages(baseUrl: String)(implicit webDriver: WebDriver) {
   val doYouWantToSignInPage = new DoYouWantToSignInPage(baseUrl = baseUrl)
   val enterP800ReferencePage = new EnterP800ReferencePage(baseUrl = baseUrl)
   val cannotConfirmReferencePage = new CannotConfirmReferencePage(baseUrl = baseUrl)
-  val confirmIdentityPage = new ConfirmIdentityPage(baseUrl = baseUrl)
+  val weNeedYouToConfirmYourIdentityPage = new WeNeedYouToConfirmYourIdentityPage(baseUrl = baseUrl)
   val checkYourReferencePage = new CheckYourReferencePage(baseUrl = baseUrl)
-  val requestYourRefundByBankTransferPage = new RequestYourRefundByBankTransferPage(baseUrl = baseUrl)
+  val doYouWantYourRefundViaBankTransferPage = new DoYouWantYourRefundViaBankTransferPage(baseUrl = baseUrl)
 
   val yourChequeWillBePostedToYouPage = new YourCheckWillBePostedToYouPage(baseUrl = baseUrl)
   val chequeRequestReceivedPage = new ChequeRequestReceivedPage(baseUrl = baseUrl)

@@ -16,8 +16,7 @@
 
 package testdata
 
-import models.P800ReferenceValidation
-import models.journeymodels.{JourneyDoYouWantToSignInNo, JourneyId, JourneyStarted, JourneyWhatIsYourP800Reference}
+import models.journeymodels.{JourneyCheckYourReferenceInvalid, JourneyCheckYourReferenceValid, JourneyDoYouWantToSignInNo, JourneyDoYouWantToSignInYes, JourneyId, JourneyStarted, JourneyWhatIsYourP800Reference}
 
 /**
  * Test Data (Td) Journey. It has journey examples in all possible states.
@@ -31,23 +30,32 @@ trait TdJourney { dependencies: TdBase =>
     createdAt = dependencies.instant
   )
 
+  lazy val journeyDoYouWantToSignInYes: JourneyDoYouWantToSignInYes = JourneyDoYouWantToSignInYes(
+    _id       = journeyId,
+    createdAt = dependencies.instant
+  )
+
   lazy val journeyDoYouWantToSignInNo: JourneyDoYouWantToSignInNo = JourneyDoYouWantToSignInNo(
     _id       = journeyId,
     createdAt = dependencies.instant
   )
 
   lazy val journeyWhatIsYourP800Reference: JourneyWhatIsYourP800Reference = JourneyWhatIsYourP800Reference(
-    _id                     = journeyId,
-    createdAt               = dependencies.instant,
-    p800Reference           = dependencies.p800Reference,
-    p800ReferenceValidation = P800ReferenceValidation.NotValidatedYet
+    _id           = journeyId,
+    createdAt     = dependencies.instant,
+    p800Reference = dependencies.p800Reference
   )
 
-  lazy val journeyWhatIsYourP800InvalidReference: JourneyWhatIsYourP800Reference = JourneyWhatIsYourP800Reference(
-    _id                     = journeyId,
-    createdAt               = dependencies.instant,
-    p800Reference           = dependencies.p800Reference,
-    p800ReferenceValidation = P800ReferenceValidation.Invalid
+  lazy val journeyCheckYourReferenceValid: JourneyCheckYourReferenceValid = JourneyCheckYourReferenceValid(
+    _id           = journeyId,
+    createdAt     = dependencies.instant,
+    p800Reference = dependencies.p800Reference
+  )
+
+  lazy val journeyCheckYourReferenceInvalid: JourneyCheckYourReferenceInvalid = JourneyCheckYourReferenceInvalid(
+    _id           = journeyId,
+    createdAt     = dependencies.instant,
+    p800Reference = dependencies.p800Reference
   )
 
 }

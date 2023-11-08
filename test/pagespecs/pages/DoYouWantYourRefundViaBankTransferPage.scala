@@ -19,12 +19,12 @@ package pagespecs.pages
 import org.openqa.selenium.WebDriver
 import pagespecs.pagesupport.{ContentExpectation, Page, PageUtil}
 
-class RequestYourRefundByBankTransferPage(baseUrl: String)(implicit webDriver: WebDriver) extends Page(
+class DoYouWantYourRefundViaBankTransferPage(baseUrl: String)(implicit webDriver: WebDriver) extends Page(
   baseUrl,
-  path = "/get-an-income-tax-refund/request-your-refund-by-bank-transfer"
+  path = "/get-an-income-tax-refund/do-you-want-your-refund-via-bank-transfer"
 ) {
 
-  override def expectedH1: String = "Under Construction"
+  override def expectedH1: String = "Do you want your refund by bank transfer?"
 
   def assertPageIsDisplayed(potentialErrors: ContentExpectation*): Unit = withPageClue {
     val contentExpectations: Seq[ContentExpectation] = Seq(
@@ -32,8 +32,11 @@ class RequestYourRefundByBankTransferPage(baseUrl: String)(implicit webDriver: W
         atXpath       = PageUtil.Xpath.mainContent,
         expectedLines =
           """
-            |Under Construction
-            |This page has not been developed yet
+            |Do you want your refund by bank transfer?
+            |Bank transfers are faster, safer and better for the environment. You'll need to have your online or mobile banking details ready.
+            |Yes
+            |No, I want a cheque
+            |Continue
             |""".stripMargin
       )
     ) ++ potentialErrors
@@ -44,5 +47,28 @@ class RequestYourRefundByBankTransferPage(baseUrl: String)(implicit webDriver: W
       title               = PageUtil.standardTitle(expectedH1),
       contentExpectations = contentExpectations: _*
     )
+  }
+
+  def assertPageShowsWithErrors(): Unit = assertPageIsDisplayed(
+    ContentExpectation(
+      atXpath       = PageUtil.Xpath.errorSummary,
+      expectedLines =
+        """
+          |There is a problem
+          |Select if you want to receive a bank transfer or a cheque
+          |""".stripMargin
+    ),
+    ContentExpectation(
+      atXpath       = PageUtil.Xpath.errorMessage,
+      expectedLines = """Select if you want to receive a bank transfer or a cheque"""
+    )
+  )
+
+  def selectYes(): Unit = withPageClue {
+    PageUtil.clickByIdOrName("do-you-want-your-refund-via-bank-transfer")
+  }
+
+  def selectNo(): Unit = withPageClue {
+    PageUtil.clickByIdOrName("do-you-want-your-refund-via-bank-transfer-2")
   }
 }

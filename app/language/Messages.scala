@@ -244,6 +244,29 @@ object Messages {
     )
   }
 
+  object DoYouWantYourRefundViaBankTransfer {
+
+    val `Do you want your refund by bank transfer?`: Message = Message(
+      english = "Do you want your refund by bank transfer?"
+    )
+
+    val `Bank transfers are faster, safer, ...`: Message = Message(
+      english = "Bank transfers are faster, safer and better for the environment. You'll need to have your online or mobile banking details ready."
+    )
+
+    val `Yes`: Message = Message(
+      english = "Yes"
+    )
+
+    val `No, I want a cheque`: Message = Message(
+      english = "No, I want a cheque"
+    )
+
+    val `Select if you want to receive a bank transfer or a cheque`: Message = Message(
+      english = "Select if you want to receive a bank transfer or a cheque"
+    )
+
+  }
   object ServicePhase {
 
     val serviceName: Message = Message(

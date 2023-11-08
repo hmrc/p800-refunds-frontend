@@ -22,14 +22,16 @@ import javax.inject.Inject
 
 class Views @Inject() (
     //TODO: remove once all pages are developed
-    val underConstructionPage:           views.html.UnderConstructionPage,
-    val doYouWantToSignInPage:           views.html.DoYouWantToSignInPage,
-    val enterP800ReferencePage:          views.html.EnterP800ReferencePage,
-    val checkYourReferencePage:          views.html.CheckYourReferencePage,
-    val cannotConfirmReferencePage:      views.html.CannotConfirmReferencePage,
-    val yourChequeWillBePostedToYouPage: views.html.chequejourney.YourChequeWillBePostedToYouPage,
-    val chequeRequestReceivedPage:       views.html.chequejourney.ChequeRequestReceivedPage,
-    val confirmIdentityPage:             views.html.ConfirmIdentityPage
+    val underConstructionPage:                  views.html.UnderConstructionPage,
+    val doYouWantToSignInPage:                  views.html.DoYouWantToSignInPage,
+    val enterP800ReferencePage:                 views.html.EnterP800ReferencePage,
+    val checkYourReferencePage:                 views.html.CheckYourReferencePage,
+    val cannotConfirmReferencePage:             views.html.CannotConfirmReferencePage,
+    val yourChequeWillBePostedToYouPage:        views.html.chequejourney.YourChequeWillBePostedToYouPage,
+    val chequeRequestReceivedPage:              views.html.chequejourney.ChequeRequestReceivedPage,
+    val weNeedYouToConfirmYourIdentityPage:     views.html.WeNeedYouToConfirmYourIdentityPage,
+    val doYouWantYourRefundViaBankTransferPage: views.html.DoYouWantYourRefundViaBankTransferPage
+
 )
 
 class ViewsTestOnly @Inject() (

@@ -18,15 +18,16 @@ package controllers
 
 import action.{Actions, JourneyRequest}
 import config.AppConfig
+import io.scalaland.chimney.dsl._
+import models.forms.enumsforforms.{CheckYourReferenceFormValue, DoYouWantToSignInFormValue, DoYouWantYourRefundViaBankTransferFormValue}
+import models.forms.{CheckYourReferenceForm, DoYouWantToSignInForm, DoYouWantYourRefundViaBankTransferForm, EnterP800ReferenceForm}
 import models.journeymodels._
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, RequestHeader, Result}
+import models.{AmountInPence, P800Reference, ReferenceValidationResponse}
+import play.api.mvc._
 import requests.RequestSupport
 import services.{JourneyService, ReferenceValidationService}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
-import io.scalaland.chimney.dsl._
-import models.{AmountInPence, P800Reference, P800ReferenceValidation, ReferenceValidationResponse}
-import models.forms.{CheckYourReferenceForm, DoYouWantToSignInForm, EnterP800ReferenceForm}
-import models.forms.enumsforforms.{CheckYourReferenceFormValue, DoYouWantToSignInFormValue}
+import util.JourneyLogger
 import views.Views
 
 import javax.inject.{Inject, Singleton}
@@ -66,7 +67,10 @@ class JourneyController @Inject() (
         form      = formWithErrors,
         submitUrl = controllers.routes.JourneyController.doYouWantToSignInSubmit
       ))), {
-        case DoYouWantToSignInFormValue.Yes => Future.successful(Redirect(appConfig.ptaSignInUrl))
+        case DoYouWantToSignInFormValue.Yes =>
+          journeyService
+            .upsert(request.journey.transformInto[JourneyDoYouWantToSignInYes])
+            .map(_ => Redirect(appConfig.ptaSignInUrl))
         case DoYouWantToSignInFormValue.No =>
           journeyService
             .upsert(request.journey.transformInto[JourneyDoYouWantToSignInNo])
@@ -99,7 +103,6 @@ class JourneyController @Inject() (
   private def journeyIntoWhatIsYourP800Reference(p800Reference: P800Reference)(implicit request: JourneyRequest[AnyContent]): JourneyWhatIsYourP800Reference =
     request.journey.into[JourneyWhatIsYourP800Reference]
       .withFieldConst(_.p800Reference, p800Reference)
-      .withFieldConst(_.p800ReferenceValidation, P800ReferenceValidation.NotValidatedYet)
       .transform
 
   val checkYourReference: Action[AnyContent] = actions.journeyAction { implicit request =>
@@ -121,35 +124,42 @@ class JourneyController @Inject() (
       case journey: JourneyWhatIsYourP800Reference =>
         bindCheckReferenceSubmitForm(journey)
       case _ =>
-        Future.successful(Redirect(controllers.testonly.routes.TestOnlyController.govUkRouteIn))
+        // TODO: Handle other cases more appropriately
+        throw new Exception("Check your reference page with unexpected state")
     }
   }
 
   private def bindCheckReferenceSubmitForm(journey: JourneyWhatIsYourP800Reference)(implicit request: JourneyRequest[AnyContent]): Future[Result] =
     CheckYourReferenceForm.form.bindFromRequest().fold(
       formWithErrors => Future.successful(BadRequest(views.checkYourReferencePage(
-        reference = journey.p800Reference.value,
+        reference = journey.p800Reference.value, //TODO talk about type safety
         form      = formWithErrors,
         submitUrl = controllers.routes.JourneyController.checkYourReferenceSubmit
       ))),
       {
-        case CheckYourReferenceFormValue.Yes => validateReference(journey.p800Reference)
+        case CheckYourReferenceFormValue.Yes => validateReference(journey)
         case CheckYourReferenceFormValue.No  => Future.successful(Redirect(controllers.routes.JourneyController.enterP800Reference))
       }
     )
 
-  private def validateReference(p800Reference: P800Reference)(implicit requestHeader: RequestHeader): Future[Result] =
-    referenceValidationService.validateReference(p800Reference).map {
-      case ReferenceValidationResponse(true)  => Redirect(controllers.routes.JourneyController.requestRefundByBankTransfer)
-      case ReferenceValidationResponse(false) => Redirect(controllers.routes.JourneyController.cannotConfirmReference)
+  private def validateReference(journey: JourneyWhatIsYourP800Reference)(implicit request: Request[_]): Future[Result] =
+    referenceValidationService.validateReference(journey.p800Reference).flatMap {
+      case ReferenceValidationResponse(true) =>
+        journeyService
+          .upsert(
+            journey.transformInto[JourneyCheckYourReferenceValid]
+          )
+          .map(_ => Redirect(controllers.routes.JourneyController.doYouWantYourRefundViaBankTransfer))
+      case ReferenceValidationResponse(false) =>
+        journeyService
+          .upsert(
+            journey.transformInto[JourneyCheckYourReferenceInvalid]
+          )
+          .map(_ => Redirect(controllers.routes.JourneyController.cannotConfirmReference))
     }
 
   val cannotConfirmReference: Action[AnyContent] = actions.default { implicit request =>
     Ok(views.cannotConfirmReferencePage())
-  }
-
-  val requestRefundByBankTransfer: Action[AnyContent] = actions.default { implicit request =>
-    Ok(views.underConstructionPage())
   }
 
   val yourChequeWillBePostedToYou: Action[AnyContent] = actions.default { implicit request =>
@@ -162,8 +172,38 @@ class JourneyController @Inject() (
     Ok(views.chequeRequestReceivedPage(dummyP800Ref, refundAmountInPence))
   }
 
-  val confirmIdentity: Action[AnyContent] = actions.default { implicit request =>
-    Ok(views.confirmIdentityPage())
+  val weNeedYouToConfirmYourIdentity: Action[AnyContent] = actions.default { implicit request =>
+    Ok(views.weNeedYouToConfirmYourIdentityPage())
+  }
+
+  val doYouWantYourRefundViaBankTransfer: Action[AnyContent] = actions.default { implicit request =>
+    Ok(views.doYouWantYourRefundViaBankTransferPage(
+      DoYouWantYourRefundViaBankTransferForm.form
+    ))
+  }
+
+  val doYouWantYourRefundViaBankTransferSubmit: Action[AnyContent] = actions.journeyAction.async { implicit request =>
+    request.journey match {
+      case j: JourneyCheckYourReferenceValid =>
+        DoYouWantYourRefundViaBankTransferForm.form.bindFromRequest().fold(
+          formWithErrors => Future.successful(BadRequest(views.doYouWantYourRefundViaBankTransferPage(
+            form = formWithErrors
+          ))), {
+            case DoYouWantYourRefundViaBankTransferFormValue.Yes =>
+              journeyService
+                .upsert(j.transformInto[JourneyDoYouWantYourRefundViaBankTransferYes])
+                .map(_ => Redirect(controllers.routes.JourneyController.weNeedYouToConfirmYourIdentity))
+            case DoYouWantYourRefundViaBankTransferFormValue.No =>
+              journeyService
+                .upsert(j.transformInto[JourneyDoYouWantYourRefundViaBankTransferNo])
+                .map(_ => Redirect(controllers.routes.JourneyController.yourChequeWillBePostedToYou))
+          }
+        )
+      case j =>
+        JourneyLogger.error(s"Unsupported journey state ${j.name}, redirecting to corresponding page")
+        // TODO: Handle other cases more appropriately
+        throw new Exception("Check your reference page with unexpected state")
+    }
   }
 
   //TODO: remove once we have all pages
