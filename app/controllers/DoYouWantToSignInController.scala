@@ -45,16 +45,14 @@ class DoYouWantToSignInController @Inject() (
 
   val get: Action[AnyContent] = actions.journeyAction { implicit request =>
     Ok(views.doYouWantToSignInPage(
-      form      = DoYouWantToSignInForm.form,
-      submitUrl = controllers.routes.DoYouWantToSignInController.post
+      form = DoYouWantToSignInForm.form
     ))
   }
 
   val post: Action[AnyContent] = actions.journeyAction.async { implicit request =>
     DoYouWantToSignInForm.form.bindFromRequest().fold(
       formWithErrors => Future.successful(BadRequest(views.doYouWantToSignInPage(
-        form      = formWithErrors,
-        submitUrl = controllers.routes.DoYouWantToSignInController.post
+        form = formWithErrors
       ))), {
         case DoYouWantToSignInFormValue.Yes =>
           journeyService

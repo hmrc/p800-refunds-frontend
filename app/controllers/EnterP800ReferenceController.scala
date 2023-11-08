@@ -43,16 +43,14 @@ class EnterP800ReferenceController @Inject() (
 
   val get: Action[AnyContent] = actions.journeyAction { implicit request =>
     Ok(views.enterP800ReferencePage(
-      form      = EnterP800ReferenceForm.form,
-      submitUrl = controllers.routes.EnterP800ReferenceController.post
+      form = EnterP800ReferenceForm.form
     ))
   }
 
   val post: Action[AnyContent] = actions.journeyAction.async { implicit request =>
     EnterP800ReferenceForm.form.bindFromRequest().fold(
       formWithErrors => Future.successful(BadRequest(views.enterP800ReferencePage(
-        form      = formWithErrors,
-        submitUrl = controllers.routes.EnterP800ReferenceController.post
+        form = formWithErrors
       ))),
       p800Reference => {
         journeyService

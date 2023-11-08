@@ -28,8 +28,7 @@
 
 @(
     reference: P800Reference,
-    form: Form[CheckYourReferenceFormValue],
-    submitUrl: Call
+    form: Form[CheckYourReferenceFormValue]
 )(implicit request: Request[_])
 
 @import viewsHelpers.requestSupport._
@@ -56,7 +55,7 @@
 
     <h2 class="govuk-heading-m">@{Messages.CheckYourReferenceMessages.`Is this correct?`.show}</h2>
 
-    @viewsHelpers.formWithCsrf(action = submitUrl) {
+    @viewsHelpers.formWithCsrf(action = controllers.routes.CheckYourReferenceController.post) {
         @viewsHelpers.govukRadios(Radios(
             idPrefix = Some(key),
             name = key,

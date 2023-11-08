@@ -28,8 +28,7 @@
 )
 
 @(
-    form: Form[P800Reference],
-    submitUrl: Call
+    form: Form[P800Reference]
 )(implicit request: Request[_])
 
 @import viewsHelpers.requestSupport._
@@ -51,7 +50,7 @@
         @viewsHelpers.govukErrorSummary(ErrorSummary(errorList = form.errors.asTextErrorLinks, title = Text(Messages.CommonMessages.`There is a problem`.show)))
     }
 
-    @viewsHelpers.formWithCsrf(action = submitUrl) {
+    @viewsHelpers.formWithCsrf(action = controllers.routes.EnterP800ReferenceController.post) {
         @viewsHelpers.govukInput(Input(
             id = key,
             name = key,

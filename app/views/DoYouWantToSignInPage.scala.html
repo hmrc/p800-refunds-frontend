@@ -28,8 +28,7 @@
 )
 
 @(
-    form: Form[DoYouWantToSignInFormValue],
-    submitUrl: Call
+    form: Form[DoYouWantToSignInFormValue]
 )(implicit request: Request[_])
 
 @import viewsHelpers.requestSupport._
@@ -51,7 +50,7 @@
         @viewsHelpers.govukErrorSummary(ErrorSummary(errorList = form.errors.asTextErrorLinks, title = Text(Messages.CommonMessages.`There is a problem`.show)))
     }
 
-    @viewsHelpers.formWithCsrf(action = submitUrl) {
+    @viewsHelpers.formWithCsrf(action = controllers.routes.DoYouWantToSignInController.post) {
         @viewsHelpers.govukRadios(Radios(
             fieldset = Some(Fieldset(
                 legend = Some(Legend(

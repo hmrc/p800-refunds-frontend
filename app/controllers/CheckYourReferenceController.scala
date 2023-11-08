@@ -48,8 +48,7 @@ class CheckYourReferenceController @Inject() (
       case j: JourneyWhatIsYourP800Reference =>
         Ok(views.checkYourReferencePage(
           reference = j.p800Reference,
-          form      = CheckYourReferenceForm.form,
-          submitUrl = controllers.routes.CheckYourReferenceController.post
+          form      = CheckYourReferenceForm.form
         ))
       case _ =>
         // TODO: Handle other cases more appropriately
@@ -71,8 +70,7 @@ class CheckYourReferenceController @Inject() (
     CheckYourReferenceForm.form.bindFromRequest().fold(
       formWithErrors => Future.successful(BadRequest(views.checkYourReferencePage(
         reference = journey.p800Reference,
-        form      = formWithErrors,
-        submitUrl = controllers.routes.CheckYourReferenceController.post
+        form      = formWithErrors
       ))),
       {
         case CheckYourReferenceFormValue.Yes => validateReference(journey)
