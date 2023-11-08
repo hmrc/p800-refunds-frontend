@@ -143,6 +143,16 @@ object Messages {
 
   }
 
+  object WhatIsYourFullName {
+    val `What is your full name`: Message = Message(
+      english = "What is your full name?"
+    )
+
+    val `Enter your name as it appears on your tax calculation`: Message = Message(
+      english = "Enter your name as it appears on your tax calculation letter or 'P800'."
+    )
+
+  }
   object ConfirmIdentity {
     val `We need you to confirm your identity`: Message = Message(
       english = "We need you to confirm your identity"
