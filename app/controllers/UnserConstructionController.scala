@@ -1,4 +1,4 @@
-@*
+/*
  * Copyright 2023 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -12,24 +12,27 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *@
+ */
 
-@import views.html.templates.Layout
-@import uk.gov.hmrc.govukfrontend.views.html.components.Text
+package controllers
 
-@this(layout: Layout)
+import action.Actions
+import play.api.mvc._
+import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
+import views.Views
 
-@(
-    pageTitle: String,
-    heading: String,
-    message: String
-)(implicit request: Request[_])
+import javax.inject.{Inject, Singleton}
 
-@layout(pageTitle = Some(pageTitle)) {
-    <h1 class="govuk-heading-xl">@{Text(heading).asHtml}</h1>
-    <p class="govuk-body">@{Text(message).asHtml}</p>
+@Singleton
+class UnserConstructionController @Inject() (
+    mcc:     MessagesControllerComponents,
+    views:   Views,
+    actions: Actions
+) extends FrontendController(mcc) {
+
+  //TODO: remove once we have all pages
+  val underConstruction: Action[AnyContent] = actions.default { implicit request =>
+    Ok(views.underConstructionPage())
+  }
 }
 
-@{
-    //$COVERAGE-OFF$
-}

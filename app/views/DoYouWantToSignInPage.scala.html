@@ -42,7 +42,11 @@
     Messages.DoYouWantToSignInMessages.`Do you want to sign in?`.show
 }
 
-@layout(pageTitle = Some(title), backLinkUrlOverride = Some(appConfig.govUkRouteIn)) {
+@layout(
+    pageTitle = Some(title),
+    backLinkUrlOverride = Some(appConfig.govUkRouteIn)
+) {
+
     @if(form.errors.nonEmpty) {
         @viewsHelpers.govukErrorSummary(ErrorSummary(errorList = form.errors.asTextErrorLinks, title = Text(Messages.CommonMessages.`There is a problem`.show)))
     }

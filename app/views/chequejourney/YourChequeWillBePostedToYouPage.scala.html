@@ -20,9 +20,9 @@
 @import config.AppConfig
 
 @this(
-        layout: Layout,
-        viewsHelpers: views.ViewsHelpers,
-        appConfig: AppConfig
+    layout: Layout,
+    viewsHelpers: views.ViewsHelpers,
+    appConfig: AppConfig
 )
 
 @()(implicit request: Request[_])
@@ -43,7 +43,10 @@
 }
 
 @* todo update the back link, Pawel working on that page atm *@
-@layout(pageTitle = Some(title), backLinkUrlOverride = Some(controllers.routes.JourneyController.doYouWantToSignIn.url)) {
+@layout(
+    pageTitle = Some(title),
+    backLinkUrlOverride = Some(controllers.routes.DoYouWantToSignInController.get.url)
+) {
 
     <h1 class="govuk-heading-xl">@{title}</h1>
 
@@ -63,7 +66,7 @@
     @viewsHelpers.govukButton(Button(
         content = Text(Messages.YourChequeWillBePostedToYou.`Submit refund request`.show),
         id      = Some("submit-refund-request"),
-        href    = Some(routes.JourneyController.chequeRequestReceived.url)
+        href    = Some(routes.RequestReceivedController.get.url)
     ))
 
 }

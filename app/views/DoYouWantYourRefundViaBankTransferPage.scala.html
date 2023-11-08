@@ -22,8 +22,8 @@
 @import uk.gov.hmrc.govukfrontend.views.html.components.implicits._
 
 @this(
-        layout: Layout,
-        viewsHelpers: views.ViewsHelpers
+    layout: Layout,
+    viewsHelpers: views.ViewsHelpers
 )
 
 @(
@@ -42,12 +42,14 @@
 
 @layout(
     pageTitle = Some(title),
-    backLinkUrlOverride = Some(controllers.routes.JourneyController.checkYourReference.url)) {
+    backLinkUrlOverride = Some(controllers.routes.CheckYourReferenceController.get.url)
+) {
+
     @if(form.errors.nonEmpty) {
         @viewsHelpers.govukErrorSummary(ErrorSummary(errorList = form.errors.asTextErrorLinks, title = Text(Messages.CommonMessages.`There is a problem`.show)))
     }
 
-    @viewsHelpers.formWithCsrf(action = controllers.routes.JourneyController.doYouWantYourRefundViaBankTransferSubmit) {
+    @viewsHelpers.formWithCsrf(action = controllers.routes.DoYouWantYourRefundViaBankTransferController.post) {
         @viewsHelpers.govukRadios(Radios(
             fieldset = Some(Fieldset(
                 legend = Some(Legend(

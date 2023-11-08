@@ -16,8 +16,7 @@
 
 package controllers.testonly
 
-import action.Actions
-import controllers.JourneyController
+import action.{Actions, JourneyIdKey}
 import models.journeymodels.{Journey, JourneyId}
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
@@ -54,8 +53,8 @@ class TestOnlyController @Inject() (
   }
 
   val showJourney: Action[AnyContent] = as.default.async { implicit request =>
-    request.session.get(JourneyController.journeyIdKey).map(JourneyId.apply) match {
-      case None            => Future.successful(Ok(s"No ${JourneyController.journeyIdKey} in play session"))
+    request.session.get(JourneyIdKey.journeyIdKey).map(JourneyId.apply) match {
+      case None            => Future.successful(Ok(s"No ${JourneyIdKey.journeyIdKey} in play session"))
       case Some(journeyId) => showJourney(journeyId)
     }
   }
@@ -65,7 +64,7 @@ class TestOnlyController @Inject() (
   }
 
   def addJourneyIdToSession(journeyId: JourneyId): Action[AnyContent] = as.default { implicit request =>
-    Ok(s"${journeyId.value} added to session").addingToSession(JourneyController.journeyIdKey -> journeyId.value)
+    Ok(s"${journeyId.value} added to session").addingToSession(JourneyIdKey.journeyIdKey -> journeyId.value)
   }
 
   private def showJourney(journeyId: JourneyId): Future[Result] = {
