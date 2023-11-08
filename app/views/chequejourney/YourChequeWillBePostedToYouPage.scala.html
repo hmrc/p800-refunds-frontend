@@ -20,9 +20,9 @@
 @import config.AppConfig
 
 @this(
-    layout: Layout,
-    viewsHelpers: views.ViewsHelpers,
-    appConfig: AppConfig
+        layout: Layout,
+        viewsHelpers: views.ViewsHelpers,
+        appConfig: AppConfig
 )
 
 @()(implicit request: Request[_])
@@ -45,7 +45,7 @@
 @* todo update the back link, Pawel working on that page atm *@
 @layout(
     pageTitle = Some(title),
-    backLinkUrlOverride = Some(controllers.routes.DoYouWantToSignInController.get.url)
+    backLinkUrlOverride = Some(controllers.routes.DoYouWantYourRefundViaBankTransferController.get.url)
 ) {
 
     <h1 class="govuk-heading-xl">@{title}</h1>
