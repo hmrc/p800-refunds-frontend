@@ -35,7 +35,3 @@ GET        /we-need-you-to-confirm-your-identity/we-have-confirmed-your-identity
 #bank account name and consent:
 #TODO
 
-#check
-GET        /cheque/your-cheque-will-be-posted-to-you                                        controllers.UnserConstructionController.underConstruction
-GET        /cheque/request-received                                                         controllers.UnserConstructionController.underConstruction
-
