@@ -24,7 +24,7 @@ GET        /request-received                                                    
 
 #we-need-you-to-confirm-your-identity:
 GET        /we-need-you-to-confirm-your-identity                                            controllers.WeNeedYouToConfirmYourIdentityController.get
-GET        /we-need-you-to-confirm-your-identity/what-is-your-full-name                     controllers.UnserConstructionController.underConstruction
+GET        /we-need-you-to-confirm-your-identity/what-is-your-full-name                     controllers.WhatIsYourFullNameController.get
 GET        /we-need-you-to-confirm-your-identity/what-is-your-date-of-birth                 controllers.UnserConstructionController.underConstruction
 GET        /we-need-you-to-confirm-your-identity/what-is-your-address                       controllers.UnserConstructionController.underConstruction
 GET        /we-need-you-to-confirm-your-identity/what-was-your-most-recent-salary-payment   controllers.UnserConstructionController.underConstruction
