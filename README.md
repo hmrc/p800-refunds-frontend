@@ -27,6 +27,81 @@ When you restart it or you build on jenkins, this will be turned on.
 sbt> runTestOnly
 ```
 
+
+## Application architecture
+
+### Journey States
+Journey states correspond to the result of the submission on pages (or endpoints).
+
+```mermaid
+
+flowchart TD
+
+    govukpage[\Claim an income tax refund a gov.uk page\] 
+    -- User clicked `/start` link on gov.uk page.
+    A new journey is created and user is navigated to the JourneyDoYouWantToSignIn page
+    --> JourneyStarted   
+
+    JourneyStarted 
+    -- Answered `Yes` 
+    on DoYouWantToSignIn page 
+    --> JourneyDoYouWantToSignInYes
+
+    JourneyStarted 
+    -- Answered `No` 
+    on DoYouWantToSignIn page 
+    --> JourneyDoYouWantToSignInNo
+
+    JourneyDoYouWantToSignInNo 
+    -- entered semivalid reference 
+    on WhatIsYourP800Reference page 
+    --> JourneyWhatIsYourP800Reference
+
+    JourneyWhatIsYourP800Reference
+    -- selected `Yes` 
+    on CheckYourReference page
+    --> ValidateReferenceApiCall{
+        API Call 
+        Check Rererence 
+    }
+
+    ValidateReferenceApiCall 
+    -- valid
+    --> JourneyCheckYourReferenceValid
+
+    ValidateReferenceApiCall
+    -- not valid
+    --> JourneyCheckYourReferenceInvalid
+
+    JourneyCheckYourReferenceInvalid
+    -- clicked `Try again` 
+    on WeCannotConfirmYourReference Page 
+    and navigated to WhatIsYourP800Reference page
+    --> JourneyWhatIsYourP800Reference
+    
+    
+    JourneyCheckYourReferenceValid
+    -- selected `Yes` 
+    on DoYouWantYourRefundViaBankTransfer page
+    --> JourneyDoYouWantYourRefundViaBankTransferYes
+
+    JourneyCheckYourReferenceValid
+    -- selected `No` 
+    on DoYouWantYourRefundViaBankTransfer page
+    --> JourneyDoYouWantYourRefundViaBankTransferNo
+
+    JourneyDoYouWantYourRefundViaBankTransferNo
+    -- clicked `Continue`
+    on YourChequeWillBePostedToYou page
+    --> JourneyYourChequeWillBePostedToYou
+
+    JourneyDoYouWantYourRefundViaBankTransferYes 
+    -- tbc ...
+    --> TBC...
+```
+
+
+
 ### License
 
 This code is open source software licensed under the [Apache 2.0 License]("http://www.apache.org/licenses/LICENSE-2.0.html").

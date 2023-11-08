@@ -24,7 +24,7 @@ class DoYouWantToSignInPageSpec extends ItSpec {
   override def beforeEach(): Unit = {
     super.beforeEach()
     addJourneyIdToSession(TdAll.journeyId)
-    addJourneyToDatabase(TdAll.journeyStarted)
+    upsertJourneyToDatabase(TdAll.journeyStarted)
   }
 
   "Selecting 'Yes, sign in' redirects to personal tax account" in {

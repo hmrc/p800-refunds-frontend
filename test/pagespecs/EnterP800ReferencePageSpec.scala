@@ -26,7 +26,7 @@ class EnterP800ReferencePageSpec extends ItSpec {
     super.beforeEach()
 
     addJourneyIdToSession(TdAll.journeyId)
-    addJourneyToDatabase(TdAll.journeyDoYouWantToSignInNo)
+    upsertJourneyToDatabase(TdAll.journeyDoYouWantToSignInNo)
   }
 
   "Entering valid p800 reference and clicking Continue redirects to /check-your-reference" in {

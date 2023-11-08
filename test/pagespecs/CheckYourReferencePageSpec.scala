@@ -25,7 +25,7 @@ class CheckYourReferencePageSpec extends ItSpec {
   override def beforeEach(): Unit = {
     super.beforeEach()
     addJourneyIdToSession(TdAll.journeyId)
-    addJourneyToDatabase(TdAll.journeyWhatIsYourP800Reference)
+    upsertJourneyToDatabase(TdAll.journeyWhatIsYourP800Reference)
   }
 
   "Selecting 'Yes' with a valid reference redirects to 'Do you want your refund via bank transfer?' page" in {
@@ -35,7 +35,7 @@ class CheckYourReferencePageSpec extends ItSpec {
     pages.checkYourReferencePage.assertPageIsDisplayed()
     pages.checkYourReferencePage.selectYes()
     pages.checkYourReferencePage.clickSubmit()
-    pages.requestYourRefundByBankTransferPage.assertPageIsDisplayed()
+    pages.doYouWantYourRefundViaBankTransferPage.assertPageIsDisplayed()
   }
 
   "Selecting 'Yes' with an invalid reference redirects to 'We cannot confirm your reference' page" in {

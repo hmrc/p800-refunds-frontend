@@ -16,14 +16,15 @@ POST       /check-your-reference                                                
 
 GET        /we-cannot-confirm-your-reference                                                controllers.JourneyController.cannotConfirmReference
 
-GET        /request-your-refund-by-bank-transfer                                            controllers.JourneyController.requestRefundByBankTransfer
+GET        /do-you-want-your-refund-via-bank-transfer                                       controllers.JourneyController.doYouWantYourRefundViaBankTransfer
+POST       /do-you-want-your-refund-via-bank-transfer                                       controllers.JourneyController.doYouWantYourRefundViaBankTransferSubmit
 
 GET        /your-cheque-will-be-posted-to-you                                               controllers.JourneyController.yourChequeWillBePostedToYou
 GET        /request-received                                                                controllers.JourneyController.chequeRequestReceived
 
 #we-need-you-to-confirm-your-identity:
 
-GET        /we-need-you-to-confirm-your-identity                                            controllers.JourneyController.confirmIdentity
+GET        /we-need-you-to-confirm-your-identity                                            controllers.JourneyController.weNeedYouToConfirmYourIdentity
 GET        /we-need-you-to-confirm-your-identity/what-is-your-full-name                     controllers.JourneyController.underConstruction
 GET        /we-need-you-to-confirm-your-identity/what-is-your-date-of-birth                 controllers.JourneyController.underConstruction
 GET        /we-need-you-to-confirm-your-identity/what-is-your-address                       controllers.JourneyController.underConstruction

@@ -27,6 +27,8 @@ object PageUtil {
 
   object Xpath {
     val mainContent: String = """//*[@id="main-content"]"""
+    val errorSummary: String = """//*[@id="main-content"]//*[@class="govuk-error-summary"]"""
+    val errorMessage: String = """//*[@class="govuk-error-message"]"""
     val header: String = """/html/body/div/header"""
     val h1: String = """//*[@id="main-content"]//h1"""
   }

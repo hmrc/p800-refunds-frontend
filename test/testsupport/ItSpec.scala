@@ -98,10 +98,9 @@ trait ItSpec extends AnyFreeSpecLike
     ()
   }
 
-  def addJourneyToDatabase(journey: Journey): Unit = {
+  def upsertJourneyToDatabase(journey: Journey): Unit = {
     val journeyRepo: JourneyRepo = app.injector.instanceOf[JourneyRepo]
-    journeyRepo.upsert(journey)
-    ()
+    journeyRepo.upsert(journey).futureValue
   }
 
   lazy val pages = new Pages(baseUrl)
