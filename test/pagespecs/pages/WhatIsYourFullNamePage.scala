@@ -33,7 +33,7 @@ class WhatIsYourFullNamePage(baseUrl: String)(implicit webDriver: WebDriver) ext
       expectedLines =
         """
           |What is your full name?
-          |Enter your name as it appears on your tax calculation letter or 'P800'.
+          |Enter your name as it appears on your tax calculation letter or ‘P800’.
           |""".stripMargin
     )) ++ errors
 
