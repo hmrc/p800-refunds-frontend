@@ -17,7 +17,6 @@
 package action
 
 import config.AppConfig
-import controllers.JourneyController
 import models.journeymodels.JourneyId
 import play.api.mvc.Results.Redirect
 import play.api.mvc.{ActionRefiner, Request, Result}
@@ -37,7 +36,7 @@ class GetJourneyActionRefiner @Inject() (
     implicit val r: Request[A] = request
     val redirectToStart: Either[Result, JourneyRequest[A]] = Left(Redirect(appConfig.govUkRouteIn))
 
-    request.session.get(JourneyController.journeyIdKey).map(JourneyId.apply) match {
+    request.session.get(JourneyIdKey.journeyIdKey).map(JourneyId.apply) match {
       case Some(journeyId) =>
         for {
           maybeJourney <- journeyService.find(journeyId)

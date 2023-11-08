@@ -3,40 +3,35 @@
 ->         /hmrc-frontend                                                                   hmrcfrontend.Routes
 GET        /assets/*file                                                                    controllers.Assets.versioned(path = "/public", file: Asset)
 
-GET        /start                                                                           controllers.JourneyController.start
+GET        /start                                                                           controllers.StartController.get
 
-GET        /do-you-want-to-sign-in                                                          controllers.JourneyController.doYouWantToSignIn
-POST       /do-you-want-to-sign-in                                                          controllers.JourneyController.doYouWantToSignInSubmit
+GET        /do-you-want-to-sign-in                                                          controllers.DoYouWantToSignInController.get
+POST       /do-you-want-to-sign-in                                                          controllers.DoYouWantToSignInController.post
 
-GET        /enter-P800-reference                                                            controllers.JourneyController.enterP800Reference
-POST       /enter-P800-reference                                                            controllers.JourneyController.enterP800ReferenceSubmit
+GET        /enter-P800-reference                                                            controllers.EnterP800ReferenceController.get
+POST       /enter-P800-reference                                                            controllers.EnterP800ReferenceController.post
 
-GET        /check-your-reference                                                            controllers.JourneyController.checkYourReference
-POST       /check-your-reference                                                            controllers.JourneyController.checkYourReferenceSubmit
+GET        /check-your-reference                                                            controllers.CheckYourReferenceController.get
+POST       /check-your-reference                                                            controllers.CheckYourReferenceController.post
 
-GET        /we-cannot-confirm-your-reference                                                controllers.JourneyController.cannotConfirmReference
+GET        /we-cannot-confirm-your-reference                                                controllers.CannotConfirmReferenceController.get
 
-GET        /do-you-want-your-refund-via-bank-transfer                                       controllers.JourneyController.doYouWantYourRefundViaBankTransfer
-POST       /do-you-want-your-refund-via-bank-transfer                                       controllers.JourneyController.doYouWantYourRefundViaBankTransferSubmit
+GET        /do-you-want-your-refund-via-bank-transfer                                       controllers.DoYouWantYourRefundViaBankTransferController.get
+POST       /do-you-want-your-refund-via-bank-transfer                                       controllers.DoYouWantYourRefundViaBankTransferController.post
 
-GET        /your-cheque-will-be-posted-to-you                                               controllers.JourneyController.yourChequeWillBePostedToYou
-GET        /request-received                                                                controllers.JourneyController.chequeRequestReceived
+GET        /your-cheque-will-be-posted-to-you                                               controllers.YourChequeWillBePostedToYouController.get
+GET        /request-received                                                                controllers.RequestReceivedController.get
 
 #we-need-you-to-confirm-your-identity:
-
-GET        /we-need-you-to-confirm-your-identity                                            controllers.JourneyController.weNeedYouToConfirmYourIdentity
-GET        /we-need-you-to-confirm-your-identity/what-is-your-full-name                     controllers.JourneyController.underConstruction
-GET        /we-need-you-to-confirm-your-identity/what-is-your-date-of-birth                 controllers.JourneyController.underConstruction
-GET        /we-need-you-to-confirm-your-identity/what-is-your-address                       controllers.JourneyController.underConstruction
-GET        /we-need-you-to-confirm-your-identity/what-was-your-most-recent-salary-payment   controllers.JourneyController.underConstruction
-GET        /we-need-you-to-confirm-your-identity/check-your-answers                         controllers.JourneyController.underConstruction
-GET        /we-need-you-to-confirm-your-identity/we-have-confirmed-your-identity            controllers.JourneyController.underConstruction
+GET        /we-need-you-to-confirm-your-identity                                            controllers.WeNeedYouToConfirmYourIdentityController.get
+GET        /we-need-you-to-confirm-your-identity/what-is-your-full-name                     controllers.UnserConstructionController.underConstruction
+GET        /we-need-you-to-confirm-your-identity/what-is-your-date-of-birth                 controllers.UnserConstructionController.underConstruction
+GET        /we-need-you-to-confirm-your-identity/what-is-your-address                       controllers.UnserConstructionController.underConstruction
+GET        /we-need-you-to-confirm-your-identity/what-was-your-most-recent-salary-payment   controllers.UnserConstructionController.underConstruction
+GET        /we-need-you-to-confirm-your-identity/check-your-answers                         controllers.UnserConstructionController.underConstruction
+GET        /we-need-you-to-confirm-your-identity/we-have-confirmed-your-identity            controllers.UnserConstructionController.underConstruction
 
 
 #bank account name and consent:
 #TODO
-
-#check
-GET        /cheque/your-cheque-will-be-posted-to-you                                        controllers.JourneyController.underConstruction
-GET        /cheque/request-received                                                         controllers.JourneyController.underConstruction
 

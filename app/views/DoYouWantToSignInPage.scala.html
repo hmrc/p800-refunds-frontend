@@ -28,8 +28,7 @@
 )
 
 @(
-    form: Form[DoYouWantToSignInFormValue],
-    submitUrl: Call
+    form: Form[DoYouWantToSignInFormValue]
 )(implicit request: Request[_])
 
 @import viewsHelpers.requestSupport._
@@ -42,12 +41,16 @@
     Messages.DoYouWantToSignInMessages.`Do you want to sign in?`.show
 }
 
-@layout(pageTitle = Some(title), backLinkUrlOverride = Some(appConfig.govUkRouteIn)) {
+@layout(
+    pageTitle = Some(title),
+    backLinkUrlOverride = Some(appConfig.govUkRouteIn)
+) {
+
     @if(form.errors.nonEmpty) {
         @viewsHelpers.govukErrorSummary(ErrorSummary(errorList = form.errors.asTextErrorLinks, title = Text(Messages.CommonMessages.`There is a problem`.show)))
     }
 
-    @viewsHelpers.formWithCsrf(action = submitUrl) {
+    @viewsHelpers.formWithCsrf(action = controllers.routes.DoYouWantToSignInController.post) {
         @viewsHelpers.govukRadios(Radios(
             fieldset = Some(Fieldset(
                 legend = Some(Legend(

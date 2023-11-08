@@ -22,8 +22,8 @@
 @import language.Messages.ServicePhase
 
 @this(
-  layout: Layout,
-  viewsHelpers: views.ViewsHelpers
+    layout: Layout,
+    viewsHelpers: views.ViewsHelpers
 )
 
 @(contentBlock: Html)(implicit request: Request[_])
@@ -46,8 +46,8 @@
 }
 
 @layout(
-  headBlock = Some(headBlock),
-  customServiceName = Some(ServicePhase.serviceNameTestOnly.show),
-  customBeforeContentBlock = Some(customBeforeContentBlock))(
-  contentBlock
+    headBlock = Some(headBlock),
+    customServiceName = Some(ServicePhase.serviceNameTestOnly.show),
+    customBeforeContentBlock = Some(customBeforeContentBlock))(
+    contentBlock
 )

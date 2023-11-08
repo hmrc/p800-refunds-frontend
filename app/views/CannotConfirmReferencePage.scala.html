@@ -31,7 +31,10 @@
     Messages.CannotConfirmReference.`We cannot confirm your reference`.show
 }
 
-@layout(pageTitle = Some(title), backLinkUrlOverride = Some(controllers.routes.JourneyController.checkYourReference.url)) {
+@layout(
+    pageTitle = Some(title),
+    backLinkUrlOverride = Some(controllers.routes.CheckYourReferenceController.get.url)
+) {
 
     <h1 class="govuk-heading-xl">@title</h1>
 
@@ -50,7 +53,6 @@
     @viewsHelpers.govukButton(Button(
         content = Text(Messages.CommonMessages.`Try again`.show),
         id      = Some("try-again"),
-        href    = Some(routes.JourneyController.enterP800Reference.url)
+        href    = Some(routes.EnterP800ReferenceController.get.url)
     ))
-
 }

@@ -28,28 +28,30 @@
 @import config.AppConfig
 
 @this(
-        govukLayout: GovukLayout,
-        govukPhaseBanner : GovukPhaseBanner,
-        hmrcHead: HmrcHead,
-        hmrcStandardHeader: HmrcStandardHeader,
-        hmrcStandardFooter: HmrcStandardFooter,
-        hmrcScripts: HmrcScripts,
-        //hmrcLanguageSelectHelper: HmrcLanguageSelectHelper, // add this back in when we support welsh
-        hmrcReportTechnicalIssueHelper: HmrcReportTechnicalIssueHelper,
-        viewsHelpers: views.ViewsHelpers,
-        appConfig: AppConfig
+    govukLayout: GovukLayout,
+    govukPhaseBanner : GovukPhaseBanner,
+    hmrcHead: HmrcHead,
+    hmrcStandardHeader: HmrcStandardHeader,
+    hmrcStandardFooter: HmrcStandardFooter,
+    hmrcScripts: HmrcScripts,
+    //hmrcLanguageSelectHelper: HmrcLanguageSelectHelper, // add this back in when we support welsh
+    hmrcReportTechnicalIssueHelper: HmrcReportTechnicalIssueHelper,
+    viewsHelpers: views.ViewsHelpers,
+    appConfig: AppConfig
 )
 
 @(
-        pageTitle: Option[String] = None,
-        headBlock: Option[Html] = None,
-        additionalScripts: Option[Html] = None,
-        showBackLink: Boolean = true,
-        customBeforeContentBlock: Option[Html] = None,
-        backLinkUrlOverride: Option[String] = None,
-        hasErrors: Boolean = false,
-        customServiceName: Option[String] = None
-)(contentBlock: Html)(implicit request: Request[_])
+    pageTitle: Option[String] = None,
+    headBlock: Option[Html] = None,
+    additionalScripts: Option[Html] = None,
+    showBackLink: Boolean = true,
+    customBeforeContentBlock: Option[Html] = None,
+    backLinkUrlOverride: Option[String] = None,
+    hasErrors: Boolean = false,
+    customServiceName: Option[String] = None)(
+    contentBlock: Html)(
+    implicit request: Request[_]
+)
 
 @import viewsHelpers.requestSupport._
 

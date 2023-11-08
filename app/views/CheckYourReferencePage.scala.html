@@ -27,9 +27,8 @@
 )
 
 @(
-    reference: String,
-    form: Form[CheckYourReferenceFormValue],
-    submitUrl: Call
+    reference: P800Reference,
+    form: Form[CheckYourReferenceFormValue]
 )(implicit request: Request[_])
 
 @import viewsHelpers.requestSupport._
@@ -42,17 +41,21 @@
     "reference-check"
 }
 
-@layout(pageTitle = Some(heading), backLinkUrlOverride = Some(controllers.routes.JourneyController.enterP800Reference.url)) {
+@layout(
+    pageTitle = Some(heading),
+    backLinkUrlOverride = Some(controllers.routes.EnterP800ReferenceController.get.url)
+) {
+
     @if(form.errors.nonEmpty) {
         @viewsHelpers.govukErrorSummary(ErrorSummary(errorList = form.errors.asTextErrorLinks, title = Text(Messages.CommonMessages.`There is a problem`.show)))
     }
 
     <h1 class="govuk-heading-xl">@heading</h1>
-    <p class="govuk-body">@{Html(Messages.CheckYourReferenceMessages.`You entered X`(reference).show)}</p>
+    <p class="govuk-body">@{Html(Messages.CheckYourReferenceMessages.`You entered X`(reference.value).show)}</p>
 
     <h2 class="govuk-heading-m">@{Messages.CheckYourReferenceMessages.`Is this correct?`.show}</h2>
 
-    @viewsHelpers.formWithCsrf(action = submitUrl) {
+    @viewsHelpers.formWithCsrf(action = controllers.routes.CheckYourReferenceController.post) {
         @viewsHelpers.govukRadios(Radios(
             idPrefix = Some(key),
             name = key,
