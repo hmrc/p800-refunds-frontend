@@ -26,6 +26,7 @@ import play.api.mvc._
 import requests.RequestSupport
 import services.{JourneyService, ReferenceValidationService}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
+import util.{Errors, JourneyLogger}
 import views.Views
 
 import javax.inject.{Inject, Singleton}
@@ -43,30 +44,45 @@ class CheckYourReferenceController @Inject() (
 
   import requestSupport._
 
-  val get: Action[AnyContent] = actions.journeyAction { implicit request =>
+  val get: Action[AnyContent] = actions.journeyAction.async { implicit request =>
     request.journey match {
-      case j: JourneyWhatIsYourP800Reference =>
-        Ok(views.checkYourReferencePage(
-          reference = j.p800Reference,
-          form      = CheckYourReferenceForm.form
-        ))
-      case _ =>
-        // TODO: Handle other cases more appropriately
-        throw new Exception("Check your reference page with unexpected state")
+      case _: JTerminal                      => JourneyController.handleFinalJourneyOnNonFinalPage()
+      case j: JBeforeWhatIsYourP800Reference => JourneyController.sendToCorrespondingPageF(j)
+      case j: JourneyWhatIsYourP800Reference => Future.successful(getResult(j))
+      case j: JAfterWhatIsYourP800Reference =>
+        journeyService
+          .upsert(
+            j
+              .into[JourneyWhatIsYourP800Reference]
+              .enableInheritedAccessors
+              .transform
+          )
+          .map(j => getResult(j))
     }
   }
+
+  private def getResult(journey: JourneyWhatIsYourP800Reference)(implicit request: Request[_]) = Ok(views.checkYourReferencePage(
+    reference = journey.p800Reference,
+    form      = CheckYourReferenceForm.form
+  ))
 
   val post: Action[AnyContent] = actions.journeyAction.async { implicit request =>
     request.journey match {
-      case journey: JourneyWhatIsYourP800Reference =>
-        bindCheckReferenceSubmitForm(journey)
-      case _ =>
-        // TODO: Handle other cases more appropriately
-        throw new Exception("Check your reference page with unexpected state")
+      case _: JTerminal                      => JourneyController.handleFinalJourneyOnNonFinalPage()
+      case j: JBeforeWhatIsYourP800Reference => JourneyController.sendToCorrespondingPageF(j)
+      case j: JourneyWhatIsYourP800Reference => processForm(j)
+      case _: JAfterWhatIsYourP800Reference =>
+        Errors.throwServerErrorException(s"This endpoint supports only ${classOf[JourneyWhatIsYourP800Reference].toString}")
+      //TODO: discuss alternative approach
+      //val journey = j
+      //              .into[JourneyWhatIsYourP800Reference]
+      //              .enableInheritedAccessors
+      //              .transform
+      //processForm(j)
     }
   }
 
-  private def bindCheckReferenceSubmitForm(journey: JourneyWhatIsYourP800Reference)(implicit request: JourneyRequest[AnyContent]): Future[Result] =
+  private def processForm(journey: JourneyWhatIsYourP800Reference)(implicit request: JourneyRequest[AnyContent]): Future[Result] =
     CheckYourReferenceForm.form.bindFromRequest().fold(
       formWithErrors => Future.successful(BadRequest(views.checkYourReferencePage(
         reference = journey.p800Reference,
@@ -87,11 +103,8 @@ class CheckYourReferenceController @Inject() (
           )
           .map(_ => Redirect(controllers.routes.DoYouWantYourRefundViaBankTransferController.get))
       case ReferenceValidationResponse(false) =>
-        journeyService
-          .upsert(
-            journey.transformInto[JourneyCheckYourReferenceInvalid]
-          )
-          .map(_ => Redirect(controllers.routes.CannotConfirmReferenceController.get))
+        JourneyLogger.info("P800 reference is invalid")
+        Future.successful(Redirect(controllers.routes.CannotConfirmReferenceController.get))
     }
 
 }

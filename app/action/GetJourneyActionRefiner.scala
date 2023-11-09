@@ -34,7 +34,7 @@ class GetJourneyActionRefiner @Inject() (
 
   override protected def refine[A](request: Request[A]): Future[Either[Result, JourneyRequest[A]]] = {
     implicit val r: Request[A] = request
-    val redirectToStart: Either[Result, JourneyRequest[A]] = Left(Redirect(appConfig.govUkRouteIn))
+    val redirectToGovUkRouteIn: Either[Result, JourneyRequest[A]] = Left(Redirect(appConfig.govUkRouteIn))
 
     request.session.get(JourneyIdKey.journeyIdKey).map(JourneyId.apply) match {
       case Some(journeyId) =>
@@ -44,13 +44,13 @@ class GetJourneyActionRefiner @Inject() (
           maybeJourney match {
             case Some(journey) => Right(new JourneyRequest(journey, request))
             case None =>
-              JourneyLogger.error(s"Journey not found based on the journeyId from session, redirecting to the start page [journeyIdFromSession:${journeyId.value}]")
-              redirectToStart
+              JourneyLogger.error(s"Journey not found based on the journeyId from session, redirecting to the gov.uk route in page [journeyIdFromSession:${journeyId.value}]")
+              redirectToGovUkRouteIn
           }
         }
       case None =>
-        JourneyLogger.error(s"There was missing journeyId in the play session. Redirecting to the start page")
-        Future.successful(redirectToStart)
+        JourneyLogger.error(s"There was missing journeyId in the play session. Redirecting to the the gov.uk route in page")
+        Future.successful(redirectToGovUkRouteIn)
     }
   }
 

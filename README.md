@@ -69,17 +69,6 @@ flowchart TD;
     ValidateReferenceApiCall 
     -- valid
     --> JourneyCheckYourReferenceValid
-
-    ValidateReferenceApiCall
-    -- not valid
-    --> JourneyCheckYourReferenceInvalid
-
-    JourneyCheckYourReferenceInvalid
-    -- clicked `Try again` 
-    on WeCannotConfirmYourReference Page 
-    and navigated to WhatIsYourP800Reference page
-    --> JourneyWhatIsYourP800Reference
-    
     
     JourneyCheckYourReferenceValid
     -- selected `Yes` 

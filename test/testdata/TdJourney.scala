@@ -16,7 +16,7 @@
 
 package testdata
 
-import models.journeymodels.{JourneyCheckYourReferenceInvalid, JourneyCheckYourReferenceValid, JourneyDoYouWantToSignInNo, JourneyDoYouWantToSignInYes, JourneyId, JourneyStarted, JourneyWhatIsYourP800Reference}
+import models.journeymodels._
 
 /**
  * Test Data (Td) Journey. It has journey examples in all possible states.
@@ -26,11 +26,6 @@ trait TdJourney { dependencies: TdBase =>
   lazy val journeyId: JourneyId = JourneyId("64886ed616fe8b501cbf0088")
 
   lazy val journeyStarted: JourneyStarted = JourneyStarted(
-    _id       = journeyId,
-    createdAt = dependencies.instant
-  )
-
-  lazy val journeyDoYouWantToSignInYes: JourneyDoYouWantToSignInYes = JourneyDoYouWantToSignInYes(
     _id       = journeyId,
     createdAt = dependencies.instant
   )
@@ -51,11 +46,4 @@ trait TdJourney { dependencies: TdBase =>
     createdAt     = dependencies.instant,
     p800Reference = dependencies.p800Reference
   )
-
-  lazy val journeyCheckYourReferenceInvalid: JourneyCheckYourReferenceInvalid = JourneyCheckYourReferenceInvalid(
-    _id           = journeyId,
-    createdAt     = dependencies.instant,
-    p800Reference = dependencies.p800Reference
-  )
-
 }

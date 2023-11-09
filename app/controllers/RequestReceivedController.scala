@@ -32,7 +32,7 @@ class RequestReceivedController @Inject() (
 ) extends FrontendController(mcc) {
 
   val get: Action[AnyContent] = actions.default { implicit request =>
-    //todo get these from journey and API call
+    //TODO Jake: pattern match on journey state, get the p800 reference (when implementing API call, populate amount into the journey so it is available here)
     val (dummyP800Ref, refundAmountInPence) = P800Reference("P800REFNO1") -> AmountInPence(231.60)
     Ok(views.requestReceivedPage(dummyP800Ref, refundAmountInPence))
   }

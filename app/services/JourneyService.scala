@@ -41,7 +41,7 @@ class JourneyService @Inject() (journeyRepo: JourneyRepo, journeyFactory: Journe
     maybeJourney.getOrElse(throw new RuntimeException(s"Expected journey to be found ${request.path} [journeyId:${journeyId.value}]"))
   }
 
-  def upsert(journey: Journey)(implicit request: Request[_]): Future[Journey] = {
+  def upsert[J <: Journey](journey: J)(implicit request: Request[_]): Future[J] = {
     JourneyLogger.debug(s"Upserting new journey [journeyId:${journey.journeyId.value}]")
     journeyRepo.upsert(journey).map(_ => journey)
   }
