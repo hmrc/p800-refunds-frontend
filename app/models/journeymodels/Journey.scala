@@ -151,7 +151,7 @@ final case class JourneyYourChequeWillBePostedToYou(
   with JAfterDoYouWantYourRefundViaBankTransferNo
 
 /*
- * Below marking traits for all [[Journey]]s after certain state
+ * Below marking traits for all [[Journey]]s after/before certain state
  */
 
 sealed trait JAfterStarted extends Journey
