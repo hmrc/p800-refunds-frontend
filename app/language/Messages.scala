@@ -73,8 +73,8 @@ object Messages {
       english = "What is your P800 reference?"
     )
 
-    val `It’s on the letter HMRC sent you about your tax calculation, also known as a ’P800’.`: Message = Message(
-      english = "It’s on the letter HMRC sent you about your tax calculation, also known as a ’P800’. For example, ’P800REFNO1’."
+    val `It’s on the letter HMRC sent you about your tax calculation, also known as a ‘P800’.`: Message = Message(
+      english = "It’s on the letter HMRC sent you about your tax calculation, also known as a ‘P800’. For example, ‘P800REFNO1’."
     )
 
     val `If you do not know your P800 reference`: Message = Message(
