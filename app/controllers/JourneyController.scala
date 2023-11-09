@@ -17,9 +17,9 @@
 package controllers
 
 import models.journeymodels._
-import play.api.mvc.Result
+import play.api.mvc.{Call, Request, Result}
 import play.api.mvc.Results.Redirect
-import util.Errors
+import util.{Errors, JourneyLogger}
 
 import scala.concurrent.Future
 
@@ -40,16 +40,22 @@ object JourneyController {
   /**
    * Based on the journey state it redirects to the corresponding to this state page.
    */
-  def sendToCorrespondingPage(journey: Journey): Result = journey match {
-    case _: JourneyStarted                               => Redirect(controllers.routes.DoYouWantToSignInController.get)
-    case _: JourneyDoYouWantToSignInNo                   => Redirect(controllers.routes.EnterP800ReferenceController.get)
-    case _: JourneyWhatIsYourP800Reference               => Redirect(controllers.routes.CheckYourReferenceController.get)
-    case _: JourneyCheckYourReferenceValid               => Redirect(controllers.routes.DoYouWantYourRefundViaBankTransferController.get)
-    case _: JourneyDoYouWantYourRefundViaBankTransferYes => Redirect(controllers.routes.WeNeedYouToConfirmYourIdentityController.get)
-    case _: JourneyDoYouWantYourRefundViaBankTransferNo  => Redirect(controllers.routes.YourChequeWillBePostedToYouController.get)
-    case _: JourneyYourChequeWillBePostedToYou           => Redirect(controllers.routes.RequestReceivedController.get)
+  def sendToCorrespondingPage(journey: Journey)(implicit request: Request[_]): Result = {
+
+    val redirectLocation: Call = journey match {
+      case _: JourneyStarted                               => controllers.routes.DoYouWantToSignInController.get
+      case _: JourneyDoYouWantToSignInNo                   => controllers.routes.EnterP800ReferenceController.get
+      case _: JourneyWhatIsYourP800Reference               => controllers.routes.CheckYourReferenceController.get
+      case _: JourneyCheckYourReferenceValid               => controllers.routes.DoYouWantYourRefundViaBankTransferController.get
+      case _: JourneyDoYouWantYourRefundViaBankTransferYes => controllers.routes.WeNeedYouToConfirmYourIdentityController.get
+      case _: JourneyDoYouWantYourRefundViaBankTransferNo  => controllers.routes.YourChequeWillBePostedToYouController.get
+      case _: JourneyYourChequeWillBePostedToYou           => controllers.routes.RequestReceivedController.get
+    }
+
+    JourneyLogger.warn(s"Incorrect journey state for this page. Redirecting to ${redirectLocation.url}")
+    Redirect(redirectLocation)
   }
 
-  def sendToCorrespondingPageF(journey: Journey): Future[Result] = Future.successful(sendToCorrespondingPage(journey))
+  def sendToCorrespondingPageF(journey: Journey)(implicit request: Request[_]): Future[Result] = Future.successful(sendToCorrespondingPage(journey))
 
 }

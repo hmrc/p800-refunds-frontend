@@ -21,6 +21,12 @@ import testsupport.ItSpec
 
 class YourChequeWillBePostedToYouPageSpec extends ItSpec {
 
+  override def beforeEach(): Unit = {
+    super.beforeEach()
+    addJourneyIdToSession(TdAll.journeyId)
+    upsertJourneyToDatabase(TdAll.journeyDoYouWantYourRefundViaBankTransferNo)
+  }
+
   "/your-cheque-will-be-posted-to-you renders your cheque will be posted page" in {
     pages.yourChequeWillBePostedToYouPage.open()
     pages.yourChequeWillBePostedToYouPage.assertPageIsDisplayed()
@@ -35,8 +41,6 @@ class YourChequeWillBePostedToYouPageSpec extends ItSpec {
   }
 
   "back button sends user to do you want your refund via bank transfer page" in {
-    addJourneyIdToSession(TdAll.journeyId)
-    upsertJourneyToDatabase(TdAll.journeyCheckYourReferenceValid)
     pages.yourChequeWillBePostedToYouPage.open()
     pages.yourChequeWillBePostedToYouPage.assertPageIsDisplayed()
     pages.yourChequeWillBePostedToYouPage.clickBackButton()

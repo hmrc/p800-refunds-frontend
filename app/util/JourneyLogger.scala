@@ -59,13 +59,14 @@ object JourneyLogger {
   private def deviceId(implicit r: RequestHeader) = s"[deviceId: ${r.cookies.find(_.name === CookieNames.deviceID).map(_.value).getOrElse("")}]"
 
   private def journeyId(implicit r: JourneyRequest[_]) = s"[${r.journey.id.toString}]"
+  private def journeyName(implicit r: JourneyRequest[_]) = s"[${r.journey.name}]"
 
   private def makeRichMessage(message: String)(implicit request: RequestHeader): String = {
     request match {
       case r: JourneyRequest[_] =>
         implicit val req: JourneyRequest[_] = r
         //Warn, don't log whole journey as it might contain sensitive data (PII)
-        s"$message $journeyId $context"
+        s"$message $journeyName $journeyId $context"
       case _ =>
         s"$message $context "
     }

@@ -46,4 +46,22 @@ trait TdJourney { dependencies: TdBase =>
     createdAt     = dependencies.instant,
     p800Reference = dependencies.p800Reference
   )
+
+  lazy val journeyDoYouWantYourRefundViaBankTransferNo: JourneyDoYouWantYourRefundViaBankTransferNo = JourneyDoYouWantYourRefundViaBankTransferNo(
+    _id           = journeyId,
+    createdAt     = dependencies.instant,
+    p800Reference = dependencies.p800Reference
+  )
+
+  lazy val journeyDoYouWantYourRefundViaBankTransferYes: JourneyDoYouWantYourRefundViaBankTransferYes = JourneyDoYouWantYourRefundViaBankTransferYes(
+    _id           = journeyId,
+    createdAt     = dependencies.instant,
+    p800Reference = dependencies.p800Reference
+  )
+
+  lazy val journeyYourChequeWillBePostedToYou: JourneyYourChequeWillBePostedToYou = JourneyYourChequeWillBePostedToYou(
+    _id           = journeyId,
+    createdAt     = dependencies.instant,
+    p800Reference = dependencies.p800Reference
+  )
 }
