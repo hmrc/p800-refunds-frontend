@@ -248,7 +248,7 @@ object Messages {
     )
 
     val `What do you think`: Message = Message(
-      english = "What did you think of this service ?"
+      english = "What did you think of this service?"
     )
 
     val `takes 30 seconds`: Message = Message(
