@@ -247,9 +247,17 @@ object Messages {
       english = "What happens next"
     )
 
+    val `What do you think`: Message = Message(
+      english = "What did you think of this service ?"
+    )
+
+    val `takes 30 seconds`: Message = Message(
+      english = "takes 30 seconds"
+    )
+
     def `If you don’t receive your refund you can call or write...`(generalEnquiriesLink: String): Message = Message(
       english =
-        s"""If you don’t receive your refund you can <a id="general-enquiries-link" class="govuk-link" href="$generalEnquiriesLink">
+        s"""If you don’t receive your refund you can <a id="general-enquiries-link" target="_blank" class="govuk-link" href="$generalEnquiriesLink">
            |call or write to the Income Tax helpline (opens in new tab)</a>. You will need your P800 reference.""".stripMargin
     )
   }
