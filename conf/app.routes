@@ -8,6 +8,9 @@ GET        /start                                                               
 GET        /do-you-want-to-sign-in                                                          controllers.DoYouWantToSignInController.get
 POST       /do-you-want-to-sign-in                                                          controllers.DoYouWantToSignInController.post
 
+# TODO: change URL to match page title (also change code names for journy state, controller, etc)
+# according to GDS "URLs should align with the title of the page"
+# see  https://www.gov.uk/guidance/content-design/url-standards-for-gov-uk
 GET        /enter-P800-reference                                                            controllers.EnterP800ReferenceController.get
 POST       /enter-P800-reference                                                            controllers.EnterP800ReferenceController.post
 
@@ -20,6 +23,8 @@ GET        /do-you-want-your-refund-via-bank-transfer                           
 POST       /do-you-want-your-refund-via-bank-transfer                                       controllers.DoYouWantYourRefundViaBankTransferController.post
 
 GET        /your-cheque-will-be-posted-to-you                                               controllers.YourChequeWillBePostedToYouController.get
+
+#TODO: change url to reflect cheque in the name, there will be another request-received page so we want to distinguish between them
 GET        /request-received                                                                controllers.RequestReceivedController.get
 
 #we-need-you-to-confirm-your-identity:

@@ -26,6 +26,7 @@ import play.api.mvc._
 import requests.RequestSupport
 import services.JourneyService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
+import util.Errors
 import views.Views
 
 import javax.inject.{Inject, Singleton}
@@ -43,24 +44,50 @@ class DoYouWantToSignInController @Inject() (
 
   import requestSupport._
 
-  val get: Action[AnyContent] = actions.journeyAction { implicit request =>
-    Ok(views.doYouWantToSignInPage(
-      form = DoYouWantToSignInForm.form
-    ))
+  val get: Action[AnyContent] = actions.journeyAction.async { implicit request =>
+    request.journey match {
+      case _: JTerminal      => JourneyController.handleFinalJourneyOnNonFinalPage()
+      case _: JourneyStarted => Future.successful(getResult)
+      case j: JAfterStarted =>
+        journeyService
+          .upsert(
+            j
+              .into[JourneyStarted]
+              .enableInheritedAccessors
+              .transform
+          )
+          .map(_ => getResult)
+    }
   }
 
+  private def getResult(implicit request: Request[_]) = Ok(views.doYouWantToSignInPage(
+    form = DoYouWantToSignInForm.form
+  ))
+
   val post: Action[AnyContent] = actions.journeyAction.async { implicit request =>
+    request.journey match {
+      case j: JourneyStarted => processForm(j)
+      case _: JAfterStarted =>
+        Errors.throwServerErrorException(s"This endpoint supports only ${classOf[JourneyStarted].toString}")
+      //TODO: discuss alternative approach
+      //val journey = j
+      //              .into[JourneyStarted]
+      //              .enableInheritedAccessors
+      //              .transform
+      //processForm(j)
+    }
+  }
+
+  private def processForm(journey: Journey)(implicit request: Request[_]): Future[Result] = {
     DoYouWantToSignInForm.form.bindFromRequest().fold(
       formWithErrors => Future.successful(BadRequest(views.doYouWantToSignInPage(
         form = formWithErrors
       ))), {
         case DoYouWantToSignInFormValue.Yes =>
-          journeyService
-            .upsert(request.journey.transformInto[JourneyDoYouWantToSignInYes])
-            .map(_ => Redirect(appConfig.ptaSignInUrl))
+          Future.successful(Redirect(appConfig.ptaSignInUrl))
         case DoYouWantToSignInFormValue.No =>
           journeyService
-            .upsert(request.journey.transformInto[JourneyDoYouWantToSignInNo])
+            .upsert(journey.transformInto[JourneyDoYouWantToSignInNo])
             .map(_ => Redirect(controllers.routes.EnterP800ReferenceController.get))
       }
     )

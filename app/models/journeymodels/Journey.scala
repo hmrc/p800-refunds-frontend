@@ -52,25 +52,27 @@ final case class JourneyStarted(
     override val _id:       JourneyId,
     override val createdAt: Instant
 ) extends Journey
-
-/**
- * [[Journey]] when finishing submission on DoYouWantToSignIn page,
- * when selected Yes.
- */
-final case class JourneyDoYouWantToSignInYes(
-    override val _id:       JourneyId,
-    override val createdAt: Instant
-) extends Journey
+  with JBeforeDoYouWantToSignInNo
+  with JBeforeWhatIsYourP800Reference
+  with JBeforeCheckYourReferenceValid
+  with JBeforeDoYouWantYourRefundViaBankTransferYes
+  with JBeforeDoYouWantYourRefundViaBankTransferNo
+  with JBeforeYourChequeWillBePostedToYou
 
 /**
  * [[Journey]] when finishing submission on DoYouWantToSignIn page,
  * when selected No.
- * It's the final state of the journey.
  */
 final case class JourneyDoYouWantToSignInNo(
     override val _id:       JourneyId,
     override val createdAt: Instant
 ) extends Journey
+  with JAfterStarted
+  with JBeforeWhatIsYourP800Reference
+  with JBeforeCheckYourReferenceValid
+  with JBeforeDoYouWantYourRefundViaBankTransferYes
+  with JBeforeDoYouWantYourRefundViaBankTransferNo
+  with JBeforeYourChequeWillBePostedToYou
 
 /**
  * [[Journey]] when finishing submission on WhatIsYourP800Reference page.
@@ -80,53 +82,101 @@ final case class JourneyWhatIsYourP800Reference(
     override val createdAt: Instant,
     p800Reference:          P800Reference
 ) extends Journey
+  with JAfterStarted
+  with JAfterDoYouWantToSignInNo
+  with JBeforeCheckYourReferenceValid
+  with JBeforeDoYouWantYourRefundViaBankTransferYes
+  with JBeforeDoYouWantYourRefundViaBankTransferNo
+  with JBeforeYourChequeWillBePostedToYou
 
 /**
  * [[Journey]] when finishing submission on CheckYourReference page,
  * when the validation of the [[P800Reference]] succeeded
  */
 final case class JourneyCheckYourReferenceValid(
-    override val _id:       JourneyId,
-    override val createdAt: Instant,
-    p800Reference:          P800Reference
+    override val _id:           JourneyId,
+    override val createdAt:     Instant,
+    override val p800Reference: P800Reference
 ) extends Journey
-
-/**
- * [[Journey]] when finishing submission on CheckYourReference page,
- * when the validation of the [[P800Reference]] failed
- */
-final case class JourneyCheckYourReferenceInvalid(
-    override val _id:       JourneyId,
-    override val createdAt: Instant,
-    p800Reference:          P800Reference
-) extends Journey
+  with JAfterStarted
+  with JAfterDoYouWantToSignInNo
+  with JAfterWhatIsYourP800Reference
+  with JBeforeDoYouWantYourRefundViaBankTransferYes
+  with JBeforeDoYouWantYourRefundViaBankTransferNo
+  with JBeforeYourChequeWillBePostedToYou
 
 /**
  * [[Journey]] when finishing submission on DoYouWantYourRefundViaBankTransfer page,
  * when selected Yes
  */
 final case class JourneyDoYouWantYourRefundViaBankTransferYes(
-    override val _id:       JourneyId,
-    override val createdAt: Instant,
-    p800Reference:          P800Reference
+    override val _id:           JourneyId,
+    override val createdAt:     Instant,
+    override val p800Reference: P800Reference
 ) extends Journey
+  with JAfterStarted
+  with JAfterDoYouWantToSignInNo
+  with JAfterWhatIsYourP800Reference
+  with JAfterCheckYourReferenceValid
 
 /**
  * [[Journey]] when finishing submission on DoYouWantYourRefundViaBankTransfer page,
  * when selected Yes
  */
 final case class JourneyDoYouWantYourRefundViaBankTransferNo(
-    override val _id:       JourneyId,
-    override val createdAt: Instant,
-    p800Reference:          P800Reference
+    override val _id:           JourneyId,
+    override val createdAt:     Instant,
+    override val p800Reference: P800Reference
 ) extends Journey
+  with JAfterStarted
+  with JAfterDoYouWantToSignInNo
+  with JAfterWhatIsYourP800Reference
+  with JAfterCheckYourReferenceValid
+  with JBeforeYourChequeWillBePostedToYou
 
 /**
  * [[Journey]] when finishing submission on YourChequeWillBePostedToYou page.
  * It's the final state of the journey.
  */
 final case class JourneyYourChequeWillBePostedToYou(
-    override val _id:       JourneyId,
-    override val createdAt: Instant,
-    p800Reference:          P800Reference
+    override val _id:           JourneyId,
+    override val createdAt:     Instant,
+    override val p800Reference: P800Reference
 ) extends Journey
+  with JTerminal
+  with JAfterStarted
+  with JAfterDoYouWantToSignInNo
+  with JAfterWhatIsYourP800Reference
+  with JAfterCheckYourReferenceValid
+  with JAfterDoYouWantYourRefundViaBankTransferNo
+
+/*
+ * Below marking traits for all [[Journey]]s after/before certain state
+ */
+
+sealed trait JAfterStarted extends Journey
+sealed trait JAfterDoYouWantToSignInNo extends Journey
+sealed trait JAfterWhatIsYourP800Reference extends Journey {
+  val p800Reference: P800Reference
+}
+sealed trait JAfterCheckYourReferenceValid extends Journey {
+  val p800Reference: P800Reference
+}
+sealed trait JAfterDoYouWantYourRefundViaBankTransferYes extends Journey {
+  val p800Reference: P800Reference
+}
+sealed trait JAfterDoYouWantYourRefundViaBankTransferNo extends Journey {
+  val p800Reference: P800Reference
+}
+
+sealed trait JBeforeDoYouWantToSignInNo extends Journey
+sealed trait JBeforeWhatIsYourP800Reference extends Journey
+sealed trait JBeforeCheckYourReferenceValid extends Journey
+sealed trait JBeforeDoYouWantYourRefundViaBankTransferYes extends Journey
+sealed trait JBeforeDoYouWantYourRefundViaBankTransferNo extends Journey
+sealed trait JBeforeYourChequeWillBePostedToYou extends Journey
+
+/**
+ * Marking trait for [[Journey]] in terminal state
+ */
+sealed trait JTerminal extends Journey

@@ -33,7 +33,7 @@ sbt> runTestOnly
 ### Journey States
 Journey states correspond to the result of the submission on pages (or endpoints).
 
-[If mermaid dosen't render click here](https://mermaid.live/edit#pako:eNqtVU1v2kAQ_SujPYPLR4DYh0pALvQQoYQGpXUltmaBre1Zul6TkIj_3llDbL6hUnxAZva9N29nZ9bvLFBjwTw2idRLMOPawODORx-BnqlapOGcT8VP3-9GXMbAESQGKhZg-CtoMUlxDNwCnTQEC_X9X7Bml8vwPREagkgGoRjD6EtiSH8EkcQQFG6znDWlDShe4I9KNYolyAQCLbghLqc0qRWjGPKFnGZRo8DMBHxb4-_Us0qHHM1APcop9nDtZ-Pl6wfs0ZogMsDHNvcWcvdtTF6Ets6fRTLaxMn38URwkOkARzLX57xXn5HyXu1lPIIosgs0WfJExHLBIzm2R0wRDEThZTjjppeQiu7fVioPOeC4oxPoPVcnURtjiYhEYA6PojsTQWhpuzYKF092F9Qs-Xp7Lrs8it7XkKzp-j2wIShCmSw8EGN776sP06dEi0JmxTuoxaHbpzXuvGyuispcrdzDxbb2ZdwmRz6tA70EPuUSt8o9FF2O5KKrcCJ1vFv4fnH-dlx3xvRcz1zfMpANbfF7qawXmicfhQ2X7rInyTscw4HmmJDWcX-XeYeDfr3H43P_6RZPXwxnKftdQp1gJKZilFu2dNrt31QMZRR1RF8ltK-BVT_u9Qzhvy1S4YshNL8DcBynSDjodOk_K7FY6JjLMX32snvAZ_QZiYXPPHodcx36zMcV4Xhq1OMSA-YZnYoSS-d2Pu8kn2oeM2_Co4Sic47Me2evzCtX6xWn1mg0qrVmvV5ttGoltmRe7cZpuc1aza22XLd5W6-0ViX2phRJVB23Qmvubb3ZbLaq7s1NpvcjW7RJV_8A7wiPQg)
+[If mermaid dosen't render click here](https://mermaid.live/edit#pako:eNqtVU1z2jAQ_Ss7OoOLceIAh84k5JIeMpmEhknrzqDaC6i2JSrLIQnDf-_KNjblK-lMzcWs3nv7tNqVVyxUEbIBmyZqGc65NjC6DmQggZ6Zes7jBZ_h9yAYJlykwCUIGaoUwfAX0DjNZQTcAp08BgsNgh9Qsttt-JqhhjARYYwRTD5lhvQnkAgZg5LbLKekXILEJfxSuZb4CiKDUCM3xOWUJrdiFJP8WcyKqFFg5ghfSvy1elL5mEszUg9iJm9k6afy8nkDe7AmiAyw2ebOQu3-UmZL1Nb5rZpUYbJ9OA_sJdrD3aqdjAcQTXaUpkieYSqeeSIiW26KyBAbL-M5NzcZqei7XqdzXwMOOzqC3nF1FFUZyzDB0BZq8oTZVl2GcwxjS_vbRuPi0e6CDq5ev1yIIU-SVQkpGuDuBmwImlAhC_fE2N77emP6mGhTyKJ4e7XYd_tY4k7L1qpSmVK5VYaK7ty0ZmZbc4xDLgk2VHIqdLpfmYo51SqF5ZwWQBgaiop94mQr4mZOaKwMFoZogOUMo48fPBRjsHX4R8vyzuHXrVxx6V54FPyKy3ikucxI6_A0vs-jPDsN-nGPh-f2v1s8PtgnKZXd-n6kRjFC5jipLVs67fZ3jmORJFd4pzLa18iqH_Z6gvDPFqnwzRCZnyE4jtMkHF0N6T9rsRR1ykVEn5BijgNGV3KKARvQa8R1HLBArgnHc6MeXmXIBkbn2GL5ws7XteAzzdNNcMElG6zYCxu4Zz3Hu_Au3PNu33X7fu-8xV7ZoO12O47nd3q-73UvPK_bO1u32JtSJOE6Hc_td_we_Xy_TwqF4Ldi0eqv_wAOZFOL)
 
 ```mermaid
 flowchart TD;
@@ -69,17 +69,6 @@ flowchart TD;
     ValidateReferenceApiCall 
     -- valid
     --> JourneyCheckYourReferenceValid
-
-    ValidateReferenceApiCall
-    -- not valid
-    --> JourneyCheckYourReferenceInvalid
-
-    JourneyCheckYourReferenceInvalid
-    -- clicked `Try again` 
-    on WeCannotConfirmYourReference Page 
-    and navigated to WhatIsYourP800Reference page
-    --> JourneyWhatIsYourP800Reference
-    
     
     JourneyCheckYourReferenceValid
     -- selected `Yes` 
