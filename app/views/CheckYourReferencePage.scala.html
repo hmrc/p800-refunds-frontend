@@ -51,12 +51,19 @@
     }
 
     <h1 class="govuk-heading-xl">@heading</h1>
-    <p class="govuk-body">@{Html(Messages.CheckYourReferenceMessages.`You entered X`(reference.value).show)}</p>
+ <p class="govuk-body">@{Html(Messages.CheckYourReferenceMessages.`You entered X`(reference.value).show)}</p>
 
-    <h2 class="govuk-heading-m">@{Messages.CheckYourReferenceMessages.`Is this correct?`.show}</h2>
 
     @viewsHelpers.formWithCsrf(action = controllers.routes.CheckYourReferenceController.post) {
         @viewsHelpers.govukRadios(Radios(
+            fieldset = Some(Fieldset(
+                legend = Some(Legend(
+                    content = Text(Messages.CheckYourReferenceMessages.`Is this correct?`.show),
+                    classes = "govuk-fieldset__legend--m",
+                    isPageHeading = false
+                ))
+            )),
+
             idPrefix = Some(key),
             name = key,
             items = Seq(
