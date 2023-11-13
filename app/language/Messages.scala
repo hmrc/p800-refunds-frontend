@@ -252,7 +252,7 @@ object Messages {
     )
 
     val `takes 30 seconds`: Message = Message(
-      english = "takes 30 seconds"
+      english = "(takes 30 seconds)"
     )
 
     def `If you don’t receive your refund you can call or write...`(generalEnquiriesLink: String): Message = Message(
