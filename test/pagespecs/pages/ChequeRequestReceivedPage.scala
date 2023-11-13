@@ -44,6 +44,7 @@ class ChequeRequestReceivedPage(baseUrl: String)(implicit webDriver: WebDriver) 
           |
           |What happens next
           |If you don’t receive your refund you can call or write to the Income Tax helpline (opens in new tab). You will need your P800 reference.
+          |What did you think of this service? (takes 30 seconds)
           |""".stripMargin
     )
 
