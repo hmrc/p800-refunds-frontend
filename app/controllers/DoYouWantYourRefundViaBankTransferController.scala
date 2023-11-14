@@ -44,8 +44,8 @@ class DoYouWantYourRefundViaBankTransferController @Inject() (
 
   val get: Action[AnyContent] = actions.journeyAction.async { implicit request =>
     request.journey match {
-      case _: JTerminal                      => JourneyController.handleFinalJourneyOnNonFinalPage()
-      case j: JBeforeCheckYourReferenceValid => JourneyController.sendToCorrespondingPageF(j)
+      case j: JTerminal                      => JourneyRouter.handleFinalJourneyOnNonFinalPage(j)
+      case j: JBeforeCheckYourReferenceValid => JourneyRouter.sendToCorrespondingPageF(j)
       case _: JourneyCheckYourReferenceValid => Future.successful(getResult)
       case j: JAfterCheckYourReferenceValid =>
         journeyService
@@ -65,8 +65,8 @@ class DoYouWantYourRefundViaBankTransferController @Inject() (
 
   val post: Action[AnyContent] = actions.journeyAction.async { implicit request =>
     request.journey match {
-      case _: JTerminal                      => JourneyController.handleFinalJourneyOnNonFinalPage()
-      case j: JBeforeCheckYourReferenceValid => JourneyController.sendToCorrespondingPageF(j)
+      case j: JTerminal                      => JourneyRouter.handleFinalJourneyOnNonFinalPage(j)
+      case j: JBeforeCheckYourReferenceValid => JourneyRouter.sendToCorrespondingPageF(j)
       case j: JourneyCheckYourReferenceValid => processForm(j)
       case _: JAfterCheckYourReferenceValid =>
         Errors.throwServerErrorException(s"This endpoint supports only ${classOf[JourneyCheckYourReferenceValid].toString}")

@@ -38,8 +38,8 @@ class YourChequeWillBePostedToYouController @Inject() (
 
   val get: Action[AnyContent] = actions.journeyAction.async { implicit request =>
     request.journey match {
-      case _: JTerminal                                   => JourneyController.handleFinalJourneyOnNonFinalPage()
-      case j: JBeforeDoYouWantYourRefundViaBankTransferNo => JourneyController.sendToCorrespondingPageF(j)
+      case j: JTerminal                                   => JourneyRouter.handleFinalJourneyOnNonFinalPage(j)
+      case j: JBeforeDoYouWantYourRefundViaBankTransferNo => JourneyRouter.sendToCorrespondingPageF(j)
       case _: JourneyDoYouWantYourRefundViaBankTransferNo => Future.successful(getResult)
       case j: JAfterDoYouWantYourRefundViaBankTransferNo =>
         journeyService
@@ -50,9 +50,9 @@ class YourChequeWillBePostedToYouController @Inject() (
               .transform
           )
           .map(_ => getResult)
-      case j: JourneyDoYouWantYourRefundViaBankTransferYes => JourneyController.sendToCorrespondingPageF(j)
+      case j: JourneyDoYouWantYourRefundViaBankTransferYes => JourneyRouter.sendToCorrespondingPageF(j)
       //TODO: missing implementation for further journey states, uncomment in future once provided
-      //case j: JAfterDoYouWantYourRefundViaBankTransferYes  => JourneyController.sendToCorrespondingPageF(j)
+      //case j: JAfterDoYouWantYourRefundViaBankTransferYes  => JourneyRouter.sendToCorrespondingPageF(j)
     }
   }
 
@@ -60,5 +60,21 @@ class YourChequeWillBePostedToYouController @Inject() (
     Ok(views.yourChequeWillBePostedToYouPage())
   }
 
-  //TODO Jake: post, which changes status
+  val post: Action[AnyContent] = actions.journeyAction.async { implicit request =>
+    request.journey match {
+      case j: JTerminal                                    => JourneyRouter.handleFinalJourneyOnNonFinalPage(j)
+      case j: JBeforeDoYouWantYourRefundViaBankTransferNo  => JourneyRouter.sendToCorrespondingPageF(j)
+      case j: JourneyDoYouWantYourRefundViaBankTransferNo  => processPost(j)
+      case j: JourneyDoYouWantYourRefundViaBankTransferYes => JourneyRouter.sendToCorrespondingPageF(j)
+      //TODO: missing implementation for further journey states, uncomment in future once provided
+      //case j: JAfterDoYouWantYourRefundViaBankTransferYes  => JourneyRouter.sendToCorrespondingPageF(j)
+    }
+  }
+
+  private def processPost(journey: JourneyDoYouWantYourRefundViaBankTransferNo)(implicit request: Request[_]): Future[Result] = {
+    //TODO: API call
+    journeyService
+      .upsert(journey.transformInto[JourneyYourChequeWillBePostedToYou])
+      .map(_ => Redirect(controllers.routes.RequestReceivedController.get))
+  }
 }

@@ -43,8 +43,8 @@ class EnterP800ReferenceController @Inject() (
 
   val get: Action[AnyContent] = actions.journeyAction.async { implicit request =>
     request.journey match {
-      case _: JTerminal                  => JourneyController.handleFinalJourneyOnNonFinalPage()
-      case j: JBeforeDoYouWantToSignInNo => JourneyController.sendToCorrespondingPageF(j)
+      case j: JTerminal                  => JourneyRouter.handleFinalJourneyOnNonFinalPage(j)
+      case j: JBeforeDoYouWantToSignInNo => JourneyRouter.sendToCorrespondingPageF(j)
       case _: JourneyDoYouWantToSignInNo => Future.successful(getResult)
       case j: JAfterDoYouWantToSignInNo =>
         journeyService
@@ -64,8 +64,8 @@ class EnterP800ReferenceController @Inject() (
 
   val post: Action[AnyContent] = actions.journeyAction.async { implicit request =>
     request.journey match {
-      case _: JTerminal                  => JourneyController.handleFinalJourneyOnNonFinalPage()
-      case j: JBeforeDoYouWantToSignInNo => JourneyController.sendToCorrespondingPageF(j)
+      case j: JTerminal                  => JourneyRouter.handleFinalJourneyOnNonFinalPage(j)
+      case j: JBeforeDoYouWantToSignInNo => JourneyRouter.sendToCorrespondingPageF(j)
       case j: JourneyDoYouWantToSignInNo => processForm(j)
       case _: JAfterDoYouWantToSignInNo =>
         Errors.throwServerErrorException(s"This endpoint supports only ${classOf[JourneyDoYouWantToSignInNo].toString}")

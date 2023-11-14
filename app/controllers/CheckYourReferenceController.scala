@@ -46,8 +46,8 @@ class CheckYourReferenceController @Inject() (
 
   val get: Action[AnyContent] = actions.journeyAction.async { implicit request =>
     request.journey match {
-      case _: JTerminal                      => JourneyController.handleFinalJourneyOnNonFinalPage()
-      case j: JBeforeWhatIsYourP800Reference => JourneyController.sendToCorrespondingPageF(j)
+      case j: JTerminal                      => JourneyRouter.handleFinalJourneyOnNonFinalPage(j)
+      case j: JBeforeWhatIsYourP800Reference => JourneyRouter.sendToCorrespondingPageF(j)
       case j: JourneyWhatIsYourP800Reference => Future.successful(getResult(j))
       case j: JAfterWhatIsYourP800Reference =>
         journeyService
@@ -68,8 +68,8 @@ class CheckYourReferenceController @Inject() (
 
   val post: Action[AnyContent] = actions.journeyAction.async { implicit request =>
     request.journey match {
-      case _: JTerminal                      => JourneyController.handleFinalJourneyOnNonFinalPage()
-      case j: JBeforeWhatIsYourP800Reference => JourneyController.sendToCorrespondingPageF(j)
+      case j: JTerminal                      => JourneyRouter.handleFinalJourneyOnNonFinalPage(j)
+      case j: JBeforeWhatIsYourP800Reference => JourneyRouter.sendToCorrespondingPageF(j)
       case j: JourneyWhatIsYourP800Reference => processForm(j)
       case _: JAfterWhatIsYourP800Reference =>
         Errors.throwServerErrorException(s"This endpoint supports only ${classOf[JourneyWhatIsYourP800Reference].toString}")

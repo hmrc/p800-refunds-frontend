@@ -26,10 +26,10 @@ abstract class Page(
   extends Endpoint(baseUrl, path) {
 
   def expectedH1: String
-
   def clickEnglishLink()(implicit webDriver: WebDriver): Unit = click on xpath("""//a[@hreflang="en"]""")
   def clickWelshLink()(implicit webDriver: WebDriver): Unit = click on xpath("""//a[@hreflang="cy"]""")
   def clickBackButton()(implicit webDriver: WebDriver): Unit = click on xpath("""/html/body//a[@class="govuk-back-link"]""")
+  def clickBackButtonInBrowser()(implicit webDriver: WebDriver): Unit = webDriver.navigate().back()
   def clickSignOut()(implicit webDriver: WebDriver): Unit = PageUtil.clickByClassName("hmrc-sign-out-nav__link")
   def clickSubmit()(implicit webDriver: WebDriver): Unit = PageUtil.clickByIdOrName("submit")
 

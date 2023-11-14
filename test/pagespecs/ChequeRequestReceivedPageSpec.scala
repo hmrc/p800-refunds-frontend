@@ -16,13 +16,32 @@
 
 package pagespecs
 
+import testdata.TdAll
 import testsupport.ItSpec
 
 class ChequeRequestReceivedPageSpec extends ItSpec {
+
+  override def beforeEach(): Unit = {
+    super.beforeEach()
+    addJourneyIdToSession(TdAll.journeyId)
+    upsertJourneyToDatabase(TdAll.journeyYourChequeWillBePostedToYou)
+  }
 
   "/request-received renders the cheque request received page" in {
     pages.chequeRequestReceivedPage.open()
     pages.chequeRequestReceivedPage.assertPageIsDisplayed()
   }
 
+  "user is kept in the final page if clicked browser's back button" in {
+    //setup the history in the browser:
+    upsertJourneyToDatabase(TdAll.journeyDoYouWantYourRefundViaBankTransferNo)
+    pages.yourChequeWillBePostedToYouPage.open()
+    pages.yourChequeWillBePostedToYouPage.assertPageIsDisplayed()
+    pages.yourChequeWillBePostedToYouPage.clickSubmitRefundRequest()
+
+    pages.chequeRequestReceivedPage.open()
+    pages.chequeRequestReceivedPage.assertPageIsDisplayed()
+    pages.chequeRequestReceivedPage.clickBackButtonInBrowser()
+    pages.chequeRequestReceivedPage.assertPageIsDisplayed()
+  }
 }

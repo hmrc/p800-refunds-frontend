@@ -46,7 +46,7 @@ class DoYouWantToSignInController @Inject() (
 
   val get: Action[AnyContent] = actions.journeyAction.async { implicit request =>
     request.journey match {
-      case _: JTerminal      => JourneyController.handleFinalJourneyOnNonFinalPage()
+      case j: JTerminal      => JourneyRouter.handleFinalJourneyOnNonFinalPage(j)
       case _: JourneyStarted => Future.successful(getResult)
       case j: JAfterStarted =>
         journeyService
