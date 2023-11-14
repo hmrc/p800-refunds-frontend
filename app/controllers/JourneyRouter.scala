@@ -17,25 +17,25 @@
 package controllers
 
 import models.journeymodels._
-import play.api.mvc.{Call, Request, Result}
 import play.api.mvc.Results.Redirect
-import util.{Errors, JourneyLogger}
+import play.api.mvc.{Call, Request, Result}
+import util.JourneyLogger
 
 import scala.concurrent.Future
 
-object JourneyController {
+object JourneyRouter {
 
   /**
    * Handle journey in final state on non final page.
-   * TODO OPS-11309
-   * We don't know yet what to do here.
+   *
    * The case is when user is on final page (i.e. RequestReceived) and
-   * clicks back. Shall we render the previous pages? Or remove the journeyId
-   * from the session upon displaying final page (but what if user refreshes it?)
+   * clicks back. We ignore his request and redirect back to the final page.
    */
-  def handleFinalJourneyOnNonFinalPage(): Nothing = {
-    Errors.throwBadRequestException("Not decided yet, what to do")
-  }
+  def handleFinalJourneyOnNonFinalPage(journey: JTerminal): Future[Result] = Future.successful(
+    journey match {
+      case _: JourneyYourChequeWillBePostedToYou => Redirect(controllers.routes.RequestReceivedController.get)
+    }
+  )
 
   /**
    * Based on the journey state it redirects to the corresponding to this state page.

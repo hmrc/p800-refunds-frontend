@@ -63,10 +63,10 @@
         )
     )
 
-    @viewsHelpers.govukButton(Button(
-        content = Text(Messages.YourChequeWillBePostedToYou.`Submit refund request`.show),
-        id      = Some("submit-refund-request"),
-        href    = Some(routes.RequestReceivedController.get.url)
-    ))
-
+    @viewsHelpers.formWithCsrf(action = controllers.routes.YourChequeWillBePostedToYouController.post) {
+        @viewsHelpers.govukButton(Button(
+            content = Text(Messages.YourChequeWillBePostedToYou.`Submit refund request`.show),
+            id      = Some("submit-refund-request")
+        ))
+    }
 }

@@ -17,12 +17,14 @@
 package controllers
 
 import action.Actions
+import models.journeymodels.{JAfterCheckYourReferenceValid, JBeforeYourChequeWillBePostedToYou, JourneyYourChequeWillBePostedToYou}
 import models.{AmountInPence, P800Reference}
 import play.api.mvc._
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import views.Views
 
 import javax.inject.{Inject, Singleton}
+import scala.concurrent.Future
 
 @Singleton
 class RequestReceivedController @Inject() (
@@ -31,8 +33,18 @@ class RequestReceivedController @Inject() (
     actions: Actions
 ) extends FrontendController(mcc) {
 
-  val get: Action[AnyContent] = actions.default { implicit request =>
-    //TODO Jake: pattern match on journey state, get the p800 reference (when implementing API call, populate amount into the journey so it is available here)
+  val get: Action[AnyContent] = actions.journeyAction.async { implicit request =>
+
+    request.journey match {
+      case j: JBeforeYourChequeWillBePostedToYou => JourneyRouter.sendToCorrespondingPageF(j)
+      case _: JourneyYourChequeWillBePostedToYou =>
+        //TODO get the p800 reference (when implementing API call, populate amount into the journey so it is available here)
+        getResult
+      case j: JAfterCheckYourReferenceValid => JourneyRouter.sendToCorrespondingPageF(j)
+    }
+  }
+
+  private def getResult(implicit request: Request[_]) = Future.successful {
     val (dummyP800Ref, refundAmountInPence) = P800Reference("P800REFNO1") -> AmountInPence(231.60)
     Ok(views.requestReceivedPage(dummyP800Ref, refundAmountInPence))
   }
