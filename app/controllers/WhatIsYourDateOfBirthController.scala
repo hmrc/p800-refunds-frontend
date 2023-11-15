@@ -14,15 +14,24 @@
  * limitations under the License.
  */
 
-package pagespecs
+package controllers
 
-import testsupport.ItSpec
+import action.Actions
+import play.api.mvc._
+import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
+import views.Views
 
-class WhatIsYourFullNamePageSpec extends ItSpec {
+import javax.inject.{Inject, Singleton}
 
-  "/what-is-your-full-name renders the what is your name page" in {
-    pages.whatIsYourFullNamePage.open()
-    pages.whatIsYourFullNamePage.assertPageIsDisplayed()
+@Singleton
+class WhatIsYourDateOfBirthController @Inject() (
+    mcc:     MessagesControllerComponents,
+    views:   Views,
+    actions: Actions
+) extends FrontendController(mcc) {
+
+  val get: Action[AnyContent] = actions.default { implicit request =>
+    Ok(views.whatIsYourDateOfBirthePage())
   }
 
 }

@@ -143,6 +143,16 @@ object Messages {
 
   }
 
+  object WhatIsYourDateOfBirth {
+    val `What is your date of birth`: Message = Message(
+      english = "What is your date of birth?"
+    )
+
+    val `For example`: Message = Message(
+      english = "For example, 27 3 2007"
+    )
+
+  }
   object WhatIsYourFullName {
     val `What is your full name`: Message = Message(
       english = "What is your full name?"
