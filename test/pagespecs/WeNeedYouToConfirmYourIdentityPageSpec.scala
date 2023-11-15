@@ -20,7 +20,7 @@ import testsupport.ItSpec
 
 class WeNeedYouToConfirmYourIdentityPageSpec extends ItSpec {
 
-  "/request-received renders the cheque request received page" in {
+  "/confirm-your-identity renders the we need to confirm your identity page" in {
     pages.weNeedYouToConfirmYourIdentityPage.open()
     pages.weNeedYouToConfirmYourIdentityPage.assertPageIsDisplayed()
   }

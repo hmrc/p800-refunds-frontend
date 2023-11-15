@@ -18,11 +18,11 @@ package pagespecs
 
 import testsupport.ItSpec
 
-class WhatIsYourFullNamePageSpec extends ItSpec {
+class WhatIsYourDateOfBirthPageSpec extends ItSpec {
 
-  "/what-is-your-full-name renders the what is your name page" in {
-    pages.whatIsYourFullNamePage.open()
-    pages.whatIsYourFullNamePage.assertPageIsDisplayed()
+  "/what-is-your-date-of-birth renders the what is your date of birth page" in {
+    pages.whatIsYourDateOfBirthPage.open()
+    pages.whatIsYourDateOfBirthPage.assertPageIsDisplayed()
   }
 
 }
