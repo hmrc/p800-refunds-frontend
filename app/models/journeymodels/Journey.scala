@@ -16,7 +16,7 @@
 
 package models.journeymodels
 
-import models.P800Reference
+import models.{P800Reference, FullName}
 import play.api.libs.json.OFormat
 
 import java.time.{Clock, Instant}
@@ -58,6 +58,7 @@ final case class JourneyStarted(
   with JBeforeDoYouWantYourRefundViaBankTransferYes
   with JBeforeDoYouWantYourRefundViaBankTransferNo
   with JBeforeYourChequeWillBePostedToYou
+  with JBeforeWhatIsYourFullName
 
 /**
  * [[Journey]] when finishing submission on DoYouWantToSignIn page,
@@ -73,6 +74,7 @@ final case class JourneyDoYouWantToSignInNo(
   with JBeforeDoYouWantYourRefundViaBankTransferYes
   with JBeforeDoYouWantYourRefundViaBankTransferNo
   with JBeforeYourChequeWillBePostedToYou
+  with JBeforeWhatIsYourFullName
 
 /**
  * [[Journey]] when finishing submission on WhatIsYourP800Reference page.
@@ -88,6 +90,7 @@ final case class JourneyWhatIsYourP800Reference(
   with JBeforeDoYouWantYourRefundViaBankTransferYes
   with JBeforeDoYouWantYourRefundViaBankTransferNo
   with JBeforeYourChequeWillBePostedToYou
+  with JBeforeWhatIsYourFullName
 
 /**
  * [[Journey]] when finishing submission on CheckYourReference page,
@@ -104,6 +107,7 @@ final case class JourneyCheckYourReferenceValid(
   with JBeforeDoYouWantYourRefundViaBankTransferYes
   with JBeforeDoYouWantYourRefundViaBankTransferNo
   with JBeforeYourChequeWillBePostedToYou
+  with JBeforeWhatIsYourFullName
 
 /**
  * [[Journey]] when finishing submission on DoYouWantYourRefundViaBankTransfer page,
@@ -118,6 +122,7 @@ final case class JourneyDoYouWantYourRefundViaBankTransferYes(
   with JAfterDoYouWantToSignInNo
   with JAfterWhatIsYourP800Reference
   with JAfterCheckYourReferenceValid
+  with JBeforeWhatIsYourFullName
 
 /**
  * [[Journey]] when finishing submission on DoYouWantYourRefundViaBankTransfer page,
@@ -149,6 +154,24 @@ final case class JourneyYourChequeWillBePostedToYou(
   with JAfterWhatIsYourP800Reference
   with JAfterCheckYourReferenceValid
   with JAfterDoYouWantYourRefundViaBankTransferNo
+// TODO: how do we handle the diverging states, does this need one of:
+// with JAfterWhatIsYourFullName
+// with JBeforeWhatIsYourFullName
+
+/**
+ * [[Journey]] when finishing submission on WhatIsYourFullName page.
+ */
+final case class JourneyWhatIsYourFullName(
+    override val _id:           JourneyId,
+    override val createdAt:     Instant,
+    override val p800Reference: P800Reference,
+    fullName:                   FullName
+) extends Journey
+  with JAfterStarted
+  with JAfterDoYouWantToSignInNo
+  with JAfterWhatIsYourP800Reference
+  with JAfterCheckYourReferenceValid
+  with JAfterDoYouWantYourRefundViaBankTransferYes
 
 /*
  * Below marking traits for all [[Journey]]s after/before certain state
@@ -168,6 +191,10 @@ sealed trait JAfterDoYouWantYourRefundViaBankTransferYes extends Journey {
 sealed trait JAfterDoYouWantYourRefundViaBankTransferNo extends Journey {
   val p800Reference: P800Reference
 }
+sealed trait JAfterWhatIsYourFullName extends Journey {
+  val p800Reference: P800Reference
+  val fullName: FullName
+}
 
 sealed trait JBeforeDoYouWantToSignInNo extends Journey
 sealed trait JBeforeWhatIsYourP800Reference extends Journey
@@ -175,6 +202,7 @@ sealed trait JBeforeCheckYourReferenceValid extends Journey
 sealed trait JBeforeDoYouWantYourRefundViaBankTransferYes extends Journey
 sealed trait JBeforeDoYouWantYourRefundViaBankTransferNo extends Journey
 sealed trait JBeforeYourChequeWillBePostedToYou extends Journey
+sealed trait JBeforeWhatIsYourFullName extends Journey
 
 /**
  * Marking trait for [[Journey]] in terminal state

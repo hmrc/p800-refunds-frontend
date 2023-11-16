@@ -175,6 +175,7 @@ object Messages {
     )
 
   }
+
   object WhatIsYourFullName {
     val `What is your full name`: Message = Message(
       english = "What is your full name?"
@@ -183,7 +184,24 @@ object Messages {
     val `Enter your name as it appears on your tax calculation`: Message = Message(
       english = "Enter your name as it appears on your tax calculation letter or ‘P800’."
     )
+
+    val `Full name must be 2 characters or more`: Message = Message(
+      english = "Full name must be 2 characters or more"
+    )
+
+    val `Full name must be 160 characters or less`: Message = Message(
+      english = "Full name must be 160 characters or less"
+    )
+
+    def `Name must not include X`(x: String): Message = Message(
+      english = s"Name must not include $x"
+    )
+
+    val `Full name must only include letters a to z, and special characters such as hyphens, spaces and apostrophes`: Message = Message(
+      english = "Full name must only include letters a to z, and special characters such as hyphens, spaces and apostrophes"
+    )
   }
+
   object ConfirmIdentity {
     val `We need you to confirm your identity`: Message = Message(
       english = "We need you to confirm your identity"
