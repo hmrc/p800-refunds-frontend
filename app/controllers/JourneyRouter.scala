@@ -31,11 +31,11 @@ object JourneyRouter {
    * The case is when user is on final page (i.e. RequestReceived) and
    * clicks back. We ignore his request and redirect back to the final page.
    */
-  def handleFinalJourneyOnNonFinalPage(journey: JTerminal): Future[Result] = Future.successful(
-    journey match {
-      case _: JourneyYourChequeWillBePostedToYou => Redirect(controllers.routes.RequestReceivedController.get)
-    }
-  )
+  def handleFinalJourneyOnNonFinalPageF(journey: JTerminal): Future[Result] = Future.successful(handleFinalJourneyOnNonFinalPage(journey))
+
+  def handleFinalJourneyOnNonFinalPage(journey: JTerminal): Result = journey match {
+    case _: JourneyYourChequeWillBePostedToYou => Redirect(controllers.routes.RequestReceivedController.get)
+  }
 
   /**
    * Based on the journey state it redirects to the corresponding to this state page.

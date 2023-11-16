@@ -16,13 +16,34 @@
 
 package pagespecs
 
+import testdata.TdAll
 import testsupport.ItSpec
 
 class WeNeedYouToConfirmYourIdentityPageSpec extends ItSpec {
 
+  override def beforeEach(): Unit = {
+    super.beforeEach()
+    addJourneyIdToSession(TdAll.journeyId)
+    upsertJourneyToDatabase(TdAll.journeyDoYouWantYourRefundViaBankTransferYes)
+  }
+
   "/confirm-your-identity renders the we need to confirm your identity page" in {
     pages.weNeedYouToConfirmYourIdentityPage.open()
     pages.weNeedYouToConfirmYourIdentityPage.assertPageIsDisplayed()
+  }
+
+  "'Continue' button sends user to 'What is your full name' page" in {
+    pages.weNeedYouToConfirmYourIdentityPage.open()
+    pages.weNeedYouToConfirmYourIdentityPage.assertPageIsDisplayed()
+    pages.weNeedYouToConfirmYourIdentityPage.clickSubmit()
+    pages.whatIsYourFullNamePage.assertPageIsDisplayed()
+  }
+
+  "'Back' button sends user to 'Do you want your refund by bank transfer' page" in {
+    pages.weNeedYouToConfirmYourIdentityPage.open()
+    pages.weNeedYouToConfirmYourIdentityPage.assertPageIsDisplayed()
+    pages.weNeedYouToConfirmYourIdentityPage.clickBackButton()
+    pages.doYouWantYourRefundViaBankTransferPage.assertPageIsDisplayed()
   }
 
 }

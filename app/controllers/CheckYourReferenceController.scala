@@ -46,7 +46,7 @@ class CheckYourReferenceController @Inject() (
 
   val get: Action[AnyContent] = actions.journeyAction.async { implicit request =>
     request.journey match {
-      case j: JTerminal                      => JourneyRouter.handleFinalJourneyOnNonFinalPage(j)
+      case j: JTerminal                      => JourneyRouter.handleFinalJourneyOnNonFinalPageF(j)
       case j: JBeforeWhatIsYourP800Reference => JourneyRouter.sendToCorrespondingPageF(j)
       case j: JourneyWhatIsYourP800Reference => Future.successful(getResult(j))
       case j: JAfterWhatIsYourP800Reference =>
@@ -68,7 +68,7 @@ class CheckYourReferenceController @Inject() (
 
   val post: Action[AnyContent] = actions.journeyAction.async { implicit request =>
     request.journey match {
-      case j: JTerminal                      => JourneyRouter.handleFinalJourneyOnNonFinalPage(j)
+      case j: JTerminal                      => JourneyRouter.handleFinalJourneyOnNonFinalPageF(j)
       case j: JBeforeWhatIsYourP800Reference => JourneyRouter.sendToCorrespondingPageF(j)
       case j: JourneyWhatIsYourP800Reference => processForm(j)
       case _: JAfterWhatIsYourP800Reference =>
