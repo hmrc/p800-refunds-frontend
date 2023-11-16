@@ -26,7 +26,7 @@ class PtaSignInPage(baseUrl: String)(implicit webDriver: WebDriver) extends Page
 
   override def expectedH1: String = "Personal tax account sign in"
 
-  def assertPageIsDisplayed(): Unit = withPageClue {
+  def assertPageIsDisplayed(errors: ContentExpectation*): Unit = withPageClue {
     PageUtil.assertPage(
       path        = path,
       h1          = expectedH1,

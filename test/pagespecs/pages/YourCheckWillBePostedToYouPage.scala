@@ -27,7 +27,7 @@ class YourCheckWillBePostedToYouPage(baseUrl: String)(implicit webDriver: WebDri
 
   override def expectedH1: String = "Your cheque will be posted to you"
 
-  def assertPageIsDisplayed(): Unit = withPageClue {
+  def assertPageIsDisplayed(errors: ContentExpectation*): Unit = withPageClue {
     val contentExpectations: Seq[ContentExpectation] = Seq(
       ContentExpectation(
         atXpath       = PageUtil.Xpath.mainContent,
