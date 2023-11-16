@@ -43,7 +43,7 @@ class EnterP800ReferenceController @Inject() (
 
   val get: Action[AnyContent] = actions.journeyAction.async { implicit request =>
     request.journey match {
-      case j: JTerminal                  => JourneyRouter.handleFinalJourneyOnNonFinalPage(j)
+      case j: JTerminal                  => JourneyRouter.handleFinalJourneyOnNonFinalPageF(j)
       case j: JBeforeDoYouWantToSignInNo => JourneyRouter.sendToCorrespondingPageF(j)
       case _: JourneyDoYouWantToSignInNo => Future.successful(getResult)
       case j: JAfterDoYouWantToSignInNo =>
@@ -64,7 +64,7 @@ class EnterP800ReferenceController @Inject() (
 
   val post: Action[AnyContent] = actions.journeyAction.async { implicit request =>
     request.journey match {
-      case j: JTerminal                  => JourneyRouter.handleFinalJourneyOnNonFinalPage(j)
+      case j: JTerminal                  => JourneyRouter.handleFinalJourneyOnNonFinalPageF(j)
       case j: JBeforeDoYouWantToSignInNo => JourneyRouter.sendToCorrespondingPageF(j)
       case j: JourneyDoYouWantToSignInNo => processForm(j)
       case _: JAfterDoYouWantToSignInNo =>

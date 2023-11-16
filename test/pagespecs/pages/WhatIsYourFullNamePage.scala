@@ -26,7 +26,7 @@ class WhatIsYourFullNamePage(baseUrl: String)(implicit webDriver: WebDriver) ext
 
   override def expectedH1: String = "What is your full name?"
 
-  def assertPageIsDisplayed(errors: ContentExpectation*): Unit = withPageClue {
+  override def assertPageIsDisplayed(errors: ContentExpectation*): Unit = withPageClue {
 
     val contentExpectations: Seq[ContentExpectation] = Seq(ContentExpectation(
       atXpath       = PageUtil.Xpath.mainContent,
