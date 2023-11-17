@@ -31,7 +31,8 @@ class Views @Inject() (
     val requestReceivedPage:                    views.html.chequejourney.RequestReceivedPage,
     val weNeedYouToConfirmYourIdentityPage:     views.html.WeNeedYouToConfirmYourIdentityPage,
     val whatIsYourFullNamePage:                 views.html.WhatIsYourFullNamePage,
-    val whatIsYourDateOfBirthePage:             views.html.WhatIsYourDateOfBirthPage,
+    val whatIsYourDateOfBirthPage:              views.html.WhatIsYourDateOfBirthPage,
+    val whatIsYourNationalInsuranceNumberPage:  views.html.WhatIsYourNationalInsuranceNumberPage,
     val doYouWantYourRefundViaBankTransferPage: views.html.DoYouWantYourRefundViaBankTransferPage
 
 )

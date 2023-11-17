@@ -28,33 +28,38 @@
 @import viewsHelpers.requestSupport._
 
 @title = @{
-    Messages.WhatIsYourDateOfBirth.`What is your date of birth`.show
+    Messages.WhatIsYourNationalInsuranceNumber.`What is your National Insurance number`.show
 }
-@key = @{
-    "reference"
-}
+
 
 @layout(
     pageTitle = Some(title)
 ) {
 
-    @viewsHelpers.govukDateInput(DateInput(
-        id = key,
-        namePrefix = Some("date-of-birth"),
-        hint = Some(Hint(
-            content = Text( Messages.WhatIsYourDateOfBirth.`For example`.show)
-        )),
-        fieldset = Some(Fieldset(
-            legend = Some(Legend(
-                content = Text(title),
-                classes = "govuk-fieldset__legend--xl",
-                isPageHeading = true
-            ))
-        ))
+    <fieldset class="govuk-fieldset" aria-describedby="national-insurance-number">
+        <legend class="govuk-fieldset__legend govuk-fieldset__legend--l">
+            <h1 class="govuk-heading-xl"><label for="national-insurance-number">@{title}</label></h1>
+        </legend>
+
+    <div id="national-insurance-number" class="govuk-hint">
+        @{Messages.WhatIsYourNationalInsuranceNumber.`Its on your National Insurance`.show}<br>
+        @{Messages.WhatIsYourNationalInsuranceNumber.`For example`.show}
+    </div>
+
+    @viewsHelpers.govukDetails(Details(
+        summary = Text(Messages.WhatIsYourNationalInsuranceNumber.`I do not know my National Insurance number`.show),
+        content = Text(Messages.WhatIsYourNationalInsuranceNumber.`You can get help to find a lost National`.show)
+    ))
+
+    @viewsHelpers.govukInput(Input(
+        id = "national-insurance-number",
+        name = "national-insurance-number",
+        classes = "govuk-!-width-two-thirds"
     ))
 
     @viewsHelpers.govukButton(Button(
         content = Text(Messages.CommonMessages.`continue`.show),
         id      = Some("submit")
     ))
+    </fieldset>
 }
