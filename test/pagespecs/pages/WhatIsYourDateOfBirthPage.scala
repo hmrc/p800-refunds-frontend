@@ -47,4 +47,8 @@ class WhatIsYourDateOfBirthPage(baseUrl: String)(implicit webDriver: WebDriver) 
     )
   }
 
+  def enterDayOfMonth(day: String): Unit = PageUtil.setTextFieldById("date-of-birth-day", day)
+  def enterMonth(month: String): Unit = PageUtil.setTextFieldById("date-of-birth-month", month)
+  def enterYear(year: String): Unit = PageUtil.setTextFieldById("date-of-birth-year", year)
+
 }

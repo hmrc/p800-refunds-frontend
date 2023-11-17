@@ -17,13 +17,14 @@
 @import language.Messages
 @import uk.gov.hmrc.govukfrontend.views.html.components._
 @import views.html.templates.Layout
+@import models.forms.WhatIsYourDateOfBirthForm
 
 @this(
     layout: Layout,
     viewsHelpers: views.ViewsHelpers
 )
 
-@()(implicit request: Request[_])
+@(form: Form[WhatIsYourDateOfBirthForm])(implicit request: Request[_])
 
 @import viewsHelpers.requestSupport._
 
@@ -31,30 +32,31 @@
     Messages.WhatIsYourDateOfBirth.`What is your date of birth`.show
 }
 @key = @{
-    "reference"
+    "date-of-birth"
 }
 
 @layout(
     pageTitle = Some(title)
 ) {
-
-    @viewsHelpers.govukDateInput(DateInput(
-        id = key,
-        namePrefix = Some("date-of-birth"),
-        hint = Some(Hint(
-            content = Text( Messages.WhatIsYourDateOfBirth.`For example`.show)
-        )),
-        fieldset = Some(Fieldset(
-            legend = Some(Legend(
-                content = Text(title),
-                classes = "govuk-fieldset__legend--xl",
-                isPageHeading = true
+    @viewsHelpers.formWithCsrf(action = controllers.routes.WhatIsYourDateOfBirthController.post) {
+        @viewsHelpers.govukDateInput(DateInput(
+            id = key,
+            namePrefix = Some("date-of-birth"),
+            hint = Some(Hint(
+                content = Text(Messages.WhatIsYourDateOfBirth.`For example`.show)
+            )),
+            fieldset = Some(Fieldset(
+                legend = Some(Legend(
+                    content = Text(title),
+                    classes = "govuk-fieldset__legend--xl",
+                    isPageHeading = true
+                ))
             ))
         ))
-    ))
 
-    @viewsHelpers.govukButton(Button(
-        content = Text(Messages.CommonMessages.`continue`.show),
-        id      = Some("submit")
-    ))
+        @viewsHelpers.govukButton(Button(
+            content = Text(Messages.CommonMessages.`continue`.show),
+            id = Some("submit")
+        ))
+    }
 }
