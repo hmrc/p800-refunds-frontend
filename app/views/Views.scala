@@ -33,7 +33,8 @@ class Views @Inject() (
     val whatIsYourFullNamePage:                 views.html.WhatIsYourFullNamePage,
     val whatIsYourDateOfBirthPage:              views.html.WhatIsYourDateOfBirthPage,
     val whatIsYourNationalInsuranceNumberPage:  views.html.WhatIsYourNationalInsuranceNumberPage,
-    val doYouWantYourRefundViaBankTransferPage: views.html.DoYouWantYourRefundViaBankTransferPage
+    val doYouWantYourRefundViaBankTransferPage: views.html.DoYouWantYourRefundViaBankTransferPage,
+    val weHaveConfirmedYourIdentityPage:        views.html.WeHaveConfirmedYourIdentityPage
 
 )
 

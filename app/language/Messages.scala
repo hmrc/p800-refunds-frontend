@@ -183,7 +183,6 @@ object Messages {
     val `Enter your name as it appears on your tax calculation`: Message = Message(
       english = "Enter your name as it appears on your tax calculation letter or ‘P800’."
     )
-
   }
   object ConfirmIdentity {
     val `We need you to confirm your identity`: Message = Message(
@@ -218,6 +217,16 @@ object Messages {
       english = "We do this to protect your security."
     )
 
+  }
+
+  object WeHaveConfirmedYourIdentity {
+    val `We have confirmed your identity`: Message = Message(
+      english = "We have confirmed your identity"
+    )
+
+    val `Enter your name as it appears on your tax calculation`: Message = Message(
+      english = "Enter your name as it appears on your tax calculation letter or ‘P800’."
+    )
   }
 
   object YourChequeWillBePostedToYou {

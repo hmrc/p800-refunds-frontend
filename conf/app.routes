@@ -34,10 +34,12 @@ GET        /we-need-you-to-confirm-your-identity/what-is-your-full-name         
 GET        /we-need-you-to-confirm-your-identity/what-is-your-date-of-birth                 controllers.WhatIsYourDateOfBirthController.get
 GET        /we-need-you-to-confirm-your-identity/what-is-your-national-insurance-number     controllers.WhatIsYourNationalInsuranceNumberController.get
 
+GET        /we-have-confirmed-your-identity                                                 controllers.WeHaveConfirmedYourIdentityController.get
+
 GET        /we-need-you-to-confirm-your-identity/what-is-your-address                       controllers.UnserConstructionController.underConstruction
 GET        /we-need-you-to-confirm-your-identity/what-was-your-most-recent-salary-payment   controllers.UnserConstructionController.underConstruction
 GET        /we-need-you-to-confirm-your-identity/check-your-answers                         controllers.UnserConstructionController.underConstruction
-GET        /we-need-you-to-confirm-your-identity/we-have-confirmed-your-identity            controllers.UnserConstructionController.underConstruction
+
 
 
 #bank account name and consent:
