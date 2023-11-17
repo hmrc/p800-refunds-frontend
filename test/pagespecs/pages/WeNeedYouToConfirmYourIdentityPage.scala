@@ -26,7 +26,7 @@ class WeNeedYouToConfirmYourIdentityPage(baseUrl: String)(implicit webDriver: We
 
   override def expectedH1: String = "We need you to confirm your identity"
 
-  def assertPageIsDisplayed(errors: ContentExpectation*): Unit = withPageClue {
+  override def assertPageIsDisplayed(errors: ContentExpectation*): Unit = withPageClue {
 
     val contentExpectations: Seq[ContentExpectation] = Seq(ContentExpectation(
       atXpath       = PageUtil.Xpath.mainContent,

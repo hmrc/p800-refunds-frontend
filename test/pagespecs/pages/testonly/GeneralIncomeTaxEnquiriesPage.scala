@@ -26,7 +26,7 @@ class GeneralIncomeTaxEnquiriesPage(baseUrl: String)(implicit webDriver: WebDriv
 
   override def expectedH1: String = "Income Tax General Enquiries"
 
-  def assertPageIsDisplayed(): Unit = withPageClue {
+  override def assertPageIsDisplayed(errors: ContentExpectation*): Unit = withPageClue {
     PageUtil.assertPage(
       path        = path,
       h1          = expectedH1,

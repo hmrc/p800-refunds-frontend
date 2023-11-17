@@ -26,7 +26,7 @@ class CannotConfirmReferencePage(baseUrl: String)(implicit webDriver: WebDriver)
 
   override def expectedH1: String = "We cannot confirm your reference"
 
-  def assertPageIsDisplayed(errors: ContentExpectation*): Unit = withPageClue {
+  override def assertPageIsDisplayed(errors: ContentExpectation*): Unit = withPageClue {
 
     val contentExpectations: Seq[ContentExpectation] = Seq(ContentExpectation(
       atXpath       = PageUtil.Xpath.mainContent,

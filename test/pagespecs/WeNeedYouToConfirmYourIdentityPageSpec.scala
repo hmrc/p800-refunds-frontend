@@ -14,15 +14,41 @@
  * limitations under the License.
  */
 
-package pagespecs
+package pagespecs.pages
 
-import testsupport.ItSpec
+import org.openqa.selenium.WebDriver
+import pagespecs.pagesupport.{ContentExpectation, Page, PageUtil}
 
-class WeNeedYouToConfirmYourIdentityPageSpec extends ItSpec {
+class WeNeedYouToConfirmYourIdentityPage(baseUrl: String)(implicit webDriver: WebDriver) extends Page(
+  baseUrl,
+  path = "/get-an-income-tax-refund/we-need-you-to-confirm-your-identity"
+) {
 
-  "/confirm-your-identity renders the we need to confirm your identity page" in {
-    pages.weNeedYouToConfirmYourIdentityPage.open()
-    pages.weNeedYouToConfirmYourIdentityPage.assertPageIsDisplayed()
+  override def expectedH1: String = "We need you to confirm your identity"
+
+  override def assertPageIsDisplayed(errors: ContentExpectation*): Unit = withPageClue {
+
+    val contentExpectations: Seq[ContentExpectation] = Seq(ContentExpectation(
+      atXpath       = PageUtil.Xpath.mainContent,
+      expectedLines =
+        """
+          |We need you to confirm your identity
+          |Before we pay your refund, we need to ask you some security questions to confirm your identity.
+          |We will need to ask you for your:
+          |name
+          |address
+          |date of birth
+          |National Insurance number
+          |We do this to protect your security.
+          |""".stripMargin
+    )) ++ errors
+
+    PageUtil.assertPage(
+      path                = path,
+      h1                  = expectedH1,
+      title               = PageUtil.standardTitle(expectedH1),
+      contentExpectations = contentExpectations: _*
+    )
   }
 
 }

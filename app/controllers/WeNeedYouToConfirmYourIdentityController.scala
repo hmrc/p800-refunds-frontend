@@ -17,6 +17,7 @@
 package controllers
 
 import action.Actions
+import models.journeymodels._
 import play.api.mvc._
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import views.Views
@@ -30,8 +31,17 @@ class WeNeedYouToConfirmYourIdentityController @Inject() (
     actions: Actions
 ) extends FrontendController(mcc) {
 
-  val get: Action[AnyContent] = actions.default { implicit request =>
-    Ok(views.weNeedYouToConfirmYourIdentityPage())
+  val get: Action[AnyContent] = actions.journeyAction { implicit request =>
+    request.journey match {
+      case j: JTerminal                                    => JourneyRouter.handleFinalJourneyOnNonFinalPage(j)
+      case j: JBeforeDoYouWantYourRefundViaBankTransferYes => JourneyRouter.sendToCorrespondingPage(j)
+      case j: JBeforeDoYouWantYourRefundViaBankTransferNo  => JourneyRouter.sendToCorrespondingPage(j)
+      case j: JAfterDoYouWantYourRefundViaBankTransferNo   => JourneyRouter.sendToCorrespondingPage(j)
+      case j: JourneyDoYouWantYourRefundViaBankTransferNo  => JourneyRouter.sendToCorrespondingPage(j)
+      case _: JAfterDoYouWantYourRefundViaBankTransferYes  => getResult
+      case _: JourneyDoYouWantYourRefundViaBankTransferYes => getResult
+    }
   }
 
+  private def getResult(implicit request: Request[_]) = Ok(views.weNeedYouToConfirmYourIdentityPage())
 }

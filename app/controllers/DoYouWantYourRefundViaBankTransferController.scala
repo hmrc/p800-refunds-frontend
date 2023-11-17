@@ -44,7 +44,7 @@ class DoYouWantYourRefundViaBankTransferController @Inject() (
 
   val get: Action[AnyContent] = actions.journeyAction.async { implicit request =>
     request.journey match {
-      case j: JTerminal                      => JourneyRouter.handleFinalJourneyOnNonFinalPage(j)
+      case j: JTerminal                      => JourneyRouter.handleFinalJourneyOnNonFinalPageF(j)
       case j: JBeforeCheckYourReferenceValid => JourneyRouter.sendToCorrespondingPageF(j)
       case _: JourneyCheckYourReferenceValid => Future.successful(getResult)
       case j: JAfterCheckYourReferenceValid =>
@@ -65,7 +65,7 @@ class DoYouWantYourRefundViaBankTransferController @Inject() (
 
   val post: Action[AnyContent] = actions.journeyAction.async { implicit request =>
     request.journey match {
-      case j: JTerminal                      => JourneyRouter.handleFinalJourneyOnNonFinalPage(j)
+      case j: JTerminal                      => JourneyRouter.handleFinalJourneyOnNonFinalPageF(j)
       case j: JBeforeCheckYourReferenceValid => JourneyRouter.sendToCorrespondingPageF(j)
       case j: JourneyCheckYourReferenceValid => processForm(j)
       case _: JAfterCheckYourReferenceValid =>

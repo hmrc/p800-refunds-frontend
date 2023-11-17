@@ -67,6 +67,8 @@ abstract class Page(
     ()
   }
 
+  def assertPageIsDisplayed(errors: ContentExpectation*): Unit
+
   //Please don't add anything which is specific to only one page! Use specific Page for that.
   //Don't add public utility methods here. Use PageUtil for that.
 }
