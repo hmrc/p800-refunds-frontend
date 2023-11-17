@@ -19,7 +19,7 @@ package pagespecs.pages
 import org.openqa.selenium.WebDriver
 import pagespecs.pagesupport.{ContentExpectation, Page, PageUtil}
 
-class WeNeedYouToConfirmYourIdentityPage(baseUrl: String)(implicit webDriver: WebDriver) extends Page(
+class WeNeedYouToConfirmYourIdentityPageSpec(baseUrl: String)(implicit webDriver: WebDriver) extends Page(
   baseUrl,
   path = "/get-an-income-tax-refund/we-need-you-to-confirm-your-identity"
 ) {
