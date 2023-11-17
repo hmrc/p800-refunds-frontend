@@ -48,7 +48,7 @@
 
     @viewsHelpers.govukDetails(Details(
         summary = Text(Messages.WhatIsYourNationalInsuranceNumber.`I do not know my National Insurance number`.show),
-        content = Text(Messages.WhatIsYourNationalInsuranceNumber.`You can get help to find a lost National`.show)
+        content = HtmlContent(Messages.WhatIsYourNationalInsuranceNumber.`You can get help to find a lost National`.show)
     ))
 
     @viewsHelpers.govukInput(Input(

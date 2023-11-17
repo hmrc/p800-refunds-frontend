@@ -26,7 +26,6 @@ class WhatIsYourDateOfBirthPage(baseUrl: String)(implicit webDriver: WebDriver) 
 
   override def expectedH1: String = "What is your date of birth?"
 
-
   override def assertPageIsDisplayed(errors: ContentExpectation*): Unit = withPageClue {
 
     val contentExpectations: Seq[ContentExpectation] = Seq(ContentExpectation(
