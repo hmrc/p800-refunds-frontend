@@ -19,12 +19,12 @@ package pagespecs.pages
 import org.openqa.selenium.WebDriver
 import pagespecs.pagesupport.{ContentExpectation, Page, PageUtil}
 
-class WeNeedYouToConfirmYourIdentityPage(baseUrl: String)(implicit webDriver: WebDriver) extends Page(
+class WeHaveConfirmedYourIdentityPage(baseUrl: String)(implicit webDriver: WebDriver) extends Page(
   baseUrl,
-  path = "/get-an-income-tax-refund/we-need-you-to-confirm-your-identity"
+  path = "/get-an-income-tax-refund/we-have-confirmed-your-identity"
 ) {
 
-  override def expectedH1: String = "We need you to confirm your identity"
+  override def expectedH1: String = "We have confirmed your identity"
 
   override def assertPageIsDisplayed(errors: ContentExpectation*): Unit = withPageClue {
 
@@ -32,14 +32,8 @@ class WeNeedYouToConfirmYourIdentityPage(baseUrl: String)(implicit webDriver: We
       atXpath       = PageUtil.Xpath.mainContent,
       expectedLines =
         """
-          |We need you to confirm your identity
-          |Before we pay your refund, we need to ask you some security questions to confirm your identity.
-          |We will need to ask you for your:
-          |name
-          |address
-          |date of birth
-          |National Insurance number
-          |We do this to protect your security.
+          |We have confirmed your identity
+          |Continue
           |""".stripMargin
     )) ++ errors
 
