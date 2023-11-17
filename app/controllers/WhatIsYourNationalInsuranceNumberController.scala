@@ -24,14 +24,14 @@ import views.Views
 import javax.inject.{Inject, Singleton}
 
 @Singleton
-class WhatIsYourDateOfBirthController @Inject() (
+class WhatIsYourNationalInsuranceNumberController @Inject() (
     mcc:     MessagesControllerComponents,
     views:   Views,
     actions: Actions
 ) extends FrontendController(mcc) {
 
   val get: Action[AnyContent] = actions.default { implicit request =>
-    Ok(views.whatIsYourDateOfBirthPage())
+    Ok(views.whatIsYourNationalInsuranceNumberPage())
   }
 
 }

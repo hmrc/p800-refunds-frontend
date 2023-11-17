@@ -19,27 +19,25 @@ package pagespecs.pages
 import org.openqa.selenium.WebDriver
 import pagespecs.pagesupport.{ContentExpectation, Page, PageUtil}
 
-class WeNeedYouToConfirmYourIdentityPage(baseUrl: String)(implicit webDriver: WebDriver) extends Page(
+class WhatIsYourNationalInsuranceNumberPage(baseUrl: String)(implicit webDriver: WebDriver) extends Page(
   baseUrl,
-  path = "/get-an-income-tax-refund/we-need-you-to-confirm-your-identity"
+  path = "/get-an-income-tax-refund/we-need-you-to-confirm-your-identity/what-is-your-national-insurance-number"
 ) {
 
-  override def expectedH1: String = "We need you to confirm your identity"
+  override def expectedH1: String = "What is your National Insurance number?"
 
-  override def assertPageIsDisplayed(errors: ContentExpectation*): Unit = withPageClue {
+  def assertPageIsDisplayed(errors: ContentExpectation*): Unit = withPageClue {
 
     val contentExpectations: Seq[ContentExpectation] = Seq(ContentExpectation(
       atXpath       = PageUtil.Xpath.mainContent,
       expectedLines =
         """
-          |We need you to confirm your identity
-          |Before we pay your refund, we need to ask you some security questions to confirm your identity.
-          |We will need to ask you for your:
-          |name
-          |address
-          |date of birth
-          |National Insurance number
-          |We do this to protect your security.
+          |What is your National Insurance number?
+          |It’s on your National Insurance card or letter, benefit letter, payslip or P60.
+          |For example, ‘QQ 12 34 56 C’.
+          |I do not know my National Insurance number
+          |You can get help to find a lost National Insurance number (opens in new tab).
+          |Continue
           |""".stripMargin
     )) ++ errors
 

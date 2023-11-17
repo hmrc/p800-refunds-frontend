@@ -1,0 +1,65 @@
+@*
+ * Copyright 2023 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import language.Messages
+@import uk.gov.hmrc.govukfrontend.views.html.components._
+@import views.html.templates.Layout
+
+@this(
+    layout: Layout,
+    viewsHelpers: views.ViewsHelpers
+)
+
+@()(implicit request: Request[_])
+
+@import viewsHelpers.requestSupport._
+
+@title = @{
+    Messages.WhatIsYourNationalInsuranceNumber.`What is your National Insurance number`.show
+}
+
+
+@layout(
+    pageTitle = Some(title)
+) {
+
+    <fieldset class="govuk-fieldset" aria-describedby="national-insurance-number">
+        <legend class="govuk-fieldset__legend govuk-fieldset__legend--l">
+            <h1 class="govuk-heading-xl"><label for="national-insurance-number">@{title}</label></h1>
+        </legend>
+
+    <div id="national-insurance-number" class="govuk-hint">
+        @{Messages.WhatIsYourNationalInsuranceNumber.`Its on your National Insurance`.show}<br>
+        @{Messages.WhatIsYourNationalInsuranceNumber.`For example`.show}
+    </div>
+
+    @viewsHelpers.govukDetails(Details(
+        summary = Text(Messages.WhatIsYourNationalInsuranceNumber.`I do not know my National Insurance number`.show),
+        content = HtmlContent(Messages.WhatIsYourNationalInsuranceNumber.`You can get help to find a lost National`.show)
+    ))
+
+    @viewsHelpers.govukInput(Input(
+        id = "national-insurance-number",
+        name = "national-insurance-number",
+        classes = "govuk-!-width-two-thirds"
+    ))
+
+    @viewsHelpers.govukButton(Button(
+        content = Text(Messages.CommonMessages.`continue`.show),
+        id      = Some("submit")
+    ))
+    </fieldset>
+}

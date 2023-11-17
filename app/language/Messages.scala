@@ -143,6 +143,28 @@ object Messages {
 
   }
 
+  object WhatIsYourNationalInsuranceNumber {
+    val `What is your National Insurance number`: Message = Message(
+      english = "What is your National Insurance number?"
+    )
+
+    val `Its on your National Insurance`: Message = Message(
+      english = "It’s on your National Insurance card or letter, benefit letter, payslip or P60."
+    )
+
+    val `For example`: Message = Message(
+      english = "For example, ‘QQ 12 34 56 C’."
+    )
+
+    val `I do not know my National Insurance number`: Message = Message(
+      english = "I do not know my National Insurance number"
+    )
+
+    def `You can get help to find a lost National`: Message = Message(
+      english = s"""You can get help to <a id="govuk-link" href="#" class="govuk-link">find a lost National Insurance number (opens in new tab).</a>"""
+    )
+  }
+
   object WhatIsYourDateOfBirth {
     val `What is your date of birth`: Message = Message(
       english = "What is your date of birth?"
@@ -216,7 +238,7 @@ object Messages {
     )
 
     def `Contact HMRC to tell us that you have changed address.`(contactHmrcLink: String): Message = Message(
-      english = s"""<a id="contact-hmrc-link" href="$contactHmrcLink" class="govuk-link">Contact HMRC</a> to tell us that you have changed address."""
+      english = s"""<a id="contact-hmrc-link" href="$contactHmrcLink" class="govuk-link" target="_blank">Contact HMRC</a> to tell us that you have changed address."""
     )
 
     val `Wait two days for HMRC to update your details.`: Message = Message(

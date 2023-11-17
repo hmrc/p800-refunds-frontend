@@ -14,24 +14,15 @@
  * limitations under the License.
  */
 
-package controllers
+package pagespecs
 
-import action.Actions
-import play.api.mvc._
-import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
-import views.Views
+import testsupport.ItSpec
 
-import javax.inject.{Inject, Singleton}
+class WhatIsYourNationalInsuranceNumberPageSpec extends ItSpec {
 
-@Singleton
-class WhatIsYourDateOfBirthController @Inject() (
-    mcc:     MessagesControllerComponents,
-    views:   Views,
-    actions: Actions
-) extends FrontendController(mcc) {
-
-  val get: Action[AnyContent] = actions.default { implicit request =>
-    Ok(views.whatIsYourDateOfBirthPage())
+  "/what-is-your-national-insurance-number renders the what is your national insurance number page" in {
+    pages.whatIsYourFullNamePage.open()
+    pages.whatIsYourFullNamePage.assertPageIsDisplayed()
   }
 
 }

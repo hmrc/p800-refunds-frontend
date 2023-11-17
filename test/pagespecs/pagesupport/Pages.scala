@@ -30,6 +30,7 @@ class Pages(baseUrl: String)(implicit webDriver: WebDriver) {
   val weNeedYouToConfirmYourIdentityPage = new WeNeedYouToConfirmYourIdentityPage(baseUrl = baseUrl)
   val whatIsYourFullNamePage = new WhatIsYourFullNamePage(baseUrl = baseUrl)
   val whatIsYourDateOfBirthPage = new WhatIsYourDateOfBirthPage(baseUrl = baseUrl)
+  val whatIsYourNationalInsuranceNumberPage = new WhatIsYourNationalInsuranceNumberPage(baseUrl = baseUrl)
   val checkYourReferencePage = new CheckYourReferencePage(baseUrl = baseUrl)
   val doYouWantYourRefundViaBankTransferPage = new DoYouWantYourRefundViaBankTransferPage(baseUrl = baseUrl)
 
