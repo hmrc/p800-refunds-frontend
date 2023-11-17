@@ -14,41 +14,56 @@
  * limitations under the License.
  */
 
-package pagespecs.pages
+package pagespecs
 
-import org.openqa.selenium.WebDriver
-import pagespecs.pagesupport.{ContentExpectation, Page, PageUtil}
+import models.journeymodels.Journey
+import org.scalatest.prop.TableDrivenPropertyChecks._
+import pagespecs.pagesupport.Page
+import testdata.TdAll
+import testsupport.ItSpec
 
-class WeNeedYouToConfirmYourIdentityPageSpec(baseUrl: String)(implicit webDriver: WebDriver) extends Page(
-  baseUrl,
-  path = "/get-an-income-tax-refund/we-need-you-to-confirm-your-identity"
-) {
+class WeNeedYouToConfirmYourIdentityPageSpec extends ItSpec {
 
-  override def expectedH1: String = "We need you to confirm your identity"
+  override def beforeEach(): Unit = {
+    super.beforeEach()
+    addJourneyIdToSession(TdAll.journeyId)
+    upsertJourneyToDatabase(TdAll.journeyDoYouWantYourRefundViaBankTransferYes)
+  }
 
-  override def assertPageIsDisplayed(errors: ContentExpectation*): Unit = withPageClue {
+  "/confirm-your-identity renders the we need to confirm your identity page" in {
+    pages.weNeedYouToConfirmYourIdentityPage.open()
+    pages.weNeedYouToConfirmYourIdentityPage.assertPageIsDisplayed()
+  }
 
-    val contentExpectations: Seq[ContentExpectation] = Seq(ContentExpectation(
-      atXpath       = PageUtil.Xpath.mainContent,
-      expectedLines =
-        """
-          |We need you to confirm your identity
-          |Before we pay your refund, we need to ask you some security questions to confirm your identity.
-          |We will need to ask you for your:
-          |name
-          |address
-          |date of birth
-          |National Insurance number
-          |We do this to protect your security.
-          |""".stripMargin
-    )) ++ errors
+  "'Continue' button sends user to 'What is your full name' page" in {
+    pages.weNeedYouToConfirmYourIdentityPage.open()
+    pages.weNeedYouToConfirmYourIdentityPage.assertPageIsDisplayed()
+    pages.weNeedYouToConfirmYourIdentityPage.clickSubmit()
+    pages.whatIsYourFullNamePage.assertPageIsDisplayed()
+  }
 
-    PageUtil.assertPage(
-      path                = path,
-      h1                  = expectedH1,
-      title               = PageUtil.standardTitle(expectedH1),
-      contentExpectations = contentExpectations: _*
-    )
+  "'Back' button sends user to 'Do you want your refund by bank transfer' page" in {
+    pages.weNeedYouToConfirmYourIdentityPage.open()
+    pages.weNeedYouToConfirmYourIdentityPage.assertPageIsDisplayed()
+    pages.weNeedYouToConfirmYourIdentityPage.clickBackButton()
+    pages.doYouWantYourRefundViaBankTransferPage.assertPageIsDisplayed()
+  }
+
+  forAll(Table(
+    ("journeyState", "expectedPage"),
+    (TdAll.journeyDoYouWantYourRefundViaBankTransferNo, pages.yourChequeWillBePostedToYouPage),
+    (TdAll.journeyStarted, pages.doYouWantToSignInPage),
+    (TdAll.journeyDoYouWantToSignInNo, pages.enterP800ReferencePage),
+    (TdAll.journeyWhatIsYourP800Reference, pages.checkYourReferencePage),
+    (TdAll.journeyCheckYourReferenceValid, pages.doYouWantYourRefundViaBankTransferPage),
+    (TdAll.journeyYourChequeWillBePostedToYou, pages.chequeRequestReceivedPage),
+    //todo jake add another scenario in for JAfterDoYouWantYourRefundViaBankTransferYes when we have it
+  )) { (journeyState: Journey, expectedPage: Page) =>
+    s"JourneyState: [${journeyState.name}] should redirect accordingly when state is before this page" in {
+      upsertJourneyToDatabase(journeyState)
+      pages.weNeedYouToConfirmYourIdentityPage.open()
+      expectedPage.assertPageIsDisplayed()
+    }
   }
 
 }
