@@ -21,8 +21,8 @@ import testsupport.ItSpec
 class WhatIsYourNationalInsuranceNumberPageSpec extends ItSpec {
 
   "/what-is-your-national-insurance-number renders the what is your national insurance number page" in {
-    pages.whatIsYourFullNamePage.open()
-    pages.whatIsYourFullNamePage.assertPageIsDisplayed()
+    pages.whatIsYourNationalInsuranceNumberPage.open()
+    pages.whatIsYourNationalInsuranceNumberPage.assertPageIsDisplayed()
   }
 
 }

@@ -28,18 +28,32 @@ class WhatIsYourNationalInsuranceNumberPage(baseUrl: String)(implicit webDriver:
 
   def assertPageIsDisplayed(errors: ContentExpectation*): Unit = withPageClue {
 
-    val contentExpectations: Seq[ContentExpectation] = Seq(ContentExpectation(
-      atXpath       = PageUtil.Xpath.mainContent,
-      expectedLines =
-        """
-          |What is your National Insurance number?
-          |It’s on your National Insurance card or letter, benefit letter, payslip or P60.
-          |For example, ‘QQ 12 34 56 C’.
-          |I do not know my National Insurance number
-          |You can get help to find a lost National Insurance number (opens in new tab).
-          |Continue
-          |""".stripMargin
-    )) ++ errors
+    val contentExpectations: Seq[ContentExpectation] = Seq(
+      ContentExpectation(
+        atXpath       = PageUtil.Xpath.mainContent,
+        expectedLines =
+          """
+            |What is your National Insurance number?
+            |It’s on your National Insurance card or letter, benefit letter, payslip or P60.
+            |For example, ‘QQ 12 34 56 C’.
+            |Continue
+            |""".stripMargin
+      ),
+      ContentExpectation(
+        atXpath       = """//*[@class="govuk-details__summary-text"]""",
+        expectedLines =
+          """
+            |I do not know my National Insurance number
+            |""".stripMargin
+      ),
+      ContentExpectation(
+        atXpath       = """//*[@class="govuk-details__text"]""",
+        expectedLines =
+          """
+            |You can get help to find a lost National Insurance number (opens in new tab)
+            |""".stripMargin
+      )
+    ) ++ errors
 
     PageUtil.assertPage(
       path                = path,
