@@ -247,7 +247,7 @@ object Messages {
     )
 
     def `Contact HMRC to tell us that you have changed address.`(contactHmrcLink: String): Message = Message(
-      english = s"""<a id="contact-hmrc-link" href="$contactHmrcLink" class="govuk-link" target="_blank">Contact HMRC</a> to tell us that you have changed address."""
+      english = s"""<a id="contact-hmrc-link" href="$contactHmrcLink" class="govuk-link">Contact HMRC</a> to tell us that you have changed address."""
     )
 
     val `Wait two days for HMRC to update your details.`: Message = Message(
