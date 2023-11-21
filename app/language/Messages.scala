@@ -185,6 +185,10 @@ object Messages {
       english = "Enter your name as it appears on your tax calculation letter or ‘P800’."
     )
 
+    val `Enter your full name`: Message = Message(
+      english = "Enter your full name"
+    )
+
     val `Full name must be 2 characters or more`: Message = Message(
       english = "Full name must be 2 characters or more"
     )

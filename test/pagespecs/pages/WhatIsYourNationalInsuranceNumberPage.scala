@@ -21,7 +21,7 @@ import pagespecs.pagesupport.{ContentExpectation, Page, PageUtil}
 
 class WhatIsYourNationalInsuranceNumberPage(baseUrl: String)(implicit webDriver: WebDriver) extends Page(
   baseUrl,
-  path = "/get-an-income-tax-refund/we-need-you-to-confirm-your-identity/what-is-your-national-insurance-number"
+  path = "/get-an-income-tax-refund/what-is-your-national-insurance-number"
 ) {
 
   override def expectedH1: String = "What is your National Insurance number?"
