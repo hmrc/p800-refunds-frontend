@@ -16,6 +16,7 @@
 
 package views
 
+import play.api.data.FormError
 import requests.RequestSupport
 import uk.gov.hmrc.govukfrontend.views.html.components._
 
@@ -41,3 +42,8 @@ class ViewsHelpers @Inject() (
     val govukPanel:        GovukPanel,
     val govukDateInput:    GovukDateInput
 )
+
+object ViewsHelpers {
+  @SuppressWarnings(Array("org.wartremover.warts.Any"))
+  def formErrorArgsStringList(e: FormError): List[String] = e.args.toList.map(_.toString)
+}

@@ -16,12 +16,13 @@
 
 package controllers
 
-import action.Actions
+import action.{Actions, JourneyRequest}
 import io.scalaland.chimney.dsl._
-import models.dateofbirth.DateOfBirth
+import models.dateofbirth.{DateOfBirth, DayOfMonth, Month, Year}
 import models.forms.WhatIsYourDateOfBirthForm
-import models.journeymodels.{JAfterDoYouWantYourRefundViaBankTransferYes, JTerminal, JourneyWhatIsYourDateOfBirth}
+import models.journeymodels._
 import play.api.mvc._
+import requests.RequestSupport
 import services.JourneyService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import views.Views
@@ -31,44 +32,86 @@ import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class WhatIsYourDateOfBirthController @Inject() (
-    mcc:     MessagesControllerComponents,
-    views:   Views,
-    actions: Actions,
+    mcc:            MessagesControllerComponents,
+    requestSupport: RequestSupport,
+    views:          Views,
+    actions:        Actions,
     journeyService: JourneyService
 )(implicit execution: ExecutionContext) extends FrontendController(mcc) {
 
-  val get: Action[AnyContent] = actions.journeyAction { implicit request =>
-    getResult
-  }
+  import requestSupport._
 
-  private def getResult(implicit request: Request[_]): Result = Ok(views.whatIsYourDateOfBirthPage(WhatIsYourDateOfBirthForm.form))
-
-  val post: Action[AnyContent] = actions.journeyAction.async { implicit request =>
+  val get: Action[AnyContent] = actions.journeyAction { implicit request: JourneyRequest[_] =>
+    //todo match on journey stages... will need page before this to be able to do it.
     request.journey match {
-      case j: JTerminal                      => JourneyRouter.handleFinalJourneyOnNonFinalPageF(j)
-      case j: JBeforeCheckYourReferenceValid => JourneyRouter.sendToCorrespondingPageF(j)
-      case j: JourneyCheckYourReferenceValid => processForm(j)
-      case _: JAfterCheckYourReferenceValid => ???
-//        Errors.throwServerErrorException(s"This endpoint supports only ${classOf[JourneyCheckYourReferenceValid].toString}")
-      //TODO: discuss alternative approach
-      //val journey = j
-      //              .into[JourneyCheckYourReferenceValid]
-      //              .enableInheritedAccessors
-      //              .transform
-      //processForm(j)
+      case j: JTerminal                                    => JourneyRouter.handleFinalJourneyOnNonFinalPage(j)
+      case j: JBeforeDoYouWantYourRefundViaBankTransferYes => JourneyRouter.sendToCorrespondingPage(j)
+      case j: JourneyDoYouWantYourRefundViaBankTransferNo  => JourneyRouter.sendToCorrespondingPage(j)
+      case _: JourneyDoYouWantYourRefundViaBankTransferYes => getResult(None)
+      case j: JAfterWhatIsYourDateOfBirth                  => getResult(Some(j))
     }
   }
 
-  private def processForm(journey: JAfterDoYouWantYourRefundViaBankTransferYes)(implicit request: Request[_]): Future[Result] =
+  private def getResult(maybeJourneyToPrepop: Option[JAfterWhatIsYourDateOfBirth])(implicit request: JourneyRequest[_]): Result = {
+    maybeJourneyToPrepop.fold(Ok(views.whatIsYourDateOfBirthPage(WhatIsYourDateOfBirthForm.form))) { j =>
+      Ok(views.whatIsYourDateOfBirthPage(WhatIsYourDateOfBirthForm.form.fill(WhatIsYourDateOfBirthForm(j.dateOfBirth))))
+    }
+  }
+
+  val post: Action[AnyContent] = actions.journeyAction.async { implicit request =>
+    println("Inside the post action")
+    request.journey match {
+      case j: JTerminal                                    => JourneyRouter.handleFinalJourneyOnNonFinalPageF(j)
+      case j: JBeforeDoYouWantYourRefundViaBankTransferYes => JourneyRouter.sendToCorrespondingPageF(j)
+      case j: JourneyDoYouWantYourRefundViaBankTransferNo  => JourneyRouter.sendToCorrespondingPageF(j)
+      case j: JourneyDoYouWantYourRefundViaBankTransferYes => processForm(j)
+      //      case j: JourneyDoYouWantYourRefundViaBankTransferYes => processForm(Left(j))
+      case j: JAfterWhatIsYourDateOfBirth                  => JourneyRouter.sendToCorrespondingPageF(j) //todo change back to process form
+      //      case j: JAfterWhatIsYourDateOfBirth                  => processForm(Right(j))
+    }
+  }
+
+  //  private def processForm(journey: Either[JourneyDoYouWantYourRefundViaBankTransferYes, JAfterWhatIsYourDateOfBirth])(implicit request: Request[_]): Future[Result] = {
+  private def processForm(journey: JourneyDoYouWantYourRefundViaBankTransferYes)(implicit request: Request[_]): Future[Result] = {
+    println("Inside process form")
     WhatIsYourDateOfBirthForm
       .form
       .bindFromRequest()
       .fold(
-        formWithErrors => Future.successful(BadRequest(views.whatIsYourDateOfBirthPage(
-          form = formWithErrors
-        ))), validForm => journeyService
-              .upsert(journey.into[JourneyWhatIsYourDateOfBirth].withFieldConst(_.dateOfBirth, DateOfBirth(validForm.dayOfMonth, validForm.month, validForm.year)))
-              .map(_ => Redirect(controllers.routes.WhatIsYourNationalInsuranceNumberController.get))
+        formWithErrors => {
+          println(s"bad form: ${formWithErrors.data.toString()}")
+          println(s"bad form: ${formWithErrors.errors.toString()}")
+          Future.successful(BadRequest(views.whatIsYourDateOfBirthPage(form = formWithErrors)))
+        },
+        validForm => {
+
+          //          val dobFromForm = DateOfBirth(
+          //            dayOfMonth = validForm.dayOfMonth,
+          //            month      = validForm.month,
+          //            year       = validForm.year
+          //          )
+          //
+          //          val transformedJourney: JourneyDoYouWantYourRefundViaBankTransferYes => JourneyWhatIsYourDateOfBirth = j => j.into[JourneyWhatIsYourDateOfBirth]
+          //            .withFieldConst(_.dateOfBirth, dobFromForm)
+          //            .enableInheritedAccessors
+          //            .transform
+          //
+          //          val journeyToUpsert = journey.fold[Journey](
+          //            (o: JourneyDoYouWantYourRefundViaBankTransferYes) => transformedJourney(o),
+          //            (o: JAfterWhatIsYourDateOfBirth) => o.into[JAfterWhatIsYourDateOfBirth].withFieldConst(_.dateOfBirth, dobFromForm).transform
+          //          )
+
+          println(s"I am the journey: ${journey.toString}")
+          val dob = DateOfBirth(
+            DayOfMonth(validForm.date.dayOfMonth.value),
+            Month(validForm.date.month.value),
+            Year(validForm.date.year.value)
+          )
+          journeyService
+            .upsert(journey.into[JourneyWhatIsYourDateOfBirth].withFieldConst(_.dateOfBirth, dob).transform)
+            .map(_ => Redirect(controllers.routes.WhatIsYourNationalInsuranceNumberController.get))
+        }
       )
+  }
 
 }

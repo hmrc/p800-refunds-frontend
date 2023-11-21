@@ -36,7 +36,6 @@ class WhatIsYourNationalInsuranceNumberPage(baseUrl: String)(implicit webDriver:
           |It’s on your National Insurance card or letter, benefit letter, payslip or P60.
           |For example, ‘QQ 12 34 56 C’.
           |I do not know my National Insurance number
-          |You can get help to find a lost National Insurance number (opens in new tab).
           |Continue
           |""".stripMargin
     )) ++ errors

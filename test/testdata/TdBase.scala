@@ -33,6 +33,8 @@ trait TdBase {
   lazy val instant: Instant = localDateTime.toInstant(ZoneOffset.UTC)
   lazy val newInstant: Instant = instant.plusSeconds(20) //used when a new journey is created from existing one
 
+  lazy val gdsDateTimeFormatter: DateTimeFormatter = DateTimeFormatter.ofPattern("d MMMM Y")
+
   lazy val p800Reference: P800Reference = P800Reference("P800REFNO1")
 
   // date of birth

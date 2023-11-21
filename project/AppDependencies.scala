@@ -1,6 +1,3 @@
-import play.core.PlayVersion
-import play.sbt.PlayImport._
-import sbt.Keys.libraryDependencies
 import sbt._
 
 object AppDependencies {
@@ -16,7 +13,7 @@ object AppDependencies {
     "com.beachape"      %% "enumeratum-play"            % "1.7.3",
     "org.typelevel"     %% "cats-core"                  % "2.10.0",
     "org.julienrf"      %% "play-json-derived-codecs"   % "7.0.0", //choose carefully
-    "io.scalaland"      %% "chimney"                    % "0.8.2"
+    "io.scalaland"      %% "chimney"                    % "0.8.3"
   // format: ON
   )
 

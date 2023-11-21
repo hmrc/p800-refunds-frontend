@@ -32,6 +32,7 @@ GET        /request-received                                                    
 GET        /we-need-you-to-confirm-your-identity                                            controllers.WeNeedYouToConfirmYourIdentityController.get
 GET        /we-need-you-to-confirm-your-identity/what-is-your-full-name                     controllers.WhatIsYourFullNameController.get
 GET        /we-need-you-to-confirm-your-identity/what-is-your-date-of-birth                 controllers.WhatIsYourDateOfBirthController.get
+POST       /we-need-you-to-confirm-your-identity/what-is-your-date-of-birth                 controllers.WhatIsYourDateOfBirthController.post
 GET        /we-need-you-to-confirm-your-identity/what-is-your-national-insurance-number     controllers.WhatIsYourNationalInsuranceNumberController.get
 
 GET        /we-need-you-to-confirm-your-identity/what-is-your-address                       controllers.UnserConstructionController.underConstruction

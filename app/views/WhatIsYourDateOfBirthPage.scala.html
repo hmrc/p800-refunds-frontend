@@ -18,6 +18,10 @@
 @import uk.gov.hmrc.govukfrontend.views.html.components._
 @import views.html.templates.Layout
 @import models.forms.WhatIsYourDateOfBirthForm
+@import uk.gov.hmrc.govukfrontend.views.html.components._
+@import uk.gov.hmrc.hmrcfrontend.views.Implicits.RichDateInput
+@import views.ViewsHelpers
+@import uk.gov.hmrc.hmrcfrontend.views.Implicits.RichErrorSummary
 
 @this(
     layout: Layout,
@@ -36,23 +40,25 @@
 }
 
 @layout(
-    pageTitle = Some(title)
+    pageTitle = Some(title),
+    backLinkUrlOverride = Some(routes.WhatIsYourFullNameController.get.url)
 ) {
+
+    @if(form.errors.nonEmpty) {
+        @viewsHelpers.govukErrorSummary(ErrorSummary().withFormErrorsAsText(form.copy(errors = form.errors.distinctBy(_.message))))
+    }
+
     @viewsHelpers.formWithCsrf(action = controllers.routes.WhatIsYourDateOfBirthController.post) {
-        @viewsHelpers.govukDateInput(DateInput(
+       @viewsHelpers.govukDateInput(DateInput(
             id = key,
-            namePrefix = Some("date-of-birth"),
-            hint = Some(Hint(
-                content = Text(Messages.WhatIsYourDateOfBirth.`For example`.show)
-            )),
+            hint = Some(Hint(content = Text(Messages.WhatIsYourDateOfBirth.`For example`.show))),
             fieldset = Some(Fieldset(
                 legend = Some(Legend(
                     content = Text(title),
-                    classes = "govuk-fieldset__legend--xl",
-                    isPageHeading = true
-                ))
-            ))
-        ))
+                    classes = "govuk-fieldset__legend--l",
+                    isPageHeading = true)))
+            )
+        ).withFormField(form("date")))
 
         @viewsHelpers.govukButton(Button(
             content = Text(Messages.CommonMessages.`continue`.show),
