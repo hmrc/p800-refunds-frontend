@@ -17,21 +17,79 @@
 package controllers
 
 import action.Actions
+import io.scalaland.chimney.dsl._
+import models.forms.WhatIsYourFullNameForm
+import models.journeymodels._
 import play.api.mvc._
+import requests.RequestSupport
+import services.JourneyService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
+import util.Errors
 import views.Views
+import scala.concurrent.{ExecutionContext, Future}
 
 import javax.inject.{Inject, Singleton}
 
 @Singleton
 class WhatIsYourFullNameController @Inject() (
-    mcc:     MessagesControllerComponents,
-    views:   Views,
-    actions: Actions
-) extends FrontendController(mcc) {
+    mcc:            MessagesControllerComponents,
+    requestSupport: RequestSupport,
+    journeyService: JourneyService,
+    views:          Views,
+    actions:        Actions
+)(implicit ec: ExecutionContext) extends FrontendController(mcc) {
 
-  val get: Action[AnyContent] = actions.default { implicit request =>
-    Ok(views.whatIsYourFullNamePage())
+  import requestSupport._
+
+  val get: Action[AnyContent] = actions.journeyAction.async { implicit request =>
+    request.journey match {
+      case j: JTerminal                                    => JourneyRouter.handleFinalJourneyOnNonFinalPageF(j)
+      case j: JBeforeDoYouWantYourRefundViaBankTransferYes => JourneyRouter.sendToCorrespondingPageF(j)
+      case j: JourneyDoYouWantYourRefundViaBankTransferNo  => JourneyRouter.sendToCorrespondingPageF(j)
+      case _: JourneyDoYouWantYourRefundViaBankTransferYes => Future.successful(getResult)
+      case j: JAfterDoYouWantYourRefundViaBankTransferYes =>
+        journeyService
+          .upsert(
+            j
+              .into[JourneyDoYouWantYourRefundViaBankTransferYes]
+              .enableInheritedAccessors
+              .transform
+          )
+          .map(_ => getResult)
+    }
   }
+
+  private def getResult(implicit request: Request[_]): Result = Ok(views.whatIsYourFullNamePage(
+    form = WhatIsYourFullNameForm.form
+  ))
+
+  val post: Action[AnyContent] = actions.journeyAction.async { implicit request =>
+    request.journey match {
+      case j: JTerminal                                    => JourneyRouter.handleFinalJourneyOnNonFinalPageF(j)
+      case j: JBeforeDoYouWantYourRefundViaBankTransferYes => JourneyRouter.sendToCorrespondingPageF(j)
+      case j: JourneyDoYouWantYourRefundViaBankTransferNo  => JourneyRouter.sendToCorrespondingPageF(j)
+      case j: JourneyDoYouWantYourRefundViaBankTransferYes => processForm(j)
+      case _: JAfterDoYouWantYourRefundViaBankTransferYes =>
+        Errors.throwServerErrorException(s"This endpoint supports only ${classOf[JourneyDoYouWantYourRefundViaBankTransferYes].toString}")
+      // TODO: Discuss alternative approach
+    }
+  }
+
+  private def processForm(journey: JourneyDoYouWantYourRefundViaBankTransferYes)(implicit request: Request[_]): Future[Result] =
+    WhatIsYourFullNameForm
+      .form
+      .bindFromRequest()
+      .fold(
+        formWithErrors => Future.successful(BadRequest(views.whatIsYourFullNamePage(formWithErrors))),
+        fullName => {
+          journeyService
+            .upsert(
+              journey.into[JourneyWhatIsYourFullName]
+                .withFieldConst(_.fullName, fullName)
+                .transform
+            )
+            .map(_ => Redirect(controllers.routes.WhatIsYourDateOfBirthController.get))
+        }
+      )
 
 }

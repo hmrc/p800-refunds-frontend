@@ -16,7 +16,7 @@
 
 package testdata
 
-import models.P800Reference
+import models.{P800Reference, FullName}
 
 import java.time.{Instant, LocalDateTime, ZoneOffset}
 import java.time.format.DateTimeFormatter
@@ -33,4 +33,6 @@ trait TdBase {
   lazy val newInstant: Instant = instant.plusSeconds(20) //used when a new journey is created from existing one
 
   lazy val p800Reference: P800Reference = P800Reference("P800REFNO1")
+
+  lazy val fullName: FullName = FullName("Test Name.-")
 }

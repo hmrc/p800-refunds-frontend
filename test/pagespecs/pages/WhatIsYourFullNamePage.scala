@@ -26,6 +26,10 @@ class WhatIsYourFullNamePage(baseUrl: String)(implicit webDriver: WebDriver) ext
 
   override def expectedH1: String = "What is your full name?"
 
+  private val fullNameFieldId: String = "fullName"
+
+  def enterFullName(fullName: String): Unit = PageUtil.setTextFieldById(fullNameFieldId, fullName)
+
   override def assertPageIsDisplayed(errors: ContentExpectation*): Unit = withPageClue {
 
     val contentExpectations: Seq[ContentExpectation] = Seq(ContentExpectation(
@@ -42,6 +46,58 @@ class WhatIsYourFullNamePage(baseUrl: String)(implicit webDriver: WebDriver) ext
       h1                  = expectedH1,
       title               = PageUtil.standardTitle(expectedH1),
       contentExpectations = contentExpectations: _*
+    )
+  }
+
+  def assertPageShowsErrorTooShort(): Unit = withPageClue {
+    assertPageIsDisplayed(
+      ContentExpectation(
+        atXpath       = PageUtil.Xpath.mainContent,
+        expectedLines =
+          """
+            |There is a problem
+            |Full name must be 2 characters or more
+            |""".stripMargin
+      )
+    )
+  }
+
+  def assertPageShowsErrorTooLong(): Unit = withPageClue {
+    assertPageIsDisplayed(
+      ContentExpectation(
+        atXpath       = PageUtil.Xpath.mainContent,
+        expectedLines =
+          """
+            |There is a problem
+            |Full name must be 160 characters or less
+            |""".stripMargin
+      )
+    )
+  }
+
+  def assertPageShowsInvalidCharacterError(expectedInvalidCharacters: String): Unit = withPageClue {
+    assertPageIsDisplayed(
+      ContentExpectation(
+        atXpath       = PageUtil.Xpath.mainContent,
+        expectedLines =
+          s"""
+            |There is a problem
+            |Name must not include $expectedInvalidCharacters
+            |""".stripMargin
+      )
+    )
+  }
+
+  def assertPageShowsTooManyInvalidCharacterError(): Unit = withPageClue {
+    assertPageIsDisplayed(
+      ContentExpectation(
+        atXpath       = PageUtil.Xpath.mainContent,
+        expectedLines =
+          s"""
+            |There is a problem
+            |Full name must only include letters a to z, and special characters such as hyphens, spaces and apostrophes
+            |""".stripMargin
+      )
     )
   }
 
