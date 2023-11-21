@@ -38,45 +38,45 @@ Journey states correspond to the result of the submission on pages (or endpoints
 ```mermaid
 flowchart TD;
 
-    govukpage[\Claim an income tax refund a gov.uk page\] 
+    govukpage[\Claim an income tax refund a gov.uk page\]
     -- User clicked `/start` link on gov.uk page.
     A new journey is created and user is navigated to the JourneyDoYouWantToSignIn page
-    --> JourneyStarted   
+    --> JourneyStarted
 
-    JourneyStarted 
-    -- Answered `Yes` 
-    on DoYouWantToSignIn page 
+    JourneyStarted
+    -- Answered `Yes`
+    on DoYouWantToSignIn page
     --> JourneyDoYouWantToSignInYes
 
-    JourneyStarted 
-    -- Answered `No` 
-    on DoYouWantToSignIn page 
+    JourneyStarted
+    -- Answered `No`
+    on DoYouWantToSignIn page
     --> JourneyDoYouWantToSignInNo
 
-    JourneyDoYouWantToSignInNo 
-    -- entered semivalid reference 
-    on WhatIsYourP800Reference page 
+    JourneyDoYouWantToSignInNo
+    -- entered semivalid reference
+    on WhatIsYourP800Reference page
     --> JourneyWhatIsYourP800Reference
 
     JourneyWhatIsYourP800Reference
-    -- selected `Yes` 
+    -- selected `Yes`
     on CheckYourReference page
     --> ValidateReferenceApiCall{
-        API Call 
-        Check Rererence 
+        API Call
+        Check Rererence
     }
 
-    ValidateReferenceApiCall 
+    ValidateReferenceApiCall
     -- valid
     --> JourneyCheckYourReferenceValid
-    
+
     JourneyCheckYourReferenceValid
-    -- selected `Yes` 
+    -- selected `Yes`
     on DoYouWantYourRefundViaBankTransfer page
     --> JourneyDoYouWantYourRefundViaBankTransferYes
 
     JourneyCheckYourReferenceValid
-    -- selected `No` 
+    -- selected `No`
     on DoYouWantYourRefundViaBankTransfer page
     --> JourneyDoYouWantYourRefundViaBankTransferNo
 
@@ -85,7 +85,12 @@ flowchart TD;
     on YourChequeWillBePostedToYou page
     --> JourneyYourChequeWillBePostedToYou
 
-    JourneyDoYouWantYourRefundViaBankTransferYes 
+    JourneyDoYouWantYourRefundViaBankTransferYes
+    -- clicked `Continue`
+    on WeNeedYouToConfirmYourIdentity page
+    --> JourneyWhatIsYourFullName
+
+    JourneyWhatIsYourFullName
     -- tbc ...
     --> TBC...
 ```

@@ -14,12 +14,24 @@
  * limitations under the License.
  */
 
-package models.forms
+package controllers
 
-import play.api.data.FormError
+import action.Actions
+import play.api.mvc._
+import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
+import views.Views
 
-//todo delete me
-final case class FormErrorWithFieldMessageOverrides(
-    formError:             FormError,
-    fieldMessageOverrides: Seq[FormError] = Seq.empty
-)
+import javax.inject.{Inject, Singleton}
+
+@Singleton
+class WeHaveConfirmedYourIdentityController @Inject() (
+    mcc:     MessagesControllerComponents,
+    views:   Views,
+    actions: Actions
+) extends FrontendController(mcc) {
+
+  val get: Action[AnyContent] = actions.default { implicit request =>
+    Ok(views.weHaveConfirmedYourIdentityPage())
+  }
+
+}

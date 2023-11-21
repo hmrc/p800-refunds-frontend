@@ -51,6 +51,7 @@ object JourneyRouter {
       case _: JourneyDoYouWantYourRefundViaBankTransferNo  => controllers.routes.YourChequeWillBePostedToYouController.get
       case _: JourneyWhatIsYourDateOfBirth                 => controllers.routes.WhatIsYourDateOfBirthController.get
       case _: JourneyYourChequeWillBePostedToYou           => controllers.routes.RequestReceivedController.get
+      case _: JourneyWhatIsYourFullName                    => controllers.routes.WhatIsYourFullNameController.get
     }
 
     JourneyLogger.warn(s"Incorrect journey state for this page. Redirecting to ${redirectLocation.url}")

@@ -26,7 +26,7 @@ class WhatIsYourDateOfBirthPageSpec extends ItSpec {
   override def beforeEach(): Unit = {
     super.beforeEach()
     addJourneyIdToSession(TdAll.journeyId)
-    upsertJourneyToDatabase(TdAll.journeyDoYouWantYourRefundViaBankTransferYes)
+    upsertJourneyToDatabase(TdAll.journeyWhatIsYourFullName)
   }
 
   "/what-is-your-date-of-birth renders the what is your date of birth page" in {

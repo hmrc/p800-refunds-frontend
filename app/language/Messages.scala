@@ -194,24 +194,13 @@ object Messages {
       def `Date of birth must be on or after`(oneHundredAndTenYearsAgo: String): Message = Message(
         english = s"Date of birth must be on or after $oneHundredAndTenYearsAgo"
       )
-      def `Date of birth must include a [include whichever fields are incomplete]`(incompleteFields: String): Message = Message(
+      def `Date of birth must include a ...`(incompleteFields: String): Message = Message(
         english = s"Date of birth must include a $incompleteFields"
       )
-
-      val errors: Map[String, Message] = List(
-        `Enter your date of birth`,
-        `You must enter a real date`,
-        `Enter a year which contains 4 numbers`,
-        `Date of birth must be in the past`,
-        `Date of birth must be on or before`("test"),
-        `Date of birth must be on or after`("test"),
-        `Date of birth must include a [include whichever fields are incomplete]`("day"),
-        `Date of birth must include a [include whichever fields are incomplete]`("month"),
-        `Date of birth must include a [include whichever fields are incomplete]`("year")
-      ).map((message: Message) => message.english -> message).toMap
     }
 
   }
+
   object WhatIsYourFullName {
     val `What is your full name`: Message = Message(
       english = "What is your full name?"
@@ -221,7 +210,27 @@ object Messages {
       english = "Enter your name as it appears on your tax calculation letter or ‘P800’."
     )
 
+    val `Enter your full name`: Message = Message(
+      english = "Enter your full name"
+    )
+
+    val `Full name must be 2 characters or more`: Message = Message(
+      english = "Full name must be 2 characters or more"
+    )
+
+    val `Full name must be 160 characters or less`: Message = Message(
+      english = "Full name must be 160 characters or less"
+    )
+
+    def `Name must not include X`(x: String): Message = Message(
+      english = s"Name must not include $x"
+    )
+
+    val `Full name must only include letters a to z, and special characters such as hyphens, spaces and apostrophes`: Message = Message(
+      english = "Full name must only include letters a to z, and special characters such as hyphens, spaces and apostrophes"
+    )
   }
+
   object ConfirmIdentity {
     val `We need you to confirm your identity`: Message = Message(
       english = "We need you to confirm your identity"
@@ -257,6 +266,16 @@ object Messages {
 
   }
 
+  object WeHaveConfirmedYourIdentity {
+    val `We have confirmed your identity`: Message = Message(
+      english = "We have confirmed your identity"
+    )
+
+    val `Enter your name as it appears on your tax calculation`: Message = Message(
+      english = "Enter your name as it appears on your tax calculation letter or ‘P800’."
+    )
+  }
+
   object YourChequeWillBePostedToYou {
     val `Your cheque will be posted to you`: Message = Message(
       english = "Your cheque will be posted to you"
@@ -275,7 +294,7 @@ object Messages {
     )
 
     def `Contact HMRC to tell us that you have changed address.`(contactHmrcLink: String): Message = Message(
-      english = s"""<a id="contact-hmrc-link" href="$contactHmrcLink" class="govuk-link" target="_blank">Contact HMRC</a> to tell us that you have changed address."""
+      english = s"""<a id="contact-hmrc-link" href="$contactHmrcLink" class="govuk-link">Contact HMRC</a> to tell us that you have changed address."""
     )
 
     val `Wait two days for HMRC to update your details.`: Message = Message(

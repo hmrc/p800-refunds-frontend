@@ -14,15 +14,12 @@
  * limitations under the License.
  */
 
-package pagespecs
+package models
 
-import testsupport.ItSpec
+import play.api.libs.json.{Format, Json}
 
-class WhatIsYourNationalInsuranceNumberPageSpec extends ItSpec {
+final case class FullName(value: String) extends AnyVal
 
-  "/what-is-your-national-insurance-number renders the what is your national insurance number page" in {
-    pages.whatIsYourNationalInsuranceNumberPage.open()
-    pages.whatIsYourNationalInsuranceNumberPage.assertPageIsDisplayed()
-  }
-
+object FullName {
+  implicit val formats: Format[FullName] = Json.valueFormat[FullName]
 }

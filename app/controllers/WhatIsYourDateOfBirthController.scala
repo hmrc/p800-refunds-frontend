@@ -18,7 +18,7 @@ package controllers
 
 import action.{Actions, JourneyRequest}
 import io.scalaland.chimney.dsl._
-import models.dateofbirth.{DateOfBirth, DayOfMonth, Month, Year}
+import models.dateofbirth.DateOfBirth
 import models.forms.WhatIsYourDateOfBirthForm
 import models.journeymodels._
 import play.api.mvc._
@@ -42,73 +42,47 @@ class WhatIsYourDateOfBirthController @Inject() (
   import requestSupport._
 
   val get: Action[AnyContent] = actions.journeyAction { implicit request: JourneyRequest[_] =>
-    //todo match on journey stages... will need page before this to be able to do it.
     request.journey match {
-      case j: JTerminal                                    => JourneyRouter.handleFinalJourneyOnNonFinalPage(j)
-      case j: JBeforeDoYouWantYourRefundViaBankTransferYes => JourneyRouter.sendToCorrespondingPage(j)
-      case j: JourneyDoYouWantYourRefundViaBankTransferNo  => JourneyRouter.sendToCorrespondingPage(j)
-      case _: JourneyDoYouWantYourRefundViaBankTransferYes => getResult(None)
-      case j: JAfterWhatIsYourDateOfBirth                  => getResult(Some(j))
+      case j: JTerminal                    => JourneyRouter.handleFinalJourneyOnNonFinalPage(j)
+      case j: JBeforeWhatIsYourFullName    => JourneyRouter.sendToCorrespondingPage(j)
+      case _: JourneyWhatIsYourFullName    => getResult(None)
+      case j: JourneyWhatIsYourDateOfBirth => getResult(Some(j.dateOfBirth))
     }
   }
 
-  private def getResult(maybeJourneyToPrepop: Option[JAfterWhatIsYourDateOfBirth])(implicit request: JourneyRequest[_]): Result = {
-    maybeJourneyToPrepop.fold(Ok(views.whatIsYourDateOfBirthPage(WhatIsYourDateOfBirthForm.form))) { j =>
-      Ok(views.whatIsYourDateOfBirthPage(WhatIsYourDateOfBirthForm.form.fill(WhatIsYourDateOfBirthForm(j.dateOfBirth))))
-    }
+  private def getResult(maybeDateOfBirth: Option[DateOfBirth])(implicit request: JourneyRequest[_]): Result = {
+    maybeDateOfBirth.fold(
+      Ok(views.whatIsYourDateOfBirthPage(WhatIsYourDateOfBirthForm.form))
+    ) { dateOfBirth: DateOfBirth =>
+        Ok(views.whatIsYourDateOfBirthPage(WhatIsYourDateOfBirthForm.form.fill(WhatIsYourDateOfBirthForm(dateOfBirth))))
+      }
   }
 
   val post: Action[AnyContent] = actions.journeyAction.async { implicit request =>
     println("Inside the post action")
     request.journey match {
-      case j: JTerminal                                    => JourneyRouter.handleFinalJourneyOnNonFinalPageF(j)
-      case j: JBeforeDoYouWantYourRefundViaBankTransferYes => JourneyRouter.sendToCorrespondingPageF(j)
-      case j: JourneyDoYouWantYourRefundViaBankTransferNo  => JourneyRouter.sendToCorrespondingPageF(j)
-      case j: JourneyDoYouWantYourRefundViaBankTransferYes => processForm(j)
-      //      case j: JourneyDoYouWantYourRefundViaBankTransferYes => processForm(Left(j))
-      case j: JAfterWhatIsYourDateOfBirth                  => JourneyRouter.sendToCorrespondingPageF(j) //todo change back to process form
-      //      case j: JAfterWhatIsYourDateOfBirth                  => processForm(Right(j))
+      case j: JTerminal                                   => JourneyRouter.handleFinalJourneyOnNonFinalPageF(j)
+      case j: JBeforeWhatIsYourFullName                   => JourneyRouter.sendToCorrespondingPageF(j)
+      case j: JAfterDoYouWantYourRefundViaBankTransferYes => processForm(j)
     }
   }
 
-  //  private def processForm(journey: Either[JourneyDoYouWantYourRefundViaBankTransferYes, JAfterWhatIsYourDateOfBirth])(implicit request: Request[_]): Future[Result] = {
-  private def processForm(journey: JourneyDoYouWantYourRefundViaBankTransferYes)(implicit request: Request[_]): Future[Result] = {
-    println("Inside process form")
+  private def processForm(journey: JAfterDoYouWantYourRefundViaBankTransferYes)(implicit request: Request[_]): Future[Result] = {
     WhatIsYourDateOfBirthForm
       .form
       .bindFromRequest()
       .fold(
         formWithErrors => {
-          println(s"bad form: ${formWithErrors.data.toString()}")
-          println(s"bad form: ${formWithErrors.errors.toString()}")
           Future.successful(BadRequest(views.whatIsYourDateOfBirthPage(form = formWithErrors)))
         },
         validForm => {
-
-          //          val dobFromForm = DateOfBirth(
-          //            dayOfMonth = validForm.dayOfMonth,
-          //            month      = validForm.month,
-          //            year       = validForm.year
-          //          )
-          //
-          //          val transformedJourney: JourneyDoYouWantYourRefundViaBankTransferYes => JourneyWhatIsYourDateOfBirth = j => j.into[JourneyWhatIsYourDateOfBirth]
-          //            .withFieldConst(_.dateOfBirth, dobFromForm)
-          //            .enableInheritedAccessors
-          //            .transform
-          //
-          //          val journeyToUpsert = journey.fold[Journey](
-          //            (o: JourneyDoYouWantYourRefundViaBankTransferYes) => transformedJourney(o),
-          //            (o: JAfterWhatIsYourDateOfBirth) => o.into[JAfterWhatIsYourDateOfBirth].withFieldConst(_.dateOfBirth, dobFromForm).transform
-          //          )
-
-          println(s"I am the journey: ${journey.toString}")
-          val dob = DateOfBirth(
-            DayOfMonth(validForm.date.dayOfMonth.value),
-            Month(validForm.date.month.value),
-            Year(validForm.date.year.value)
-          )
+          val newJourney = journey match {
+            case j: JourneyWhatIsYourFullName    => j.into[JourneyWhatIsYourDateOfBirth].withFieldConst(_.dateOfBirth, validForm.date).transform
+            case j: JourneyWhatIsYourDateOfBirth => j.copy(dateOfBirth = validForm.date)
+            //other Journey states will just use copy, I guess, then we don't lose any extra info when they traverse through the journey and we can prepop when users progress.
+          }
           journeyService
-            .upsert(journey.into[JourneyWhatIsYourDateOfBirth].withFieldConst(_.dateOfBirth, dob).transform)
+            .upsert(newJourney)
             .map(_ => Redirect(controllers.routes.WhatIsYourNationalInsuranceNumberController.get))
         }
       )

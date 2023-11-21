@@ -61,6 +61,7 @@
     @viewsHelpers.govukButton(Button(
         content = Text(Messages.CommonMessages.`continue`.show),
         id      = Some("submit"),
-        href    = Some(routes.WhatIsYourDateOfBirthController.get.url)//todo jake revert this, just need it for testing atm
+        classes = "govuk-!-margin-top-4",
+        href    = Some(routes.WhatIsYourFullNameController.get.url)
     ))
 }

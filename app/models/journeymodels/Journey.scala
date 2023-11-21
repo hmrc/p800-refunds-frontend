@@ -16,7 +16,7 @@
 
 package models.journeymodels
 
-import models.P800Reference
+import models.{P800Reference, FullName}
 import models.dateofbirth.DateOfBirth
 import play.api.libs.json.OFormat
 
@@ -58,8 +58,9 @@ final case class JourneyStarted(
   with JBeforeCheckYourReferenceValid
   with JBeforeDoYouWantYourRefundViaBankTransferYes
   with JBeforeDoYouWantYourRefundViaBankTransferNo
-  with JBeforeWhatIsYourDateOfBirth
   with JBeforeYourChequeWillBePostedToYou
+  with JBeforeWhatIsYourFullName
+  with JBeforeWhatIsYourDateOfBirth
 
 /**
  * [[Journey]] when finishing submission on DoYouWantToSignIn page,
@@ -74,8 +75,9 @@ final case class JourneyDoYouWantToSignInNo(
   with JBeforeCheckYourReferenceValid
   with JBeforeDoYouWantYourRefundViaBankTransferYes
   with JBeforeDoYouWantYourRefundViaBankTransferNo
-  with JBeforeWhatIsYourDateOfBirth
   with JBeforeYourChequeWillBePostedToYou
+  with JBeforeWhatIsYourFullName
+  with JBeforeWhatIsYourDateOfBirth
 
 /**
  * [[Journey]] when finishing submission on WhatIsYourP800Reference page.
@@ -90,8 +92,9 @@ final case class JourneyWhatIsYourP800Reference(
   with JBeforeCheckYourReferenceValid
   with JBeforeDoYouWantYourRefundViaBankTransferYes
   with JBeforeDoYouWantYourRefundViaBankTransferNo
-  with JBeforeWhatIsYourDateOfBirth
   with JBeforeYourChequeWillBePostedToYou
+  with JBeforeWhatIsYourFullName
+  with JBeforeWhatIsYourDateOfBirth
 
 /**
  * [[Journey]] when finishing submission on CheckYourReference page,
@@ -107,8 +110,9 @@ final case class JourneyCheckYourReferenceValid(
   with JAfterWhatIsYourP800Reference
   with JBeforeDoYouWantYourRefundViaBankTransferYes
   with JBeforeDoYouWantYourRefundViaBankTransferNo
-  with JBeforeWhatIsYourDateOfBirth
   with JBeforeYourChequeWillBePostedToYou
+  with JBeforeWhatIsYourFullName
+  with JBeforeWhatIsYourDateOfBirth
 
 /**
  * [[Journey]] when finishing submission on DoYouWantYourRefundViaBankTransfer page,
@@ -123,6 +127,7 @@ final case class JourneyDoYouWantYourRefundViaBankTransferYes(
   with JAfterDoYouWantToSignInNo
   with JAfterWhatIsYourP800Reference
   with JAfterCheckYourReferenceValid
+  with JBeforeWhatIsYourFullName
   with JBeforeWhatIsYourDateOfBirth
 
 /**
@@ -139,25 +144,8 @@ final case class JourneyDoYouWantYourRefundViaBankTransferNo(
   with JAfterWhatIsYourP800Reference
   with JAfterCheckYourReferenceValid
   with JBeforeYourChequeWillBePostedToYou
+  with JBeforeWhatIsYourFullName
   with JBeforeWhatIsYourDateOfBirth
-
-/**
- * [[Journey]] when finishing submission on WhatIsYourDateOfBirth page,
- * when the validation of date of birth is successful
- */
-final case class JourneyWhatIsYourDateOfBirth(
-    override val _id:           JourneyId,
-    override val createdAt:     Instant,
-    override val p800Reference: P800Reference,
-    override val dateOfBirth:   DateOfBirth
-) extends Journey
-  with JAfterStarted
-  with JAfterDoYouWantToSignInNo
-  with JAfterWhatIsYourP800Reference
-  with JAfterCheckYourReferenceValid
-  with JAfterDoYouWantYourRefundViaBankTransferYes
-  with JAfterWhatIsYourDateOfBirth
-  with JBeforeYourChequeWillBePostedToYou
 
 /**
  * [[Journey]] when finishing submission on YourChequeWillBePostedToYou page.
@@ -174,6 +162,41 @@ final case class JourneyYourChequeWillBePostedToYou(
   with JAfterWhatIsYourP800Reference
   with JAfterCheckYourReferenceValid
   with JAfterDoYouWantYourRefundViaBankTransferNo
+
+/**
+ * [[Journey]] when finishing submission on WhatIsYourFullName page.
+ */
+final case class JourneyWhatIsYourFullName(
+    override val _id:           JourneyId,
+    override val createdAt:     Instant,
+    override val p800Reference: P800Reference,
+    fullName:                   FullName
+) extends Journey
+  with JAfterStarted
+  with JAfterDoYouWantToSignInNo
+  with JAfterWhatIsYourP800Reference
+  with JAfterCheckYourReferenceValid
+  with JAfterDoYouWantYourRefundViaBankTransferYes
+  with JBeforeWhatIsYourDateOfBirth
+
+/**
+ * [[Journey]] when finishing submission on WhatIsYourDateOfBirth page,
+ * when the validation of date of birth is successful
+ */
+final case class JourneyWhatIsYourDateOfBirth(
+    override val _id:           JourneyId,
+    override val createdAt:     Instant,
+    override val p800Reference: P800Reference,
+    override val fullName:      FullName,
+    dateOfBirth:                DateOfBirth
+) extends Journey
+  with JAfterStarted
+  with JAfterDoYouWantToSignInNo
+  with JAfterWhatIsYourP800Reference
+  with JAfterCheckYourReferenceValid
+  with JAfterDoYouWantYourRefundViaBankTransferYes
+  with JAfterWhatIsYourFullName
+  with JBeforeYourChequeWillBePostedToYou
 
 /*
  * Below marking traits for all [[Journey]]s after/before certain state
@@ -193,7 +216,13 @@ sealed trait JAfterDoYouWantYourRefundViaBankTransferYes extends Journey {
 sealed trait JAfterDoYouWantYourRefundViaBankTransferNo extends Journey {
   val p800Reference: P800Reference
 }
+sealed trait JAfterWhatIsYourFullName extends Journey {
+  val p800Reference: P800Reference
+  val fullName: FullName
+}
 sealed trait JAfterWhatIsYourDateOfBirth extends Journey {
+  val p800Reference: P800Reference
+  val fullName: FullName
   val dateOfBirth: DateOfBirth
 }
 
@@ -202,8 +231,9 @@ sealed trait JBeforeWhatIsYourP800Reference extends Journey
 sealed trait JBeforeCheckYourReferenceValid extends Journey
 sealed trait JBeforeDoYouWantYourRefundViaBankTransferYes extends Journey
 sealed trait JBeforeDoYouWantYourRefundViaBankTransferNo extends Journey
-sealed trait JBeforeWhatIsYourDateOfBirth extends Journey
 sealed trait JBeforeYourChequeWillBePostedToYou extends Journey
+sealed trait JBeforeWhatIsYourFullName extends Journey
+sealed trait JBeforeWhatIsYourDateOfBirth extends Journey
 
 /**
  * Marking trait for [[Journey]] in terminal state

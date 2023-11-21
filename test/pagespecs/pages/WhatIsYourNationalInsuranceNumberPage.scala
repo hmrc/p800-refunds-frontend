@@ -21,24 +21,39 @@ import pagespecs.pagesupport.{ContentExpectation, Page, PageUtil}
 
 class WhatIsYourNationalInsuranceNumberPage(baseUrl: String)(implicit webDriver: WebDriver) extends Page(
   baseUrl,
-  path = "/get-an-income-tax-refund/we-need-you-to-confirm-your-identity/what-is-your-national-insurance-number"
+  path = "/get-an-income-tax-refund/what-is-your-national-insurance-number"
 ) {
 
   override def expectedH1: String = "What is your National Insurance number?"
 
   def assertPageIsDisplayed(errors: ContentExpectation*): Unit = withPageClue {
 
-    val contentExpectations: Seq[ContentExpectation] = Seq(ContentExpectation(
-      atXpath       = PageUtil.Xpath.mainContent,
-      expectedLines =
-        """
-          |What is your National Insurance number?
-          |It’s on your National Insurance card or letter, benefit letter, payslip or P60.
-          |For example, ‘QQ 12 34 56 C’.
-          |I do not know my National Insurance number
-          |Continue
-          |""".stripMargin
-    )) ++ errors
+    val contentExpectations: Seq[ContentExpectation] = Seq(
+      ContentExpectation(
+        atXpath       = PageUtil.Xpath.mainContent,
+        expectedLines =
+          """
+            |What is your National Insurance number?
+            |It’s on your National Insurance card or letter, benefit letter, payslip or P60.
+            |For example, ‘QQ 12 34 56 C’.
+            |Continue
+            |""".stripMargin
+      ),
+      ContentExpectation(
+        atXpath       = """//*[@class="govuk-details__summary-text"]""",
+        expectedLines =
+          """
+            |I do not know my National Insurance number
+            |""".stripMargin
+      ),
+      ContentExpectation(
+        atXpath       = """//*[@class="govuk-details__text"]""",
+        expectedLines =
+          """
+            |You can get help to find a lost National Insurance number (opens in new tab)
+            |""".stripMargin
+      )
+    ) ++ errors
 
     PageUtil.assertPage(
       path                = path,

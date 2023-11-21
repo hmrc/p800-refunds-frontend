@@ -18,11 +18,11 @@ package pagespecs
 
 import testsupport.ItSpec
 
-class WhatIsYourNationalInsuranceNumberPageSpec extends ItSpec {
+class WeHaveConfirmedYourIdentityPageSpec extends ItSpec {
 
-  "/what-is-your-national-insurance-number renders the what is your national insurance number page" in {
-    pages.whatIsYourNationalInsuranceNumberPage.open()
-    pages.whatIsYourNationalInsuranceNumberPage.assertPageIsDisplayed()
+  "/we-have-confirmed-your-identity renders the we have confirmed your identity page" in {
+    pages.weHaveConfirmedYourIdentityPage.open()
+    pages.weHaveConfirmedYourIdentityPage.assertPageIsDisplayed()
   }
 
 }

@@ -1,4 +1,4 @@
-/*
+@*
  * Copyright 2023 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -12,17 +12,38 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- */
+ *@
 
-package pagespecs
+@import language.Messages
+@import uk.gov.hmrc.govukfrontend.views.html.components._
+@import views.html.templates.Layout
 
-import testsupport.ItSpec
+@this(
+        layout: Layout,
+        viewsHelpers: views.ViewsHelpers
+)
 
-class WhatIsYourNationalInsuranceNumberPageSpec extends ItSpec {
+@()(implicit request: Request[_])
 
-  "/what-is-your-national-insurance-number renders the what is your national insurance number page" in {
-    pages.whatIsYourNationalInsuranceNumberPage.open()
-    pages.whatIsYourNationalInsuranceNumberPage.assertPageIsDisplayed()
-  }
+@import viewsHelpers.requestSupport._
 
+@title = @{
+    Messages.WeHaveConfirmedYourIdentity.`We have confirmed your identity`.show
+}
+
+
+@layout(
+    pageTitle = Some(title)
+) {
+
+    <h1 class="govuk-heading-xl">@title</h1>
+
+
+
+
+
+    @viewsHelpers.govukButton(Button(
+        content = Text(Messages.CommonMessages.`continue`.show),
+        id      = Some("submit")
+    ))
 }
