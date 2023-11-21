@@ -21,7 +21,7 @@ import pagespecs.pagesupport.{ContentExpectation, Page, PageUtil}
 
 class WhatIsYourDateOfBirthPage(baseUrl: String)(implicit webDriver: WebDriver) extends Page(
   baseUrl,
-  path = "/get-an-income-tax-refund/we-need-you-to-confirm-your-identity/what-is-your-date-of-birth"
+  path = "/get-an-income-tax-refund/what-is-your-date-of-birth"
 ) {
 
   override def expectedH1: String = "What is your date of birth?"

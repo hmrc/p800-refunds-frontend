@@ -21,7 +21,7 @@ import pagespecs.pagesupport.{ContentExpectation, Page, PageUtil}
 
 class WhatIsYourFullNamePage(baseUrl: String)(implicit webDriver: WebDriver) extends Page(
   baseUrl,
-  path = "/get-an-income-tax-refund/we-need-you-to-confirm-your-identity/what-is-your-full-name"
+  path = "/get-an-income-tax-refund/what-is-your-full-name"
 ) {
 
   override def expectedH1: String = "What is your full name?"
@@ -46,6 +46,19 @@ class WhatIsYourFullNamePage(baseUrl: String)(implicit webDriver: WebDriver) ext
       h1                  = expectedH1,
       title               = PageUtil.standardTitle(expectedH1),
       contentExpectations = contentExpectations: _*
+    )
+  }
+
+  def assertPageShowsErrorEmptyInput(): Unit = withPageClue {
+    assertPageIsDisplayed(
+      ContentExpectation(
+        atXpath       = PageUtil.Xpath.mainContent,
+        expectedLines =
+          """
+            |There is a problem
+            |Enter your full name
+            |""".stripMargin
+      )
     )
   }
 

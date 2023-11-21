@@ -45,7 +45,7 @@ class WhatIsYourFullNamePageSpec extends ItSpec {
     pages.whatIsYourFullNamePage.open()
     pages.whatIsYourFullNamePage.assertPageIsDisplayed()
     pages.whatIsYourFullNamePage.clickSubmit()
-    pages.whatIsYourFullNamePage.assertPageShowsErrorTooShort()
+    pages.whatIsYourFullNamePage.assertPageShowsErrorEmptyInput()
   }
 
   "Clicking 'Continue' with a full name shorter than 2 characters shows error" in {
@@ -92,6 +92,14 @@ class WhatIsYourFullNamePageSpec extends ItSpec {
     pages.whatIsYourFullNamePage.open()
     pages.whatIsYourFullNamePage.assertPageIsDisplayed()
     pages.whatIsYourFullNamePage.enterFullName("Nam£")
+    pages.whatIsYourFullNamePage.clickSubmit()
+    pages.whatIsYourFullNamePage.assertPageShowsInvalidCharacterError("£")
+  }
+
+  "Clicking 'Continue' with a full name with many of the same invalid symbol character shows error" in {
+    pages.whatIsYourFullNamePage.open()
+    pages.whatIsYourFullNamePage.assertPageIsDisplayed()
+    pages.whatIsYourFullNamePage.enterFullName("£N£a£m£")
     pages.whatIsYourFullNamePage.clickSubmit()
     pages.whatIsYourFullNamePage.assertPageShowsInvalidCharacterError("£")
   }

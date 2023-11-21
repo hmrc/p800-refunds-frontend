@@ -24,15 +24,16 @@ import play.api.data.{Form, FormError, Forms}
 import java.util.regex.Pattern
 
 object WhatIsYourFullNameForm {
-  val fullNameRegexPattern: Pattern = Pattern.compile("^[A-Za-z .'-]{1,160}$")
+  private val fullNameRegexPattern: Pattern = Pattern.compile("^[A-Za-z .'-]{1,160}$")
 
-  def validFullName(value: String): Boolean =
+  private def validFullName(value: String): Boolean =
     fullNameRegexPattern.matcher(value).matches()
 
-  def invalidFullNameError(input: String): Message = {
+  private def invalidFullNameErrorMessage(input: String): Message = {
     val symbols: Array[Char] = input.trim
       .replaceAll("[a-zA-Z .'-]*", "")
       .toCharArray
+      .distinct
 
     symbols match {
       case Array(x)    => Messages.WhatIsYourFullName.`Name must not include X`(x.toString)
@@ -45,10 +46,11 @@ object WhatIsYourFullNameForm {
     val fullNameMapping = Forms.of(new Formatter[FullName]() {
       override def bind(key: String, data: Map[String, String]): Either[Seq[FormError], FullName] =
         data.get(key) match {
+          case Some(value) if value.trim.isEmpty        => Left(Seq(FormError(key, Messages.WhatIsYourFullName.`Enter your full name`.show)))
           case Some(value) if value.trim.length < 2     => Left(Seq(FormError(key, Messages.WhatIsYourFullName.`Full name must be 2 characters or more`.show)))
           case Some(value) if value.trim.length > 160   => Left(Seq(FormError(key, Messages.WhatIsYourFullName.`Full name must be 160 characters or less`.show)))
           case Some(value) if validFullName(value.trim) => Right(FullName(value))
-          case Some(value)                              => Left(Seq(FormError(key, invalidFullNameError(value.trim).show)))
+          case Some(value)                              => Left(Seq(FormError(key, invalidFullNameErrorMessage(value.trim).show)))
           case None                                     => Left(Seq(FormError(key, Messages.WhatIsYourFullName.`Full name must be 2 characters or more`.show)))
         }
 
