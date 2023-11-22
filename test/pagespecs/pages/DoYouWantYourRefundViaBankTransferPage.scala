@@ -49,20 +49,22 @@ class DoYouWantYourRefundViaBankTransferPage(baseUrl: String)(implicit webDriver
     )
   }
 
-  def assertPageShowsWithErrors(): Unit = assertPageIsDisplayed(
-    ContentExpectation(
-      atXpath       = PageUtil.Xpath.errorSummary,
-      expectedLines =
-        """
-          |There is a problem
-          |Select if you want to receive a bank transfer or a cheque
-          |""".stripMargin
-    ),
-    ContentExpectation(
-      atXpath       = PageUtil.Xpath.errorMessage,
-      expectedLines = """Select if you want to receive a bank transfer or a cheque"""
+  def assertPageShowsWithErrors(): Unit = withPageClue {
+    assertPageIsDisplayed(
+      ContentExpectation(
+        atXpath       = PageUtil.Xpath.errorSummary,
+        expectedLines =
+          """
+            |There is a problem
+            |Select if you want to receive a bank transfer or a cheque
+            |""".stripMargin
+      ),
+      ContentExpectation(
+        atXpath       = PageUtil.Xpath.errorMessage,
+        expectedLines = """Select if you want to receive a bank transfer or a cheque"""
+      )
     )
-  )
+  }
 
   def selectYes(): Unit = withPageClue {
     PageUtil.clickByIdOrName("do-you-want-your-refund-via-bank-transfer")

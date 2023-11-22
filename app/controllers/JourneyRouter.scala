@@ -49,6 +49,7 @@ object JourneyRouter {
       case _: JourneyCheckYourReferenceValid               => controllers.routes.DoYouWantYourRefundViaBankTransferController.get
       case _: JourneyDoYouWantYourRefundViaBankTransferYes => controllers.routes.WeNeedYouToConfirmYourIdentityController.get
       case _: JourneyDoYouWantYourRefundViaBankTransferNo  => controllers.routes.YourChequeWillBePostedToYouController.get
+      case _: JourneyWhatIsYourDateOfBirth                 => controllers.routes.WhatIsYourDateOfBirthController.get
       case _: JourneyYourChequeWillBePostedToYou           => controllers.routes.RequestReceivedController.get
       case _: JourneyWhatIsYourFullName                    => controllers.routes.WhatIsYourFullNameController.get
     }

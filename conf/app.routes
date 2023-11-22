@@ -35,14 +35,11 @@ GET        /what-is-your-full-name                      controllers.WhatIsYourFu
 POST       /what-is-your-full-name                      controllers.WhatIsYourFullNameController.post
 
 GET        /what-is-your-date-of-birth                  controllers.WhatIsYourDateOfBirthController.get
+POST       /what-is-your-date-of-birth                  controllers.WhatIsYourDateOfBirthController.post
+
 GET        /what-is-your-national-insurance-number      controllers.WhatIsYourNationalInsuranceNumberController.get
 
 GET        /we-have-confirmed-your-identity             controllers.WeHaveConfirmedYourIdentityController.get
-
-GET        /what-is-your-address                        controllers.UnserConstructionController.underConstruction
-GET        /what-was-your-most-recent-salary-payment    controllers.UnserConstructionController.underConstruction
-GET        /check-your-answers                          controllers.UnserConstructionController.underConstruction
-
 #bank account name and consent:
 #TODO
 

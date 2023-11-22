@@ -57,7 +57,8 @@ class WeNeedYouToConfirmYourIdentityPageSpec extends ItSpec {
     (TdAll.journeyWhatIsYourP800Reference, pages.checkYourReferencePage),
     (TdAll.journeyCheckYourReferenceValid, pages.doYouWantYourRefundViaBankTransferPage),
     (TdAll.journeyYourChequeWillBePostedToYou, pages.chequeRequestReceivedPage),
-  //todo jake add another scenario in for JAfterDoYouWantYourRefundViaBankTransferYes when we have it
+    (TdAll.journeyWhatIsYourFullName, pages.weNeedYouToConfirmYourIdentityPage),
+    (TdAll.journeyWhatIsYourDateOfBirth, pages.weNeedYouToConfirmYourIdentityPage)
   )) { (journeyState: Journey, expectedPage: Page) =>
     s"JourneyState: [${journeyState.name}] should redirect accordingly when state is before this page" in {
       upsertJourneyToDatabase(journeyState)

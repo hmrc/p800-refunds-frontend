@@ -174,6 +174,31 @@ object Messages {
       english = "For example, 27 3 2007"
     )
 
+    object Errors {
+      val `Enter your date of birth`: Message = Message(
+        english = "Enter your date of birth"
+      )
+
+      val `You must enter a real date`: Message = Message(
+        english = "You must enter a real date"
+      )
+      val `Enter a year which contains 4 numbers`: Message = Message(
+        english = "Enter a year which contains 4 numbers"
+      )
+      val `Date of birth must be in the past`: Message = Message(
+        english = "Date of birth must be in the past"
+      )
+      def `Date of birth must be on or before`(sixteenYearsAgo: String): Message = Message(
+        english = s"Date of birth must be on or before $sixteenYearsAgo"
+      )
+      def `Date of birth must be on or after`(oneHundredAndTenYearsAgo: String): Message = Message(
+        english = s"Date of birth must be on or after $oneHundredAndTenYearsAgo"
+      )
+      def `Date of birth must include a ...`(incompleteFields: String): Message = Message(
+        english = s"Date of birth must include a $incompleteFields"
+      )
+    }
+
   }
 
   object WhatIsYourFullName {

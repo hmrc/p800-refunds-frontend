@@ -16,22 +16,75 @@
 
 package controllers
 
-import action.Actions
+import action.{Actions, JourneyRequest}
+import io.scalaland.chimney.dsl._
+import models.dateofbirth.DateOfBirth
+import models.forms.WhatIsYourDateOfBirthForm
+import models.journeymodels._
 import play.api.mvc._
+import requests.RequestSupport
+import services.JourneyService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import views.Views
 
 import javax.inject.{Inject, Singleton}
+import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class WhatIsYourDateOfBirthController @Inject() (
-    mcc:     MessagesControllerComponents,
-    views:   Views,
-    actions: Actions
-) extends FrontendController(mcc) {
+    mcc:            MessagesControllerComponents,
+    requestSupport: RequestSupport,
+    views:          Views,
+    actions:        Actions,
+    journeyService: JourneyService
+)(implicit execution: ExecutionContext) extends FrontendController(mcc) {
 
-  val get: Action[AnyContent] = actions.default { implicit request =>
-    Ok(views.whatIsYourDateOfBirthPage())
+  import requestSupport._
+
+  val get: Action[AnyContent] = actions.journeyAction { implicit request: JourneyRequest[_] =>
+    request.journey match {
+      case j: JTerminal                    => JourneyRouter.handleFinalJourneyOnNonFinalPage(j)
+      case j: JBeforeWhatIsYourFullName    => JourneyRouter.sendToCorrespondingPage(j)
+      case _: JourneyWhatIsYourFullName    => getResult(None)
+      case j: JourneyWhatIsYourDateOfBirth => getResult(Some(j.dateOfBirth))
+    }
+  }
+
+  private def getResult(maybeDateOfBirth: Option[DateOfBirth])(implicit request: JourneyRequest[_]): Result = {
+    maybeDateOfBirth.fold(
+      Ok(views.whatIsYourDateOfBirthPage(WhatIsYourDateOfBirthForm.form))
+    ) { dateOfBirth: DateOfBirth =>
+        Ok(views.whatIsYourDateOfBirthPage(WhatIsYourDateOfBirthForm.form.fill(WhatIsYourDateOfBirthForm(dateOfBirth))))
+      }
+  }
+
+  val post: Action[AnyContent] = actions.journeyAction.async { implicit request =>
+    request.journey match {
+      case j: JTerminal                                   => JourneyRouter.handleFinalJourneyOnNonFinalPageF(j)
+      case j: JBeforeWhatIsYourFullName                   => JourneyRouter.sendToCorrespondingPageF(j)
+      case j: JAfterDoYouWantYourRefundViaBankTransferYes => processForm(j)
+    }
+  }
+
+  private def processForm(journey: JAfterDoYouWantYourRefundViaBankTransferYes)(implicit request: Request[_]): Future[Result] = {
+    WhatIsYourDateOfBirthForm
+      .form
+      .bindFromRequest()
+      .fold(
+        formWithErrors => {
+          Future.successful(BadRequest(views.whatIsYourDateOfBirthPage(form = formWithErrors)))
+        },
+        validForm => {
+          val newJourney = journey match {
+            case j: JourneyWhatIsYourFullName    => j.into[JourneyWhatIsYourDateOfBirth].withFieldConst(_.dateOfBirth, validForm.date).transform
+            case j: JourneyWhatIsYourDateOfBirth => j.copy(dateOfBirth = validForm.date)
+            //other Journey states will just use copy, I guess, then we don't lose any extra info when they traverse through the journey and we can prepop when users progress.
+          }
+          journeyService
+            .upsert(newJourney)
+            .map(_ => Redirect(controllers.routes.WhatIsYourNationalInsuranceNumberController.get))
+        }
+      )
   }
 
 }
