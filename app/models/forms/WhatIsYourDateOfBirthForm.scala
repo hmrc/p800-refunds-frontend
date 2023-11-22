@@ -63,11 +63,11 @@ object WhatIsYourDateOfBirthForm {
   private def createFormError(key: String, message: Message)(implicit language: Language): Left[Seq[FormError], Nothing] = Left(Seq(FormError(key, message.show)))
 
   private def checkIfFormValuesAreEmpty[A](
-                                            key:           String,
-                                            valueFromFormToKeepIfNotAllEmpty:    A,
-                                            dayFromForm:   String,
-                                            monthFromForm: String,
-                                            yearFromForm:  String
+      key:                              String,
+      valueFromFormToKeepIfNotAllEmpty: A,
+      dayFromForm:                      String,
+      monthFromForm:                    String,
+      yearFromForm:                     String
   )(implicit language: Language): Either[Seq[FormError], A] = {
     val errorMessageOrFormInput: Either[Message, A] = (dayFromForm.isEmpty, monthFromForm.isEmpty, yearFromForm.isEmpty) match {
       case (true, true, true)    => Left(Messages.WhatIsYourDateOfBirth.Errors.`Enter your date of birth`)

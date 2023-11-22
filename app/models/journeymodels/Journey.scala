@@ -162,6 +162,7 @@ final case class JourneyYourChequeWillBePostedToYou(
   with JAfterWhatIsYourP800Reference
   with JAfterCheckYourReferenceValid
   with JAfterDoYouWantYourRefundViaBankTransferNo
+  with JBeforeDoYouWantYourRefundViaBankTransferYes
 
 /**
  * [[Journey]] when finishing submission on WhatIsYourFullName page.

@@ -39,10 +39,8 @@ trait TdBase {
 
   lazy val gdsDateTimeFormatter: DateTimeFormatter = DateTimeFormatter.ofPattern("d MMMM Y")
 
-  // date of birth
   lazy val dayOfMonth: DayOfMonth = DayOfMonth("1")
   lazy val month: Month = Month("1")
   lazy val year: Year = Year("2000")
   lazy val dateOfBirth: DateOfBirth = DateOfBirth(dayOfMonth, month, year)
-  //
 }

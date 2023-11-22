@@ -73,21 +73,27 @@ class WhatIsYourDateOfBirthPage(baseUrl: String)(implicit webDriver: WebDriver) 
   def assertPageShowsErrorDayMissing(): Unit = withPageClue {
     assertErrorMessages("""Date of birth must include a day""")
   }
+
   def assertPageShowsErrorMonthMissing(): Unit = withPageClue {
     assertErrorMessages("""Date of birth must include a month""")
   }
+
   def assertPageShowsErrorYearMissing(): Unit = withPageClue {
     assertErrorMessages("""Date of birth must include a year""")
   }
+
   def assertPageShowsErrorMonthTooLarge(): Unit = withPageClue {
     assertErrorMessages("""You must enter a real date""")
   }
+
   def assertPageShowsErrorDateInTheFuture(): Unit = withPageClue {
     assertErrorMessages("""Date of birth must be in the past""")
   }
+
   def assertPageShowsErrorDateTooYoung(expectedDate: String): Unit = withPageClue {
     assertErrorMessages(s"""Date of birth must be on or before $expectedDate""")
   }
+
   def assertPageShowsErrorDateTooOld(expectedDate: String): Unit = withPageClue {
     assertErrorMessages(s"""Date of birth must be on or after $expectedDate""")
   }
