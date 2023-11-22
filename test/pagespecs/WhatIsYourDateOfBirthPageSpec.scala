@@ -165,7 +165,6 @@ class WhatIsYourDateOfBirthPageSpec extends ItSpec {
 
   "Submitting form date in the future" in {
     val dateInFuture: LocalDateTime = LocalDateTime.now(clock).plusDays(1L)
-    println("future date attempted: " + dateInFuture.toString)
     pages.whatIsYourDateOfBirthPage.open()
     pages.whatIsYourDateOfBirthPage.assertPageIsDisplayed()
     pages.whatIsYourDateOfBirthPage.enterDayOfMonth(dateInFuture.getDayOfMonth.toString)

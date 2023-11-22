@@ -59,7 +59,6 @@ class WhatIsYourDateOfBirthController @Inject() (
   }
 
   val post: Action[AnyContent] = actions.journeyAction.async { implicit request =>
-    println("Inside the post action")
     request.journey match {
       case j: JTerminal                                   => JourneyRouter.handleFinalJourneyOnNonFinalPageF(j)
       case j: JBeforeWhatIsYourFullName                   => JourneyRouter.sendToCorrespondingPageF(j)
