@@ -16,22 +16,80 @@
 
 package controllers
 
-import action.Actions
+import action.{Actions, JourneyRequest}
 import play.api.mvc._
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import views.Views
+import models.NationalInsuranceNumber
+import models.forms.WhatIsYourNationalInsuranceNumberForm
+import models.journeymodels._
+import requests.RequestSupport
+import services.JourneyService
+import io.scalaland.chimney.dsl._
 
 import javax.inject.{Inject, Singleton}
+import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class WhatIsYourNationalInsuranceNumberController @Inject() (
-    mcc:     MessagesControllerComponents,
-    views:   Views,
-    actions: Actions
-) extends FrontendController(mcc) {
+    mcc:            MessagesControllerComponents,
+    views:          Views,
+    actions:        Actions,
+    journeyService: JourneyService,
+    requestSupport: RequestSupport
+)(implicit ec: ExecutionContext) extends FrontendController(mcc) {
 
-  val get: Action[AnyContent] = actions.default { implicit request =>
-    Ok(views.whatIsYourNationalInsuranceNumberPage())
+  import requestSupport._
+
+  val get: Action[AnyContent] = actions.journeyAction { implicit request =>
+    request.journey match {
+      case j: JTerminal                                => JourneyRouter.handleFinalJourneyOnNonFinalPage(j)
+      case j: JBeforeWhatIsYourDateOfBirth             => JourneyRouter.sendToCorrespondingPage(j)
+      case _: JourneyWhatIsYourDateOfBirth             => getResult(None)
+      case j: JourneyWhatIsYourNationalInsuranceNumber => getResult(Some(j.nationalInsuranceNumber))
+      //case j: JAfterWhatIsYourNationalInsuranceNumber  => getResult(Some(j.nationalInsuranceNumber))
+    }
   }
 
+  private def getResult(maybeNationalInsuranceNumber: Option[NationalInsuranceNumber])(implicit request: JourneyRequest[_]): Result = {
+    maybeNationalInsuranceNumber.fold(
+      Ok(views.whatIsYourNationalInsuranceNumberPage(WhatIsYourNationalInsuranceNumberForm.form))
+    ) { nationalInsuranceNumber: NationalInsuranceNumber =>
+        Ok(views.whatIsYourNationalInsuranceNumberPage(WhatIsYourNationalInsuranceNumberForm.form.fill(nationalInsuranceNumber)))
+      }
+  }
+
+  val post: Action[AnyContent] = actions.journeyAction.async { implicit request: JourneyRequest[_] =>
+    request.journey match {
+      case j: JTerminal                                   => JourneyRouter.handleFinalJourneyOnNonFinalPageF(j)
+      case j: JBeforeWhatIsYourDateOfBirth                => JourneyRouter.sendToCorrespondingPageF(j)
+      case j: JAfterDoYouWantYourRefundViaBankTransferYes => processForm(j)
+    }
+  }
+
+  private def processForm(journey: JAfterDoYouWantYourRefundViaBankTransferYes)(implicit request: JourneyRequest[_]): Future[Result] = {
+    WhatIsYourNationalInsuranceNumberForm
+      .form
+      .bindFromRequest()
+      .fold(
+        formWithErrors => {
+          Future.successful(BadRequest(views.whatIsYourNationalInsuranceNumberPage(form = formWithErrors)))
+        },
+        nationalInsuranceNumber => {
+          val newJourney = journey match {
+            case j: JourneyWhatIsYourFullName => j
+            case j: JourneyWhatIsYourDateOfBirth => j.into[JourneyWhatIsYourNationalInsuranceNumber]
+              .withFieldConst(_.nationalInsuranceNumber, nationalInsuranceNumber)
+              .transform
+            case j: JourneyWhatIsYourNationalInsuranceNumber => j.copy(nationalInsuranceNumber = nationalInsuranceNumber)
+          }
+          journeyService
+            .upsert(newJourney)
+            // TODO: Redirect to CheckYourAnswers page when implemented
+            .map(_ => Redirect(controllers.routes.UnderConstructionController.underConstruction))
+        }
+      )
+  }
+
+  // private def processForm()
 }

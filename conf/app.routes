@@ -38,8 +38,10 @@ GET        /what-is-your-date-of-birth                  controllers.WhatIsYourDa
 POST       /what-is-your-date-of-birth                  controllers.WhatIsYourDateOfBirthController.post
 
 GET        /what-is-your-national-insurance-number      controllers.WhatIsYourNationalInsuranceNumberController.get
+POST       /what-is-your-national-insurance-number      controllers.WhatIsYourNationalInsuranceNumberController.post
 
 GET        /we-have-confirmed-your-identity             controllers.WeHaveConfirmedYourIdentityController.get
 #bank account name and consent:
 #TODO
 
+GET        /under-construction                          controllers.UnderConstructionController.underConstruction

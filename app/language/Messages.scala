@@ -148,20 +148,24 @@ object Messages {
       english = "What is your National Insurance number?"
     )
 
-    val `Its on your National Insurance`: Message = Message(
-      english = "It’s on your National Insurance card or letter, benefit letter, payslip or P60."
-    )
-
-    val `For example`: Message = Message(
-      english = "For example, ‘QQ 12 34 56 C’."
+    val `It’s on your National Insurance`: Message = Message(
+      english = "It’s on your National Insurance card or letter, benefit letter, payslip or P60. For example, ‘QQ 12 34 56 C’."
     )
 
     val `I do not know my National Insurance number`: Message = Message(
       english = "I do not know my National Insurance number"
     )
 
-    def `You can get help to find a lost National`: Message = Message(
+    val `You can get help to find a lost National`: Message = Message(
       english = s"""You can get help to <a id="govuk-link" href="#" class="govuk-link">find a lost National Insurance number (opens in new tab).</a>"""
+    )
+
+    val `Enter your National Insurance number`: Message = Message(
+      english = "Enter your National Insurance number"
+    )
+
+    val `Enter your National Insurance number in the correct format`: Message = Message(
+      english = "Enter your National Insurance number in the correct format"
     )
   }
 

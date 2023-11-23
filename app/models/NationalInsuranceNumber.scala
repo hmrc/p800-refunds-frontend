@@ -14,25 +14,12 @@
  * limitations under the License.
  */
 
-package controllers
+package models
 
-import action.Actions
-import play.api.mvc._
-import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
-import views.Views
+import play.api.libs.json.{Json, Format}
 
-import javax.inject.{Inject, Singleton}
+final case class NationalInsuranceNumber(value: String)
 
-@Singleton
-class UnserConstructionController @Inject() (
-    mcc:     MessagesControllerComponents,
-    views:   Views,
-    actions: Actions
-) extends FrontendController(mcc) {
-
-  //TODO: remove once we have all pages
-  val underConstruction: Action[AnyContent] = actions.default { implicit request =>
-    Ok(views.underConstructionPage())
-  }
+object NationalInsuranceNumber {
+  implicit val formats: Format[NationalInsuranceNumber] = Json.valueFormat[NationalInsuranceNumber]
 }
-

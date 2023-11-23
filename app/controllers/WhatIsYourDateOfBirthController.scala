@@ -47,6 +47,7 @@ class WhatIsYourDateOfBirthController @Inject() (
       case j: JBeforeWhatIsYourFullName    => JourneyRouter.sendToCorrespondingPage(j)
       case _: JourneyWhatIsYourFullName    => getResult(None)
       case j: JourneyWhatIsYourDateOfBirth => getResult(Some(j.dateOfBirth))
+      case j: JAfterWhatIsYourDateOfBirth  => getResult(Some(j.dateOfBirth))
     }
   }
 
@@ -76,8 +77,9 @@ class WhatIsYourDateOfBirthController @Inject() (
         },
         validForm => {
           val newJourney = journey match {
-            case j: JourneyWhatIsYourFullName    => j.into[JourneyWhatIsYourDateOfBirth].withFieldConst(_.dateOfBirth, validForm.date).transform
-            case j: JourneyWhatIsYourDateOfBirth => j.copy(dateOfBirth = validForm.date)
+            case j: JourneyWhatIsYourFullName                => j.into[JourneyWhatIsYourDateOfBirth].withFieldConst(_.dateOfBirth, validForm.date).transform
+            case j: JourneyWhatIsYourDateOfBirth             => j.copy(dateOfBirth = validForm.date)
+            case j: JourneyWhatIsYourNationalInsuranceNumber => j.copy(dateOfBirth = validForm.date)
             //other Journey states will just use copy, I guess, then we don't lose any extra info when they traverse through the journey and we can prepop when users progress.
           }
           journeyService

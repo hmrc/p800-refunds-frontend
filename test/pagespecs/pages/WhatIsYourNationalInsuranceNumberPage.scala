@@ -17,7 +17,9 @@
 package pagespecs.pages
 
 import org.openqa.selenium.WebDriver
+import org.scalatest.Assertion
 import pagespecs.pagesupport.{ContentExpectation, Page, PageUtil}
+import testsupport.RichMatchers.convertToAnyShouldWrapper
 
 class WhatIsYourNationalInsuranceNumberPage(baseUrl: String)(implicit webDriver: WebDriver) extends Page(
   baseUrl,
@@ -25,6 +27,9 @@ class WhatIsYourNationalInsuranceNumberPage(baseUrl: String)(implicit webDriver:
 ) {
 
   override def expectedH1: String = "What is your National Insurance number?"
+
+  def enterNationalInsuranceNumber(nationalInsuranceNumber: String): Unit =
+    PageUtil.setTextFieldById("nationalInsuranceNumber", nationalInsuranceNumber)
 
   def assertPageIsDisplayed(errors: ContentExpectation*): Unit = withPageClue {
 
@@ -63,4 +68,33 @@ class WhatIsYourNationalInsuranceNumberPage(baseUrl: String)(implicit webDriver:
     )
   }
 
+  def assertPageShowsErrorEmptyInput(): Unit = withPageClue {
+    assertPageIsDisplayed(
+      ContentExpectation(
+        atXpath       = PageUtil.Xpath.mainContent,
+        expectedLines =
+          """
+            |There is a problem
+            |Enter your National Insurance number
+            |""".stripMargin
+      )
+    )
+  }
+
+  def assertPageShowsErrorInvalid(): Unit = withPageClue {
+    assertPageIsDisplayed(
+      ContentExpectation(
+        atXpath       = PageUtil.Xpath.mainContent,
+        expectedLines =
+          """
+            |There is a problem
+            |Enter your National Insurance number in the correct format
+            |""".stripMargin
+      )
+    )
+  }
+
+  def assertDataPrepopulated(nationalInsuranceNumber: String): Assertion = withPageClue {
+    PageUtil.getValueById("nationalInsuranceNumber") shouldBe nationalInsuranceNumber
+  }
 }

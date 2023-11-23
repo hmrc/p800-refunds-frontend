@@ -16,7 +16,7 @@
 
 package models.journeymodels
 
-import models.{P800Reference, FullName}
+import models.{P800Reference, FullName, NationalInsuranceNumber}
 import models.dateofbirth.DateOfBirth
 import play.api.libs.json.OFormat
 
@@ -179,6 +179,7 @@ final case class JourneyWhatIsYourFullName(
   with JAfterCheckYourReferenceValid
   with JAfterDoYouWantYourRefundViaBankTransferYes
   with JBeforeWhatIsYourDateOfBirth
+  with JBeforeWhatIsYourNationalInsuranceNumber
 
 /**
  * [[Journey]] when finishing submission on WhatIsYourDateOfBirth page,
@@ -197,6 +198,23 @@ final case class JourneyWhatIsYourDateOfBirth(
   with JAfterCheckYourReferenceValid
   with JAfterDoYouWantYourRefundViaBankTransferYes
   with JAfterWhatIsYourFullName
+  with JBeforeWhatIsYourNationalInsuranceNumber
+
+final case class JourneyWhatIsYourNationalInsuranceNumber(
+    override val _id:           JourneyId,
+    override val createdAt:     Instant,
+    override val p800Reference: P800Reference,
+    override val fullName:      FullName,
+    override val dateOfBirth:   DateOfBirth,
+    nationalInsuranceNumber:    NationalInsuranceNumber
+) extends Journey
+  with JAfterStarted
+  with JAfterDoYouWantToSignInNo
+  with JAfterWhatIsYourP800Reference
+  with JAfterCheckYourReferenceValid
+  with JAfterDoYouWantYourRefundViaBankTransferYes
+  with JAfterWhatIsYourFullName
+  with JAfterWhatIsYourDateOfBirth
   with JBeforeYourChequeWillBePostedToYou
 
 /*
@@ -226,6 +244,12 @@ sealed trait JAfterWhatIsYourDateOfBirth extends Journey {
   val fullName: FullName
   val dateOfBirth: DateOfBirth
 }
+sealed trait JAfterWhatIsYourNationalInsuranceNumber extends Journey {
+  val p800Reference: P800Reference
+  val fullName: FullName
+  val dateOfBirth: DateOfBirth
+  val nationalInsuranceNumber: NationalInsuranceNumber
+}
 
 sealed trait JBeforeDoYouWantToSignInNo extends Journey
 sealed trait JBeforeWhatIsYourP800Reference extends Journey
@@ -235,6 +259,7 @@ sealed trait JBeforeDoYouWantYourRefundViaBankTransferNo extends Journey
 sealed trait JBeforeYourChequeWillBePostedToYou extends Journey
 sealed trait JBeforeWhatIsYourFullName extends Journey
 sealed trait JBeforeWhatIsYourDateOfBirth extends Journey
+sealed trait JBeforeWhatIsYourNationalInsuranceNumber extends Journey
 
 /**
  * Marking trait for [[Journey]] in terminal state

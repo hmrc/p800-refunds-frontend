@@ -16,7 +16,7 @@
 
 package testdata
 
-import models.{P800Reference, FullName}
+import models.{P800Reference, FullName, NationalInsuranceNumber}
 import models.dateofbirth.{DateOfBirth, DayOfMonth, Month, Year}
 
 import java.time.{Instant, LocalDateTime, ZoneOffset}
@@ -43,4 +43,5 @@ trait TdBase {
   lazy val month: Month = Month("1")
   lazy val year: Year = Year("2000")
   lazy val dateOfBirth: DateOfBirth = DateOfBirth(dayOfMonth, month, year)
+  lazy val nationalInsuranceNumber: NationalInsuranceNumber = NationalInsuranceNumber("MA000003A")
 }
