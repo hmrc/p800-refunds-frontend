@@ -61,6 +61,8 @@ final case class JourneyStarted(
   with JBeforeYourChequeWillBePostedToYou
   with JBeforeWhatIsYourFullName
   with JBeforeWhatIsYourDateOfBirth
+  with JBeforeWhatIsYourNationalInsuranceNumber
+  with JBeforeCheckYourAnswers
 
 /**
  * [[Journey]] when finishing submission on DoYouWantToSignIn page,
@@ -78,6 +80,8 @@ final case class JourneyDoYouWantToSignInNo(
   with JBeforeYourChequeWillBePostedToYou
   with JBeforeWhatIsYourFullName
   with JBeforeWhatIsYourDateOfBirth
+  with JBeforeWhatIsYourNationalInsuranceNumber
+  with JBeforeCheckYourAnswers
 
 /**
  * [[Journey]] when finishing submission on WhatIsYourP800Reference page.
@@ -95,6 +99,8 @@ final case class JourneyWhatIsYourP800Reference(
   with JBeforeYourChequeWillBePostedToYou
   with JBeforeWhatIsYourFullName
   with JBeforeWhatIsYourDateOfBirth
+  with JBeforeWhatIsYourNationalInsuranceNumber
+  with JBeforeCheckYourAnswers
 
 /**
  * [[Journey]] when finishing submission on CheckYourReference page,
@@ -113,6 +119,8 @@ final case class JourneyCheckYourReferenceValid(
   with JBeforeYourChequeWillBePostedToYou
   with JBeforeWhatIsYourFullName
   with JBeforeWhatIsYourDateOfBirth
+  with JBeforeWhatIsYourNationalInsuranceNumber
+  with JBeforeCheckYourAnswers
 
 /**
  * [[Journey]] when finishing submission on DoYouWantYourRefundViaBankTransfer page,
@@ -129,6 +137,8 @@ final case class JourneyDoYouWantYourRefundViaBankTransferYes(
   with JAfterCheckYourReferenceValid
   with JBeforeWhatIsYourFullName
   with JBeforeWhatIsYourDateOfBirth
+  with JBeforeWhatIsYourNationalInsuranceNumber
+  with JBeforeCheckYourAnswers
 
 /**
  * [[Journey]] when finishing submission on DoYouWantYourRefundViaBankTransfer page,
@@ -144,8 +154,8 @@ final case class JourneyDoYouWantYourRefundViaBankTransferNo(
   with JAfterWhatIsYourP800Reference
   with JAfterCheckYourReferenceValid
   with JBeforeYourChequeWillBePostedToYou
-  with JBeforeWhatIsYourFullName
-  with JBeforeWhatIsYourDateOfBirth
+  with JBeforeWhatIsYourFullName //TODO: this is not correct (ask Jake)
+  with JBeforeWhatIsYourDateOfBirth //TODO: this is not correct (ask Jake)
 
 /**
  * [[Journey]] when finishing submission on YourChequeWillBePostedToYou page.
@@ -162,7 +172,7 @@ final case class JourneyYourChequeWillBePostedToYou(
   with JAfterWhatIsYourP800Reference
   with JAfterCheckYourReferenceValid
   with JAfterDoYouWantYourRefundViaBankTransferNo
-  with JBeforeDoYouWantYourRefundViaBankTransferYes
+  with JBeforeDoYouWantYourRefundViaBankTransferYes //TODO: this is not correct (ask Jake)
 
 /**
  * [[Journey]] when finishing submission on WhatIsYourFullName page.
@@ -180,6 +190,7 @@ final case class JourneyWhatIsYourFullName(
   with JAfterDoYouWantYourRefundViaBankTransferYes
   with JBeforeWhatIsYourDateOfBirth
   with JBeforeWhatIsYourNationalInsuranceNumber
+  with JBeforeCheckYourAnswers
 
 /**
  * [[Journey]] when finishing submission on WhatIsYourDateOfBirth page,
@@ -199,6 +210,7 @@ final case class JourneyWhatIsYourDateOfBirth(
   with JAfterDoYouWantYourRefundViaBankTransferYes
   with JAfterWhatIsYourFullName
   with JBeforeWhatIsYourNationalInsuranceNumber
+  with JBeforeCheckYourAnswers
 
 final case class JourneyWhatIsYourNationalInsuranceNumber(
     override val _id:           JourneyId,
@@ -215,7 +227,26 @@ final case class JourneyWhatIsYourNationalInsuranceNumber(
   with JAfterDoYouWantYourRefundViaBankTransferYes
   with JAfterWhatIsYourFullName
   with JAfterWhatIsYourDateOfBirth
-  with JBeforeYourChequeWillBePostedToYou
+  with JBeforeYourChequeWillBePostedToYou //TODO: this is not correct (ask Jake)
+  with JBeforeCheckYourAnswers
+
+final case class JourneyCheckYourAnswers(
+    override val _id:                     JourneyId,
+    override val createdAt:               Instant,
+    override val p800Reference:           P800Reference,
+    override val fullName:                FullName,
+    override val dateOfBirth:             DateOfBirth,
+    override val nationalInsuranceNumber: NationalInsuranceNumber
+//TODO: results of API calls
+) extends Journey
+  with JAfterStarted
+  with JAfterDoYouWantToSignInNo
+  with JAfterWhatIsYourP800Reference
+  with JAfterCheckYourReferenceValid
+  with JAfterDoYouWantYourRefundViaBankTransferYes
+  with JAfterWhatIsYourFullName
+  with JAfterWhatIsYourDateOfBirth
+  with JAfterWhatIsYourNationalInsuranceNumber
 
 /*
  * Below marking traits for all [[Journey]]s after/before certain state
@@ -244,7 +275,15 @@ sealed trait JAfterWhatIsYourDateOfBirth extends Journey {
   val fullName: FullName
   val dateOfBirth: DateOfBirth
 }
+
 sealed trait JAfterWhatIsYourNationalInsuranceNumber extends Journey {
+  val p800Reference: P800Reference
+  val fullName: FullName
+  val dateOfBirth: DateOfBirth
+  val nationalInsuranceNumber: NationalInsuranceNumber
+}
+
+sealed trait JAfterCheckYourAnswers extends Journey {
   val p800Reference: P800Reference
   val fullName: FullName
   val dateOfBirth: DateOfBirth
@@ -260,6 +299,7 @@ sealed trait JBeforeYourChequeWillBePostedToYou extends Journey
 sealed trait JBeforeWhatIsYourFullName extends Journey
 sealed trait JBeforeWhatIsYourDateOfBirth extends Journey
 sealed trait JBeforeWhatIsYourNationalInsuranceNumber extends Journey
+sealed trait JBeforeCheckYourAnswers extends Journey
 
 /**
  * Marking trait for [[Journey]] in terminal state
