@@ -49,7 +49,7 @@ object WhatIsYourDateOfBirthForm {
   private val dateOfBirthYearKey = "date.year"
 
   //creates a list of month strings tupled with int value, i.e. ("January", 0), ("Jan",0)
-  private val monthStringAndIntValue: List[(String, Int)] = {
+  val monthStringAndIntValue: List[(String, Int)] = {
     val calendar = Calendar.getInstance(Locale.UK)
     val shortFormat = calendar.getDisplayNames(Calendar.MONTH, Calendar.SHORT_FORMAT, Locale.UK).asScala.toList
     val longFormat = calendar.getDisplayNames(Calendar.MONTH, Calendar.LONG_FORMAT, Locale.UK).asScala.toList

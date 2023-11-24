@@ -124,6 +124,34 @@ object Messages {
     )
   }
 
+  object CheckYourAnswersMessages {
+
+    val `Check your answers`: Message = Message(
+      english = "Check your answers"
+    )
+
+    val `Full name`: Message = Message(
+      english = "Full name"
+    )
+
+    val `Date of birth`: Message = Message(
+      english = "Date of birth"
+    )
+
+    val `Address`: Message = Message(
+      english = "Address"
+    )
+
+    val `National Insurance Number`: Message = Message(
+      english = "National Insurance Number"
+    )
+
+    val `Change`: Message = Message(
+      english = "Change"
+    )
+
+  }
+
   object CannotConfirmReference {
     val `We cannot confirm your reference`: Message = Message(
       english = "We cannot confirm your reference"

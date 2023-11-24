@@ -40,7 +40,8 @@ class ViewsHelpers @Inject() (
     val govukRadios:       GovukRadios,
     val govukSelect:       GovukSelect,
     val govukPanel:        GovukPanel,
-    val govukDateInput:    GovukDateInput
+    val govukDateInput:    GovukDateInput,
+    val govukSummaryList:  GovukSummaryList
 )
 
 object ViewsHelpers {

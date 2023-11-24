@@ -40,6 +40,13 @@ POST       /what-is-your-date-of-birth                  controllers.WhatIsYourDa
 GET        /what-is-your-national-insurance-number      controllers.WhatIsYourNationalInsuranceNumberController.get
 POST       /what-is-your-national-insurance-number      controllers.WhatIsYourNationalInsuranceNumberController.post
 
+GET        /check-your-answers                        controllers.CheckYourAnswersController.get
+POST       /check-your-answers                        controllers.CheckYourAnswersController.post
+GET        /check-your-answers/change-your-full-name          controllers.CheckYourAnswersController.changeFullName
+GET        /check-your-answers/change-your-date-of-birth      controllers.CheckYourAnswersController.changeDateOfBirth
+GET        /check-your-answers/change-your-national-insurance-number              controllers.CheckYourAnswersController.changeNationalInsuranceNumber
+
+
 GET        /we-have-confirmed-your-identity             controllers.WeHaveConfirmedYourIdentityController.get
 #bank account name and consent:
 #TODO

@@ -47,7 +47,7 @@ class WhatIsYourNationalInsuranceNumberController @Inject() (
       case j: JBeforeWhatIsYourDateOfBirth             => JourneyRouter.sendToCorrespondingPage(j)
       case _: JourneyWhatIsYourDateOfBirth             => getResult(None)
       case j: JourneyWhatIsYourNationalInsuranceNumber => getResult(Some(j.nationalInsuranceNumber))
-      //case j: JAfterWhatIsYourNationalInsuranceNumber  => getResult(Some(j.nationalInsuranceNumber))
+      case j: JAfterWhatIsYourNationalInsuranceNumber  => getResult(Some(j.nationalInsuranceNumber))
     }
   }
 
@@ -81,12 +81,16 @@ class WhatIsYourNationalInsuranceNumberController @Inject() (
             case j: JourneyWhatIsYourDateOfBirth => j.into[JourneyWhatIsYourNationalInsuranceNumber]
               .withFieldConst(_.nationalInsuranceNumber, nationalInsuranceNumber)
               .transform
-            case j: JourneyWhatIsYourNationalInsuranceNumber => j.copy(nationalInsuranceNumber = nationalInsuranceNumber)
+            case j: JAfterWhatIsYourDateOfBirth =>
+              j
+                .into[JourneyWhatIsYourNationalInsuranceNumber]
+                .enableInheritedAccessors
+                .withFieldConst(_.nationalInsuranceNumber, nationalInsuranceNumber)
+                .transform
           }
           journeyService
             .upsert(newJourney)
-            // TODO: Redirect to CheckYourAnswers page when implemented
-            .map(_ => Redirect(controllers.routes.UnderConstructionController.underConstruction))
+            .map(_ => Redirect(controllers.routes.CheckYourAnswersController.get))
         }
       )
   }

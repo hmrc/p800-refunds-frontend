@@ -51,8 +51,9 @@ object JourneyRouter {
       case _: JourneyDoYouWantYourRefundViaBankTransferNo  => controllers.routes.YourChequeWillBePostedToYouController.get
       case _: JourneyWhatIsYourFullName                    => controllers.routes.WhatIsYourDateOfBirthController.get
       case _: JourneyWhatIsYourDateOfBirth                 => controllers.routes.WhatIsYourNationalInsuranceNumberController.get
-      // TODO: JourneyWhatIsYourNationalInsuranceNumber should go to CheckYourAnswers page once implemented
-      case _: JourneyWhatIsYourNationalInsuranceNumber     => controllers.routes.UnderConstructionController.underConstruction
+      case _: JourneyWhatIsYourNationalInsuranceNumber     => controllers.routes.CheckYourAnswersController.get
+      case _: JourneyCheckYourAnswers                      => controllers.routes.WeHaveConfirmedYourIdentityController.get
+      case _: JourneyCheckYourAnswersChange                => controllers.routes.WeHaveConfirmedYourIdentityController.get
       case _: JourneyYourChequeWillBePostedToYou           => controllers.routes.RequestReceivedController.get
     }
 

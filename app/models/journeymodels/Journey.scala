@@ -248,6 +248,26 @@ final case class JourneyCheckYourAnswers(
   with JAfterWhatIsYourDateOfBirth
   with JAfterWhatIsYourNationalInsuranceNumber
 
+/**
+ * This state represents journey leaving CheckYourAnswers page via the "Change" link
+ */
+final case class JourneyCheckYourAnswersChange(
+    override val _id:                     JourneyId,
+    override val createdAt:               Instant,
+    override val p800Reference:           P800Reference,
+    override val fullName:                FullName,
+    override val dateOfBirth:             DateOfBirth,
+    override val nationalInsuranceNumber: NationalInsuranceNumber
+) extends Journey
+  with JAfterStarted
+  with JAfterDoYouWantToSignInNo
+  with JAfterWhatIsYourP800Reference
+  with JAfterCheckYourReferenceValid
+  with JAfterDoYouWantYourRefundViaBankTransferYes
+  with JAfterWhatIsYourFullName
+  with JAfterWhatIsYourDateOfBirth
+  with JAfterWhatIsYourNationalInsuranceNumber
+
 /*
  * Below marking traits for all [[Journey]]s after/before certain state
  */
