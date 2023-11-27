@@ -154,8 +154,6 @@ final case class JourneyDoYouWantYourRefundViaBankTransferNo(
   with JAfterWhatIsYourP800Reference
   with JAfterCheckYourReferenceValid
   with JBeforeYourChequeWillBePostedToYou
-  with JBeforeWhatIsYourFullName //TODO: this is not correct (ask Jake)
-  with JBeforeWhatIsYourDateOfBirth //TODO: this is not correct (ask Jake)
 
 /**
  * [[Journey]] when finishing submission on YourChequeWillBePostedToYou page.
@@ -172,7 +170,6 @@ final case class JourneyYourChequeWillBePostedToYou(
   with JAfterWhatIsYourP800Reference
   with JAfterCheckYourReferenceValid
   with JAfterDoYouWantYourRefundViaBankTransferNo
-  with JBeforeDoYouWantYourRefundViaBankTransferYes //TODO: this is not correct (ask Jake)
 
 /**
  * [[Journey]] when finishing submission on WhatIsYourFullName page.
@@ -227,7 +224,6 @@ final case class JourneyWhatIsYourNationalInsuranceNumber(
   with JAfterDoYouWantYourRefundViaBankTransferYes
   with JAfterWhatIsYourFullName
   with JAfterWhatIsYourDateOfBirth
-  with JBeforeYourChequeWillBePostedToYou //TODO: this is not correct (ask Jake)
   with JBeforeCheckYourAnswers
 
 final case class JourneyCheckYourAnswers(

@@ -54,6 +54,7 @@ object JourneyRouter {
       // TODO: JourneyWhatIsYourNationalInsuranceNumber should go to CheckYourAnswers page once implemented
       case _: JourneyWhatIsYourNationalInsuranceNumber     => controllers.routes.UnderConstructionController.underConstruction
       case _: JourneyYourChequeWillBePostedToYou           => controllers.routes.RequestReceivedController.get
+      case _: JourneyCheckYourAnswers                      => controllers.routes.WeHaveConfirmedYourIdentityController.get
     }
 
     JourneyLogger.warn(s"Incorrect journey state for this page. Redirecting to ${redirectLocation.url}")
