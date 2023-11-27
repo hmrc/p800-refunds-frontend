@@ -47,7 +47,3 @@ GET        /check-your-answers/change-your-date-of-birth      controllers.CheckY
 GET        /check-your-answers/change-your-national-insurance-number              controllers.CheckYourAnswersController.changeNationalInsuranceNumber
 
 GET        /we-have-confirmed-your-identity             controllers.WeHaveConfirmedYourIdentityController.get
-#bank account name and consent:
-#TODO
-
-GET        /under-construction                          controllers.UnderConstructionController.underConstruction

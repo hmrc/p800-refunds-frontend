@@ -39,8 +39,7 @@ class WhatIsYourNationalInsuranceNumberPageSpec extends ItSpec {
     pages.whatIsYourNationalInsuranceNumberPage.assertPageIsDisplayed()
     pages.whatIsYourNationalInsuranceNumberPage.enterNationalInsuranceNumber(TdAll.nationalInsuranceNumber)
     pages.whatIsYourNationalInsuranceNumberPage.clickSubmit()
-    // TODO: Uncomment when checkYourAnswers page is here
-    // pages.checkYourAnswers.assertPageIsDisplayed()
+    pages.checkYourAnswersPage.assertPageIsDisplayed()
   }
 
   "Clicking 'Continue' with empty text input shows error" in {
