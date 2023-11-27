@@ -43,11 +43,12 @@ class WhatIsYourNationalInsuranceNumberController @Inject() (
 
   val get: Action[AnyContent] = actions.journeyAction { implicit request =>
     request.journey match {
-      case j: JTerminal                                => JourneyRouter.handleFinalJourneyOnNonFinalPage(j)
-      case j: JBeforeWhatIsYourDateOfBirth             => JourneyRouter.sendToCorrespondingPage(j)
-      case _: JourneyWhatIsYourDateOfBirth             => getResult(None)
-      case j: JourneyWhatIsYourNationalInsuranceNumber => getResult(Some(j.nationalInsuranceNumber))
-      case j: JAfterWhatIsYourNationalInsuranceNumber  => getResult(Some(j.nationalInsuranceNumber))
+      case j: JTerminal                                   => JourneyRouter.handleFinalJourneyOnNonFinalPage(j)
+      case j: JourneyDoYouWantYourRefundViaBankTransferNo => JourneyRouter.sendToCorrespondingPage(j)
+      case j: JBeforeWhatIsYourDateOfBirth                => JourneyRouter.sendToCorrespondingPage(j)
+      case _: JourneyWhatIsYourDateOfBirth                => getResult(None)
+      case j: JourneyWhatIsYourNationalInsuranceNumber    => getResult(Some(j.nationalInsuranceNumber))
+      case j: JAfterWhatIsYourNationalInsuranceNumber     => getResult(Some(j.nationalInsuranceNumber))
     }
   }
 
@@ -62,6 +63,7 @@ class WhatIsYourNationalInsuranceNumberController @Inject() (
   val post: Action[AnyContent] = actions.journeyAction.async { implicit request: JourneyRequest[_] =>
     request.journey match {
       case j: JTerminal                                   => JourneyRouter.handleFinalJourneyOnNonFinalPageF(j)
+      case j: JourneyDoYouWantYourRefundViaBankTransferNo => JourneyRouter.sendToCorrespondingPageF(j)
       case j: JBeforeWhatIsYourDateOfBirth                => JourneyRouter.sendToCorrespondingPageF(j)
       case j: JAfterDoYouWantYourRefundViaBankTransferYes => processForm(j)
     }
@@ -94,6 +96,4 @@ class WhatIsYourNationalInsuranceNumberController @Inject() (
         }
       )
   }
-
-  // private def processForm()
 }

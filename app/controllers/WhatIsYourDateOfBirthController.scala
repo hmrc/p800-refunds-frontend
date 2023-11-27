@@ -43,11 +43,12 @@ class WhatIsYourDateOfBirthController @Inject() (
 
   val get: Action[AnyContent] = actions.journeyAction { implicit request: JourneyRequest[_] =>
     request.journey match {
-      case j: JTerminal                    => JourneyRouter.handleFinalJourneyOnNonFinalPage(j)
-      case j: JBeforeWhatIsYourFullName    => JourneyRouter.sendToCorrespondingPage(j)
-      case _: JourneyWhatIsYourFullName    => getResult(None)
-      case j: JourneyWhatIsYourDateOfBirth => getResult(Some(j.dateOfBirth))
-      case j: JAfterWhatIsYourDateOfBirth  => getResult(Some(j.dateOfBirth))
+      case j: JTerminal                                   => JourneyRouter.handleFinalJourneyOnNonFinalPage(j)
+      case j: JourneyDoYouWantYourRefundViaBankTransferNo => JourneyRouter.sendToCorrespondingPage(j)
+      case j: JBeforeWhatIsYourFullName                   => JourneyRouter.sendToCorrespondingPage(j)
+      case _: JourneyWhatIsYourFullName                   => getResult(None)
+      case j: JourneyWhatIsYourDateOfBirth                => getResult(Some(j.dateOfBirth))
+      case j: JAfterWhatIsYourDateOfBirth                 => getResult(Some(j.dateOfBirth))
     }
   }
 
@@ -62,6 +63,7 @@ class WhatIsYourDateOfBirthController @Inject() (
   val post: Action[AnyContent] = actions.journeyAction.async { implicit request =>
     request.journey match {
       case j: JTerminal                                   => JourneyRouter.handleFinalJourneyOnNonFinalPageF(j)
+      case j: JourneyDoYouWantYourRefundViaBankTransferNo => JourneyRouter.sendToCorrespondingPageF(j)
       case j: JBeforeWhatIsYourFullName                   => JourneyRouter.sendToCorrespondingPageF(j)
       case j: JAfterDoYouWantYourRefundViaBankTransferYes => processForm(j)
     }

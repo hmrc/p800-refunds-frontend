@@ -154,8 +154,6 @@ final case class JourneyDoYouWantYourRefundViaBankTransferNo(
   with JAfterWhatIsYourP800Reference
   with JAfterCheckYourReferenceValid
   with JBeforeYourChequeWillBePostedToYou
-  with JBeforeWhatIsYourFullName //TODO: this is not correct (ask Jake)
-  with JBeforeWhatIsYourDateOfBirth //TODO: this is not correct (ask Jake)
 
 /**
  * [[Journey]] when finishing submission on YourChequeWillBePostedToYou page.
@@ -172,7 +170,6 @@ final case class JourneyYourChequeWillBePostedToYou(
   with JAfterWhatIsYourP800Reference
   with JAfterCheckYourReferenceValid
   with JAfterDoYouWantYourRefundViaBankTransferNo
-  with JBeforeDoYouWantYourRefundViaBankTransferYes //TODO: this is not correct (ask Jake)
 
 /**
  * [[Journey]] when finishing submission on WhatIsYourFullName page.
@@ -227,7 +224,6 @@ final case class JourneyWhatIsYourNationalInsuranceNumber(
   with JAfterDoYouWantYourRefundViaBankTransferYes
   with JAfterWhatIsYourFullName
   with JAfterWhatIsYourDateOfBirth
-  with JBeforeYourChequeWillBePostedToYou //TODO: this is not correct (ask Jake)
   with JBeforeCheckYourAnswers
 
 final case class JourneyCheckYourAnswers(
@@ -238,26 +234,6 @@ final case class JourneyCheckYourAnswers(
     override val dateOfBirth:             DateOfBirth,
     override val nationalInsuranceNumber: NationalInsuranceNumber
 //TODO: results of API calls
-) extends Journey
-  with JAfterStarted
-  with JAfterDoYouWantToSignInNo
-  with JAfterWhatIsYourP800Reference
-  with JAfterCheckYourReferenceValid
-  with JAfterDoYouWantYourRefundViaBankTransferYes
-  with JAfterWhatIsYourFullName
-  with JAfterWhatIsYourDateOfBirth
-  with JAfterWhatIsYourNationalInsuranceNumber
-
-/**
- * This state represents journey leaving CheckYourAnswers page via the "Change" link
- */
-final case class JourneyCheckYourAnswersChange(
-    override val _id:                     JourneyId,
-    override val createdAt:               Instant,
-    override val p800Reference:           P800Reference,
-    override val fullName:                FullName,
-    override val dateOfBirth:             DateOfBirth,
-    override val nationalInsuranceNumber: NationalInsuranceNumber
 ) extends Journey
   with JAfterStarted
   with JAfterDoYouWantToSignInNo
