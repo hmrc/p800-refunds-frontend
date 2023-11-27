@@ -43,10 +43,12 @@ class WhatIsYourDateOfBirthController @Inject() (
 
   val get: Action[AnyContent] = actions.journeyAction { implicit request: JourneyRequest[_] =>
     request.journey match {
-      case j: JTerminal                    => JourneyRouter.handleFinalJourneyOnNonFinalPage(j)
-      case j: JBeforeWhatIsYourFullName    => JourneyRouter.sendToCorrespondingPage(j)
-      case _: JourneyWhatIsYourFullName    => getResult(None)
-      case j: JourneyWhatIsYourDateOfBirth => getResult(Some(j.dateOfBirth))
+      case j: JTerminal                                   => JourneyRouter.handleFinalJourneyOnNonFinalPage(j)
+      case j: JourneyDoYouWantYourRefundViaBankTransferNo => JourneyRouter.sendToCorrespondingPage(j)
+      case j: JBeforeWhatIsYourFullName                   => JourneyRouter.sendToCorrespondingPage(j)
+      case _: JourneyWhatIsYourFullName                   => getResult(None)
+      case j: JourneyWhatIsYourDateOfBirth                => getResult(Some(j.dateOfBirth))
+      case j: JAfterWhatIsYourDateOfBirth                 => getResult(Some(j.dateOfBirth))
     }
   }
 
@@ -61,6 +63,7 @@ class WhatIsYourDateOfBirthController @Inject() (
   val post: Action[AnyContent] = actions.journeyAction.async { implicit request =>
     request.journey match {
       case j: JTerminal                                   => JourneyRouter.handleFinalJourneyOnNonFinalPageF(j)
+      case j: JourneyDoYouWantYourRefundViaBankTransferNo => JourneyRouter.sendToCorrespondingPageF(j)
       case j: JBeforeWhatIsYourFullName                   => JourneyRouter.sendToCorrespondingPageF(j)
       case j: JAfterDoYouWantYourRefundViaBankTransferYes => processForm(j)
     }
@@ -76,8 +79,10 @@ class WhatIsYourDateOfBirthController @Inject() (
         },
         validForm => {
           val newJourney = journey match {
-            case j: JourneyWhatIsYourFullName    => j.into[JourneyWhatIsYourDateOfBirth].withFieldConst(_.dateOfBirth, validForm.date).transform
-            case j: JourneyWhatIsYourDateOfBirth => j.copy(dateOfBirth = validForm.date)
+            case j: JourneyWhatIsYourFullName                => j.into[JourneyWhatIsYourDateOfBirth].withFieldConst(_.dateOfBirth, validForm.date).transform
+            case j: JourneyWhatIsYourDateOfBirth             => j.copy(dateOfBirth = validForm.date)
+            case j: JourneyWhatIsYourNationalInsuranceNumber => j.copy(dateOfBirth = validForm.date)
+            case j: JourneyCheckYourAnswers                  => j.copy(dateOfBirth = validForm.date)
             //other Journey states will just use copy, I guess, then we don't lose any extra info when they traverse through the journey and we can prepop when users progress.
           }
           journeyService

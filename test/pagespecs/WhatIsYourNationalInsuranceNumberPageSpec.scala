@@ -17,12 +17,58 @@
 package pagespecs
 
 import testsupport.ItSpec
+import testdata.TdAll
 
 class WhatIsYourNationalInsuranceNumberPageSpec extends ItSpec {
+
+  override def beforeEach(): Unit = {
+    super.beforeEach()
+
+    addJourneyIdToSession(TdAll.journeyId)
+    upsertJourneyToDatabase(TdAll.journeyWhatIsYourDateOfBirth)
+  }
 
   "/what-is-your-national-insurance-number renders the what is your national insurance number page" in {
     pages.whatIsYourNationalInsuranceNumberPage.open()
     pages.whatIsYourNationalInsuranceNumberPage.assertPageIsDisplayed()
   }
 
+  "Entering a valid NINO and clicking 'Continue' redirects user to 'Check your answers' page" in {
+    pages.whatIsYourNationalInsuranceNumberPage.open()
+    pages.whatIsYourNationalInsuranceNumberPage.assertPageIsDisplayed()
+    pages.whatIsYourNationalInsuranceNumberPage.enterNationalInsuranceNumber(TdAll.nationalInsuranceNumber.value)
+    pages.whatIsYourNationalInsuranceNumberPage.clickSubmit()
+    // TODO: Uncomment when checkYourAnswers page is here
+    // pages.checkYourAnswers.assertPageIsDisplayed()
+  }
+
+  "Clicking 'Continue' with empty text input shows error" in {
+    pages.whatIsYourNationalInsuranceNumberPage.open()
+    pages.whatIsYourNationalInsuranceNumberPage.assertPageIsDisplayed()
+    pages.whatIsYourNationalInsuranceNumberPage.clickSubmit()
+    pages.whatIsYourNationalInsuranceNumberPage.assertPageShowsErrorEmptyInput()
+  }
+
+  Seq("Not a NINO", "1234", "QQ 12 34 56 C", "MA0%0£03A").foreach { nino =>
+    s"Clicking 'Continue' with invalid NINO ($nino) shows error" in {
+      pages.whatIsYourNationalInsuranceNumberPage.open()
+      pages.whatIsYourNationalInsuranceNumberPage.assertPageIsDisplayed()
+      pages.whatIsYourNationalInsuranceNumberPage.enterNationalInsuranceNumber(nino)
+      pages.whatIsYourNationalInsuranceNumberPage.clickSubmit()
+      pages.whatIsYourNationalInsuranceNumberPage.assertPageShowsErrorInvalid()
+    }
+  }
+
+  "Clicking 'Back' redirects to 'What is your Date of birth?' page" in {
+    pages.whatIsYourNationalInsuranceNumberPage.open()
+    pages.whatIsYourNationalInsuranceNumberPage.assertPageIsDisplayed()
+    pages.whatIsYourNationalInsuranceNumberPage.clickBackButton()
+    pages.whatIsYourDateOfBirthPage.assertPageIsDisplayed()
+  }
+
+  "Prepopulate the form if the user has already entered it" in {
+    upsertJourneyToDatabase(TdAll.journeyWhatIsYourNationalInsuranceNumber)
+    pages.whatIsYourNationalInsuranceNumberPage.open()
+    pages.whatIsYourNationalInsuranceNumberPage.assertDataPrepopulated("MA000003A")
+  }
 }

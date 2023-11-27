@@ -16,14 +16,18 @@
 
 @import language.Messages
 @import uk.gov.hmrc.govukfrontend.views.html.components._
+@import uk.gov.hmrc.govukfrontend.views.html.components.implicits._
 @import views.html.templates.Layout
+@import models.NationalInsuranceNumber
 
 @this(
     layout: Layout,
     viewsHelpers: views.ViewsHelpers
 )
 
-@()(implicit request: Request[_])
+@(
+    form: Form[NationalInsuranceNumber]
+)(implicit request: Request[_])
 
 @import viewsHelpers.requestSupport._
 
@@ -31,35 +35,43 @@
     Messages.WhatIsYourNationalInsuranceNumber.`What is your National Insurance number`.show
 }
 
+@key = @{
+    "nationalInsuranceNumber"
+}
 
 @layout(
-    pageTitle = Some(title)
+    pageTitle = Some(title),
+    backLinkUrlOverride = Some(controllers.routes.WhatIsYourDateOfBirthController.get.url)
 ) {
+    @if(form.errors.nonEmpty) {
+        @viewsHelpers.govukErrorSummary(ErrorSummary(errorList = form.errors.asTextErrorLinks, title = Text(Messages.CommonMessages.`There is a problem`.show)))
+    }
 
-    <fieldset class="govuk-fieldset" aria-describedby="national-insurance-number">
-        <legend class="govuk-fieldset__legend govuk-fieldset__legend--l">
-            <h1 class="govuk-heading-xl"><label for="national-insurance-number">@{title}</label></h1>
-        </legend>
+    @viewsHelpers.formWithCsrf(action = controllers.routes.WhatIsYourNationalInsuranceNumberController.post) {
+        @viewsHelpers.govukInput(Input(
+            id = key,
+            name = key,
+            classes = "govuk-!-width-two-thirds",
+            label = Label(
+                content = Text(title),
+                isPageHeading = true,
+                classes = "govuk-label--xl"
+            ),
+            hint = Some(Hint(
+                content = Text(Messages.WhatIsYourNationalInsuranceNumber.`It’s on your National Insurance`.show)
+            )),
+            autocomplete = Some("off"),
+            spellcheck = Some(false)
+        ).withFormField(form(key)))
 
-    <div id="national-insurance-number" class="govuk-hint">
-        @{Messages.WhatIsYourNationalInsuranceNumber.`Its on your National Insurance`.show}<br>
-        @{Messages.WhatIsYourNationalInsuranceNumber.`For example`.show}
-    </div>
+        @viewsHelpers.govukDetails(Details(
+            summary = Text(Messages.WhatIsYourNationalInsuranceNumber.`I do not know my National Insurance number`.show),
+            content = HtmlContent(Messages.WhatIsYourNationalInsuranceNumber.`You can get help to find a lost National`.show)
+        ))
 
-    @viewsHelpers.govukDetails(Details(
-        summary = Text(Messages.WhatIsYourNationalInsuranceNumber.`I do not know my National Insurance number`.show),
-        content = HtmlContent(Messages.WhatIsYourNationalInsuranceNumber.`You can get help to find a lost National`.show)
-    ))
-
-    @viewsHelpers.govukInput(Input(
-        id = "national-insurance-number",
-        name = "national-insurance-number",
-        classes = "govuk-!-width-two-thirds"
-    ))
-
-    @viewsHelpers.govukButton(Button(
-        content = Text(Messages.CommonMessages.`continue`.show),
-        id      = Some("submit")
-    ))
-    </fieldset>
+        @viewsHelpers.govukButton(Button(
+            content = Text(Messages.CommonMessages.`continue`.show),
+            id      = Some("submit")
+        ))
+    }
 }
