@@ -43,5 +43,7 @@ trait TdBase {
   lazy val month: Month = Month("1")
   lazy val year: Year = Year("2000")
   lazy val dateOfBirth: DateOfBirth = DateOfBirth(dayOfMonth, month, year)
+  lazy val dateOfBirthFormatted: String = "01 January 2000"
+
   lazy val nationalInsuranceNumber: NationalInsuranceNumber = NationalInsuranceNumber("MA000003A")
 }

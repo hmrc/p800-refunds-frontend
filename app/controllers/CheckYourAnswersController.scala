@@ -125,31 +125,34 @@ class CheckYourAnswersController @Inject() (
     SummaryList(rows = Seq(
       buildSummaryListRow(
         Messages.CheckYourAnswersMessages.`Full name`.show,
+        id = "full-name",
         fullName.value,
         controllers.routes.CheckYourAnswersController.changeFullName
       ),
       buildSummaryListRow(
         Messages.CheckYourAnswersMessages.`Date of birth`.show,
+        id = "date-of-birth",
         formatDateOfBirth(dateOfBirth),
         controllers.routes.CheckYourAnswersController.changeDateOfBirth
       ),
       buildSummaryListRow(
         Messages.CheckYourAnswersMessages.`National Insurance Number`.show,
+        id = "national-insurance-number",
         s"""${nationalInsuranceNumber.value}""",
         controllers.routes.CheckYourAnswersController.changeNationalInsuranceNumber
       )
     ))
   }
 
-  private def buildSummaryListRow(key: String, value: String, call: Call)(implicit request: Request[_]): SummaryListRow = SummaryListRow(
+  private def buildSummaryListRow(key: String, id: String, value: String, call: Call)(implicit request: Request[_]): SummaryListRow = SummaryListRow(
     key     = Key(HtmlContent(s"""<p class="govuk-heading-m">$key</p>""")),
     value   = Value(HtmlContent(
       //language=HTML
       s"""
           <div class="govuk-grid-row">
-              <div class="govuk-grid-column-one-half">$value</div>
+              <div id="$id" class="govuk-grid-column-one-half">$value</div>
               <div class="govuk-grid-column-one-half govuk-!-text-align-right">
-                  <a href="${call.url}">${Messages.CheckYourAnswersMessages.`Change`.show}</a>
+                  <a href="${call.url}" id="change-$id">${Messages.CheckYourAnswersMessages.`Change`.show}</a>
               </div>
           </div>
       """

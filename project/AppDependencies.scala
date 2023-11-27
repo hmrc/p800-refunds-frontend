@@ -21,7 +21,7 @@ object AppDependencies {
     // format: OFF
     "uk.gov.hmrc"             %% "bootstrap-test-play-28"     % bootstrapVersion exclude("com.github.tomakehurst", "wiremock-jre8"),
     "uk.gov.hmrc.mongo"       %% "hmrc-mongo-test-play-28"    % hmrcMongoVersion,
-    "org.jsoup"               %  "jsoup"                      % "1.16.2",
+    "org.jsoup"               %  "jsoup"                      % "1.17.1",
     "com.github.tomakehurst"  %  "wiremock-standalone"        % "3.0.1",
     "org.scalatest"           %% "scalatest"                  % "3.2.17",
     "com.vladsch.flexmark"    %  "flexmark-all"               % "0.62.2",

@@ -130,10 +130,10 @@ object PageUtil {
       serviceName:         String,
       contentExpectations: ContentExpectation*
   )(implicit webDriver: WebDriver): Unit = withPageClue(path) {
-    readPageServiceName() shouldBe serviceName withClue "serviceName"
     readPath() shouldBe path withClue "path"
     readH1() shouldBe h1 withClue "h1"
     pageTitle shouldBe title withClue "pageTitle"
+    readPageServiceName() shouldBe serviceName withClue "serviceName"
     assertContentByXpath(contentExpectations: _*)
   }
 
