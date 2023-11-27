@@ -77,6 +77,13 @@ class CheckYourAnswersSpec extends ItSpec {
     ) withClue "user is navigated back to check your answers page"
   }
 
+  "clicking submit navigates to confirmation page" in {
+    pages.checkYourAnswersPage.open()
+    pages.checkYourAnswersPage.assertPageIsDisplayed()
+    pages.checkYourAnswersPage.clickSubmit()
+    pages.weHaveConfirmedYourIdentityPage.assertPageIsDisplayed()
+  }
+
   override def beforeEach(): Unit = {
     super.beforeEach()
     addJourneyIdToSession(td.journeyId)
