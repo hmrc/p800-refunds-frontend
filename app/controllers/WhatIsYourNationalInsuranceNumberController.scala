@@ -83,13 +83,16 @@ class WhatIsYourNationalInsuranceNumberController @Inject() (
             case j: JourneyWhatIsYourDateOfBirth => j.into[JourneyWhatIsYourNationalInsuranceNumber]
               .withFieldConst(_.nationalInsuranceNumber, nationalInsuranceNumber)
               .transform
-            case j: JourneyWhatIsYourNationalInsuranceNumber => j.copy(nationalInsuranceNumber = nationalInsuranceNumber)
-            case j: JourneyCheckYourAnswers                  => j.copy(nationalInsuranceNumber = nationalInsuranceNumber)
+            case j: JAfterWhatIsYourDateOfBirth =>
+              j
+                .into[JourneyWhatIsYourNationalInsuranceNumber]
+                .enableInheritedAccessors
+                .withFieldConst(_.nationalInsuranceNumber, nationalInsuranceNumber)
+                .transform
           }
           journeyService
             .upsert(newJourney)
-            // TODO: Redirect to CheckYourAnswers page when implemented
-            .map(_ => Redirect(controllers.routes.UnderConstructionController.underConstruction))
+            .map(_ => Redirect(controllers.routes.CheckYourAnswersController.get))
         }
       )
   }

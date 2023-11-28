@@ -16,6 +16,7 @@
 
 package pagespecs.pages
 
+import models.NationalInsuranceNumber
 import org.openqa.selenium.WebDriver
 import org.scalatest.Assertion
 import pagespecs.pagesupport.{ContentExpectation, Page, PageUtil}
@@ -28,8 +29,8 @@ class WhatIsYourNationalInsuranceNumberPage(baseUrl: String)(implicit webDriver:
 
   override def expectedH1: String = "What is your National Insurance number?"
 
-  def enterNationalInsuranceNumber(nationalInsuranceNumber: String): Unit =
-    PageUtil.setTextFieldById("nationalInsuranceNumber", nationalInsuranceNumber)
+  def enterNationalInsuranceNumber(nationalInsuranceNumber: NationalInsuranceNumber): Unit =
+    PageUtil.setTextFieldById("nationalInsuranceNumber", nationalInsuranceNumber.value)
 
   def assertPageIsDisplayed(errors: ContentExpectation*): Unit = withPageClue {
 

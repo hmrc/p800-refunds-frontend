@@ -26,8 +26,6 @@ import util.DateTimeFormatsUtil
 import util.SafeEquals.EqualsOps
 
 import java.time.LocalDate
-import java.util.{Calendar, Locale}
-import scala.jdk.CollectionConverters.MapHasAsScala
 import scala.util.{Failure, Success, Try}
 
 final case class WhatIsYourDateOfBirthForm(date: DateOfBirth)
@@ -48,15 +46,7 @@ object WhatIsYourDateOfBirthForm {
   private val dateOfBirthMonthKey = "date.month"
   private val dateOfBirthYearKey = "date.year"
 
-  //creates a list of month strings tupled with int value, i.e. ("January", 0), ("Jan",0)
-  private val monthStringAndIntValue: List[(String, Int)] = {
-    val calendar = Calendar.getInstance(Locale.UK)
-    val shortFormat = calendar.getDisplayNames(Calendar.MONTH, Calendar.SHORT_FORMAT, Locale.UK).asScala.toList
-    val longFormat = calendar.getDisplayNames(Calendar.MONTH, Calendar.LONG_FORMAT, Locale.UK).asScala.toList
-    (shortFormat ++ longFormat).map((monthDisplayNames: (String, Integer)) => monthDisplayNames._1 -> monthDisplayNames._2.intValue())
-  }
-
-  private def monthStringIsValidMonth(month: String): Boolean = monthStringAndIntValue.collectFirst {
+  private def monthStringIsValidMonth(month: String): Boolean = DateOfBirth.monthStringAndIntValue.collectFirst {
     case (m: String, _: Int) if m.toLowerCase === month.toLowerCase => true
   }.getOrElse(false)
 
@@ -159,7 +149,7 @@ object WhatIsYourDateOfBirthForm {
 
     val monthIntoInt: Option[Int] = Try(date.month.value.toInt).toOption match {
       case Some(value) => Some(value)
-      case None => monthStringAndIntValue.collectFirst {
+      case None => DateOfBirth.monthStringAndIntValue.collectFirst {
         case (m: String, monthNumber) if m.toLowerCase === date.month.value.toLowerCase => monthNumber + 1
       }
     }

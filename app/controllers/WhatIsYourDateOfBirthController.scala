@@ -78,16 +78,19 @@ class WhatIsYourDateOfBirthController @Inject() (
           Future.successful(BadRequest(views.whatIsYourDateOfBirthPage(form = formWithErrors)))
         },
         validForm => {
-          val newJourney = journey match {
-            case j: JourneyWhatIsYourFullName                => j.into[JourneyWhatIsYourDateOfBirth].withFieldConst(_.dateOfBirth, validForm.date).transform
-            case j: JourneyWhatIsYourDateOfBirth             => j.copy(dateOfBirth = validForm.date)
-            case j: JourneyWhatIsYourNationalInsuranceNumber => j.copy(dateOfBirth = validForm.date)
-            case j: JourneyCheckYourAnswers                  => j.copy(dateOfBirth = validForm.date)
-            //other Journey states will just use copy, I guess, then we don't lose any extra info when they traverse through the journey and we can prepop when users progress.
+          val newJourney: Journey = journey match {
+            case j: JourneyWhatIsYourFullName     => j.into[JourneyWhatIsYourDateOfBirth].withFieldConst(_.dateOfBirth, validForm.date).transform
+            case j: JourneyCheckYourAnswersChange => j.into[JourneyWhatIsYourNationalInsuranceNumber].withFieldConst(_.dateOfBirth, validForm.date).transform
+            case j: JAfterWhatIsYourFullName      => j.into[JourneyWhatIsYourDateOfBirth].enableInheritedAccessors.withFieldConst(_.dateOfBirth, validForm.date).transform
           }
           journeyService
             .upsert(newJourney)
-            .map(_ => Redirect(controllers.routes.WhatIsYourNationalInsuranceNumberController.get))
+            .map(_ =>
+              //TIP: navigate to the next page or to the checkYourAnswers page depending if it was a change or not.
+              journey match {
+                case _: JourneyCheckYourAnswersChange => Redirect(controllers.routes.CheckYourAnswersController.get)
+                case _                                => Redirect(controllers.routes.WhatIsYourNationalInsuranceNumberController.get)
+              })
         }
       )
   }

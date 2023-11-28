@@ -16,6 +16,7 @@
 
 package pagespecs.pages
 
+import models.FullName
 import org.openqa.selenium.WebDriver
 import pagespecs.pagesupport.{ContentExpectation, Page, PageUtil}
 
@@ -28,7 +29,7 @@ class WhatIsYourFullNamePage(baseUrl: String)(implicit webDriver: WebDriver) ext
 
   private val fullNameFieldId: String = "fullName"
 
-  def enterFullName(fullName: String): Unit = PageUtil.setTextFieldById(fullNameFieldId, fullName)
+  def enterFullName(fullName: FullName): Unit = PageUtil.setTextFieldById(fullNameFieldId, fullName.value)
 
   override def assertPageIsDisplayed(errors: ContentExpectation*): Unit = withPageClue {
 

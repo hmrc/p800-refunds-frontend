@@ -16,6 +16,7 @@
 
 package pagespecs
 
+import models.NationalInsuranceNumber
 import testsupport.ItSpec
 import testdata.TdAll
 
@@ -37,10 +38,9 @@ class WhatIsYourNationalInsuranceNumberPageSpec extends ItSpec {
     s"Entering a valid NINO ($nino) and clicking 'Continue' redirects user to 'Check your answers' page" in {
       pages.whatIsYourNationalInsuranceNumberPage.open()
       pages.whatIsYourNationalInsuranceNumberPage.assertPageIsDisplayed()
-      pages.whatIsYourNationalInsuranceNumberPage.enterNationalInsuranceNumber(nino)
+      pages.whatIsYourNationalInsuranceNumberPage.enterNationalInsuranceNumber(NationalInsuranceNumber(nino))
       pages.whatIsYourNationalInsuranceNumberPage.clickSubmit()
-      // TODO: Uncomment when checkYourAnswers page is here
-      // pages.checkYourAnswers.assertPageIsDisplayed()
+      pages.checkYourAnswersPage.assertPageIsDisplayed()
     }
   }
 
@@ -55,7 +55,7 @@ class WhatIsYourNationalInsuranceNumberPageSpec extends ItSpec {
     s"Clicking 'Continue' with invalid NINO ($nino) shows error" in {
       pages.whatIsYourNationalInsuranceNumberPage.open()
       pages.whatIsYourNationalInsuranceNumberPage.assertPageIsDisplayed()
-      pages.whatIsYourNationalInsuranceNumberPage.enterNationalInsuranceNumber(nino)
+      pages.whatIsYourNationalInsuranceNumberPage.enterNationalInsuranceNumber(NationalInsuranceNumber(nino))
       pages.whatIsYourNationalInsuranceNumberPage.clickSubmit()
       pages.whatIsYourNationalInsuranceNumberPage.assertPageShowsErrorInvalid()
     }
