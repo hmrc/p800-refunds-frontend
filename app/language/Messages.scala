@@ -143,7 +143,7 @@ object Messages {
     )
 
     val `National Insurance Number`: Message = Message(
-      english = "National Insurance Number"
+      english = "National Insurance number"
     )
 
     val `Change`: Message = Message(

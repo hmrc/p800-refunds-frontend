@@ -39,6 +39,8 @@ class Pages(baseUrl: String)(implicit webDriver: WebDriver) {
   val chequeRequestReceivedPage = new ChequeRequestReceivedPage(baseUrl = baseUrl)
 
   val checkYourAnswersPage = new CheckYourAnswersPage(baseUrl = baseUrl)
+  val whatIsTheNameOfYourBankAccountPage = new WhatIsTheNameOfYourBankAccountPage(baseUrl = baseUrl)
+
   // Page Stubs
   val govUkRouteInPage = new GovUkRouteInPage(baseUrl = baseUrl)
   val ptaSignInPage = new PtaSignInPage(baseUrl = baseUrl)

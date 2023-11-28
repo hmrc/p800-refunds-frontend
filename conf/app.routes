@@ -1,49 +1,51 @@
 # microservice specific routes
 
-->         /hmrc-frontend                               hmrcfrontend.Routes
-GET        /assets/*file                                controllers.Assets.versioned(path = "/public", file: Asset)
+->          /hmrc-frontend                                                   hmrcfrontend.Routes
+GET         /assets/*file                                                    controllers.Assets.versioned(path = "/public", file: Asset)
 
-GET        /start                                       controllers.StartController.get
+GET         /start                                                           controllers.StartController.get
 
-GET        /do-you-want-to-sign-in                      controllers.DoYouWantToSignInController.get
-POST       /do-you-want-to-sign-in                      controllers.DoYouWantToSignInController.post
+GET         /do-you-want-to-sign-in                                          controllers.DoYouWantToSignInController.get
+POST        /do-you-want-to-sign-in                                          controllers.DoYouWantToSignInController.post
 
 # TODO: change URL to match page title (also change code names for journy state, controller, etc)
 # according to GDS "URLs should align with the title of the page"
 # see  https://www.gov.uk/guidance/content-design/url-standards-for-gov-uk
-GET        /enter-P800-reference                        controllers.EnterP800ReferenceController.get
-POST       /enter-P800-reference                        controllers.EnterP800ReferenceController.post
+GET         /enter-P800-reference                                            controllers.EnterP800ReferenceController.get
+POST        /enter-P800-reference                                            controllers.EnterP800ReferenceController.post
 
-GET        /check-your-reference                        controllers.CheckYourReferenceController.get
-POST       /check-your-reference                        controllers.CheckYourReferenceController.post
+GET         /check-your-reference                                            controllers.CheckYourReferenceController.get
+POST        /check-your-reference                                            controllers.CheckYourReferenceController.post
 
-GET        /we-cannot-confirm-your-reference            controllers.CannotConfirmReferenceController.get
+GET         /we-cannot-confirm-your-reference                                controllers.CannotConfirmReferenceController.get
 
-GET        /do-you-want-your-refund-via-bank-transfer   controllers.DoYouWantYourRefundViaBankTransferController.get
-POST       /do-you-want-your-refund-via-bank-transfer   controllers.DoYouWantYourRefundViaBankTransferController.post
+GET         /do-you-want-your-refund-via-bank-transfer                       controllers.DoYouWantYourRefundViaBankTransferController.get
+POST        /do-you-want-your-refund-via-bank-transfer                       controllers.DoYouWantYourRefundViaBankTransferController.post
 
-GET        /your-cheque-will-be-posted-to-you           controllers.YourChequeWillBePostedToYouController.get
-POST       /your-cheque-will-be-posted-to-you           controllers.YourChequeWillBePostedToYouController.post
+GET         /your-cheque-will-be-posted-to-you                               controllers.YourChequeWillBePostedToYouController.get
+POST        /your-cheque-will-be-posted-to-you                               controllers.YourChequeWillBePostedToYouController.post
 
 #TODO: change url to reflect cheque in the name, there will be another request-received page so we want to distinguish between them
-GET        /request-received                            controllers.RequestReceivedController.get
+GET         /request-received                                                controllers.RequestReceivedController.get
 
 #we-need-you-to-confirm-your-identity:
-GET        /we-need-you-to-confirm-your-identity        controllers.WeNeedYouToConfirmYourIdentityController.get
+GET         /we-need-you-to-confirm-your-identity                            controllers.WeNeedYouToConfirmYourIdentityController.get
 
-GET        /what-is-your-full-name                      controllers.WhatIsYourFullNameController.get
-POST       /what-is-your-full-name                      controllers.WhatIsYourFullNameController.post
+GET         /what-is-your-full-name                                          controllers.WhatIsYourFullNameController.get
+POST        /what-is-your-full-name                                          controllers.WhatIsYourFullNameController.post
 
-GET        /what-is-your-date-of-birth                  controllers.WhatIsYourDateOfBirthController.get
-POST       /what-is-your-date-of-birth                  controllers.WhatIsYourDateOfBirthController.post
+GET         /what-is-your-date-of-birth                                      controllers.WhatIsYourDateOfBirthController.get
+POST        /what-is-your-date-of-birth                                      controllers.WhatIsYourDateOfBirthController.post
 
-GET        /what-is-your-national-insurance-number      controllers.WhatIsYourNationalInsuranceNumberController.get
-POST       /what-is-your-national-insurance-number      controllers.WhatIsYourNationalInsuranceNumberController.post
+GET         /what-is-your-national-insurance-number                          controllers.WhatIsYourNationalInsuranceNumberController.get
+POST        /what-is-your-national-insurance-number                          controllers.WhatIsYourNationalInsuranceNumberController.post
 
-GET        /check-your-answers                        controllers.CheckYourAnswersController.get
-POST       /check-your-answers                        controllers.CheckYourAnswersController.post
-GET        /check-your-answers/change-your-full-name          controllers.CheckYourAnswersController.changeFullName
-GET        /check-your-answers/change-your-date-of-birth      controllers.CheckYourAnswersController.changeDateOfBirth
-GET        /check-your-answers/change-your-national-insurance-number              controllers.CheckYourAnswersController.changeNationalInsuranceNumber
+GET         /check-your-answers                                              controllers.CheckYourAnswersController.get
+POST        /check-your-answers                                              controllers.CheckYourAnswersController.post
+GET         /check-your-answers/change-your-full-name                        controllers.CheckYourAnswersController.changeFullName
+GET         /check-your-answers/change-your-date-of-birth                    controllers.CheckYourAnswersController.changeDateOfBirth
+GET         /check-your-answers/change-your-national-insurance-number        controllers.CheckYourAnswersController.changeNationalInsuranceNumber
 
-GET        /we-have-confirmed-your-identity             controllers.WeHaveConfirmedYourIdentityController.get
+GET         /we-have-confirmed-your-identity                                 controllers.WeHaveConfirmedYourIdentityController.get
+
+GET         /what-is-the-name-of-your-bank-account                           controllers.WhatIsTheNameOfYourBankAccountController.get

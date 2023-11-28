@@ -26,7 +26,7 @@ class DoYouWantYourRefundViaBankTransferPage(baseUrl: String)(implicit webDriver
 
   override def expectedH1: String = "Do you want your refund by bank transfer?"
 
-  override def assertPageIsDisplayed(potentialErrors: ContentExpectation*): Unit = withPageClue {
+  override def assertPageIsDisplayed(extraExpectations: ContentExpectation*): Unit = withPageClue {
     val contentExpectations: Seq[ContentExpectation] = Seq(
       ContentExpectation(
         atXpath       = PageUtil.Xpath.mainContent,
@@ -39,7 +39,7 @@ class DoYouWantYourRefundViaBankTransferPage(baseUrl: String)(implicit webDriver
             |Continue
             |""".stripMargin
       )
-    ) ++ potentialErrors
+    ) ++ extraExpectations
 
     PageUtil.assertPage(
       path                = path,

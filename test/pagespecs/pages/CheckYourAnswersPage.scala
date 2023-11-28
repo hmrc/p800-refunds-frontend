@@ -56,7 +56,6 @@ class CheckYourAnswersPage(baseUrl: String)(implicit webDriver: WebDriver) exten
     )
   }
 
-  //TODO: rename the base parameter (agree with Jake)
   def assertPageIsDisplayed(extraExpectations: ContentExpectation*): Unit = withPageClue {
 
     val contentExpectation: ContentExpectation = ContentExpectation(
@@ -70,7 +69,7 @@ class CheckYourAnswersPage(baseUrl: String)(implicit webDriver: WebDriver) exten
           |Date of birth
           |
           |Change
-          |National Insurance Number
+          |National Insurance number
           |
           |Change
           |Continue

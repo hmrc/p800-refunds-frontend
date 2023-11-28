@@ -31,7 +31,7 @@ class WhatIsYourFullNamePage(baseUrl: String)(implicit webDriver: WebDriver) ext
 
   def enterFullName(fullName: FullName): Unit = PageUtil.setTextFieldById(fullNameFieldId, fullName.value)
 
-  override def assertPageIsDisplayed(errors: ContentExpectation*): Unit = withPageClue {
+  override def assertPageIsDisplayed(extraExpectations: ContentExpectation*): Unit = withPageClue {
 
     val contentExpectations: Seq[ContentExpectation] = Seq(ContentExpectation(
       atXpath       = PageUtil.Xpath.mainContent,
@@ -40,7 +40,7 @@ class WhatIsYourFullNamePage(baseUrl: String)(implicit webDriver: WebDriver) ext
           |What is your full name?
           |Enter your name as it appears on your tax calculation letter or ‘P800’.
           |""".stripMargin
-    )) ++ errors
+    )) ++ extraExpectations
 
     PageUtil.assertPage(
       path                = path,

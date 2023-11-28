@@ -26,7 +26,7 @@ class CannotConfirmReferencePage(baseUrl: String)(implicit webDriver: WebDriver)
 
   override def expectedH1: String = "We cannot confirm your reference"
 
-  override def assertPageIsDisplayed(errors: ContentExpectation*): Unit = withPageClue {
+  override def assertPageIsDisplayed(extraExpectations: ContentExpectation*): Unit = withPageClue {
 
     val contentExpectations: Seq[ContentExpectation] = Seq(ContentExpectation(
       atXpath       = PageUtil.Xpath.mainContent,
@@ -37,7 +37,7 @@ class CannotConfirmReferencePage(baseUrl: String)(implicit webDriver: WebDriver)
           |You have 2 more attempts to request a bank transfer this way.
           |Or you can sign in to request your refund.
           |""".stripMargin
-    )) ++ errors
+    )) ++ extraExpectations
 
     PageUtil.assertPage(
       path                = path,

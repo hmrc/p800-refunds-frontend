@@ -33,17 +33,15 @@
 
 
 @layout(
-    pageTitle = Some(title)
+    pageTitle = Some(title),
+    backLinkUrlOverride = Some(controllers.routes.CheckYourAnswersController.get.url)
 ) {
 
     <h1 class="govuk-heading-xl">@title</h1>
 
-
-
-
-
     @viewsHelpers.govukButton(Button(
         content = Text(Messages.CommonMessages.`continue`.show),
-        id      = Some("submit")
+        id      = Some("submit"),
+        href       = Some(controllers.routes.WhatIsTheNameOfYourBankAccountController.get.url)
     ))
 }
