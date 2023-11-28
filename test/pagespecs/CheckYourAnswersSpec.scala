@@ -97,6 +97,6 @@ class CheckYourAnswersSpec extends ItSpec {
     upsertJourneyToDatabase(td.journeyWhatIsYourNationalInsuranceNumber)
   }
 
-  lazy val td = new TdAll {}
+  private lazy val td = new TdAll {}
 
 }

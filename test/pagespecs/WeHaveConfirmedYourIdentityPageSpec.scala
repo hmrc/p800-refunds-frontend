@@ -16,13 +16,36 @@
 
 package pagespecs
 
+import testdata.TdAll
 import testsupport.ItSpec
 
 class WeHaveConfirmedYourIdentityPageSpec extends ItSpec {
 
-  "/we-have-confirmed-your-identity renders the we have confirmed your identity page" in {
+  "page renders correctly" in {
     pages.weHaveConfirmedYourIdentityPage.open()
     pages.weHaveConfirmedYourIdentityPage.assertPageIsDisplayed()
   }
+
+  "clicking submit navigates to What Is The Name Of Your Bank Account page" in {
+    pages.weHaveConfirmedYourIdentityPage.open()
+    pages.weHaveConfirmedYourIdentityPage.assertPageIsDisplayed()
+    pages.weHaveConfirmedYourIdentityPage.clickSubmit()
+    pages.whatIsTheNameOfYourBankAccountPage.assertPageIsDisplayed()
+  }
+
+  "clicking back button navigates to Check Your Answers page" in {
+    pages.weHaveConfirmedYourIdentityPage.open()
+    pages.weHaveConfirmedYourIdentityPage.assertPageIsDisplayed()
+    pages.weHaveConfirmedYourIdentityPage.clickBackButton()
+    pages.checkYourAnswersPage.assertPageIsDisplayed()
+  }
+
+  override def beforeEach(): Unit = {
+    super.beforeEach()
+    addJourneyIdToSession(td.journeyId)
+    upsertJourneyToDatabase(td.journeyCheckYourAnswers)
+  }
+
+  private lazy val td: TdAll = new TdAll {}
 
 }

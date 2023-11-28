@@ -43,7 +43,7 @@ class EnterP800ReferencePage(baseUrl: String)(implicit webDriver: WebDriver) ext
       .getOrElse(throw new Exception("Expecting at least one window handle"))
   }
 
-  override def assertPageIsDisplayed(potentialErrors: ContentExpectation*): Unit = withPageClue {
+  override def assertPageIsDisplayed(extraExpectations: ContentExpectation*): Unit = withPageClue {
     val contentExpectations: Seq[ContentExpectation] = Seq(
       ContentExpectation(
         atXpath       = PageUtil.Xpath.mainContent,
@@ -54,7 +54,7 @@ class EnterP800ReferencePage(baseUrl: String)(implicit webDriver: WebDriver) ext
             |If you do not know your P800 reference
             |""".stripMargin
       )
-    ) ++ potentialErrors
+    ) ++ extraExpectations
 
     PageUtil.assertPage(
       path                = path,

@@ -26,7 +26,7 @@ class CheckYourReferencePage(baseUrl: String)(implicit webDriver: WebDriver) ext
 
   override def expectedH1: String = "Check your reference"
 
-  override def assertPageIsDisplayed(potentialErrors: ContentExpectation*): Unit = withPageClue {
+  override def assertPageIsDisplayed(extraExpectations: ContentExpectation*): Unit = withPageClue {
     val contentExpectations: Seq[ContentExpectation] = Seq(
       ContentExpectation(
         atXpath       = PageUtil.Xpath.mainContent,
@@ -37,7 +37,7 @@ class CheckYourReferencePage(baseUrl: String)(implicit webDriver: WebDriver) ext
             |Is this correct?
             |""".stripMargin
       )
-    ) ++ potentialErrors
+    ) ++ extraExpectations
 
     PageUtil.assertPage(
       path                = path,

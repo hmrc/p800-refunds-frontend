@@ -32,7 +32,7 @@ class WhatIsYourNationalInsuranceNumberPage(baseUrl: String)(implicit webDriver:
   def enterNationalInsuranceNumber(nationalInsuranceNumber: NationalInsuranceNumber): Unit =
     PageUtil.setTextFieldById("nationalInsuranceNumber", nationalInsuranceNumber.value)
 
-  def assertPageIsDisplayed(errors: ContentExpectation*): Unit = withPageClue {
+  def assertPageIsDisplayed(extraExpectations: ContentExpectation*): Unit = withPageClue {
 
     val contentExpectations: Seq[ContentExpectation] = Seq(
       ContentExpectation(
@@ -59,7 +59,7 @@ class WhatIsYourNationalInsuranceNumberPage(baseUrl: String)(implicit webDriver:
             |You can get help to find a lost National Insurance number (opens in new tab)
             |""".stripMargin
       )
-    ) ++ errors
+    ) ++ extraExpectations
 
     PageUtil.assertPage(
       path                = path,

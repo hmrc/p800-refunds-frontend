@@ -26,7 +26,7 @@ class WeHaveConfirmedYourIdentityPage(baseUrl: String)(implicit webDriver: WebDr
 
   override def expectedH1: String = "We have confirmed your identity"
 
-  override def assertPageIsDisplayed(errors: ContentExpectation*): Unit = withPageClue {
+  override def assertPageIsDisplayed(extraExpectations: ContentExpectation*): Unit = withPageClue {
 
     val contentExpectations: Seq[ContentExpectation] = Seq(ContentExpectation(
       atXpath       = PageUtil.Xpath.mainContent,
@@ -35,7 +35,7 @@ class WeHaveConfirmedYourIdentityPage(baseUrl: String)(implicit webDriver: WebDr
           |We have confirmed your identity
           |Continue
           |""".stripMargin
-    )) ++ errors
+    )) ++ extraExpectations
 
     PageUtil.assertPage(
       path                = path,
