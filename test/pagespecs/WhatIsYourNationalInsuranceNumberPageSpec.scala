@@ -34,12 +34,14 @@ class WhatIsYourNationalInsuranceNumberPageSpec extends ItSpec {
     pages.whatIsYourNationalInsuranceNumberPage.assertPageIsDisplayed()
   }
 
-  "Entering a valid NINO and clicking 'Continue' redirects user to 'Check your answers' page" in {
-    pages.whatIsYourNationalInsuranceNumberPage.open()
-    pages.whatIsYourNationalInsuranceNumberPage.assertPageIsDisplayed()
-    pages.whatIsYourNationalInsuranceNumberPage.enterNationalInsuranceNumber(TdAll.nationalInsuranceNumber)
-    pages.whatIsYourNationalInsuranceNumberPage.clickSubmit()
-    pages.checkYourAnswersPage.assertPageIsDisplayed()
+  Seq(TdAll.nationalInsuranceNumber.value, "aa000000a", "AA000000A.", "MA 00 00 03 A").foreach { nino =>
+    s"Entering a valid NINO ($nino) and clicking 'Continue' redirects user to 'Check your answers' page" in {
+      pages.whatIsYourNationalInsuranceNumberPage.open()
+      pages.whatIsYourNationalInsuranceNumberPage.assertPageIsDisplayed()
+      pages.whatIsYourNationalInsuranceNumberPage.enterNationalInsuranceNumber(nino)
+      pages.whatIsYourNationalInsuranceNumberPage.clickSubmit()
+      pages.checkYourAnswersPage.assertPageIsDisplayed()
+    }
   }
 
   "Clicking 'Continue' with empty text input shows error" in {

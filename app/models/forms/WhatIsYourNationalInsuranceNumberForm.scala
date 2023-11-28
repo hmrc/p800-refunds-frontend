@@ -30,12 +30,15 @@ object WhatIsYourNationalInsuranceNumberForm {
   private def validNationalInsuranceNumber(value: String): Boolean =
     nationalInsuranceNumberPattern.matcher(value).matches()
 
+  private def cleanInput(input: Option[String]): Option[String] =
+    input.map(_.replaceAll("[^0-9a-zA-Z]", "").toUpperCase)
+
   def form(implicit language: Language): Form[NationalInsuranceNumber] = {
     val nationalInsuranceNumberMapping = Forms.of(new Formatter[NationalInsuranceNumber] {
       override def bind(key: String, data: Map[String, String]): Either[Seq[FormError], NationalInsuranceNumber] =
-        data.get(key) match {
+        cleanInput(data.get(key)) match {
           case Some(value) if value.trim.isEmpty => Left(Seq(FormError(key, Messages.WhatIsYourNationalInsuranceNumber.`Enter your National Insurance number`.show)))
-          case Some(value) if validNationalInsuranceNumber(value.replaceAll("\\s", "")) => Right(NationalInsuranceNumber(value))
+          case Some(value) if validNationalInsuranceNumber(value) => Right(NationalInsuranceNumber(value))
           case Some(_) => Left(Seq(FormError(key, Messages.WhatIsYourNationalInsuranceNumber.`Enter your National Insurance number in the correct format`.show)))
           case None => Left(Seq(FormError(key, Messages.WhatIsYourNationalInsuranceNumber.`Enter your National Insurance number in the correct format`.show)))
         }
