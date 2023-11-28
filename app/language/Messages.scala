@@ -156,8 +156,8 @@ object Messages {
       english = "I do not know my National Insurance number"
     )
 
-    val `You can get help to find a lost National`: Message = Message(
-      english = s"""You can get help to <a id="govuk-link" href="#" class="govuk-link">find a lost National Insurance number (opens in new tab).</a>"""
+    def `You can get help to find a lost National`(link: String): Message = Message(
+      english = s"""You can get help to <a id="lost-national-insurance-number-link" href="$link" target="_blank" class="govuk-link">find a lost National Insurance number (opens in new tab).</a>"""
     )
 
     val `Enter your National Insurance number`: Message = Message(

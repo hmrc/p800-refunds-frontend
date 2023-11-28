@@ -14,14 +14,16 @@
  * limitations under the License.
  *@
 
+@import config.AppConfig
 @import language.Messages
+@import models.NationalInsuranceNumber
 @import uk.gov.hmrc.govukfrontend.views.html.components._
 @import uk.gov.hmrc.govukfrontend.views.html.components.implicits._
 @import views.html.templates.Layout
-@import models.NationalInsuranceNumber
 
 @this(
     layout: Layout,
+    appConfig: AppConfig,
     viewsHelpers: views.ViewsHelpers
 )
 
@@ -66,7 +68,7 @@
 
         @viewsHelpers.govukDetails(Details(
             summary = Text(Messages.WhatIsYourNationalInsuranceNumber.`I do not know my National Insurance number`.show),
-            content = HtmlContent(Messages.WhatIsYourNationalInsuranceNumber.`You can get help to find a lost National`.show)
+            content = HtmlContent(Messages.WhatIsYourNationalInsuranceNumber.`You can get help to find a lost National`(appConfig.lostNationalInsuranceNumberUrl).show)
         ))
 
         @viewsHelpers.govukButton(Button(
