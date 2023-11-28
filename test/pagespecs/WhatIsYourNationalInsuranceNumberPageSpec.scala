@@ -38,7 +38,7 @@ class WhatIsYourNationalInsuranceNumberPageSpec extends ItSpec {
     s"Entering a valid NINO ($nino) and clicking 'Continue' redirects user to 'Check your answers' page" in {
       pages.whatIsYourNationalInsuranceNumberPage.open()
       pages.whatIsYourNationalInsuranceNumberPage.assertPageIsDisplayed()
-      pages.whatIsYourNationalInsuranceNumberPage.enterNationalInsuranceNumber(nino)
+      pages.whatIsYourNationalInsuranceNumberPage.enterNationalInsuranceNumber(NationalInsuranceNumber(nino))
       pages.whatIsYourNationalInsuranceNumberPage.clickSubmit()
       pages.checkYourAnswersPage.assertPageIsDisplayed()
     }

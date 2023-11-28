@@ -84,6 +84,13 @@ class CheckYourAnswersSpec extends ItSpec {
     pages.weHaveConfirmedYourIdentityPage.assertPageIsDisplayed()
   }
 
+  "clicking back button navigates to What Is Your Natinal Insurance Number page" in {
+    pages.checkYourAnswersPage.open()
+    pages.checkYourAnswersPage.assertPageIsDisplayed()
+    pages.checkYourAnswersPage.clickBackButton()
+    pages.whatIsYourNationalInsuranceNumberPage.assertPageIsDisplayed()
+  }
+
   override def beforeEach(): Unit = {
     super.beforeEach()
     addJourneyIdToSession(td.journeyId)

@@ -19,10 +19,9 @@ package controllers
 import action.{Actions, JourneyRequest}
 import io.scalaland.chimney.dsl._
 import language.Messages
-import models.{FullName, NationalInsuranceNumber}
 import models.dateofbirth.DateOfBirth
-import models.forms.WhatIsYourDateOfBirthForm
 import models.journeymodels._
+import models.{FullName, NationalInsuranceNumber}
 import play.api.mvc._
 import requests.RequestSupport
 import services.JourneyService
@@ -32,7 +31,6 @@ import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import util.JourneyLogger
 import views.Views
 
-import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
@@ -161,22 +159,10 @@ class CheckYourAnswersController @Inject() (
   )
 
   private val dateFormatter = DateTimeFormatter.ofPattern("dd MMMM yyyy")
-  //TODO: Ask Jake if the DateOfBirth can be represented as Integers, or LocalDate so we can avoid hassle of having this function
-  private def formatDateOfBirth(dateOfBirth: DateOfBirth)(implicit request: Request[_]): String = {
-    Try {
-      val month: Int = WhatIsYourDateOfBirthForm.monthStringAndIntValue.toMap
-        .get(dateOfBirth.month.value) //if the month is Jan or January (etc) get associated 0 based index of the month
-        .map(_ + 1) //increase base so January is 1 (not 0)
-        .getOrElse(dateOfBirth.month.value.toInt) //if the month is string represetnging integer, cast it to int
 
-      val date: LocalDate = LocalDate.of(
-        dateOfBirth.year.value.toInt,
-        month,
-        dateOfBirth.dayOfMonth.value.toInt
-      )
-      date.format(dateFormatter)
-    } match {
-      case Success(formattedDate) => formattedDate
+  private def formatDateOfBirth(dateOfBirth: DateOfBirth)(implicit request: Request[_]): String = {
+    Try(DateOfBirth.asLocalDate(dateOfBirth)) match {
+      case Success(date) => date.format(dateFormatter)
       case Failure(ex) =>
         JourneyLogger.error(s"Error formatting date, investigate (the journey was not interrupted) [dateOfBirth:${dateOfBirth.toString}]", ex)
         s"${dateOfBirth.dayOfMonth.value} ${dateOfBirth.month.value} ${dateOfBirth.year.value} "
