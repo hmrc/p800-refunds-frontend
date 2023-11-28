@@ -143,14 +143,15 @@ class CheckYourAnswersController @Inject() (
   }
 
   private def buildSummaryListRow(key: String, id: String, value: String, call: Call)(implicit request: Request[_]): SummaryListRow = SummaryListRow(
-    key     = Key(HtmlContent(s"""<p class="govuk-heading-m">$key</p>""")),
+    key     = Key(HtmlContent(s"""$key""")),
     value   = Value(HtmlContent(
       //language=HTML
       s"""
           <div class="govuk-grid-row">
               <div id="$id" class="govuk-grid-column-one-half">$value</div>
               <div class="govuk-grid-column-one-half govuk-!-text-align-right">
-                  <a href="${call.url}" id="change-$id">${Messages.CheckYourAnswersMessages.`Change`.show}</a>
+                  <a href="${call.url}" id="change-$id">${Messages.CheckYourAnswersMessages.`Change`.show}
+                  <span class="govuk-visually-hidden">$key</span></a>
               </div>
           </div>
       """
