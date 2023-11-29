@@ -255,6 +255,40 @@ object Messages {
 
   }
 
+  object WeNeedToConfirmYourIdentity {
+    val `We need you to confirm your identity`: Message = Message(
+      english = "We need you to confirm your identity"
+    )
+
+    val `Before we pay your refund`: Message = Message(
+      english = "Before we pay your refund, we need to ask you some security questions to confirm your identity."
+    )
+
+    val `We will need to ask you for your`: Message = Message(
+      english = "We will need to ask you for your:"
+    )
+
+    val `name`: Message = Message(
+      english = "name"
+    )
+
+    val `address`: Message = Message(
+      english = "address"
+    )
+
+    val `date of birth`: Message = Message(
+      english = "date of birth"
+    )
+
+    val `National Insurance number`: Message = Message(
+      english = "National Insurance number"
+    )
+
+    val `We do this to protect your security`: Message = Message(
+      english = "We do this to protect your security."
+    )
+  }
+
   object WhatIsYourNationalInsuranceNumber {
     val `What is your National Insurance number`: Message = Message(
       english = "What is your National Insurance number?"
@@ -347,41 +381,6 @@ object Messages {
     )
   }
 
-  object ConfirmIdentity {
-    val `We need you to confirm your identity`: Message = Message(
-      english = "We need you to confirm your identity"
-    )
-
-    val `Before we pay your refund`: Message = Message(
-      english = "Before we pay your refund, we need to ask you some security questions to confirm your identity."
-    )
-
-    val `We will need to ask you for your`: Message = Message(
-      english = "We will need to ask you for your:"
-    )
-
-    val `name`: Message = Message(
-      english = "name"
-    )
-
-    val `address`: Message = Message(
-      english = "address"
-    )
-
-    val `date of birth`: Message = Message(
-      english = "date of birth"
-    )
-
-    val `National Insurance number`: Message = Message(
-      english = "National Insurance number"
-    )
-
-    val `We do this to protect your security`: Message = Message(
-      english = "We do this to protect your security."
-    )
-
-  }
-
   object WeHaveConfirmedYourIdentity {
     val `We have confirmed your identity`: Message = Message(
       english = "We have confirmed your identity"
@@ -389,6 +388,21 @@ object Messages {
 
     val `Enter your name as it appears on your tax calculation`: Message = Message(
       english = "Enter your name as it appears on your tax calculation letter or ‘P800’."
+    )
+  }
+
+  object WeCannotConfirmYourIdentity {
+    val `We cannot confirm your identity`: Message = Message(
+      english = "We cannot confirm your identity"
+    )
+    val `The information you have provided does not match our records.`: Message = Message(
+      english = "The information you have provided does not match our records."
+    )
+    val `Try gain`: Message = Message(
+      english = "Try again"
+    )
+    val `Choose another method`: Message = Message(
+      english = "Choose another method"
     )
   }
 

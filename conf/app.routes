@@ -54,4 +54,7 @@ GET         /check-your-answers/change-your-national-insurance-number        con
 
 GET         /we-have-confirmed-your-identity                                 controllers.WeHaveConfirmedYourIdentityController.get
 
+GET         /we-cannot-confirm-your-identity                                 controllers.WeCannotConfirmYourIdentityController.get
+POST        /we-cannot-confirm-your-identity                                 controllers.WeCannotConfirmYourIdentityController.post
+
 GET         /what-is-the-name-of-your-bank-account                           controllers.WhatIsTheNameOfYourBankAccountController.get
