@@ -17,21 +17,21 @@
 package controllers
 
 import action.Actions
-import play.api.mvc._
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import views.Views
 
 import javax.inject.{Inject, Singleton}
 
 @Singleton
-class WeHaveConfirmedYourIdentityController @Inject() (
+class ChooseAnotherWayToReceiveYourRefundController @Inject() (
     mcc:     MessagesControllerComponents,
     views:   Views,
     actions: Actions
 ) extends FrontendController(mcc) {
 
-  val get: Action[AnyContent] = actions.journeyAction { implicit request =>
-    Ok(views.weHaveConfirmedYourIdentityPage())
+  val get: Action[AnyContent] = actions.default { implicit request =>
+    Ok(views.underConstructionPage())
   }
 
 }

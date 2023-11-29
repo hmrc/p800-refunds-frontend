@@ -34,8 +34,8 @@ class WeCannotConfirmYourIdentityController @Inject() (
     Ok(views.weCannotConfirmYourIdentityPage())
   }
 
-  val post: Action[AnyContent] = actions.journeyAction { _ =>
-    Ok("in progress, the try again link")
+  val tryAgain: Action[AnyContent] = actions.journeyAction { _ =>
+    Redirect(routes.WeNeedYouToConfirmYourIdentityController.get)
   }
 
 }

@@ -41,12 +41,17 @@
 
     <p class="govuk-body">@{Messages.WeCannotConfirmYourIdentity.`The information you have provided does not match our records.`.show}</p>
 
-    @viewsHelpers.formWithCsrf(action = controllers.routes.WeCannotConfirmYourIdentityController.post) {
+    <div class="govuk-button-group">
+    @viewsHelpers.formWithCsrf(action = controllers.routes.WeCannotConfirmYourIdentityController.tryAgain) {
         @viewsHelpers.govukButton(Button(
             content = Text(Messages.WeCannotConfirmYourIdentity.`Try gain`.show),
-            id = Some("submit")
+            id = Some("try-again")
         ))
-        @viewsHelpers.govukButton
+        <a id="choose-another-method-link" class="govuk-link" href=@{routes.ChooseAnotherWayToReceiveYourRefundController.get.url}>
+            @{Messages.WeCannotConfirmYourIdentity.`Choose another method`.show}
+        </a>
     }
+    </div>
+
 
 }
