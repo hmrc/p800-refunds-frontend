@@ -137,6 +137,20 @@ object Messages {
       english = "Choose another way to get my money"
     )
   }
+
+  object ChooseAnotherOption {
+    val `Choose another way to receive your refund`: Message = Message(
+      english = "Choose another way to receive your refund"
+    )
+
+    val `Bank transfer via your personal tax account`: Message = Message(
+      english = "Bank transfer via your personal tax account"
+    )
+
+    val `Cheque`: Message = Message(
+      english = "Cheque"
+    )
+  }
       
   object CheckYourAnswersMessages {
 
@@ -163,7 +177,6 @@ object Messages {
     val `Change`: Message = Message(
       english = "Change"
     )
-
   }
 
   object CannotConfirmReference {
