@@ -73,4 +73,11 @@ class EnterP800ReferencePageSpec extends ItSpec {
     pages.enterP800ReferencePage.clickBackButton()
     pages.doYouWantToSignInPage.assertPageIsDisplayed()
   }
+
+  "clicking service name navigates to the gov-uk route in page" in {
+    pages.enterP800ReferencePage.open()
+    pages.enterP800ReferencePage.assertPageIsDisplayed()
+    pages.enterP800ReferencePage.clickServiceName()
+    pages.govUkRouteInPage.assertPageIsDisplayed()
+  }
 }

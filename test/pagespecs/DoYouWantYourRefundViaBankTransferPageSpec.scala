@@ -57,4 +57,11 @@ class DoYouWantYourRefundViaBankTransferPageSpec extends ItSpec {
     pages.doYouWantYourRefundViaBankTransferPage.clickSubmit()
     pages.doYouWantYourRefundViaBankTransferPage.assertPageShowsWithErrors()
   }
+
+  "clicking service name navigates to the gov-uk route in page" in {
+    pages.doYouWantYourRefundViaBankTransferPage.open()
+    pages.doYouWantYourRefundViaBankTransferPage.assertPageIsDisplayed()
+    pages.doYouWantYourRefundViaBankTransferPage.clickServiceName()
+    pages.govUkRouteInPage.assertPageIsDisplayed()
+  }
 }

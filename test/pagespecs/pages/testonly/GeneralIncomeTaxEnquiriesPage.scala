@@ -31,7 +31,7 @@ class GeneralIncomeTaxEnquiriesPage(baseUrl: String)(implicit webDriver: WebDriv
       path        = path,
       h1          = expectedH1,
       title       = PageUtil.standardTitleForTestOnlyPages,
-      serviceName = "Test Only - Claim an income tax refund",
+      serviceName = "Test Only - Get an Income Tax refund",
       ContentExpectation(
         atXpath       = PageUtil.Xpath.mainContent,
         expectedLines =

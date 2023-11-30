@@ -18,6 +18,7 @@ package pagespecs.pagesupport
 
 import org.openqa.selenium.WebDriver
 import org.scalatestplus.selenium.WebBrowser._
+import pagespecs.pagesupport.PageUtil.Xpath
 
 abstract class Page(
     baseUrl:           String,
@@ -32,6 +33,7 @@ abstract class Page(
   def clickBackButtonInBrowser()(implicit webDriver: WebDriver): Unit = webDriver.navigate().back()
   def clickSignOut()(implicit webDriver: WebDriver): Unit = PageUtil.clickByClassName("hmrc-sign-out-nav__link")
   def clickSubmit()(implicit webDriver: WebDriver): Unit = PageUtil.clickByIdOrName("submit")
+  def clickServiceName()(implicit webDriver: WebDriver): Unit = PageUtil.clickByXpath(Xpath.serviceName)
 
   protected def withPageClue[A](testF: => A)(implicit webDriver: WebDriver): A = PageUtil.withPageClue(path)(testF)
 

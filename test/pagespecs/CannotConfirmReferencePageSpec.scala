@@ -41,4 +41,11 @@ class CannotConfirmReferencePageSpec extends ItSpec {
     pages.cannotConfirmReferencePage.clickBackButton()
     pages.checkYourReferencePage.assertPageIsDisplayed()
   }
+
+  "clicking service name navigates to the gov-uk route in page" in {
+    pages.cannotConfirmReferencePage.open()
+    pages.cannotConfirmReferencePage.assertPageIsDisplayed()
+    pages.cannotConfirmReferencePage.clickServiceName()
+    pages.govUkRouteInPage.assertPageIsDisplayed()
+  }
 }

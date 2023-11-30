@@ -46,4 +46,11 @@ class YourChequeWillBePostedToYouPageSpec extends ItSpec {
     pages.yourChequeWillBePostedToYouPage.clickBackButton()
     pages.doYouWantYourRefundViaBankTransferPage.assertPageIsDisplayed()
   }
+
+  "clicking service name navigates to the gov-uk route in page" in {
+    pages.yourChequeWillBePostedToYouPage.open()
+    pages.yourChequeWillBePostedToYouPage.assertPageIsDisplayed()
+    pages.yourChequeWillBePostedToYouPage.clickServiceName()
+    pages.govUkRouteInPage.assertPageIsDisplayed()
+  }
 }

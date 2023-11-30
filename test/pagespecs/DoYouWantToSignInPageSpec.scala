@@ -56,4 +56,11 @@ class DoYouWantToSignInPageSpec extends ItSpec {
     pages.doYouWantToSignInPage.clickSubmit()
     pages.doYouWantToSignInPage.assertPageShowsWithErrors()
   }
+
+  "clicking service name navigates to the gov-uk route in page" in {
+    pages.doYouWantToSignInPage.open()
+    pages.doYouWantToSignInPage.assertPageIsDisplayed()
+    pages.doYouWantToSignInPage.clickServiceName()
+    pages.govUkRouteInPage.assertPageIsDisplayed()
+  }
 }

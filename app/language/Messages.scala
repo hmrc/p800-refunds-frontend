@@ -137,7 +137,7 @@ object Messages {
       english = "Choose another way to get my money"
     )
   }
-      
+
   object CheckYourAnswersMessages {
 
     val `Check your answers`: Message = Message(
@@ -422,11 +422,11 @@ object Messages {
   object ServicePhase {
 
     val serviceName: Message = Message(
-      english = "Claim an income tax refund"
+      english = "Get an Income Tax refund"
     )
 
     val serviceNameTestOnly: Message = Message(
-      english = "Test Only - Claim an income tax refund"
+      english = "Test Only - Get an Income Tax refund"
     )
 
     val beta: Message = Message(

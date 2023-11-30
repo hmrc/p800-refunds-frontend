@@ -73,4 +73,11 @@ class WhatIsYourNationalInsuranceNumberPageSpec extends ItSpec {
     pages.whatIsYourNationalInsuranceNumberPage.open()
     pages.whatIsYourNationalInsuranceNumberPage.assertDataPrepopulated("MA000003A")
   }
+
+  "clicking service name navigates to the gov-uk route in page" in {
+    pages.whatIsYourNationalInsuranceNumberPage.open()
+    pages.whatIsYourNationalInsuranceNumberPage.assertPageIsDisplayed()
+    pages.whatIsYourNationalInsuranceNumberPage.clickServiceName()
+    pages.govUkRouteInPage.assertPageIsDisplayed()
+  }
 }

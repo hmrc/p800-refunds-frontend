@@ -40,6 +40,13 @@ class WeHaveConfirmedYourIdentityPageSpec extends ItSpec {
     pages.checkYourAnswersPage.assertPageIsDisplayed()
   }
 
+  "clicking service name navigates to the gov-uk route in page" in {
+    pages.weHaveConfirmedYourIdentityPage.open()
+    pages.weHaveConfirmedYourIdentityPage.assertPageIsDisplayed()
+    pages.weHaveConfirmedYourIdentityPage.clickServiceName()
+    pages.govUkRouteInPage.assertPageIsDisplayed()
+  }
+
   override def beforeEach(): Unit = {
     super.beforeEach()
     addJourneyIdToSession(td.journeyId)

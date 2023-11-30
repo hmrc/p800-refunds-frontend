@@ -91,6 +91,13 @@ class CheckYourAnswersSpec extends ItSpec {
     pages.whatIsYourNationalInsuranceNumberPage.assertPageIsDisplayed()
   }
 
+  "clicking service name navigates to the gov-uk route in page" in {
+    pages.checkYourAnswersPage.open()
+    pages.checkYourAnswersPage.assertPageIsDisplayed()
+    pages.checkYourAnswersPage.clickServiceName()
+    pages.govUkRouteInPage.assertPageIsDisplayed()
+  }
+
   override def beforeEach(): Unit = {
     super.beforeEach()
     addJourneyIdToSession(td.journeyId)

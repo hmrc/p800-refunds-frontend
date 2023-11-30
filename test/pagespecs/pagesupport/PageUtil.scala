@@ -31,10 +31,12 @@ object PageUtil {
     val errorMessage: String = """//*[@class="govuk-error-message"]"""
     val header: String = """/html/body/div/header"""
     val h1: String = """//*[@id="main-content"]//h1"""
+    val serviceName: String = """/html/body/header//a[contains(@class, "hmrc-header__service-name")]"""
   }
 
   def clickByIdOrName(id: String)(implicit webDriver: WebDriver): Unit = findElement(id).underlying.click()
   def clickByClassName(className: String)(implicit webDriver: WebDriver): Unit = findElementByClassName(className).underlying.click()
+  def clickByXpath(xPath: String)(implicit webDriver: WebDriver): Unit = xpath(xPath).element.underlying.click()
 
   def setTextFieldById(idValue: String, content: String)(implicit webDriver: WebDriver): Unit = WebBrowser.textField(idValue).value = content
   def setEmailFieldById(idValue: String, content: String)(implicit webDriver: WebDriver): Unit = {
@@ -135,6 +137,7 @@ object PageUtil {
     pageTitle shouldBe title withClue "pageTitle"
     readPageServiceName() shouldBe serviceName withClue "serviceName"
     assertContentByXpath(contentExpectations: _*)
+    //xxxxxxxxxxxxxx pawel
   }
 
   /**
@@ -150,13 +153,13 @@ object PageUtil {
     path                = path,
     h1                  = h1,
     title               = title,
-    serviceName         = "Claim an income tax refund",
+    serviceName         = "Get an Income Tax refund",
     contentExpectations = contentExpectations: _*
   )
 
   private def readH1()(implicit webDriver: WebDriver): String = xpath("""//*[@id="main-content"]//h1""").element.text.stripSpaces()
 
-  private def readPageServiceName()(implicit webDriver: WebDriver): String = className("hmrc-header__service-name").element.text
+  private def readPageServiceName()(implicit webDriver: WebDriver): String = xpath(Xpath.serviceName).element.text
 
   /**
    * Runs test using `testF` and reports page related information if the test fails.
@@ -177,9 +180,9 @@ object PageUtil {
          |""".stripMargin
     }
 
-  def standardTitle(h1: String): String = s"$h1 - Claim an income tax refund - GOV.UK"
-  val standardTitleForTestOnlyPages: String = s"Test Only - Claim an income tax refund - GOV.UK"
-  def standardTitleInWelsh(h1: String): String = s"$h1 - Claim an income tax refund - GOV.UK"
+  def standardTitle(h1: String): String = s"$h1 - Get an Income Tax refund - GOV.UK"
+  val standardTitleForTestOnlyPages: String = s"Test Only - Get an Income Tax refund - GOV.UK"
+  def standardTitleInWelsh(h1: String): String = s"$h1 - Get an Income Tax refund - GOV.UK"
 
   val standardHeader: String =
     """

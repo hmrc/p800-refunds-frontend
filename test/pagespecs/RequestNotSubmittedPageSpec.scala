@@ -24,4 +24,11 @@ class RequestNotSubmittedPageSpec extends ItSpec {
     pages.requestNotSubmittedPage.open()
     pages.requestNotSubmittedPage.assertPageIsDisplayed()
   }
+
+  "clicking service name navigates to the gov-uk route in page" in {
+    pages.requestNotSubmittedPage.open()
+    pages.requestNotSubmittedPage.assertPageIsDisplayed()
+    pages.requestNotSubmittedPage.clickServiceName()
+    pages.govUkRouteInPage.assertPageIsDisplayed()
+  }
 }
