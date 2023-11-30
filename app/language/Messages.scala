@@ -124,6 +124,20 @@ object Messages {
     )
   }
 
+  object RequestNotSubmitted {
+    val `Your refund request has not been submitted`: Message = Message(
+      english = "Your refund request has not been submitted"
+    )
+
+    val `We can not verify the bank account you used`: Message = Message(
+      english = "We can not verify the bank account you used."
+    )
+
+    val `Choose another way to get my money`: Message = Message(
+      english = "Choose another way to get my money"
+    )
+  }
+      
   object CheckYourAnswersMessages {
 
     val `Check your answers`: Message = Message(
