@@ -5,18 +5,18 @@ import sbt._
 
 object AppDependencies {
 
-  private val bootstrapVersion = "7.23.0"
-  private val hmrcMongoVersion = "1.4.0"
+  private val bootstrapVersion = "8.1.0"
+  private val hmrcMongoVersion = "1.6.0"
 
   val compile: Seq[ModuleID] = Seq(
     // format: OFF
     "uk.gov.hmrc"       %% "bootstrap-frontend-play-28" % bootstrapVersion,
     "uk.gov.hmrc.mongo" %% "hmrc-mongo-play-28"         % hmrcMongoVersion,
-    "uk.gov.hmrc"       %% "play-frontend-hmrc"         % "7.28.0-play-28",
+    "uk.gov.hmrc"       %% "play-frontend-hmrc"         % "7.29.0-play-28",
     "com.beachape"      %% "enumeratum-play"            % "1.7.3",
     "org.typelevel"     %% "cats-core"                  % "2.10.0",
     "org.julienrf"      %% "play-json-derived-codecs"   % "7.0.0", //choose carefully
-    "io.scalaland"      %% "chimney"                    % "0.8.2"
+    "io.scalaland"      %% "chimney"                    % "0.8.3"
   // format: ON
   )
 
@@ -24,7 +24,7 @@ object AppDependencies {
     // format: OFF
     "uk.gov.hmrc"             %% "bootstrap-test-play-28"     % bootstrapVersion exclude("com.github.tomakehurst", "wiremock-jre8"),
     "uk.gov.hmrc.mongo"       %% "hmrc-mongo-test-play-28"    % hmrcMongoVersion,
-    "org.jsoup"               %  "jsoup"                      % "1.16.2",
+    "org.jsoup"               %  "jsoup"                      % "1.17.1",
     "com.github.tomakehurst"  %  "wiremock-standalone"        % "3.0.1",
     "org.scalatest"           %% "scalatest"                  % "3.2.17",
     "com.vladsch.flexmark"    %  "flexmark-all"               % "0.62.2",
