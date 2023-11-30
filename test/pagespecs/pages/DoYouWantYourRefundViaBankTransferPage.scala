@@ -26,7 +26,7 @@ class DoYouWantYourRefundViaBankTransferPage(baseUrl: String)(implicit webDriver
 
   override def expectedH1: String = "Do you want your refund by bank transfer?"
 
-  override def assertPageIsDisplayed(potentialErrors: ContentExpectation*): Unit = withPageClue {
+  override def assertPageIsDisplayed(extraExpectations: ContentExpectation*): Unit = withPageClue {
     val contentExpectations: Seq[ContentExpectation] = Seq(
       ContentExpectation(
         atXpath       = PageUtil.Xpath.mainContent,
@@ -39,7 +39,7 @@ class DoYouWantYourRefundViaBankTransferPage(baseUrl: String)(implicit webDriver
             |Continue
             |""".stripMargin
       )
-    ) ++ potentialErrors
+    ) ++ extraExpectations
 
     PageUtil.assertPage(
       path                = path,
@@ -49,20 +49,22 @@ class DoYouWantYourRefundViaBankTransferPage(baseUrl: String)(implicit webDriver
     )
   }
 
-  def assertPageShowsWithErrors(): Unit = assertPageIsDisplayed(
-    ContentExpectation(
-      atXpath       = PageUtil.Xpath.errorSummary,
-      expectedLines =
-        """
-          |There is a problem
-          |Select if you want to receive a bank transfer or a cheque
-          |""".stripMargin
-    ),
-    ContentExpectation(
-      atXpath       = PageUtil.Xpath.errorMessage,
-      expectedLines = """Select if you want to receive a bank transfer or a cheque"""
+  def assertPageShowsWithErrors(): Unit = withPageClue {
+    assertPageIsDisplayed(
+      ContentExpectation(
+        atXpath       = PageUtil.Xpath.errorSummary,
+        expectedLines =
+          """
+            |There is a problem
+            |Select if you want to receive a bank transfer or a cheque
+            |""".stripMargin
+      ),
+      ContentExpectation(
+        atXpath       = PageUtil.Xpath.errorMessage,
+        expectedLines = """Select if you want to receive a bank transfer or a cheque"""
+      )
     )
-  )
+  }
 
   def selectYes(): Unit = withPageClue {
     PageUtil.clickByIdOrName("do-you-want-your-refund-via-bank-transfer")

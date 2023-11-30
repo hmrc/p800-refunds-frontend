@@ -16,30 +16,50 @@
 
 package pagespecs.pages
 
+import models.NationalInsuranceNumber
 import org.openqa.selenium.WebDriver
+import org.scalatest.Assertion
 import pagespecs.pagesupport.{ContentExpectation, Page, PageUtil}
+import testsupport.RichMatchers.convertToAnyShouldWrapper
 
 class WhatIsYourNationalInsuranceNumberPage(baseUrl: String)(implicit webDriver: WebDriver) extends Page(
   baseUrl,
-  path = "/get-an-income-tax-refund/we-need-you-to-confirm-your-identity/what-is-your-national-insurance-number"
+  path = "/get-an-income-tax-refund/what-is-your-national-insurance-number"
 ) {
 
   override def expectedH1: String = "What is your National Insurance number?"
 
-  def assertPageIsDisplayed(errors: ContentExpectation*): Unit = withPageClue {
+  def enterNationalInsuranceNumber(nationalInsuranceNumber: NationalInsuranceNumber): Unit =
+    PageUtil.setTextFieldById("nationalInsuranceNumber", nationalInsuranceNumber.value)
 
-    val contentExpectations: Seq[ContentExpectation] = Seq(ContentExpectation(
-      atXpath       = PageUtil.Xpath.mainContent,
-      expectedLines =
-        """
-          |What is your National Insurance number?
-          |It’s on your National Insurance card or letter, benefit letter, payslip or P60.
-          |For example, ‘QQ 12 34 56 C’.
-          |I do not know my National Insurance number
-          |You can get help to find a lost National Insurance number (opens in new tab).
-          |Continue
-          |""".stripMargin
-    )) ++ errors
+  def assertPageIsDisplayed(extraExpectations: ContentExpectation*): Unit = withPageClue {
+
+    val contentExpectations: Seq[ContentExpectation] = Seq(
+      ContentExpectation(
+        atXpath       = PageUtil.Xpath.mainContent,
+        expectedLines =
+          """
+            |What is your National Insurance number?
+            |It’s on your National Insurance card or letter, benefit letter, payslip or P60.
+            |For example, ‘QQ 12 34 56 C’.
+            |Continue
+            |""".stripMargin
+      ),
+      ContentExpectation(
+        atXpath       = """//*[@class="govuk-details__summary-text"]""",
+        expectedLines =
+          """
+            |I do not know my National Insurance number
+            |""".stripMargin
+      ),
+      ContentExpectation(
+        atXpath       = """//*[@class="govuk-details__text"]""",
+        expectedLines =
+          """
+            |You can get help to find a lost National Insurance number (opens in new tab)
+            |""".stripMargin
+      )
+    ) ++ extraExpectations
 
     PageUtil.assertPage(
       path                = path,
@@ -47,6 +67,39 @@ class WhatIsYourNationalInsuranceNumberPage(baseUrl: String)(implicit webDriver:
       title               = PageUtil.standardTitle(expectedH1),
       contentExpectations = contentExpectations: _*
     )
+    lostNationalInsuranceNumberHref() shouldBe "https://www.gov.uk/lost-national-insurance-number"
+    ()
   }
 
+  private def lostNationalInsuranceNumberHref(): String = PageUtil.getHrefById("lost-national-insurance-number-link")
+
+  def assertPageShowsErrorEmptyInput(): Unit = withPageClue {
+    assertPageIsDisplayed(
+      ContentExpectation(
+        atXpath       = PageUtil.Xpath.mainContent,
+        expectedLines =
+          """
+            |There is a problem
+            |Enter your National Insurance number
+            |""".stripMargin
+      )
+    )
+  }
+
+  def assertPageShowsErrorInvalid(): Unit = withPageClue {
+    assertPageIsDisplayed(
+      ContentExpectation(
+        atXpath       = PageUtil.Xpath.mainContent,
+        expectedLines =
+          """
+            |There is a problem
+            |Enter your National Insurance number in the correct format
+            |""".stripMargin
+      )
+    )
+  }
+
+  def assertDataPrepopulated(nationalInsuranceNumber: String): Assertion = withPageClue {
+    PageUtil.getValueById("nationalInsuranceNumber") shouldBe nationalInsuranceNumber
+  }
 }

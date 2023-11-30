@@ -39,6 +39,8 @@ class AppConfig @Inject() (servicesConfig: ServicesConfig, configuration: Config
 
   val generalEnquiriesUrl: String = readConfigAsValidUrlString("urls.general-enquiries")
 
+  val lostNationalInsuranceNumberUrl: String = readConfigAsValidUrlString("urls.lost-national-insurance-number")
+
   val p800RefundsStubsUrl: String = servicesConfig.baseUrl("p800-refunds-stubs")
 
   /**

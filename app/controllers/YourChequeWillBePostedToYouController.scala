@@ -51,8 +51,7 @@ class YourChequeWillBePostedToYouController @Inject() (
           )
           .map(_ => getResult)
       case j: JourneyDoYouWantYourRefundViaBankTransferYes => JourneyRouter.sendToCorrespondingPageF(j)
-      //TODO: missing implementation for further journey states, uncomment in future once provided
-      //case j: JAfterDoYouWantYourRefundViaBankTransferYes  => JourneyRouter.sendToCorrespondingPageF(j)
+      case j: JAfterDoYouWantYourRefundViaBankTransferYes  => JourneyRouter.sendToCorrespondingPageF(j)
     }
   }
 
@@ -66,8 +65,7 @@ class YourChequeWillBePostedToYouController @Inject() (
       case j: JBeforeDoYouWantYourRefundViaBankTransferNo  => JourneyRouter.sendToCorrespondingPageF(j)
       case j: JourneyDoYouWantYourRefundViaBankTransferNo  => processPost(j)
       case j: JourneyDoYouWantYourRefundViaBankTransferYes => JourneyRouter.sendToCorrespondingPageF(j)
-      //TODO: missing implementation for further journey states, uncomment in future once provided
-      //case j: JAfterDoYouWantYourRefundViaBankTransferYes  => JourneyRouter.sendToCorrespondingPageF(j)
+      case j: JAfterDoYouWantYourRefundViaBankTransferYes  => JourneyRouter.sendToCorrespondingPageF(j)
     }
   }
 

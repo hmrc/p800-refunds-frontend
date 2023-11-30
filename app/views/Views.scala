@@ -26,6 +26,7 @@ class Views @Inject() (
     val doYouWantToSignInPage:                  views.html.DoYouWantToSignInPage,
     val enterP800ReferencePage:                 views.html.EnterP800ReferencePage,
     val checkYourReferencePage:                 views.html.CheckYourReferencePage,
+    val checkYourAnswersPage:                   views.html.CheckYourAnswersPage,
     val cannotConfirmReferencePage:             views.html.CannotConfirmReferencePage,
     val yourChequeWillBePostedToYouPage:        views.html.chequejourney.YourChequeWillBePostedToYouPage,
     val requestReceivedPage:                    views.html.chequejourney.RequestReceivedPage,

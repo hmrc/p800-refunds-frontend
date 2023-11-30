@@ -24,14 +24,15 @@ import views.Views
 import javax.inject.{Inject, Singleton}
 
 @Singleton
-class UnserConstructionController @Inject() (
-    mcc:     MessagesControllerComponents,
+class WhatIsTheNameOfYourBankAccountController @Inject() (
+    mcc: MessagesControllerComponents,
+    //    requestSupport: RequestSupport,
+    //    journeyService: JourneyService,
     views:   Views,
     actions: Actions
 ) extends FrontendController(mcc) {
 
-  //TODO: remove once we have all pages
-  val underConstruction: Action[AnyContent] = actions.default { implicit request =>
+  val get: Action[AnyContent] = actions.default { implicit request =>
     Ok(views.underConstructionPage())
   }
 }
