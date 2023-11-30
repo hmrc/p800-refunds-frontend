@@ -15,7 +15,9 @@
  *@
 
 @import language.Messages
+@import models.FullName
 @import uk.gov.hmrc.govukfrontend.views.html.components._
+@import uk.gov.hmrc.govukfrontend.views.html.components.implicits._
 @import views.html.templates.Layout
 
 @this(
@@ -23,7 +25,9 @@
     viewsHelpers: views.ViewsHelpers
 )
 
-@()(implicit request: Request[_])
+@(
+  form: Form[FullName]
+)(implicit request: Request[_])
 
 @import viewsHelpers.requestSupport._
 
@@ -31,35 +35,38 @@
     Messages.WhatIsYourFullName.`What is your full name`.show
 }
 @key = @{
-    "reference"
+    "fullName"
 }
 
 @layout(
-    pageTitle = Some(title)
+    pageTitle = Some(title),
+    backLinkUrlOverride = Some(controllers.routes.WeNeedYouToConfirmYourIdentityController.get.url)
 ) {
 
-    @viewsHelpers.govukInput(Input(
-        id = key,
-        name = key,
-        classes = "govuk-input--width-10",
-        label = Label(
-            content = Text(title),
-            isPageHeading = true,
-            classes = "govuk-label--xl"
-        ),
-        hint = Some(Hint(
-            content = Text(Messages.WhatIsYourFullName.`Enter your name as it appears on your tax calculation`.show)
-        )),
-        autocomplete = Some("off"),
-        spellcheck = Some(false)
-    ))
+    @if(form.errors.nonEmpty) {
+        @viewsHelpers.govukErrorSummary(ErrorSummary(errorList = form.errors.asTextErrorLinks, title = Text(Messages.CommonMessages.`There is a problem`.show)))
+    }
 
+    @viewsHelpers.formWithCsrf(action = controllers.routes.WhatIsYourFullNameController.post) {
+        @viewsHelpers.govukInput(Input(
+            id = key,
+            name = key,
+            classes = "govuk-!-width-two-thirds",
+            label = Label(
+                content = Text(title),
+                isPageHeading = true,
+                classes = "govuk-label--xl"
+            ),
+            hint = Some(Hint(
+                content = Text(Messages.WhatIsYourFullName.`Enter your name as it appears on your tax calculation`.show)
+            )),
+            autocomplete = Some("off"),
+            spellcheck = Some(false)
+        ).withFormField(form(key)))
 
-
-
-
-    @viewsHelpers.govukButton(Button(
-        content = Text(Messages.CommonMessages.`continue`.show),
-        id      = Some("submit")
-    ))
+        @viewsHelpers.govukButton(Button(
+            content = Text(Messages.CommonMessages.`continue`.show),
+            id      = Some("submit")
+        ))
+    }
 }

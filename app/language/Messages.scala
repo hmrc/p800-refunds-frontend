@@ -151,6 +151,33 @@ object Messages {
       english = "Cheque"
     )
   }
+      
+  object CheckYourAnswersMessages {
+
+    val `Check your answers`: Message = Message(
+      english = "Check your answers"
+    )
+
+    val `Full name`: Message = Message(
+      english = "Full name"
+    )
+
+    val `Date of birth`: Message = Message(
+      english = "Date of birth"
+    )
+
+    val `Address`: Message = Message(
+      english = "Address"
+    )
+
+    val `National Insurance Number`: Message = Message(
+      english = "National Insurance number"
+    )
+
+    val `Change`: Message = Message(
+      english = "Change"
+    )
+  }
 
   object CannotConfirmReference {
     val `We cannot confirm your reference`: Message = Message(
@@ -176,20 +203,24 @@ object Messages {
       english = "What is your National Insurance number?"
     )
 
-    val `Its on your National Insurance`: Message = Message(
-      english = "It’s on your National Insurance card or letter, benefit letter, payslip or P60."
-    )
-
-    val `For example`: Message = Message(
-      english = "For example, ‘QQ 12 34 56 C’."
+    val `It’s on your National Insurance`: Message = Message(
+      english = "It’s on your National Insurance card or letter, benefit letter, payslip or P60. For example, ‘QQ 12 34 56 C’."
     )
 
     val `I do not know my National Insurance number`: Message = Message(
       english = "I do not know my National Insurance number"
     )
 
-    def `You can get help to find a lost National`: Message = Message(
-      english = s"""You can get help to <a id="govuk-link" href="#" class="govuk-link">find a lost National Insurance number (opens in new tab).</a>"""
+    def `You can get help to find a lost National`(link: String): Message = Message(
+      english = s"""You can get help to <a id="lost-national-insurance-number-link" href="$link" target="_blank" class="govuk-link">find a lost National Insurance number (opens in new tab).</a>"""
+    )
+
+    val `Enter your National Insurance number`: Message = Message(
+      english = "Enter your National Insurance number"
+    )
+
+    val `Enter your National Insurance number in the correct format`: Message = Message(
+      english = "Enter your National Insurance number in the correct format"
     )
   }
 
@@ -202,7 +233,33 @@ object Messages {
       english = "For example, 27 3 2007"
     )
 
+    object Errors {
+      val `Enter your date of birth`: Message = Message(
+        english = "Enter your date of birth"
+      )
+
+      val `You must enter a real date`: Message = Message(
+        english = "You must enter a real date"
+      )
+      val `Enter a year which contains 4 numbers`: Message = Message(
+        english = "Enter a year which contains 4 numbers"
+      )
+      val `Date of birth must be in the past`: Message = Message(
+        english = "Date of birth must be in the past"
+      )
+      def `Date of birth must be on or before`(sixteenYearsAgo: String): Message = Message(
+        english = s"Date of birth must be on or before $sixteenYearsAgo"
+      )
+      def `Date of birth must be on or after`(oneHundredAndTenYearsAgo: String): Message = Message(
+        english = s"Date of birth must be on or after $oneHundredAndTenYearsAgo"
+      )
+      def `Date of birth must include a ...`(incompleteFields: String): Message = Message(
+        english = s"Date of birth must include a $incompleteFields"
+      )
+    }
+
   }
+
   object WhatIsYourFullName {
     val `What is your full name`: Message = Message(
       english = "What is your full name?"
@@ -211,7 +268,28 @@ object Messages {
     val `Enter your name as it appears on your tax calculation`: Message = Message(
       english = "Enter your name as it appears on your tax calculation letter or ‘P800’."
     )
+
+    val `Enter your full name`: Message = Message(
+      english = "Enter your full name"
+    )
+
+    val `Full name must be 2 characters or more`: Message = Message(
+      english = "Full name must be 2 characters or more"
+    )
+
+    val `Full name must be 160 characters or less`: Message = Message(
+      english = "Full name must be 160 characters or less"
+    )
+
+    def `Name must not include X`(x: String): Message = Message(
+      english = s"Name must not include $x"
+    )
+
+    val `Full name must only include letters a to z, and special characters such as hyphens, spaces and apostrophes`: Message = Message(
+      english = "Full name must only include letters a to z, and special characters such as hyphens, spaces and apostrophes"
+    )
   }
+
   object ConfirmIdentity {
     val `We need you to confirm your identity`: Message = Message(
       english = "We need you to confirm your identity"
@@ -275,7 +353,7 @@ object Messages {
     )
 
     def `Contact HMRC to tell us that you have changed address.`(contactHmrcLink: String): Message = Message(
-      english = s"""<a id="contact-hmrc-link" href="$contactHmrcLink" class="govuk-link" target="_blank">Contact HMRC</a> to tell us that you have changed address."""
+      english = s"""<a id="contact-hmrc-link" href="$contactHmrcLink" class="govuk-link">Contact HMRC</a> to tell us that you have changed address."""
     )
 
     val `Wait two days for HMRC to update your details.`: Message = Message(

@@ -16,32 +16,39 @@
 
 @import language.Messages
 @import uk.gov.hmrc.govukfrontend.views.html.components._
+@import views.ViewsHelpers
 @import views.html.templates.Layout
 
 @this(
-        layout: Layout,
-        viewsHelpers: views.ViewsHelpers
+    layout: Layout,
+    viewsHelpers: ViewsHelpers
 )
 
-@()(implicit request: Request[_])
+@(
+    summaryList: SummaryList
+)(implicit request: Request[_])
 
 @import viewsHelpers.requestSupport._
 
-@title = @{
-    Messages.WeHaveConfirmedYourIdentity.`We have confirmed your identity`.show
+@heading = @{
+    Messages.CheckYourAnswersMessages.`Check your answers`.show
 }
 
 
 @layout(
-    pageTitle = Some(title),
-    backLinkUrlOverride = Some(controllers.routes.CheckYourAnswersController.get.url)
+    pageTitle = Some(heading),
+    backLinkUrlOverride = Some(controllers.routes.WhatIsYourNationalInsuranceNumberController.get.url)
 ) {
 
-    <h1 class="govuk-heading-xl">@title</h1>
+    <h1 class="govuk-heading-xl">@heading</h1>
 
-    @viewsHelpers.govukButton(Button(
-        content = Text(Messages.CommonMessages.`continue`.show),
-        id      = Some("submit"),
-        href       = Some(controllers.routes.WhatIsTheNameOfYourBankAccountController.get.url)
-    ))
+    @viewsHelpers.govukSummaryList(summaryList)
+
+    @viewsHelpers.formWithCsrf(action = controllers.routes.CheckYourAnswersController.post) {
+        @viewsHelpers.govukButton(Button(
+            content = Text(Messages.CommonMessages.continue.show),
+            id = Some("submit")
+        ))
+    }
+
 }

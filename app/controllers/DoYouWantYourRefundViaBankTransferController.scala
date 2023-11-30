@@ -59,7 +59,7 @@ class DoYouWantYourRefundViaBankTransferController @Inject() (
     }
   }
 
-  private def getResult(implicit request: Request[_]) = Ok(views.doYouWantYourRefundViaBankTransferPage(
+  private def getResult(implicit request: Request[_]): Result = Ok(views.doYouWantYourRefundViaBankTransferPage(
     DoYouWantYourRefundViaBankTransferForm.form
   ))
 

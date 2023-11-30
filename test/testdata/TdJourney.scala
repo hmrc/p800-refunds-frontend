@@ -59,9 +59,43 @@ trait TdJourney { dependencies: TdBase =>
     p800Reference = dependencies.p800Reference
   )
 
+  lazy val journeyWhatIsYourFullName: JourneyWhatIsYourFullName = JourneyWhatIsYourFullName(
+    _id           = journeyId,
+    createdAt     = dependencies.instant,
+    p800Reference = dependencies.p800Reference,
+    fullName      = dependencies.fullName
+  )
+
+  lazy val journeyWhatIsYourDateOfBirth: JourneyWhatIsYourDateOfBirth = JourneyWhatIsYourDateOfBirth(
+    _id           = journeyId,
+    createdAt     = dependencies.instant,
+    p800Reference = dependencies.p800Reference,
+    fullName      = dependencies.fullName,
+    dateOfBirth   = dependencies.dateOfBirth
+  )
+
+  lazy val journeyWhatIsYourNationalInsuranceNumber: JourneyWhatIsYourNationalInsuranceNumber = JourneyWhatIsYourNationalInsuranceNumber(
+    _id                     = journeyId,
+    createdAt               = dependencies.instant,
+    p800Reference           = dependencies.p800Reference,
+    fullName                = dependencies.fullName,
+    dateOfBirth             = dependencies.dateOfBirth,
+    nationalInsuranceNumber = dependencies.nationalInsuranceNumber
+  )
+
+  lazy val journeyCheckYourAnswers: JourneyCheckYourAnswers = JourneyCheckYourAnswers(
+    _id                     = journeyId,
+    createdAt               = dependencies.instant,
+    p800Reference           = dependencies.p800Reference,
+    fullName                = dependencies.fullName,
+    dateOfBirth             = dependencies.dateOfBirth,
+    nationalInsuranceNumber = dependencies.nationalInsuranceNumber
+  )
+
   lazy val journeyYourChequeWillBePostedToYou: JourneyYourChequeWillBePostedToYou = JourneyYourChequeWillBePostedToYou(
     _id           = journeyId,
     createdAt     = dependencies.instant,
     p800Reference = dependencies.p800Reference
   )
+
 }

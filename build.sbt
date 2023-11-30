@@ -15,7 +15,9 @@ lazy val microservice = Project("p800-refunds-frontend", file("."))
           if (StrictBuilding.strictBuilding.value) ScalaCompilerFlags.strictScalaCompilerOptions else Nil
     },
     pipelineStages := Seq(gzip),
-    Compile / scalacOptions -= "utf8"
+    Compile / scalacOptions -= "utf8",
+    //TODO: talk to team about it. We can run tests in parallel, but we need unique journey ids in tests, otherwise tests becomes flaky very soon
+    Test / parallelExecution := false
   )
   .settings(
       routesImport ++= Seq(

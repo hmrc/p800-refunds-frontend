@@ -16,7 +16,8 @@
 
 package testdata
 
-import models.P800Reference
+import models.{P800Reference, FullName, NationalInsuranceNumber}
+import models.dateofbirth.{DateOfBirth, DayOfMonth, Month, Year}
 
 import java.time.{Instant, LocalDateTime, ZoneOffset}
 import java.time.format.DateTimeFormatter
@@ -33,4 +34,16 @@ trait TdBase {
   lazy val newInstant: Instant = instant.plusSeconds(20) //used when a new journey is created from existing one
 
   lazy val p800Reference: P800Reference = P800Reference("P800REFNO1")
+
+  lazy val fullName: FullName = FullName("Test Name.-")
+
+  lazy val gdsDateTimeFormatter: DateTimeFormatter = DateTimeFormatter.ofPattern("d MMMM Y")
+
+  lazy val dayOfMonth: DayOfMonth = DayOfMonth("1")
+  lazy val month: Month = Month("1")
+  lazy val year: Year = Year("2000")
+  lazy val dateOfBirth: DateOfBirth = DateOfBirth(dayOfMonth, month, year)
+  lazy val dateOfBirthFormatted: String = "01 January 2000"
+
+  lazy val nationalInsuranceNumber: NationalInsuranceNumber = NationalInsuranceNumber("MA000003A")
 }

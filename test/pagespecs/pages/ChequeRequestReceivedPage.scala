@@ -27,7 +27,7 @@ class ChequeRequestReceivedPage(baseUrl: String)(implicit webDriver: WebDriver) 
 
   override def expectedH1: String = "Request received"
 
-  override def assertPageIsDisplayed(errors: ContentExpectation*): Unit = withPageClue {
+  override def assertPageIsDisplayed(extraExpectations: ContentExpectation*): Unit = withPageClue {
 
     val contentExpectation: ContentExpectation = ContentExpectation(
       atXpath       = PageUtil.Xpath.mainContent,
