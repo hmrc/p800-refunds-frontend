@@ -62,6 +62,7 @@ class WhatIsYourNationalInsuranceNumberPage(baseUrl: String)(implicit webDriver:
     ) ++ extraExpectations
 
     PageUtil.assertPage(
+      baseUrl             = baseUrl,
       path                = path,
       h1                  = expectedH1,
       title               = PageUtil.standardTitle(expectedH1),

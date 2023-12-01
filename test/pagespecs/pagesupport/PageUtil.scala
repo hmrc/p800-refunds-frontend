@@ -66,6 +66,16 @@ object PageUtil {
       .getOrElse(s"Element with id=[$idOrName] didn't have attribute 'href' ${e.toString()}")
   }
 
+  /**
+   * Gets the 'href' attribute of element identified by 'xPath'
+   */
+  def getHrefByXpath(xPath: String)(implicit webDriver: WebDriver): String = {
+    xpath(xPath)
+      .element
+      .attribute("href")
+      .getOrElse(throw new RuntimeException(s"Could not find 'href' attribute of element identified by xpath: [$xPath]"))
+  }
+
   def findElement(idOrName: String)(implicit webDriver: WebDriver): Element = {
     WebBrowser.find(idOrName).getOrElse(throw new RuntimeException(s"Could not find element by id or name: [$idOrName]"))
   }
@@ -130,14 +140,16 @@ object PageUtil {
       h1:                  String,
       title:               String,
       serviceName:         String,
+      serviceNameUrl:      Option[String],
       contentExpectations: ContentExpectation*
   )(implicit webDriver: WebDriver): Unit = withPageClue(path) {
     readPath() shouldBe path withClue "path"
     readH1() shouldBe h1 withClue "h1"
     pageTitle shouldBe title withClue "pageTitle"
     readPageServiceName() shouldBe serviceName withClue "serviceName"
+    serviceNameUrl.foreach(serviceNameUrl =>
+      readPageServiceNameUrl() shouldBe serviceNameUrl withClue "serviceNameUrl")
     assertContentByXpath(contentExpectations: _*)
-    //xxxxxxxxxxxxxx pawel
   }
 
   /**
@@ -145,6 +157,7 @@ object PageUtil {
    * It asserts various elements like path, h1 and content making a good quality page assertion
    */
   def assertPage(
+      baseUrl:             String,
       path:                String,
       h1:                  String,
       title:               String,
@@ -154,12 +167,14 @@ object PageUtil {
     h1                  = h1,
     title               = title,
     serviceName         = "Get an Income Tax refund",
+    serviceNameUrl      = Some(s"$baseUrl/get-an-income-tax-refund/test-only/gov-uk-route-in"),
     contentExpectations = contentExpectations: _*
   )
 
   private def readH1()(implicit webDriver: WebDriver): String = xpath("""//*[@id="main-content"]//h1""").element.text.stripSpaces()
 
   private def readPageServiceName()(implicit webDriver: WebDriver): String = xpath(Xpath.serviceName).element.text
+  private def readPageServiceNameUrl()(implicit webDriver: WebDriver): String = PageUtil.getHrefByXpath(PageUtil.Xpath.serviceName)
 
   /**
    * Runs test using `testF` and reports page related information if the test fails.

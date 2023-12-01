@@ -39,9 +39,10 @@ abstract class Page(
 
   def assertPageIsDisplayedWithTechnicalDifficultiesError(): Unit = withPageClue {
     PageUtil.assertPage(
-      path  = path,
-      h1    = "Sorry, there is a problem with the service",
-      title = PageUtil.standardTitle("Sorry, there is a problem with the service"),
+      baseUrl = baseUrl,
+      path    = path,
+      h1      = "Sorry, there is a problem with the service",
+      title   = PageUtil.standardTitle("Sorry, there is a problem with the service"),
       ContentExpectation(
         atXpath       = PageUtil.Xpath.mainContent,
         expectedLines = """Try again later.
@@ -55,9 +56,10 @@ abstract class Page(
 
   def assertPageIsDisplayedWithTechnicalDifficultiesErrorInWelsh(): Unit = withPageClue {
     PageUtil.assertPage(
-      path  = path,
-      h1    = "Mae’n ddrwg gennym, mae problem gyda’r gwasanaeth",
-      title = PageUtil.standardTitleInWelsh("Mae’n ddrwg gennym, mae problem gyda’r gwasanaeth"),
+      baseUrl = baseUrl,
+      path    = path,
+      h1      = "Mae’n ddrwg gennym, mae problem gyda’r gwasanaeth",
+      title   = PageUtil.standardTitleInWelsh("Mae’n ddrwg gennym, mae problem gyda’r gwasanaeth"),
       ContentExpectation(
         atXpath       = PageUtil.Xpath.mainContent,
         expectedLines = """Rhowch gynnig arall arni yn nes ymlaen.

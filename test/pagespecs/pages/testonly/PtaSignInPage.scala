@@ -28,10 +28,11 @@ class PtaSignInPage(baseUrl: String)(implicit webDriver: WebDriver) extends Page
 
   override def assertPageIsDisplayed(extraExpectations: ContentExpectation*): Unit = withPageClue {
     PageUtil.assertPage(
-      path        = path,
-      h1          = expectedH1,
-      title       = PageUtil.standardTitleForTestOnlyPages,
-      serviceName = "Test Only - Get an Income Tax refund",
+      path           = path,
+      h1             = expectedH1,
+      title          = PageUtil.standardTitleForTestOnlyPages,
+      serviceName    = "Test Only - Get an Income Tax refund",
+      serviceNameUrl = None,
       ContentExpectation(
         atXpath       = PageUtil.Xpath.mainContent,
         expectedLines =
