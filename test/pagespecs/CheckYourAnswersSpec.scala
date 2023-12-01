@@ -18,6 +18,7 @@ package pagespecs
 
 import models.{FullName, NationalInsuranceNumber}
 import testsupport.ItSpec
+import testsupport.stubs.IdentityVerificationStub
 
 class CheckYourAnswersSpec extends ItSpec {
 
@@ -76,14 +77,26 @@ class CheckYourAnswersSpec extends ItSpec {
     ) withClue "user is navigated back to check your answers page"
   }
 
-  "clicking submit navigates to confirmation page" in {
+  "clicking submit redirects to 'Your identity has been confirmed' if response from NPS call is success" in {
+    IdentityVerificationStub.stubIdentityVerification2xxSucceeded
+    upsertJourneyToDatabase(td.journeyCheckYourAnswers)
     pages.checkYourAnswersPage.open()
     pages.checkYourAnswersPage.assertPageIsDisplayed()
     pages.checkYourAnswersPage.clickSubmit()
     pages.weHaveConfirmedYourIdentityPage.assertPageIsDisplayed()
+    IdentityVerificationStub.verifyIdentityVerification()
   }
 
-  "clicking back button navigates to What Is Your Natinal Insurance Number page" in {
+  "clicking submit redirects to 'We cannot confirm your identity' if response from NPS call is fail" in {
+    IdentityVerificationStub.stubIdentityVerification2xxFailed
+    pages.checkYourAnswersPage.open()
+    pages.checkYourAnswersPage.assertPageIsDisplayed()
+    pages.checkYourAnswersPage.clickSubmit()
+    pages.weCannotConfirmYourIdentityPage.assertPageIsDisplayed()
+    IdentityVerificationStub.verifyIdentityVerification()
+  }
+
+  "clicking back button navigates to What Is Your National Insurance Number page" in {
     pages.checkYourAnswersPage.open()
     pages.checkYourAnswersPage.assertPageIsDisplayed()
     pages.checkYourAnswersPage.clickBackButton()

@@ -26,6 +26,8 @@ import play.api.libs.json.{Format, Json}
 
 object WireMockHelpers {
 
+  def verifyNone(url: String): Unit = verify(exactly(0), postRequestedFor(urlPathEqualTo(url)))
+
   /**
    * Useful wiremock helper to verify that the request body serialises to what we expect.
    * Hint: If it's not working and you can't work out why, check what A you are passing in... :)
@@ -34,6 +36,12 @@ object WireMockHelpers {
    * @tparam A: Model we want to get format for
    */
   def verifyWithBodyParse[A](url: String)(implicit format: Format[A]): Unit = verify(
+    postRequestedFor(urlPathEqualTo(url))
+      .andMatching((value: Request) => customValueMatcher(url, value))
+  )
+
+  def verifyExactlyWithBodyParse[A](url: String, count: Int)(implicit format: Format[A]): Unit = verify(
+    exactly(count),
     postRequestedFor(urlPathEqualTo(url))
       .andMatching((value: Request) => customValueMatcher(url, value))
   )

@@ -16,8 +16,8 @@
 
 package models.journeymodels
 
-import models.{P800Reference, FullName, NationalInsuranceNumber}
 import models.dateofbirth.DateOfBirth
+import models.{FullName, NationalInsuranceNumber, P800Reference}
 import play.api.libs.json.OFormat
 
 import java.time.{Clock, Instant}
@@ -63,6 +63,7 @@ final case class JourneyStarted(
   with JBeforeWhatIsYourDateOfBirth
   with JBeforeWhatIsYourNationalInsuranceNumber
   with JBeforeCheckYourAnswers
+  with JBeforeIdentityVerified
 
 /**
  * [[Journey]] when finishing submission on DoYouWantToSignIn page,
@@ -82,6 +83,7 @@ final case class JourneyDoYouWantToSignInNo(
   with JBeforeWhatIsYourDateOfBirth
   with JBeforeWhatIsYourNationalInsuranceNumber
   with JBeforeCheckYourAnswers
+  with JBeforeIdentityVerified
 
 /**
  * [[Journey]] when finishing submission on WhatIsYourP800Reference page.
@@ -101,6 +103,7 @@ final case class JourneyWhatIsYourP800Reference(
   with JBeforeWhatIsYourDateOfBirth
   with JBeforeWhatIsYourNationalInsuranceNumber
   with JBeforeCheckYourAnswers
+  with JBeforeIdentityVerified
 
 /**
  * [[Journey]] when finishing submission on CheckYourReference page,
@@ -121,6 +124,7 @@ final case class JourneyCheckYourReferenceValid(
   with JBeforeWhatIsYourDateOfBirth
   with JBeforeWhatIsYourNationalInsuranceNumber
   with JBeforeCheckYourAnswers
+  with JBeforeIdentityVerified
 
 /**
  * [[Journey]] when finishing submission on DoYouWantYourRefundViaBankTransfer page,
@@ -139,6 +143,7 @@ final case class JourneyDoYouWantYourRefundViaBankTransferYes(
   with JBeforeWhatIsYourDateOfBirth
   with JBeforeWhatIsYourNationalInsuranceNumber
   with JBeforeCheckYourAnswers
+  with JBeforeIdentityVerified
 
 /**
  * [[Journey]] when finishing submission on DoYouWantYourRefundViaBankTransfer page,
@@ -154,6 +159,7 @@ final case class JourneyDoYouWantYourRefundViaBankTransferNo(
   with JAfterWhatIsYourP800Reference
   with JAfterCheckYourReferenceValid
   with JBeforeYourChequeWillBePostedToYou
+  with JBeforeIdentityVerified
 
 /**
  * [[Journey]] when finishing submission on YourChequeWillBePostedToYou page.
@@ -170,6 +176,7 @@ final case class JourneyYourChequeWillBePostedToYou(
   with JAfterWhatIsYourP800Reference
   with JAfterCheckYourReferenceValid
   with JAfterDoYouWantYourRefundViaBankTransferNo
+  with JBeforeIdentityVerified
 
 /**
  * [[Journey]] when finishing submission on WhatIsYourFullName page.
@@ -188,6 +195,7 @@ final case class JourneyWhatIsYourFullName(
   with JBeforeWhatIsYourDateOfBirth
   with JBeforeWhatIsYourNationalInsuranceNumber
   with JBeforeCheckYourAnswers
+  with JBeforeIdentityVerified
 
 /**
  * [[Journey]] when finishing submission on WhatIsYourDateOfBirth page,
@@ -208,6 +216,7 @@ final case class JourneyWhatIsYourDateOfBirth(
   with JAfterWhatIsYourFullName
   with JBeforeWhatIsYourNationalInsuranceNumber
   with JBeforeCheckYourAnswers
+  with JBeforeIdentityVerified
 
 final case class JourneyWhatIsYourNationalInsuranceNumber(
     override val _id:           JourneyId,
@@ -225,6 +234,7 @@ final case class JourneyWhatIsYourNationalInsuranceNumber(
   with JAfterWhatIsYourFullName
   with JAfterWhatIsYourDateOfBirth
   with JBeforeCheckYourAnswers
+  with JBeforeIdentityVerified
 
 /**
  * This state represents journey leaving CheckYourAnswers page via the "Change" link
@@ -245,6 +255,7 @@ final case class JourneyCheckYourAnswersChange(
   with JAfterWhatIsYourFullName
   with JAfterWhatIsYourDateOfBirth
   with JAfterWhatIsYourNationalInsuranceNumber
+  with JBeforeIdentityVerified
 
 final case class JourneyCheckYourAnswers(
     override val _id:                     JourneyId,
@@ -263,6 +274,44 @@ final case class JourneyCheckYourAnswers(
   with JAfterWhatIsYourFullName
   with JAfterWhatIsYourDateOfBirth
   with JAfterWhatIsYourNationalInsuranceNumber
+
+final case class JourneyIdentityVerified(
+    override val _id:                     JourneyId,
+    override val createdAt:               Instant,
+    override val p800Reference:           P800Reference,
+    override val fullName:                FullName,
+    override val dateOfBirth:             DateOfBirth,
+    override val nationalInsuranceNumber: NationalInsuranceNumber
+//TODO: results of API calls, there will likely be info we need to store from the api call, maybe...
+) extends Journey
+  with JAfterStarted
+  with JAfterDoYouWantToSignInNo
+  with JAfterWhatIsYourP800Reference
+  with JAfterCheckYourReferenceValid
+  with JAfterDoYouWantYourRefundViaBankTransferYes
+  with JAfterWhatIsYourFullName
+  with JAfterWhatIsYourDateOfBirth
+  with JAfterWhatIsYourNationalInsuranceNumber
+  with JAfterCheckYourAnswers
+
+final case class JourneyIdentityNotVerified(
+    override val _id:                     JourneyId,
+    override val createdAt:               Instant,
+    override val p800Reference:           P800Reference,
+    override val fullName:                FullName,
+    override val dateOfBirth:             DateOfBirth,
+    override val nationalInsuranceNumber: NationalInsuranceNumber
+//TODO: results of API calls, there will likely be info we need to store from the api call, maybe...
+) extends Journey
+  with JAfterStarted
+  with JAfterDoYouWantToSignInNo
+  with JAfterWhatIsYourP800Reference
+  with JAfterCheckYourReferenceValid
+  with JAfterDoYouWantYourRefundViaBankTransferYes
+  with JAfterWhatIsYourFullName
+  with JAfterWhatIsYourDateOfBirth
+  with JAfterWhatIsYourNationalInsuranceNumber
+  with JAfterCheckYourAnswers
 
 /*
  * Below marking traits for all [[Journey]]s after/before certain state
@@ -306,6 +355,14 @@ sealed trait JAfterCheckYourAnswers extends Journey {
   val nationalInsuranceNumber: NationalInsuranceNumber
 }
 
+sealed trait JAfterIdentityVerified extends Journey {
+  val p800Reference: P800Reference
+  val fullName: FullName
+  val dateOfBirth: DateOfBirth
+  val nationalInsuranceNumber: NationalInsuranceNumber
+  //todo we should probably store the result of the nps call, but not sure if we need to at the moment.
+}
+
 sealed trait JBeforeDoYouWantToSignInNo extends Journey
 sealed trait JBeforeWhatIsYourP800Reference extends Journey
 sealed trait JBeforeCheckYourReferenceValid extends Journey
@@ -316,6 +373,7 @@ sealed trait JBeforeWhatIsYourFullName extends Journey
 sealed trait JBeforeWhatIsYourDateOfBirth extends Journey
 sealed trait JBeforeWhatIsYourNationalInsuranceNumber extends Journey
 sealed trait JBeforeCheckYourAnswers extends Journey
+sealed trait JBeforeIdentityVerified extends Journey
 
 /**
  * Marking trait for [[Journey]] in terminal state

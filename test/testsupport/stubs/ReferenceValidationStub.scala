@@ -14,16 +14,15 @@
  * limitations under the License.
  */
 
-package testsupport.wiremock
+package testsupport.stubs
 
-import com.github.tomakehurst.wiremock.stubbing.Scenario
+import com.github.tomakehurst.wiremock.stubbing.StubMapping
+import testsupport.stubs.WireMockHelpers._
 
-object WireMockStates {
-  def state(index: Int): String = if (index == 0) Scenario.STARTED else index.toString
-  def nextState(index: Int): String = (index + 1).toString
-  def endState(index: Int, size: Int): String = if (size == 1) Scenario.STARTED else (if (index + 1 >= size) index else index + 1).toString
+object ReferenceValidationStub {
 
-  val p800RefundsUpsert: String = "p800-refunds-frontend-upsert"
-  val p800RefundsFind: String = "p800-refunds-frontend-find"
+  val url = "/validate-reference"
+
+  def validateReference2xxValid: StubMapping = stubForPostWithResponseBody(url, """{ "isValid": true }""")
+  def validateReference2xxInvalid: StubMapping = stubForPostWithResponseBody(url, """{ "isValid": false }""")
 }
-

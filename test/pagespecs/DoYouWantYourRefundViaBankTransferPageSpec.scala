@@ -42,7 +42,7 @@ class DoYouWantYourRefundViaBankTransferPageSpec extends ItSpec {
     pages.yourChequeWillBePostedToYouPage.assertPageIsDisplayed()
   }
 
-  "Clicking 'Back' redirects back to start page" in {
+  "Clicking 'Back' redirects user to 'Check your reference' page" in {
     pages.doYouWantYourRefundViaBankTransferPage.open()
     pages.doYouWantYourRefundViaBankTransferPage.assertPageIsDisplayed()
     pages.doYouWantYourRefundViaBankTransferPage.clickBackButton()
@@ -55,5 +55,4 @@ class DoYouWantYourRefundViaBankTransferPageSpec extends ItSpec {
     pages.doYouWantYourRefundViaBankTransferPage.clickSubmit()
     pages.doYouWantYourRefundViaBankTransferPage.assertPageShowsWithErrors()
   }
-
 }
