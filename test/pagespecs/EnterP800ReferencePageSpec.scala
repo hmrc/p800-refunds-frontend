@@ -17,7 +17,6 @@
 package pagespecs
 
 import pagespecs.pagesupport.PageUtil
-import testdata.TdAll
 import testsupport.ItSpec
 
 class EnterP800ReferencePageSpec extends ItSpec {
@@ -25,14 +24,14 @@ class EnterP800ReferencePageSpec extends ItSpec {
   override def beforeEach(): Unit = {
     super.beforeEach()
 
-    addJourneyIdToSession(TdAll.journeyId)
-    upsertJourneyToDatabase(TdAll.journeyDoYouWantToSignInNo)
+    addJourneyIdToSession(tdAll.journeyId)
+    upsertJourneyToDatabase(tdAll.journeyDoYouWantToSignInNo)
   }
 
   "Entering valid p800 reference and clicking Continue redirects to /check-your-reference" in {
     pages.enterP800ReferencePage.open()
     pages.enterP800ReferencePage.assertPageIsDisplayed()
-    pages.enterP800ReferencePage.enterP800Reference(TdAll.p800Reference.value)
+    pages.enterP800ReferencePage.enterP800Reference(tdAll.p800Reference.value)
     pages.enterP800ReferencePage.clickSubmit()
     pages.checkYourReferencePage.assertPageIsDisplayed()
   }
@@ -73,4 +72,5 @@ class EnterP800ReferencePageSpec extends ItSpec {
     pages.enterP800ReferencePage.clickBackButton()
     pages.doYouWantToSignInPage.assertPageIsDisplayed()
   }
+
 }

@@ -16,15 +16,14 @@
 
 package pagespecs
 
-import testdata.TdAll
 import testsupport.ItSpec
 
 class DoYouWantYourRefundViaBankTransferPageSpec extends ItSpec {
 
   override def beforeEach(): Unit = {
     super.beforeEach()
-    addJourneyIdToSession(TdAll.journeyId)
-    upsertJourneyToDatabase(TdAll.journeyCheckYourReferenceValid)
+    addJourneyIdToSession(tdAll.journeyId)
+    upsertJourneyToDatabase(tdAll.journeyCheckYourReferenceValid)
   }
 
   "Selecting 'Yes' redirects to ConfirmYourIdentityPage" in {
@@ -43,8 +42,7 @@ class DoYouWantYourRefundViaBankTransferPageSpec extends ItSpec {
     pages.yourChequeWillBePostedToYouPage.assertPageIsDisplayed()
   }
 
-  //TODO: Pawel
-  "Clicking 'Back' redirects back to start page" ignore {
+  "Clicking 'Back' redirects back to start page" in {
     pages.doYouWantYourRefundViaBankTransferPage.open()
     pages.doYouWantYourRefundViaBankTransferPage.assertPageIsDisplayed()
     pages.doYouWantYourRefundViaBankTransferPage.clickBackButton()
@@ -57,4 +55,5 @@ class DoYouWantYourRefundViaBankTransferPageSpec extends ItSpec {
     pages.doYouWantYourRefundViaBankTransferPage.clickSubmit()
     pages.doYouWantYourRefundViaBankTransferPage.assertPageShowsWithErrors()
   }
+
 }

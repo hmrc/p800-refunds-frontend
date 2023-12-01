@@ -16,15 +16,14 @@
 
 package pagespecs
 
-import testdata.TdAll
 import testsupport.ItSpec
 
 class DoYouWantToSignInPageSpec extends ItSpec {
 
   override def beforeEach(): Unit = {
     super.beforeEach()
-    addJourneyIdToSession(TdAll.journeyId)
-    upsertJourneyToDatabase(TdAll.journeyStarted)
+    addJourneyIdToSession(tdAll.journeyId)
+    upsertJourneyToDatabase(tdAll.journeyStarted)
   }
 
   "Selecting 'Yes, sign in' redirects to personal tax account" in {
@@ -56,4 +55,5 @@ class DoYouWantToSignInPageSpec extends ItSpec {
     pages.doYouWantToSignInPage.clickSubmit()
     pages.doYouWantToSignInPage.assertPageShowsWithErrors()
   }
+
 }

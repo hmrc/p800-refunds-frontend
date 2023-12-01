@@ -17,7 +17,6 @@
 package pagespecs
 
 import models.{FullName, NationalInsuranceNumber}
-import testdata.TdAll
 import testsupport.ItSpec
 
 class CheckYourAnswersSpec extends ItSpec {
@@ -25,9 +24,9 @@ class CheckYourAnswersSpec extends ItSpec {
   "page renders correctly" in {
     pages.checkYourAnswersPage.open()
     pages.checkYourAnswersPage.assertPageIsDisplayed(
-      td.fullName,
-      td.dateOfBirthFormatted,
-      td.nationalInsuranceNumber
+      tdAll.fullName,
+      tdAll.dateOfBirthFormatted,
+      tdAll.nationalInsuranceNumber
     )
   }
 
@@ -41,8 +40,8 @@ class CheckYourAnswersSpec extends ItSpec {
     pages.whatIsYourFullNamePage.clickSubmit()
     pages.checkYourAnswersPage.assertPageIsDisplayed(
       newName,
-      td.dateOfBirthFormatted,
-      td.nationalInsuranceNumber
+      tdAll.dateOfBirthFormatted,
+      tdAll.nationalInsuranceNumber
     ) withClue "user is navigated back to check your answers page"
   }
 
@@ -56,9 +55,9 @@ class CheckYourAnswersSpec extends ItSpec {
     pages.whatIsYourDateOfBirthPage.enterYear("1971")
     pages.whatIsYourDateOfBirthPage.clickSubmit()
     pages.checkYourAnswersPage.assertPageIsDisplayed(
-      td.fullName,
+      tdAll.fullName,
       "11 December 1971",
-      td.nationalInsuranceNumber
+      tdAll.nationalInsuranceNumber
     ) withClue "user is navigated back to check your answers page"
   }
 
@@ -71,8 +70,8 @@ class CheckYourAnswersSpec extends ItSpec {
     pages.whatIsYourNationalInsuranceNumberPage.enterNationalInsuranceNumber(newNationalInsuranceNumber)
     pages.whatIsYourNationalInsuranceNumberPage.clickSubmit()
     pages.checkYourAnswersPage.assertPageIsDisplayed(
-      td.fullName,
-      td.dateOfBirthFormatted,
+      tdAll.fullName,
+      tdAll.dateOfBirthFormatted,
       newNationalInsuranceNumber
     ) withClue "user is navigated back to check your answers page"
   }
@@ -93,10 +92,7 @@ class CheckYourAnswersSpec extends ItSpec {
 
   override def beforeEach(): Unit = {
     super.beforeEach()
-    addJourneyIdToSession(td.journeyId)
-    upsertJourneyToDatabase(td.journeyWhatIsYourNationalInsuranceNumber)
+    addJourneyIdToSession(tdAll.journeyId)
+    upsertJourneyToDatabase(tdAll.journeyWhatIsYourNationalInsuranceNumber)
   }
-
-  private lazy val td = new TdAll {}
-
 }

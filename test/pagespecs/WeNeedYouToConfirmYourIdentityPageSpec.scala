@@ -19,15 +19,14 @@ package pagespecs
 import models.journeymodels.Journey
 import org.scalatest.prop.TableDrivenPropertyChecks._
 import pagespecs.pagesupport.Page
-import testdata.TdAll
 import testsupport.ItSpec
 
 class WeNeedYouToConfirmYourIdentityPageSpec extends ItSpec {
 
   override def beforeEach(): Unit = {
     super.beforeEach()
-    addJourneyIdToSession(TdAll.journeyId)
-    upsertJourneyToDatabase(TdAll.journeyDoYouWantYourRefundViaBankTransferYes)
+    addJourneyIdToSession(tdAll.journeyId)
+    upsertJourneyToDatabase(tdAll.journeyDoYouWantYourRefundViaBankTransferYes)
   }
 
   "/confirm-your-identity renders the we need to confirm your identity page" in {
@@ -51,14 +50,14 @@ class WeNeedYouToConfirmYourIdentityPageSpec extends ItSpec {
 
   forAll(Table(
     ("journeyState", "expectedPage"),
-    (TdAll.journeyDoYouWantYourRefundViaBankTransferNo, pages.yourChequeWillBePostedToYouPage),
-    (TdAll.journeyStarted, pages.doYouWantToSignInPage),
-    (TdAll.journeyDoYouWantToSignInNo, pages.enterP800ReferencePage),
-    (TdAll.journeyWhatIsYourP800Reference, pages.checkYourReferencePage),
-    (TdAll.journeyCheckYourReferenceValid, pages.doYouWantYourRefundViaBankTransferPage),
-    (TdAll.journeyYourChequeWillBePostedToYou, pages.chequeRequestReceivedPage),
-    (TdAll.journeyWhatIsYourFullName, pages.weNeedYouToConfirmYourIdentityPage),
-    (TdAll.journeyWhatIsYourDateOfBirth, pages.weNeedYouToConfirmYourIdentityPage)
+    (tdAll.journeyDoYouWantYourRefundViaBankTransferNo, pages.yourChequeWillBePostedToYouPage),
+    (tdAll.journeyStarted, pages.doYouWantToSignInPage),
+    (tdAll.journeyDoYouWantToSignInNo, pages.enterP800ReferencePage),
+    (tdAll.journeyWhatIsYourP800Reference, pages.checkYourReferencePage),
+    (tdAll.journeyCheckYourReferenceValid, pages.doYouWantYourRefundViaBankTransferPage),
+    (tdAll.journeyYourChequeWillBePostedToYou, pages.chequeRequestReceivedPage),
+    (tdAll.journeyWhatIsYourFullName, pages.weNeedYouToConfirmYourIdentityPage),
+    (tdAll.journeyWhatIsYourDateOfBirth, pages.weNeedYouToConfirmYourIdentityPage)
   )) { (journeyState: Journey, expectedPage: Page) =>
     s"JourneyState: [${journeyState.name}] should redirect accordingly when state is before this page" in {
       upsertJourneyToDatabase(journeyState)

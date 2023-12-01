@@ -79,6 +79,7 @@ class CheckYourAnswersPage(baseUrl: String)(implicit webDriver: WebDriver) exten
     val contentExpectations = contentExpectation :: extraExpectations.toList
 
     PageUtil.assertPage(
+      baseUrl             = baseUrl,
       path                = path,
       h1                  = expectedH1,
       title               = PageUtil.standardTitle(expectedH1),

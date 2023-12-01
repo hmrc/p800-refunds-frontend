@@ -16,7 +16,20 @@
 
 package testdata
 
-object TdAll extends TdAll
+import models.journeymodels.JourneyId
+import org.bson.types.ObjectId
+
+object TdAll {
+
+  /**
+   * Create instance of Test Data with random journeyId.
+   */
+  def apply(jid: => JourneyId = JourneyId(ObjectId.get().toHexString)): TdAll = new TdAll {
+    override lazy val journeyId: JourneyId = jid
+  }
+
+  val tdAll: TdAll = new TdAll {}
+}
 
 trait TdAll
   extends AnyRef

@@ -37,6 +37,7 @@ class DoYouWantToSignInPage(baseUrl: String)(implicit webDriver: WebDriver) exte
     )
 
     PageUtil.assertPage(
+      baseUrl             = baseUrl,
       path                = path,
       h1                  = expectedH1,
       title               = PageUtil.standardTitle(expectedH1),
@@ -56,6 +57,7 @@ class DoYouWantToSignInPage(baseUrl: String)(implicit webDriver: WebDriver) exte
           |""".stripMargin
     )
     PageUtil.assertPage(
+      baseUrl             = baseUrl,
       path                = path,
       h1                  = expectedH1,
       title               = PageUtil.standardTitle(expectedH1),

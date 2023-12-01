@@ -16,7 +16,6 @@
 
 package pagespecs
 
-import testdata.TdAll
 import testsupport.ItSpec
 
 class CannotConfirmReferencePageSpec extends ItSpec {
@@ -27,18 +26,26 @@ class CannotConfirmReferencePageSpec extends ItSpec {
   }
 
   "clicking 'Try again' should redirect to /enter-P800-reference" in {
-    addJourneyIdToSession(TdAll.journeyId)
-    upsertJourneyToDatabase(TdAll.journeyWhatIsYourP800Reference)
+    addJourneyIdToSession(tdAll.journeyId)
+    upsertJourneyToDatabase(tdAll.journeyWhatIsYourP800Reference)
     pages.cannotConfirmReferencePage.open()
     pages.cannotConfirmReferencePage.clickTryAgain()
     pages.enterP800ReferencePage.assertPageIsDisplayed()
   }
 
   "clicking 'Back' should redirect to /check-your-reference" in {
-    addJourneyIdToSession(TdAll.journeyId)
-    upsertJourneyToDatabase(TdAll.journeyWhatIsYourP800Reference)
+    addJourneyIdToSession(tdAll.journeyId)
+    upsertJourneyToDatabase(tdAll.journeyWhatIsYourP800Reference)
     pages.cannotConfirmReferencePage.open()
     pages.cannotConfirmReferencePage.clickBackButton()
     pages.checkYourReferencePage.assertPageIsDisplayed()
   }
+
+  "clicking service name navigates to the gov-uk route in page" in {
+    pages.cannotConfirmReferencePage.open()
+    pages.cannotConfirmReferencePage.assertPageIsDisplayed()
+    pages.cannotConfirmReferencePage.clickServiceName()
+    pages.govUkRouteInPage.assertPageIsDisplayed()
+  }
+
 }

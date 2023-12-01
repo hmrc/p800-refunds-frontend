@@ -16,7 +16,6 @@
 
 package pagespecs
 
-import testdata.TdAll
 import testsupport.ItSpec
 
 class WeHaveConfirmedYourIdentityPageSpec extends ItSpec {
@@ -42,10 +41,8 @@ class WeHaveConfirmedYourIdentityPageSpec extends ItSpec {
 
   override def beforeEach(): Unit = {
     super.beforeEach()
-    addJourneyIdToSession(td.journeyId)
-    upsertJourneyToDatabase(td.journeyCheckYourAnswers)
+    addJourneyIdToSession(tdAll.journeyId)
+    upsertJourneyToDatabase(tdAll.journeyCheckYourAnswers)
   }
-
-  private lazy val td: TdAll = new TdAll {}
 
 }

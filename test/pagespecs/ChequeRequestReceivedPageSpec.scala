@@ -16,15 +16,14 @@
 
 package pagespecs
 
-import testdata.TdAll
 import testsupport.ItSpec
 
 class ChequeRequestReceivedPageSpec extends ItSpec {
 
   override def beforeEach(): Unit = {
     super.beforeEach()
-    addJourneyIdToSession(TdAll.journeyId)
-    upsertJourneyToDatabase(TdAll.journeyYourChequeWillBePostedToYou)
+    addJourneyIdToSession(tdAll.journeyId)
+    upsertJourneyToDatabase(tdAll.journeyYourChequeWillBePostedToYou)
   }
 
   "/request-received renders the cheque request received page" in {
@@ -34,7 +33,7 @@ class ChequeRequestReceivedPageSpec extends ItSpec {
 
   "user is kept in the final page if clicked browser's back button" in {
     //setup the history in the browser:
-    upsertJourneyToDatabase(TdAll.journeyDoYouWantYourRefundViaBankTransferNo)
+    upsertJourneyToDatabase(tdAll.journeyDoYouWantYourRefundViaBankTransferNo)
     pages.yourChequeWillBePostedToYouPage.open()
     pages.yourChequeWillBePostedToYouPage.assertPageIsDisplayed()
     pages.yourChequeWillBePostedToYouPage.clickSubmitRefundRequest()
@@ -44,4 +43,5 @@ class ChequeRequestReceivedPageSpec extends ItSpec {
     pages.chequeRequestReceivedPage.clickBackButtonInBrowser()
     pages.chequeRequestReceivedPage.assertPageIsDisplayed()
   }
+
 }

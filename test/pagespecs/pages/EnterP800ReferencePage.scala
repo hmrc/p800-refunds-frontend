@@ -57,6 +57,7 @@ class EnterP800ReferencePage(baseUrl: String)(implicit webDriver: WebDriver) ext
     ) ++ extraExpectations
 
     PageUtil.assertPage(
+      baseUrl             = baseUrl,
       path                = path,
       h1                  = expectedH1,
       title               = PageUtil.standardTitle(expectedH1),

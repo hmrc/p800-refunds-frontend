@@ -18,6 +18,7 @@ package pagespecs.pagesupport
 
 import org.openqa.selenium.WebDriver
 import org.scalatestplus.selenium.WebBrowser._
+import pagespecs.pagesupport.PageUtil.Xpath
 
 abstract class Page(
     baseUrl:           String,
@@ -32,14 +33,16 @@ abstract class Page(
   def clickBackButtonInBrowser()(implicit webDriver: WebDriver): Unit = webDriver.navigate().back()
   def clickSignOut()(implicit webDriver: WebDriver): Unit = PageUtil.clickByClassName("hmrc-sign-out-nav__link")
   def clickSubmit()(implicit webDriver: WebDriver): Unit = PageUtil.clickByIdOrName("submit")
+  def clickServiceName()(implicit webDriver: WebDriver): Unit = PageUtil.clickByXpath(Xpath.serviceName)
 
   protected def withPageClue[A](testF: => A)(implicit webDriver: WebDriver): A = PageUtil.withPageClue(path)(testF)
 
   def assertPageIsDisplayedWithTechnicalDifficultiesError(): Unit = withPageClue {
     PageUtil.assertPage(
-      path  = path,
-      h1    = "Sorry, there is a problem with the service",
-      title = PageUtil.standardTitle("Sorry, there is a problem with the service"),
+      baseUrl = baseUrl,
+      path    = path,
+      h1      = "Sorry, there is a problem with the service",
+      title   = PageUtil.standardTitle("Sorry, there is a problem with the service"),
       ContentExpectation(
         atXpath       = PageUtil.Xpath.mainContent,
         expectedLines = """Try again later.
@@ -53,9 +56,10 @@ abstract class Page(
 
   def assertPageIsDisplayedWithTechnicalDifficultiesErrorInWelsh(): Unit = withPageClue {
     PageUtil.assertPage(
-      path  = path,
-      h1    = "Mae’n ddrwg gennym, mae problem gyda’r gwasanaeth",
-      title = PageUtil.standardTitleInWelsh("Mae’n ddrwg gennym, mae problem gyda’r gwasanaeth"),
+      baseUrl = baseUrl,
+      path    = path,
+      h1      = "Mae’n ddrwg gennym, mae problem gyda’r gwasanaeth",
+      title   = PageUtil.standardTitleInWelsh("Mae’n ddrwg gennym, mae problem gyda’r gwasanaeth"),
       ContentExpectation(
         atXpath       = PageUtil.Xpath.mainContent,
         expectedLines = """Rhowch gynnig arall arni yn nes ymlaen.

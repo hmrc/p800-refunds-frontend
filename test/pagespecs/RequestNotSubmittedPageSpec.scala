@@ -24,4 +24,5 @@ class RequestNotSubmittedPageSpec extends ItSpec {
     pages.requestNotSubmittedPage.open()
     pages.requestNotSubmittedPage.assertPageIsDisplayed()
   }
+
 }

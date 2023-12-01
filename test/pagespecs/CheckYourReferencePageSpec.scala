@@ -16,7 +16,6 @@
 
 package pagespecs
 
-import testdata.TdAll
 import testsupport.ItSpec
 import testsupport.stubs.ReferenceValidationConnectorStub
 
@@ -24,8 +23,8 @@ class CheckYourReferencePageSpec extends ItSpec {
 
   override def beforeEach(): Unit = {
     super.beforeEach()
-    addJourneyIdToSession(TdAll.journeyId)
-    upsertJourneyToDatabase(TdAll.journeyWhatIsYourP800Reference)
+    addJourneyIdToSession(tdAll.journeyId)
+    upsertJourneyToDatabase(tdAll.journeyWhatIsYourP800Reference)
   }
 
   "Selecting 'Yes' with a valid reference redirects to 'Do you want your refund via bank transfer?' page" in {
@@ -69,4 +68,5 @@ class CheckYourReferencePageSpec extends ItSpec {
     pages.checkYourReferencePage.clickSubmit()
     pages.checkYourReferencePage.assertPageShowsWithErrors()
   }
+
 }

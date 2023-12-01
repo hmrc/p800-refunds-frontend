@@ -17,7 +17,6 @@
 package pagespecs
 
 import models.FullName
-import testdata.TdAll
 import testsupport.ItSpec
 
 class WhatIsYourFullNamePageSpec extends ItSpec {
@@ -25,8 +24,8 @@ class WhatIsYourFullNamePageSpec extends ItSpec {
   override def beforeEach(): Unit = {
     super.beforeEach()
 
-    addJourneyIdToSession(TdAll.journeyId)
-    upsertJourneyToDatabase(TdAll.journeyDoYouWantYourRefundViaBankTransferYes)
+    addJourneyIdToSession(tdAll.journeyId)
+    upsertJourneyToDatabase(tdAll.journeyDoYouWantYourRefundViaBankTransferYes)
   }
 
   "/what-is-your-full-name renders the 'What is your full name?' page" in {
@@ -37,7 +36,7 @@ class WhatIsYourFullNamePageSpec extends ItSpec {
   "Entering a valid full name and clicking 'Continue' redirects to 'What is your date of birth?' page" in {
     pages.whatIsYourFullNamePage.open()
     pages.whatIsYourFullNamePage.assertPageIsDisplayed()
-    pages.whatIsYourFullNamePage.enterFullName(TdAll.fullName)
+    pages.whatIsYourFullNamePage.enterFullName(tdAll.fullName)
     pages.whatIsYourFullNamePage.clickSubmit()
     pages.whatIsYourDateOfBirthPage.assertPageIsDisplayed()
   }
@@ -135,4 +134,5 @@ class WhatIsYourFullNamePageSpec extends ItSpec {
     pages.whatIsYourFullNamePage.clickBackButton()
     pages.weNeedYouToConfirmYourIdentityPage.assertPageIsDisplayed()
   }
+
 }

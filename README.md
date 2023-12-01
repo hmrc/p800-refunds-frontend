@@ -38,7 +38,7 @@ Journey states correspond to the result of the submission on pages (or endpoints
 ```mermaid
 flowchart TD;
 
-    govukpage[\Claim an income tax refund a gov.uk page\]
+    govukpage[\Get an Income Tax refund a gov.uk page\]
     -- User clicked `/start` link on gov.uk page.
     A new journey is created and user is navigated to the JourneyDoYouWantToSignIn page
     --> JourneyStarted

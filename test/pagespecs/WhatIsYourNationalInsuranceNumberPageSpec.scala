@@ -18,15 +18,14 @@ package pagespecs
 
 import models.NationalInsuranceNumber
 import testsupport.ItSpec
-import testdata.TdAll
 
 class WhatIsYourNationalInsuranceNumberPageSpec extends ItSpec {
 
   override def beforeEach(): Unit = {
     super.beforeEach()
 
-    addJourneyIdToSession(TdAll.journeyId)
-    upsertJourneyToDatabase(TdAll.journeyWhatIsYourDateOfBirth)
+    addJourneyIdToSession(tdAll.journeyId)
+    upsertJourneyToDatabase(tdAll.journeyWhatIsYourDateOfBirth)
   }
 
   "/what-is-your-national-insurance-number renders the what is your national insurance number page" in {
@@ -34,7 +33,7 @@ class WhatIsYourNationalInsuranceNumberPageSpec extends ItSpec {
     pages.whatIsYourNationalInsuranceNumberPage.assertPageIsDisplayed()
   }
 
-  Seq(TdAll.nationalInsuranceNumber.value, "aa000000a", "AA000000A.", "MA 00 00 03 A").foreach { nino =>
+  Seq(tdAll.nationalInsuranceNumber.value, "aa000000a", "AA000000A.", "MA 00 00 03 A").foreach { nino =>
     s"Entering a valid NINO ($nino) and clicking 'Continue' redirects user to 'Check your answers' page" in {
       pages.whatIsYourNationalInsuranceNumberPage.open()
       pages.whatIsYourNationalInsuranceNumberPage.assertPageIsDisplayed()
@@ -69,8 +68,9 @@ class WhatIsYourNationalInsuranceNumberPageSpec extends ItSpec {
   }
 
   "Prepopulate the form if the user has already entered it" in {
-    upsertJourneyToDatabase(TdAll.journeyWhatIsYourNationalInsuranceNumber)
+    upsertJourneyToDatabase(tdAll.journeyWhatIsYourNationalInsuranceNumber)
     pages.whatIsYourNationalInsuranceNumberPage.open()
     pages.whatIsYourNationalInsuranceNumberPage.assertDataPrepopulated("MA000003A")
   }
+
 }
