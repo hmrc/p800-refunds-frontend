@@ -25,27 +25,27 @@ object TdSupport {
 
   implicit class FakeRequestOps[T](r: FakeRequest[T]) {
 
-    def withAuthToken(authToken: String = TdAll.authToken): FakeRequest[T] = r.withSession((SessionKeys.authToken, authToken))
+    def withAuthToken(authToken: String = TdAll.tdAll.authToken): FakeRequest[T] = r.withSession((SessionKeys.authToken, authToken))
 
     def withAkamaiReputationHeader(
-        akamaiReputationValue: String = TdAll.akamaiReputationValue
+        akamaiReputationValue: String = TdAll.tdAll.akamaiReputationValue
     ): FakeRequest[T] = r.withHeaders(
       HeaderNames.akamaiReputation -> akamaiReputationValue
     )
 
-    def withRequestId(requestId: String = TdAll.requestId): FakeRequest[T] = r.withHeaders(
+    def withRequestId(requestId: String = TdAll.tdAll.requestId): FakeRequest[T] = r.withHeaders(
       HeaderNames.xRequestId -> requestId
     )
 
-    def withTrueClientIp(ip: String = TdAll.trueClientIp): FakeRequest[T] = r.withHeaders(
+    def withTrueClientIp(ip: String = TdAll.tdAll.trueClientIp): FakeRequest[T] = r.withHeaders(
       HeaderNames.trueClientIp -> ip
     )
 
-    def withTrueClientPort(port: String = TdAll.trueClientPort): FakeRequest[T] = r.withHeaders(
+    def withTrueClientPort(port: String = TdAll.tdAll.trueClientPort): FakeRequest[T] = r.withHeaders(
       HeaderNames.trueClientPort -> port
     )
 
-    def withDeviceId(deviceId: String = TdAll.deviceIdInRequest): FakeRequest[T] = r.withHeaders(
+    def withDeviceId(deviceId: String = TdAll.tdAll.deviceIdInRequest): FakeRequest[T] = r.withHeaders(
       HeaderNames.deviceID -> deviceId
     )
   }

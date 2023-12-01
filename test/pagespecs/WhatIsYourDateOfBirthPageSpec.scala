@@ -16,7 +16,6 @@
 
 package pagespecs
 
-import testdata.TdAll
 import testsupport.ItSpec
 
 import java.time.{LocalDate, LocalDateTime}
@@ -25,8 +24,8 @@ class WhatIsYourDateOfBirthPageSpec extends ItSpec {
 
   override def beforeEach(): Unit = {
     super.beforeEach()
-    addJourneyIdToSession(TdAll.journeyId)
-    upsertJourneyToDatabase(TdAll.journeyWhatIsYourFullName)
+    addJourneyIdToSession(tdAll.journeyId)
+    upsertJourneyToDatabase(tdAll.journeyWhatIsYourFullName)
   }
 
   "/what-is-your-date-of-birth renders the what is your date of birth page" in {
@@ -92,7 +91,7 @@ class WhatIsYourDateOfBirthPageSpec extends ItSpec {
   }
 
   "Prepopulate the form if the user has already entered it" in {
-    upsertJourneyToDatabase(TdAll.journeyWhatIsYourDateOfBirth)
+    upsertJourneyToDatabase(tdAll.journeyWhatIsYourDateOfBirth)
     pages.whatIsYourDateOfBirthPage.open()
     pages.whatIsYourDateOfBirthPage.assertDataPrepopulated("1", "1", "2000")
   }
@@ -177,7 +176,7 @@ class WhatIsYourDateOfBirthPageSpec extends ItSpec {
   "Submitting a DOB that is below the minimum allowed age of 16 years (e.g. 15 years and 364 days and below)" in {
     val `not quite 16 years ago` = LocalDate.now().minusYears(16L).plusDays(1L)
     // i.e. format
-    val `16 years ago expected date message` = LocalDate.now().minusYears(16L).format(TdAll.gdsDateTimeFormatter)
+    val `16 years ago expected date message` = LocalDate.now().minusYears(16L).format(tdAll.gdsDateTimeFormatter)
     pages.whatIsYourDateOfBirthPage.open()
     pages.whatIsYourDateOfBirthPage.assertPageIsDisplayed()
     pages.whatIsYourDateOfBirthPage.enterDayOfMonth(`not quite 16 years ago`.getDayOfMonth.toString)
@@ -189,7 +188,7 @@ class WhatIsYourDateOfBirthPageSpec extends ItSpec {
 
   "Submitting a DOB that is above the maximum allowed age of 110 years" in {
     val `110 Years and one day ago` = LocalDate.now().minusYears(110L).minusDays(1L)
-    val `110 years ago expected date message` = LocalDate.now().minusYears(110L).format(TdAll.gdsDateTimeFormatter)
+    val `110 years ago expected date message` = LocalDate.now().minusYears(110L).format(tdAll.gdsDateTimeFormatter)
     pages.whatIsYourDateOfBirthPage.open()
     pages.whatIsYourDateOfBirthPage.assertPageIsDisplayed()
     pages.whatIsYourDateOfBirthPage.enterDayOfMonth(`110 Years and one day ago`.getDayOfMonth.toString)

@@ -48,7 +48,8 @@ trait ItSpec extends AnyFreeSpecLike
   private val baseUrl: String = s"http://localhost:${testServerPort.toString}"
   private val databaseName: String = "p800-refunds-frontend-it"
   lazy val webdriverUrl: String = s"http://localhost:${port.toString}"
-  lazy val frozenInstant: Instant = TdAll.instant
+  lazy val tdAll: TdAll = TdAll()
+  lazy val frozenInstant: Instant = tdAll.instant
   lazy val clock: Clock = Clock.fixed(frozenInstant, ZoneId.of("UTC"))
 
   protected implicit val webDriver: WebDriver = new HtmlUnitDriver()

@@ -16,15 +16,14 @@
 
 package pagespecs
 
-import testdata.TdAll
 import testsupport.ItSpec
 
 class DoYouWantYourRefundViaBankTransferPageSpec extends ItSpec {
 
   override def beforeEach(): Unit = {
     super.beforeEach()
-    addJourneyIdToSession(TdAll.journeyId)
-    upsertJourneyToDatabase(TdAll.journeyCheckYourReferenceValid)
+    addJourneyIdToSession(tdAll.journeyId)
+    upsertJourneyToDatabase(tdAll.journeyCheckYourReferenceValid)
   }
 
   "Selecting 'Yes' redirects to ConfirmYourIdentityPage" in {

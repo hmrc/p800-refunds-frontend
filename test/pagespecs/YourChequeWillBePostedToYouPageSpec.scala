@@ -16,15 +16,14 @@
 
 package pagespecs
 
-import testdata.TdAll
 import testsupport.ItSpec
 
 class YourChequeWillBePostedToYouPageSpec extends ItSpec {
 
   override def beforeEach(): Unit = {
     super.beforeEach()
-    addJourneyIdToSession(TdAll.journeyId)
-    upsertJourneyToDatabase(TdAll.journeyDoYouWantYourRefundViaBankTransferNo)
+    addJourneyIdToSession(tdAll.journeyId)
+    upsertJourneyToDatabase(tdAll.journeyDoYouWantYourRefundViaBankTransferNo)
   }
 
   "/your-cheque-will-be-posted-to-you renders your cheque will be posted page" in {
