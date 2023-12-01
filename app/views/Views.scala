@@ -32,6 +32,7 @@ class Views @Inject() (
     val requestReceivedPage:                    views.html.chequejourney.RequestReceivedPage,
     val requestNotSubmittedPage:                views.html.RequestNotSubmittedPage,
     val weNeedYouToConfirmYourIdentityPage:     views.html.WeNeedYouToConfirmYourIdentityPage,
+    val giveYourConsentPage:                    views.html.GiveYourConsentPage,
     val whatIsYourFullNamePage:                 views.html.WhatIsYourFullNamePage,
     val whatIsYourDateOfBirthPage:              views.html.WhatIsYourDateOfBirthPage,
     val whatIsYourNationalInsuranceNumberPage:  views.html.WhatIsYourNationalInsuranceNumberPage,

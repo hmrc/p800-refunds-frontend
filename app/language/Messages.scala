@@ -138,6 +138,53 @@ object Messages {
     )
   }
 
+  object GiveYourConsent {
+    val `Give your consent`: Message = Message(
+      english = "Give your consent"
+    )
+
+    def `By choosing approve`(bank: String, amount: String): Message = Message(
+      english = s"""By choosing approve, you will be redirected to <strong>$bank</strong> to securely log in and approve your refund of <strong>£$amount</strong>. <a href="#" class="govuk-link">Change my bank</a>."""
+    )
+
+    val `This is a service provided by Ecospend`: Message = Message(
+      english = "This is a service provided by Ecospend, an authorised payment institution regulated by the Financial Conduct Authority (FCA), which will initiate a refund directly from HMRC to your bank."
+    )
+
+    val `Ecospend will have one-off access to`: Message = Message(
+      english = "Ecospend will have one-off access to:"
+    )
+
+    val `the name on your account`: Message = Message(
+      english = "the name on your account"
+    )
+
+    val `your account number and sort code`: Message = Message(
+      english = "your account number and sort code"
+    )
+
+    val `your transactions`: Message = Message(
+      english = "your transactions (this is just to confirm that your bank account is real and protect your security)."
+    )
+
+    val `Ecospend will not store`: Message = Message(
+      english = "Ecospend will not store or share any of your data."
+    )
+
+    val `HMRC cannot see your transactions`: Message = Message(
+      english = "HMRC cannot see your transactions or online bank account."
+    )
+
+    val `Approve this refund`: Message = Message(
+      english = "Approve this refund"
+    )
+
+    val `Choose another way to get my money`: Message = Message(
+      english = "Choose another way to get my money"
+    )
+
+  }
+
   object ChooseAnotherOption {
     val `Choose another way to receive your refund`: Message = Message(
       english = "Choose another way to receive your refund"
@@ -151,7 +198,7 @@ object Messages {
       english = "Cheque"
     )
   }
-      
+
   object CheckYourAnswersMessages {
 
     val `Check your answers`: Message = Message(

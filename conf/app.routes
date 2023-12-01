@@ -26,9 +26,10 @@ GET         /your-cheque-will-be-posted-to-you                               con
 POST        /your-cheque-will-be-posted-to-you                               controllers.YourChequeWillBePostedToYouController.post
 
 #TODO: change url to reflect cheque in the name, there will be another request-received page so we want to distinguish between them
-GET        /request-received                                                                controllers.RequestReceivedController.get
-GET        /request-not-submitted                                                           controllers.RequestNotSubmittedController.get
-GET        /choose-another-option                                                           controllers.ChooseAnotherOptionController.get
+GET        /request-received                                                 controllers.RequestReceivedController.get
+GET        /request-not-submitted                                            controllers.RequestNotSubmittedController.get
+GET        /choose-another-option                                            controllers.ChooseAnotherOptionController.get
+GET        /give-your-consent                                                controllers.GiveYourConsentController.get
 
 #we-need-you-to-confirm-your-identity:
 GET         /we-need-you-to-confirm-your-identity                            controllers.WeNeedYouToConfirmYourIdentityController.get
