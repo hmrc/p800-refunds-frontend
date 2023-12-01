@@ -42,8 +42,7 @@ class DoYouWantYourRefundViaBankTransferPageSpec extends ItSpec {
     pages.yourChequeWillBePostedToYouPage.assertPageIsDisplayed()
   }
 
-  //TODO: Pawel
-  "Clicking 'Back' redirects back to start page" ignore {
+  "Clicking 'Back' redirects back to start page" in {
     pages.doYouWantYourRefundViaBankTransferPage.open()
     pages.doYouWantYourRefundViaBankTransferPage.assertPageIsDisplayed()
     pages.doYouWantYourRefundViaBankTransferPage.clickBackButton()
