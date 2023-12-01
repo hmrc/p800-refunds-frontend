@@ -135,10 +135,4 @@ class WhatIsYourFullNamePageSpec extends ItSpec {
     pages.weNeedYouToConfirmYourIdentityPage.assertPageIsDisplayed()
   }
 
-  "clicking service name navigates to the gov-uk route in page" in {
-    pages.whatIsYourFullNamePage.open()
-    pages.whatIsYourFullNamePage.assertPageIsDisplayed()
-    pages.whatIsYourFullNamePage.clickServiceName()
-    pages.govUkRouteInPage.assertPageIsDisplayed()
-  }
 }

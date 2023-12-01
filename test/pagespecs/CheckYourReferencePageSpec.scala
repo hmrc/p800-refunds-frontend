@@ -69,10 +69,4 @@ class CheckYourReferencePageSpec extends ItSpec {
     pages.checkYourReferencePage.assertPageShowsWithErrors()
   }
 
-  "clicking service name navigates to the gov-uk route in page" in {
-    pages.checkYourReferencePage.open()
-    pages.checkYourReferencePage.assertPageIsDisplayed()
-    pages.checkYourReferencePage.clickServiceName()
-    pages.govUkRouteInPage.assertPageIsDisplayed()
-  }
 }

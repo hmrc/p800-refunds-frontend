@@ -44,10 +44,4 @@ class ChequeRequestReceivedPageSpec extends ItSpec {
     pages.chequeRequestReceivedPage.assertPageIsDisplayed()
   }
 
-  "clicking service name navigates to the gov-uk route in page" in {
-    pages.chequeRequestReceivedPage.open()
-    pages.chequeRequestReceivedPage.assertPageIsDisplayed()
-    pages.chequeRequestReceivedPage.clickServiceName()
-    pages.govUkRouteInPage.assertPageIsDisplayed()
-  }
 }

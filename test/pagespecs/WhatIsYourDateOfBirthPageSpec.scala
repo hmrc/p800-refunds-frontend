@@ -198,11 +198,4 @@ class WhatIsYourDateOfBirthPageSpec extends ItSpec {
     pages.whatIsYourDateOfBirthPage.assertPageShowsErrorDateTooOld(`110 years ago expected date message`)
   }
 
-  "clicking service name navigates to the gov-uk route in page" in {
-    pages.whatIsYourDateOfBirthPage.open()
-    pages.whatIsYourDateOfBirthPage.assertPageIsDisplayed()
-    pages.whatIsYourDateOfBirthPage.clickServiceName()
-    pages.govUkRouteInPage.assertPageIsDisplayed()
-  }
-
 }

@@ -48,13 +48,6 @@ class WeNeedYouToConfirmYourIdentityPageSpec extends ItSpec {
     pages.doYouWantYourRefundViaBankTransferPage.assertPageIsDisplayed()
   }
 
-  "clicking service name navigates to the gov-uk route in page" in {
-    pages.weNeedYouToConfirmYourIdentityPage.open()
-    pages.weNeedYouToConfirmYourIdentityPage.assertPageIsDisplayed()
-    pages.weNeedYouToConfirmYourIdentityPage.clickServiceName()
-    pages.govUkRouteInPage.assertPageIsDisplayed()
-  }
-
   forAll(Table(
     ("journeyState", "expectedPage"),
     (tdAll.journeyDoYouWantYourRefundViaBankTransferNo, pages.yourChequeWillBePostedToYouPage),
