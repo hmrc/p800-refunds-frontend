@@ -30,6 +30,9 @@ GET        /request-received                                                 con
 GET        /request-not-submitted                                            controllers.RequestNotSubmittedController.get
 GET        /choose-another-option                                            controllers.ChooseAnotherOptionController.get
 GET        /give-your-consent                                                controllers.GiveYourConsentController.get
+GET        /verifying-bank-account                                           controllers.VerifyBankAccountController.get
+
+
 
 #we-need-you-to-confirm-your-identity:
 GET         /we-need-you-to-confirm-your-identity                            controllers.WeNeedYouToConfirmYourIdentityController.get
