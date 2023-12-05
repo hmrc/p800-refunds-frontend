@@ -14,24 +14,15 @@
  * limitations under the License.
  */
 
-package controllers
+package testsupport.stubs
 
-import action.Actions
-import play.api.mvc._
-import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
-import views.Views
+import com.github.tomakehurst.wiremock.stubbing.StubMapping
+import testsupport.stubs.WireMockHelpers._
 
-import javax.inject.{Inject, Singleton}
+object ReferenceValidationStub {
 
-@Singleton
-class WeHaveConfirmedYourIdentityController @Inject() (
-    mcc:     MessagesControllerComponents,
-    views:   Views,
-    actions: Actions
-) extends FrontendController(mcc) {
+  val url = "/validate-reference"
 
-  val get: Action[AnyContent] = actions.journeyAction { implicit request =>
-    Ok(views.weHaveConfirmedYourIdentityPage())
-  }
-
+  def validateReference2xxValid: StubMapping = stubForPostWithResponseBody(url, """{ "isValid": true }""")
+  def validateReference2xxInvalid: StubMapping = stubForPostWithResponseBody(url, """{ "isValid": false }""")
 }

@@ -14,24 +14,19 @@
  * limitations under the License.
  */
 
-package controllers
+package models
 
-import action.Actions
-import play.api.mvc._
-import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
-import views.Views
+import play.api.libs.json.{Format, Json, OFormat}
 
-import javax.inject.{Inject, Singleton}
+final case class IdentityVerificationRequest(nino: NationalInsuranceNumber)
 
-@Singleton
-class WeHaveConfirmedYourIdentityController @Inject() (
-    mcc:     MessagesControllerComponents,
-    views:   Views,
-    actions: Actions
-) extends FrontendController(mcc) {
+object IdentityVerificationRequest {
+  implicit val format: Format[IdentityVerificationRequest] = Json.format[IdentityVerificationRequest]
+}
 
-  val get: Action[AnyContent] = actions.journeyAction { implicit request =>
-    Ok(views.weHaveConfirmedYourIdentityPage())
-  }
+final case class IdentityVerificationResponse(identityVerified: IdentityVerified, amount: AmountInPence)
 
+object IdentityVerificationResponse {
+  @SuppressWarnings(Array("org.wartremover.warts.Any"))
+  implicit val format: OFormat[IdentityVerificationResponse] = Json.format[IdentityVerificationResponse]
 }

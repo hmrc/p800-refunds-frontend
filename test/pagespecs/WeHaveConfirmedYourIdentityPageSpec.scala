@@ -20,6 +20,12 @@ import testsupport.ItSpec
 
 class WeHaveConfirmedYourIdentityPageSpec extends ItSpec {
 
+  override def beforeEach(): Unit = {
+    super.beforeEach()
+    addJourneyIdToSession(tdAll.journeyId)
+    upsertJourneyToDatabase(tdAll.journeyCheckYourAnswers)
+  }
+
   "page renders correctly" in {
     pages.weHaveConfirmedYourIdentityPage.open()
     pages.weHaveConfirmedYourIdentityPage.assertPageIsDisplayed()
@@ -37,12 +43,6 @@ class WeHaveConfirmedYourIdentityPageSpec extends ItSpec {
     pages.weHaveConfirmedYourIdentityPage.assertPageIsDisplayed()
     pages.weHaveConfirmedYourIdentityPage.clickBackButton()
     pages.checkYourAnswersPage.assertPageIsDisplayed()
-  }
-
-  override def beforeEach(): Unit = {
-    super.beforeEach()
-    addJourneyIdToSession(tdAll.journeyId)
-    upsertJourneyToDatabase(tdAll.journeyCheckYourAnswers)
   }
 
 }

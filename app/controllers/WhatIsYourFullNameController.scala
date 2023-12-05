@@ -25,7 +25,6 @@ import play.api.mvc._
 import requests.RequestSupport
 import services.JourneyService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
-import util.Errors
 import views.Views
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -64,10 +63,31 @@ class WhatIsYourFullNameController @Inject() (
       case j: JourneyDoYouWantYourRefundViaBankTransferNo  => JourneyRouter.sendToCorrespondingPageF(j)
       case j: JourneyDoYouWantYourRefundViaBankTransferYes => processForm(j)
       case j: JourneyCheckYourAnswersChange                => processForm(j)
-      case _: JAfterDoYouWantYourRefundViaBankTransferYes =>
-        Errors.throwServerErrorException(s"This endpoint supports only ${classOf[JourneyDoYouWantYourRefundViaBankTransferYes].toString}")
-      // TODO: Discuss alternative approach
+      case j: JAfterDoYouWantYourRefundViaBankTransferYes  => processFormJourneyAlreadyHasFullName(j)
     }
+  }
+
+  private def processFormJourneyAlreadyHasFullName(journey: JAfterDoYouWantYourRefundViaBankTransferYes)(implicit request: Request[_]): Future[Result] = {
+      def updatedJourney(fullName: FullName): Journey = journey match {
+        case j: JourneyWhatIsYourFullName                => j.copy(fullName = fullName)
+        case j: JourneyWhatIsYourDateOfBirth             => j.copy(fullName = fullName)
+        case j: JourneyWhatIsYourNationalInsuranceNumber => j.copy(fullName = fullName)
+        case j: JourneyCheckYourAnswersChange            => j.into[JourneyWhatIsYourFullName].withFieldConst(_.fullName, fullName).transform
+        case j: JourneyCheckYourAnswers                  => j.into[JourneyWhatIsYourFullName].withFieldConst(_.fullName, fullName).transform
+        case j: JourneyIdentityVerified                  => j.into[JourneyWhatIsYourFullName].withFieldConst(_.fullName, fullName).transform
+        case j: JourneyIdentityNotVerified               => j.into[JourneyWhatIsYourFullName].withFieldConst(_.fullName, fullName).transform
+      }
+    WhatIsYourFullNameForm
+      .form
+      .bindFromRequest()
+      .fold(
+        formWithErrors => Future.successful(BadRequest(views.whatIsYourFullNamePage(formWithErrors))),
+        fullName => {
+          journeyService
+            .upsert(updatedJourney(fullName))
+            .map(_ => Redirect(controllers.routes.WhatIsYourDateOfBirthController.get))
+        }
+      )
   }
 
   private def processForm(journey: JourneyDoYouWantYourRefundViaBankTransferYes)(implicit request: Request[_]): Future[Result] =

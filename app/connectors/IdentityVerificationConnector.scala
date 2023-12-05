@@ -17,7 +17,7 @@
 package connectors
 
 import config.AppConfig
-import models.ReferenceValidationRequest
+import models.IdentityVerificationRequest
 import play.api.mvc.RequestHeader
 import requests.RequestSupport._
 import uk.gov.hmrc.http.{HttpClient, HttpResponse}
@@ -26,16 +26,18 @@ import uk.gov.hmrc.http.HttpReads.Implicits._
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
+//todo maybe rename this to NPS connector or something?
 @Singleton
-class ReferenceValidationConnector @Inject() (
+class IdentityVerificationConnector @Inject() (
     appConfig:  AppConfig,
     httpClient: HttpClient
 )(implicit ec: ExecutionContext) {
 
   //todo update the url once we know what it is from the spec.
-  private val validateUrl: String = appConfig.ExternalApiCalls.p800ReferenceValidationBaseUrl + "/validate-reference"
+  private val identityVerificationUrl: String = appConfig.ExternalApiCalls.npsBaseUrl + "/verify-identity"
 
-  def validateReference(referenceValidateRequest: ReferenceValidationRequest)(implicit requestHeader: RequestHeader): Future[HttpResponse] = {
-    httpClient.POST[ReferenceValidationRequest, HttpResponse](validateUrl, referenceValidateRequest)
+  def verifyIdentity(identityVerificationRequest: IdentityVerificationRequest)(implicit requestHeader: RequestHeader): Future[HttpResponse] = {
+    httpClient.POST[IdentityVerificationRequest, HttpResponse](identityVerificationUrl, identityVerificationRequest)
   }
+
 }

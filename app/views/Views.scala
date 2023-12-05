@@ -16,8 +16,6 @@
 
 package views
 
-import views.html.testonly.{GovUkStubPage, IncomeTaxGeneralEnquiriesStubPage, PtaSignInStubPage}
-
 import javax.inject.Inject
 
 class Views @Inject() (
@@ -26,25 +24,26 @@ class Views @Inject() (
     val doYouWantToSignInPage:                  views.html.DoYouWantToSignInPage,
     val enterP800ReferencePage:                 views.html.EnterP800ReferencePage,
     val checkYourReferencePage:                 views.html.CheckYourReferencePage,
-    val checkYourAnswersPage:                   views.html.CheckYourAnswersPage,
+    val checkYourAnswersPage:                   views.html.identityverification.CheckYourAnswersPage,
     val cannotConfirmReferencePage:             views.html.CannotConfirmReferencePage,
     val yourChequeWillBePostedToYouPage:        views.html.chequejourney.YourChequeWillBePostedToYouPage,
     val requestReceivedPage:                    views.html.chequejourney.RequestReceivedPage,
+    val weNeedYouToConfirmYourIdentityPage:     views.html.identityverification.WeNeedYouToConfirmYourIdentityPage,
+    val whatIsYourFullNamePage:                 views.html.identityverification.WhatIsYourFullNamePage,
+    val whatIsYourDateOfBirthPage:              views.html.identityverification.WhatIsYourDateOfBirthPage,
+    val whatIsYourNationalInsuranceNumberPage:  views.html.identityverification.WhatIsYourNationalInsuranceNumberPage,
+    val weHaveConfirmedYourIdentityPage:        views.html.identityverification.WeHaveConfirmedYourIdentityPage,
+    val weCannotConfirmYourIdentityPage:        views.html.identityverification.WeCannotConfirmYourIdentityPage,
     val requestNotSubmittedPage:                views.html.RequestNotSubmittedPage,
-    val weNeedYouToConfirmYourIdentityPage:     views.html.WeNeedYouToConfirmYourIdentityPage,
     val giveYourConsentPage:                    views.html.GiveYourConsentPage,
     val verifyBankAccountPage:                  views.html.VerifyBankAccountPage,
-    val whatIsYourFullNamePage:                 views.html.WhatIsYourFullNamePage,
-    val whatIsYourDateOfBirthPage:              views.html.WhatIsYourDateOfBirthPage,
-    val whatIsYourNationalInsuranceNumberPage:  views.html.WhatIsYourNationalInsuranceNumberPage,
     val doYouWantYourRefundViaBankTransferPage: views.html.DoYouWantYourRefundViaBankTransferPage,
-    val weHaveConfirmedYourIdentityPage:        views.html.WeHaveConfirmedYourIdentityPage,
     val chooseAnotherOptionPage:                views.html.ChooseAnotherOptionPage
 )
 
 class ViewsTestOnly @Inject() (
     val landingTestOnlyPage:               views.html.testonly.LandingTestOnlyPage,
-    val incomeTaxGeneralEnquiriesStubPage: IncomeTaxGeneralEnquiriesStubPage,
-    val govUkStubPage:                     GovUkStubPage,
-    val ptaSignInStubPage:                 PtaSignInStubPage
+    val incomeTaxGeneralEnquiriesStubPage: views.html.testonly.IncomeTaxGeneralEnquiriesStubPage,
+    val govUkStubPage:                     views.html.testonly.GovUkStubPage,
+    val ptaSignInStubPage:                 views.html.testonly.PtaSignInStubPage
 )

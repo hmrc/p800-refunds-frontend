@@ -17,7 +17,7 @@
 package pagespecs
 
 import testsupport.ItSpec
-import testsupport.stubs.ReferenceValidationConnectorStub
+import testsupport.stubs.ReferenceValidationStub
 
 class CheckYourReferencePageSpec extends ItSpec {
 
@@ -28,7 +28,7 @@ class CheckYourReferencePageSpec extends ItSpec {
   }
 
   "Selecting 'Yes' with a valid reference redirects to 'Do you want your refund via bank transfer?' page" in {
-    ReferenceValidationConnectorStub.validateReference2xxValid
+    ReferenceValidationStub.validateReference2xxValid
 
     pages.checkYourReferencePage.open()
     pages.checkYourReferencePage.assertPageIsDisplayed()
@@ -38,7 +38,7 @@ class CheckYourReferencePageSpec extends ItSpec {
   }
 
   "Selecting 'Yes' with an invalid reference redirects to 'We cannot confirm your reference' page" in {
-    ReferenceValidationConnectorStub.validateReference2xxInvalid
+    ReferenceValidationStub.validateReference2xxInvalid
 
     pages.checkYourReferencePage.open()
     pages.checkYourReferencePage.assertPageIsDisplayed()

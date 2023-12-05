@@ -24,14 +24,18 @@ import views.Views
 import javax.inject.{Inject, Singleton}
 
 @Singleton
-class WeHaveConfirmedYourIdentityController @Inject() (
+class WeCannotConfirmYourIdentityController @Inject() (
     mcc:     MessagesControllerComponents,
     views:   Views,
     actions: Actions
 ) extends FrontendController(mcc) {
 
   val get: Action[AnyContent] = actions.journeyAction { implicit request =>
-    Ok(views.weHaveConfirmedYourIdentityPage())
+    Ok(views.weCannotConfirmYourIdentityPage())
+  }
+
+  val tryAgain: Action[AnyContent] = actions.journeyAction { _ =>
+    Redirect(routes.WeNeedYouToConfirmYourIdentityController.get)
   }
 
 }

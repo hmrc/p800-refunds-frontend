@@ -29,19 +29,22 @@ class AppConfig @Inject() (servicesConfig: ServicesConfig, configuration: Config
 
   val journeyRepoTtl: FiniteDuration = readFiniteDuration("mongodb.journey-repo-ttl")
 
-  val govUkRouteIn: String = readConfigAsValidUrlString("urls.govuk-route-in")
+  val govUkRouteIn: String = readConfigAsValidUrlString("urls.gov-uk.govuk-route-in")
 
   val ptaSignInUrl: String = readConfigAsValidUrlString("urls.pta-sign-in")
 
-  val incomeTaxGeneralEnquiriesUrl: String = readConfigAsValidUrlString("urls.income-tax-general-enquiries")
+  val incomeTaxGeneralEnquiriesUrl: String = readConfigAsValidUrlString("urls.gov-uk.income-tax-general-enquiries")
 
-  val contactHmrcChangeDetailsUrl: String = readConfigAsValidUrlString("urls.contact-hmrc-change-details")
+  val contactHmrcChangeDetailsUrl: String = readConfigAsValidUrlString("urls.gov-uk.contact-hmrc-change-details")
 
-  val generalEnquiriesUrl: String = readConfigAsValidUrlString("urls.general-enquiries")
+  val generalEnquiriesUrl: String = readConfigAsValidUrlString("urls.gov-uk.general-enquiries")
 
-  val lostNationalInsuranceNumberUrl: String = readConfigAsValidUrlString("urls.lost-national-insurance-number")
+  val lostNationalInsuranceNumberUrl: String = readConfigAsValidUrlString("urls.gov-uk.lost-national-insurance-number")
 
-  val p800RefundsStubsUrl: String = servicesConfig.baseUrl("p800-refunds-stubs")
+  object ExternalApiCalls {
+    val p800ReferenceValidationBaseUrl: String = servicesConfig.baseUrl("p800-reference-validation")
+    val npsBaseUrl: String = servicesConfig.baseUrl("nps")
+  }
 
   /**
    * The application loads the configuration from the provided `configPath` and checks if it's a valid URL.

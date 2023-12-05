@@ -14,16 +14,12 @@
  * limitations under the License.
  */
 
-package testsupport.stubs
+package models
 
-import com.github.tomakehurst.wiremock.stubbing.StubMapping
-import testsupport.stubs.WireMockHelpers._
+import play.api.libs.json.{Format, Json}
 
-object ReferenceValidationConnectorStub {
+final case class IdentityVerified(value: Boolean) extends AnyVal
 
-  val url = "/p800-refunds-stubs/validate-reference"
-
-  def validateReference2xxValid: StubMapping = stubForPostWithResponseBody(url, """{ "isValid": true }""")
-
-  def validateReference2xxInvalid: StubMapping = stubForPostWithResponseBody(url, """{ "isValid": false }""")
+object IdentityVerified {
+  implicit val format: Format[IdentityVerified] = Json.valueFormat[IdentityVerified]
 }

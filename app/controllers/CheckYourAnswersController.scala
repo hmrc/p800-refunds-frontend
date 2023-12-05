@@ -21,10 +21,10 @@ import io.scalaland.chimney.dsl._
 import language.Messages
 import models.dateofbirth.DateOfBirth
 import models.journeymodels._
-import models.{FullName, NationalInsuranceNumber}
+import models.{FullName, IdentityVerificationResponse, IdentityVerified, NationalInsuranceNumber}
 import play.api.mvc._
 import requests.RequestSupport
-import services.JourneyService
+import services.{IdentityVerificationService, JourneyService}
 import uk.gov.hmrc.govukfrontend.views.Aliases.{HtmlContent, Key, SummaryListRow, Value}
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryList
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
@@ -38,11 +38,12 @@ import scala.util.{Failure, Success, Try}
 
 @Singleton
 class CheckYourAnswersController @Inject() (
-    mcc:            MessagesControllerComponents,
-    requestSupport: RequestSupport,
-    journeyService: JourneyService,
-    views:          Views,
-    actions:        Actions
+    mcc:                         MessagesControllerComponents,
+    requestSupport:              RequestSupport,
+    journeyService:              JourneyService,
+    views:                       Views,
+    actions:                     Actions,
+    identityVerificationService: IdentityVerificationService
 )(implicit ec: ExecutionContext) extends FrontendController(mcc) {
 
   import requestSupport._
@@ -107,11 +108,24 @@ class CheckYourAnswersController @Inject() (
   }
 
   private def processForm(journey: JourneyWhatIsYourNationalInsuranceNumber)(implicit request: JourneyRequest[AnyContent]): Future[Result] = {
-    //TODO: Call NPS API to validate entered data
-    journeyService.upsert(
-      journey.into[JourneyCheckYourAnswers].transform
-    )
-      .map(_ => Redirect(controllers.routes.WeHaveConfirmedYourIdentityController.get))
+    for {
+      identityVerificationResponse <- identityVerificationService.verifyIdentity(journey.nationalInsuranceNumber)
+      (newJourney, redirect) = identityVerificationResponse match {
+        case idVerifiedResponse @ IdentityVerificationResponse(IdentityVerified(true), _) =>
+          val j: JourneyIdentityVerified = journey
+            .into[JourneyIdentityVerified]
+            .withFieldConst(_.identityVerificationResponse, idVerifiedResponse)
+            .transform
+          j -> controllers.routes.WeHaveConfirmedYourIdentityController.get
+        case idVerifiedResponse @ IdentityVerificationResponse(IdentityVerified(false), _) =>
+          val j: JourneyIdentityNotVerified = journey
+            .into[JourneyIdentityNotVerified]
+            .withFieldConst(_.identityVerificationResponse, idVerifiedResponse)
+            .transform
+          j -> controllers.routes.WeCannotConfirmYourIdentityController.get
+      }
+      _ <- journeyService.upsert(newJourney)
+    } yield Redirect(redirect)
   }
 
   def buildSummaryList(
@@ -165,7 +179,7 @@ class CheckYourAnswersController @Inject() (
     Try(DateOfBirth.asLocalDate(dateOfBirth)) match {
       case Success(date) => date.format(dateFormatter)
       case Failure(ex) =>
-        JourneyLogger.error(s"Error formatting date, investigate (the journey was not interrupted) [dateOfBirth:${dateOfBirth.toString}]", ex)
+        JourneyLogger.error(s"Error formatting date, investigate (the journey was not interrupted)", ex)
         s"${dateOfBirth.dayOfMonth.value} ${dateOfBirth.month.value} ${dateOfBirth.year.value} "
     }
   }
