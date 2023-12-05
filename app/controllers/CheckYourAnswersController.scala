@@ -21,7 +21,7 @@ import io.scalaland.chimney.dsl._
 import language.Messages
 import models.dateofbirth.DateOfBirth
 import models.journeymodels._
-import models.{FullName, IdentityVerificationResponse, NationalInsuranceNumber}
+import models.{FullName, IdentityVerificationResponse, IdentityVerified, NationalInsuranceNumber}
 import play.api.mvc._
 import requests.RequestSupport
 import services.{IdentityVerificationService, JourneyService}
@@ -108,14 +108,21 @@ class CheckYourAnswersController @Inject() (
   }
 
   private def processForm(journey: JourneyWhatIsYourNationalInsuranceNumber)(implicit request: JourneyRequest[AnyContent]): Future[Result] = {
-    //TODO: Update NPS call to get proper info and update types accordingly. Do we need to store the info? Need to check this at a later date.
     for {
       identityVerificationResponse <- identityVerificationService.verifyIdentity(journey.nationalInsuranceNumber)
       (newJourney, redirect) = identityVerificationResponse match {
-        case IdentityVerificationResponse(true) =>
-          journey.transformInto[JourneyIdentityVerified] -> controllers.routes.WeHaveConfirmedYourIdentityController.get
-        case IdentityVerificationResponse(false) =>
-          journey.transformInto[JourneyIdentityNotVerified] -> controllers.routes.WeCannotConfirmYourIdentityController.get
+        case idVerifiedResponse @ IdentityVerificationResponse(IdentityVerified(true), _) =>
+          val j: JourneyIdentityVerified = journey
+            .into[JourneyIdentityVerified]
+            .withFieldConst(_.identityVerificationResponse, idVerifiedResponse)
+            .transform
+          j -> controllers.routes.WeHaveConfirmedYourIdentityController.get
+        case idVerifiedResponse @ IdentityVerificationResponse(IdentityVerified(false), _) =>
+          val j: JourneyIdentityNotVerified = journey
+            .into[JourneyIdentityNotVerified]
+            .withFieldConst(_.identityVerificationResponse, idVerifiedResponse)
+            .transform
+          j -> controllers.routes.WeCannotConfirmYourIdentityController.get
       }
       _ <- journeyService.upsert(newJourney)
     } yield Redirect(redirect)
@@ -172,8 +179,7 @@ class CheckYourAnswersController @Inject() (
     Try(DateOfBirth.asLocalDate(dateOfBirth)) match {
       case Success(date) => date.format(dateFormatter)
       case Failure(ex) =>
-        //todo, check if we should be logging date of birth, potentially pii?
-        JourneyLogger.error(s"Error formatting date, investigate (the journey was not interrupted) [dateOfBirth:${dateOfBirth.toString}]", ex)
+        JourneyLogger.error(s"Error formatting date, investigate (the journey was not interrupted)", ex)
         s"${dateOfBirth.dayOfMonth.value} ${dateOfBirth.month.value} ${dateOfBirth.year.value} "
     }
   }

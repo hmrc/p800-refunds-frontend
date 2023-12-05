@@ -18,7 +18,7 @@ package models
 
 import play.api.libs.json.{Json, Format}
 
-final case class NationalInsuranceNumber(value: String)
+final case class NationalInsuranceNumber(value: String) extends AnyVal
 
 object NationalInsuranceNumber {
   implicit val formats: Format[NationalInsuranceNumber] = Json.valueFormat[NationalInsuranceNumber]

@@ -17,7 +17,7 @@
 package models.journeymodels
 
 import models.dateofbirth.DateOfBirth
-import models.{FullName, NationalInsuranceNumber, P800Reference}
+import models.{FullName, IdentityVerificationResponse, NationalInsuranceNumber, P800Reference}
 import play.api.libs.json.OFormat
 
 import java.time.{Clock, Instant}
@@ -281,8 +281,8 @@ final case class JourneyIdentityVerified(
     override val p800Reference:           P800Reference,
     override val fullName:                FullName,
     override val dateOfBirth:             DateOfBirth,
-    override val nationalInsuranceNumber: NationalInsuranceNumber
-//TODO: results of API calls, there will likely be info we need to store from the api call, maybe...
+    override val nationalInsuranceNumber: NationalInsuranceNumber,
+    identityVerificationResponse:         IdentityVerificationResponse
 ) extends Journey
   with JAfterStarted
   with JAfterDoYouWantToSignInNo
@@ -300,8 +300,8 @@ final case class JourneyIdentityNotVerified(
     override val p800Reference:           P800Reference,
     override val fullName:                FullName,
     override val dateOfBirth:             DateOfBirth,
-    override val nationalInsuranceNumber: NationalInsuranceNumber
-//TODO: results of API calls, there will likely be info we need to store from the api call, maybe...
+    override val nationalInsuranceNumber: NationalInsuranceNumber,
+    identityVerificationResponse:         IdentityVerificationResponse
 ) extends Journey
   with JAfterStarted
   with JAfterDoYouWantToSignInNo
@@ -360,7 +360,7 @@ sealed trait JAfterIdentityVerified extends Journey {
   val fullName: FullName
   val dateOfBirth: DateOfBirth
   val nationalInsuranceNumber: NationalInsuranceNumber
-  //todo we should probably store the result of the nps call, but not sure if we need to at the moment.
+  val identityVerificationResponse: IdentityVerificationResponse
 }
 
 sealed trait JBeforeDoYouWantToSignInNo extends Journey

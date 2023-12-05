@@ -30,9 +30,9 @@ import scala.concurrent.{ExecutionContext, Future}
 @Singleton
 class IdentityVerificationService @Inject() (identityVerificationConnector: IdentityVerificationConnector)(implicit ec: ExecutionContext) {
 
-  def verifyIdentity(nationalInsuranceNumber: NationalInsuranceNumber)(implicit requestHeader: RequestHeader): Future[IdentityVerificationResponse] =
+  def verifyIdentity(nationalInsuranceNumber: NationalInsuranceNumber)(implicit requestHeader: RequestHeader): Future[IdentityVerificationResponse] = {
     identityVerificationConnector
-      .verifyIdentity(IdentityVerificationRequest(nationalInsuranceNumber.value))
+      .verifyIdentity(IdentityVerificationRequest(nationalInsuranceNumber))
       .map { httpResponse: HttpResponse =>
         httpResponse.status match {
           case OK =>
@@ -41,7 +41,7 @@ class IdentityVerificationService @Inject() (identityVerificationConnector: Iden
           case _ =>
             throw UpstreamErrorResponse(httpResponse.body, httpResponse.status)
         }
-
       }
+  }
 
 }

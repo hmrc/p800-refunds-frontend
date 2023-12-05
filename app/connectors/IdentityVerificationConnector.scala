@@ -36,7 +36,8 @@ class IdentityVerificationConnector @Inject() (
   //todo update the url once we know what it is from the spec.
   private val identityVerificationUrl: String = appConfig.ExternalApiCalls.npsBaseUrl + "/verify-identity"
 
-  def verifyIdentity(identityVerificationRequest: IdentityVerificationRequest)(implicit requestHeader: RequestHeader): Future[HttpResponse] =
+  def verifyIdentity(identityVerificationRequest: IdentityVerificationRequest)(implicit requestHeader: RequestHeader): Future[HttpResponse] = {
     httpClient.POST[IdentityVerificationRequest, HttpResponse](identityVerificationUrl, identityVerificationRequest)
+  }
 
 }
