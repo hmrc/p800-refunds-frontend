@@ -67,19 +67,15 @@ class WhatIsYourFullNameController @Inject() (
     }
   }
 
-  //todo combine the three private defs into one, I think there is commonality between them
-  //todo check with others, do we want to update the journey and keep state - this allows us to retain info from previous inputs further down the journey
-  //or do we want to change into 'old' state before where they were and lose that info, I've seen this in places.
   private def processFormJourneyAlreadyHasFullName(journey: JAfterDoYouWantYourRefundViaBankTransferYes)(implicit request: Request[_]): Future[Result] = {
       def updatedJourney(fullName: FullName): Journey = journey match {
         case j: JourneyWhatIsYourFullName                => j.copy(fullName = fullName)
         case j: JourneyWhatIsYourDateOfBirth             => j.copy(fullName = fullName)
         case j: JourneyWhatIsYourNationalInsuranceNumber => j.copy(fullName = fullName)
-        case j: JourneyCheckYourAnswersChange            => j.copy(fullName = fullName)
-        case j: JourneyCheckYourAnswers                  => j.copy(fullName = fullName)
-        //do we want them to be able to update info after they've already verified? maybe we should redirect perhaps
-        case j: JourneyIdentityVerified                  => j.copy(fullName = fullName)
-        case j: JourneyIdentityNotVerified               => j.copy(fullName = fullName)
+        case j: JourneyCheckYourAnswersChange            => j.into[JourneyWhatIsYourFullName].withFieldConst(_.fullName, fullName).transform
+        case j: JourneyCheckYourAnswers                  => j.into[JourneyWhatIsYourFullName].withFieldConst(_.fullName, fullName).transform
+        case j: JourneyIdentityVerified                  => j.into[JourneyWhatIsYourFullName].withFieldConst(_.fullName, fullName).transform
+        case j: JourneyIdentityNotVerified               => j.into[JourneyWhatIsYourFullName].withFieldConst(_.fullName, fullName).transform
       }
     WhatIsYourFullNameForm
       .form
