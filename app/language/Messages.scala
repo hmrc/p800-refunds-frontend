@@ -185,6 +185,15 @@ object Messages {
 
   }
 
+  object VerifyBankAccount {
+    val `We are verifying your bank account`: Message = Message(
+      english = "We are verifying your bank account"
+    )
+
+    val `This usually takes a few seconds`: Message = Message(
+      english = "This usually takes a few seconds. You can <a href='#' class='govuk-link'>refresh this page</a> if it doesn't update automatically."
+    )
+  }
   object ChooseAnotherOption {
     val `Choose another way to receive your refund`: Message = Message(
       english = "Choose another way to receive your refund"
