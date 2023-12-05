@@ -16,15 +16,14 @@
 
 package pagespecs
 
-import testdata.TdAll
 import testsupport.ItSpec
 
 class WeCannotConfirmYourIdentityPageSpec extends ItSpec {
 
   override def beforeEach(): Unit = {
     super.beforeEach()
-    addJourneyIdToSession(TdAll.journeyId)
-    upsertJourneyToDatabase(TdAll.journeyCheckYourAnswers) //todo create a state that is for failed identity check
+    addJourneyIdToSession(tdAll.journeyId)
+    upsertJourneyToDatabase(tdAll.journeyCheckYourAnswers)
   }
 
   "/we-cannot-confirm-your-identity renders your 'We cannot confirm your identity' page" in {
@@ -50,7 +49,7 @@ class WeCannotConfirmYourIdentityPageSpec extends ItSpec {
     pages.weCannotConfirmYourIdentityPage.open()
     pages.weCannotConfirmYourIdentityPage.assertPageIsDisplayed()
     pages.weCannotConfirmYourIdentityPage.clickChooseAnotherWay()
-    pages.chooseAnotherWayToReceiveYourRefundPage.assertPageIsDisplayed()
+    pages.chooseAnotherOptionPage.assertPageIsDisplayed()
   }
 
 }

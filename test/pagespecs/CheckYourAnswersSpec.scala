@@ -77,9 +77,9 @@ class CheckYourAnswersSpec extends ItSpec {
     ) withClue "user is navigated back to check your answers page"
   }
 
-  "clicking submit redirects to 'Your identity has been confirmed' if response from NPS call is success" in {
+  "clicking submit redirects to 'Your identity has been confirmed' if response from NPS indicates identity verification is successful" in {
     IdentityVerificationStub.stubIdentityVerification2xxSucceeded
-    upsertJourneyToDatabase(td.journeyCheckYourAnswers)
+    upsertJourneyToDatabase(tdAll.journeyCheckYourAnswers)
     pages.checkYourAnswersPage.open()
     pages.checkYourAnswersPage.assertPageIsDisplayed()
     pages.checkYourAnswersPage.clickSubmit()
@@ -87,7 +87,7 @@ class CheckYourAnswersSpec extends ItSpec {
     IdentityVerificationStub.verifyIdentityVerification()
   }
 
-  "clicking submit redirects to 'We cannot confirm your identity' if response from NPS call is fail" in {
+  "clicking submit redirects to 'We cannot confirm your identity' if response from NPS indicates identity verification failed" in {
     IdentityVerificationStub.stubIdentityVerification2xxFailed
     pages.checkYourAnswersPage.open()
     pages.checkYourAnswersPage.assertPageIsDisplayed()

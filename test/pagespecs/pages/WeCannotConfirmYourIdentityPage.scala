@@ -43,7 +43,8 @@ class WeCannotConfirmYourIdentityPage(baseUrl: String)(implicit webDriver: WebDr
       path                = path,
       h1                  = expectedH1,
       title               = PageUtil.standardTitle(expectedH1),
-      contentExpectations = contentExpectations: _*
+      contentExpectations = contentExpectations: _*,
+      baseUrl             = baseUrl
     )
   }
 

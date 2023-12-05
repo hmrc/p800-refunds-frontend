@@ -58,5 +58,3 @@ GET         /we-cannot-confirm-your-identity                                 con
 POST        /we-cannot-confirm-your-identity                                 controllers.WeCannotConfirmYourIdentityController.tryAgain
 
 GET         /what-is-the-name-of-your-bank-account                           controllers.WhatIsTheNameOfYourBankAccountController.get
-
-GET         /choose-another-way-to-receive-your-refund                       controllers.ChooseAnotherWayToReceiveYourRefundController.get

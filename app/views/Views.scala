@@ -32,17 +32,12 @@ class Views @Inject() (
     val whatIsYourFullNamePage:                 views.html.identityverification.WhatIsYourFullNamePage,
     val whatIsYourDateOfBirthPage:              views.html.identityverification.WhatIsYourDateOfBirthPage,
     val whatIsYourNationalInsuranceNumberPage:  views.html.identityverification.WhatIsYourNationalInsuranceNumberPage,
+    val weHaveConfirmedYourIdentityPage:        views.html.identityverification.WeHaveConfirmedYourIdentityPage,
+    val weCannotConfirmYourIdentityPage:        views.html.identityverification.WeCannotConfirmYourIdentityPage,
     val requestNotSubmittedPage:                views.html.RequestNotSubmittedPage,
-    val weNeedYouToConfirmYourIdentityPage:     views.html.WeNeedYouToConfirmYourIdentityPage,
     val giveYourConsentPage:                    views.html.GiveYourConsentPage,
     val verifyBankAccountPage:                  views.html.VerifyBankAccountPage,
-    val whatIsYourFullNamePage:                 views.html.WhatIsYourFullNamePage,
-    val whatIsYourDateOfBirthPage:              views.html.WhatIsYourDateOfBirthPage,
-    val whatIsYourNationalInsuranceNumberPage:  views.html.WhatIsYourNationalInsuranceNumberPage,
     val doYouWantYourRefundViaBankTransferPage: views.html.DoYouWantYourRefundViaBankTransferPage,
-    val weHaveConfirmedYourIdentityPage:        views.html.identityverification.WeHaveConfirmedYourIdentityPage,
-    val weCannotConfirmYourIdentityPage:        views.html.identityverification.WeCannotConfirmYourIdentityPage
-    val weHaveConfirmedYourIdentityPage:        views.html.WeHaveConfirmedYourIdentityPage,
     val chooseAnotherOptionPage:                views.html.ChooseAnotherOptionPage
 )
 
