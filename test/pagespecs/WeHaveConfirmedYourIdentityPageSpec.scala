@@ -22,8 +22,9 @@ class WeHaveConfirmedYourIdentityPageSpec extends ItSpec {
 
   override def beforeEach(): Unit = {
     super.beforeEach()
+
     addJourneyIdToSession(tdAll.journeyId)
-    upsertJourneyToDatabase(tdAll.journeyCheckYourAnswers)
+    upsertJourneyToDatabase(tdAll.journeyIdentityVerified)
   }
 
   "page renders correctly" in {

@@ -48,6 +48,7 @@ class ChooseAnotherWayToGetYourRefundController @Inject() (
       case j: JBeforeIdentityVerified    => JourneyRouter.sendToCorrespondingPage(j)
       case _: JourneyIdentityVerified    => getResult
       case _: JourneyIdentityNotVerified => getResult
+      case j: JAfterIdentityVerified     => JourneyRouter.sendToCorrespondingPage(j)
     }
   }
 
@@ -57,10 +58,9 @@ class ChooseAnotherWayToGetYourRefundController @Inject() (
     request.journey match {
       case j: JTerminal                  => JourneyRouter.handleFinalJourneyOnNonFinalPageF(j)
       case j: JBeforeIdentityVerified    => JourneyRouter.sendToCorrespondingPageF(j)
-      // TODO: there is a ticket in play for bank selection, which has a link on it that will come to this page.
-      //  We will need to update case for JourneyIdentityVerified when that is done.
       case j: JourneyIdentityVerified    => JourneyRouter.sendToCorrespondingPageF(j)
       case j: JourneyIdentityNotVerified => processForm(j)
+      case j: JAfterIdentityVerified     => JourneyRouter.sendToCorrespondingPageF(j)
     }
   }
 

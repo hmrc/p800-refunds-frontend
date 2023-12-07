@@ -43,7 +43,11 @@
     "selectedBankId"
 }
 
-@layout(pageTitle = Some(title)) {
+@layout(
+    pageTitle = Some(title),
+    backLinkUrlOverride = Some(controllers.routes.WeHaveConfirmedYourIdentityController.get.url)
+) {
+
 
     @if(form.errors.nonEmpty) {
         @viewsHelpers.govukErrorSummary(ErrorSummary(errorList = form.errors.asTextErrorLinks, title = Text(Messages.CommonMessages.`There is a problem`.show)))
@@ -76,7 +80,7 @@
             classes = "select-bank-button"
         ))
 
-        <a role="button" class="govuk-button govuk-button--secondary select-bank-button" data-module="govuk-button" href="@controllers.routes.ChooseAnotherOptionController.get.url">
+        <a id="myAccountIsNotListed" role="button" class="govuk-button govuk-button--secondary select-bank-button" data-module="govuk-button" href="@controllers.routes.ChooseAnotherWayToGetYourRefundController.get.url">
             @{Messages.WhatIsTheNameOfYourBankAccount.`My account is not listed`.show}
         </a>
     }

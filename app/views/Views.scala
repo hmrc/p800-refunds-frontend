@@ -38,7 +38,7 @@ class Views @Inject() (
     val giveYourConsentPage:                     views.html.GiveYourConsentPage,
     val verifyBankAccountPage:                   views.html.VerifyBankAccountPage,
     val doYouWantYourRefundViaBankTransferPage:  views.html.DoYouWantYourRefundViaBankTransferPage,
-    val chooseAnotherOptionPage:                 views.html.ChooseAnotherOptionPage,
+    val chooseAnotherWayToReceiveYourRefundPage: views.html.ChooseAnotherWayToReceiveYourRefundPage,
     val whatIsTheNameOfYourBankAccountPage:      views.html.WhatIsTheNameOfYourBankAccountPage
 )
 

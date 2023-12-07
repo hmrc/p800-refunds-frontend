@@ -21,7 +21,7 @@ import testsupport.ItSpec
 class GiveYourConsentPageSpec extends ItSpec {
 
   "/give-your-consent renders the give your consent page" in {
-    pages.giveYourConsentPageSpecPage.open()
-    pages.giveYourConsentPageSpecPage.assertPageIsDisplayed()
+    pages.giveYourConsentPage.open()
+    pages.giveYourConsentPage.assertPageIsDisplayed()
   }
 }

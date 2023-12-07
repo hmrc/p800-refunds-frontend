@@ -54,7 +54,7 @@ object JourneyRouter {
       case _: JourneyWhatIsYourNationalInsuranceNumber     => controllers.routes.CheckYourAnswersController.get
       case _: JourneyCheckYourAnswersChange                => controllers.routes.WeHaveConfirmedYourIdentityController.get
       case _: JourneyCheckYourAnswers                      => controllers.routes.WeHaveConfirmedYourIdentityController.get
-      case _: JourneyIdentityVerified                      => controllers.routes.WeHaveConfirmedYourIdentityController.get
+      case _: JourneyIdentityVerified                      => controllers.routes.WhatIsTheNameOfYourBankAccountController.get
       case _: JourneyIdentityNotVerified                   => controllers.routes.WeCannotConfirmYourIdentityController.get
       case _: JourneyYourChequeWillBePostedToYou           => controllers.routes.RequestReceivedController.get
       case _: JourneyWhatIsTheNameOfYourBankAccount        => controllers.routes.GiveYourConsentController.get

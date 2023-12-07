@@ -53,7 +53,6 @@ class WhatIsTheNameOfYourBankAccountController @Inject() (
       case j: JourneyIdentityNotVerified                  => JourneyRouter.sendToCorrespondingPageF(j)
       case _: JourneyIdentityVerified                     => getResult(None)
       case j: JourneyWhatIsTheNameOfYourBankAccount       => getResult(Some(j.bankId))
-      // case j: JAfterWhatIsTheNameOfYourBankAccount        => getResult(Some(j.bankId))
     }
   }
 
@@ -79,10 +78,6 @@ class WhatIsTheNameOfYourBankAccountController @Inject() (
     }
   }
 
-  // could we split the JAfter traits when the journey splits -
-  // i.e. have a JAfterCheckYourAnswersVerified and a JAfterCheckYourAnswersNotVerified - ??!
-  // or would that be too confusing?
-  // Here it would be helpful as we could handle the unhappy path above and pass the happy path to processForm
   private def processForm(journey: JAfterCheckYourAnswers)(implicit request: JourneyRequest[_]): Future[Result] = {
     WhatIsTheNameOfYourBankAccountForm
       .form
@@ -95,7 +90,7 @@ class WhatIsTheNameOfYourBankAccountController @Inject() (
         },
         bankId => {
           val newJourney = journey match {
-            case j: JourneyIdentityNotVerified => j // TODO: Not sure if this is the correct way to handle this?
+            case j: JourneyIdentityNotVerified => j
             case j: JourneyIdentityVerified =>
               j.into[JourneyWhatIsTheNameOfYourBankAccount]
                 .withFieldConst(_.bankId, bankId)
