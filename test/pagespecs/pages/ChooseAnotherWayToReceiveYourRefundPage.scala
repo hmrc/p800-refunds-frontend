@@ -19,9 +19,9 @@ package pagespecs.pages
 import org.openqa.selenium.WebDriver
 import pagespecs.pagesupport.{ContentExpectation, Page, PageUtil}
 
-class ChooseAnotherOptionPage(baseUrl: String)(implicit webDriver: WebDriver) extends Page(
+class ChooseAnotherWayToReceiveYourRefundPage(baseUrl: String)(implicit webDriver: WebDriver) extends Page(
   baseUrl,
-  path = "/get-an-income-tax-refund/choose-another-option"
+  path = "/get-an-income-tax-refund/choose-another-way-to-receive-your-refund"
 ) {
 
   override def expectedH1: String = "Choose another way to receive your refund"
@@ -46,5 +46,20 @@ class ChooseAnotherOptionPage(baseUrl: String)(implicit webDriver: WebDriver) ex
       contentExpectations = contentExpectations: _*
     )
   }
+
+  def assertPageShowsWithErrors(): Unit = withPageClue {
+    val errorContent: ContentExpectation = ContentExpectation(
+      atXpath       = PageUtil.Xpath.mainContent,
+      expectedLines =
+        """
+          |There is a problem
+          |Select if you want to receive a bank transfer via your personal tax account, or a cheque
+          |""".stripMargin
+    )
+    assertPageIsDisplayed(errorContent)
+  }
+
+  def clickBankTransferOption(): Unit = PageUtil.clickByIdOrName("bank-transfer")
+  def clickChequeOption(): Unit = PageUtil.clickByIdOrName("cheque")
 
 }

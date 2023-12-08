@@ -20,25 +20,25 @@ import javax.inject.Inject
 
 class Views @Inject() (
     //TODO: remove once all pages are developed
-    val underConstructionPage:                  views.html.UnderConstructionPage,
-    val doYouWantToSignInPage:                  views.html.DoYouWantToSignInPage,
-    val enterP800ReferencePage:                 views.html.EnterP800ReferencePage,
-    val checkYourReferencePage:                 views.html.CheckYourReferencePage,
-    val checkYourAnswersPage:                   views.html.identityverification.CheckYourAnswersPage,
-    val cannotConfirmReferencePage:             views.html.CannotConfirmReferencePage,
-    val yourChequeWillBePostedToYouPage:        views.html.chequejourney.YourChequeWillBePostedToYouPage,
-    val requestReceivedPage:                    views.html.chequejourney.RequestReceivedPage,
-    val weNeedYouToConfirmYourIdentityPage:     views.html.identityverification.WeNeedYouToConfirmYourIdentityPage,
-    val whatIsYourFullNamePage:                 views.html.identityverification.WhatIsYourFullNamePage,
-    val whatIsYourDateOfBirthPage:              views.html.identityverification.WhatIsYourDateOfBirthPage,
-    val whatIsYourNationalInsuranceNumberPage:  views.html.identityverification.WhatIsYourNationalInsuranceNumberPage,
-    val weHaveConfirmedYourIdentityPage:        views.html.identityverification.WeHaveConfirmedYourIdentityPage,
-    val weCannotConfirmYourIdentityPage:        views.html.identityverification.WeCannotConfirmYourIdentityPage,
-    val requestNotSubmittedPage:                views.html.RequestNotSubmittedPage,
-    val giveYourConsentPage:                    views.html.GiveYourConsentPage,
-    val verifyBankAccountPage:                  views.html.VerifyBankAccountPage,
-    val doYouWantYourRefundViaBankTransferPage: views.html.DoYouWantYourRefundViaBankTransferPage,
-    val chooseAnotherOptionPage:                views.html.ChooseAnotherOptionPage
+    val underConstructionPage:                   views.html.UnderConstructionPage,
+    val doYouWantToSignInPage:                   views.html.DoYouWantToSignInPage,
+    val enterP800ReferencePage:                  views.html.EnterP800ReferencePage,
+    val checkYourReferencePage:                  views.html.CheckYourReferencePage,
+    val checkYourAnswersPage:                    views.html.identityverification.CheckYourAnswersPage,
+    val cannotConfirmReferencePage:              views.html.CannotConfirmReferencePage,
+    val yourChequeWillBePostedToYouPage:         views.html.chequejourney.YourChequeWillBePostedToYouPage,
+    val requestReceivedPage:                     views.html.chequejourney.RequestReceivedPage,
+    val weNeedYouToConfirmYourIdentityPage:      views.html.identityverification.WeNeedYouToConfirmYourIdentityPage,
+    val whatIsYourFullNamePage:                  views.html.identityverification.WhatIsYourFullNamePage,
+    val whatIsYourDateOfBirthPage:               views.html.identityverification.WhatIsYourDateOfBirthPage,
+    val whatIsYourNationalInsuranceNumberPage:   views.html.identityverification.WhatIsYourNationalInsuranceNumberPage,
+    val weHaveConfirmedYourIdentityPage:         views.html.identityverification.WeHaveConfirmedYourIdentityPage,
+    val weCannotConfirmYourIdentityPage:         views.html.identityverification.WeCannotConfirmYourIdentityPage,
+    val requestNotSubmittedPage:                 views.html.RequestNotSubmittedPage,
+    val giveYourConsentPage:                     views.html.GiveYourConsentPage,
+    val verifyBankAccountPage:                   views.html.VerifyBankAccountPage,
+    val doYouWantYourRefundViaBankTransferPage:  views.html.DoYouWantYourRefundViaBankTransferPage,
+    val chooseAnotherWayToReceiveYourRefundPage: views.html.ChooseAnotherWayToReceiveYourRefundPage
 )
 
 class ViewsTestOnly @Inject() (

@@ -14,14 +14,15 @@
  * limitations under the License.
  */
 
-package pagespecs
+package models.forms.enumsforforms
 
-import testsupport.ItSpec
+import enumeratum.Enum
+import scala.collection.immutable.IndexedSeq
 
-class ChooseAnotherOptionPageSpec extends ItSpec {
+sealed trait ChooseAnotherWayToGetYourRefundFormValue extends enumeratum.EnumEntry
 
-  "/choose-another-option renders the choose another option page" in {
-    pages.chooseAnotherOptionPage.open()
-    pages.chooseAnotherOptionPage.assertPageIsDisplayed()
-  }
+object ChooseAnotherWayToGetYourRefundFormValue extends Enum[ChooseAnotherWayToGetYourRefundFormValue] {
+  case object BankTransfer extends ChooseAnotherWayToGetYourRefundFormValue
+  case object Cheque extends ChooseAnotherWayToGetYourRefundFormValue
+  override def values: IndexedSeq[ChooseAnotherWayToGetYourRefundFormValue] = findValues
 }

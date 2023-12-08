@@ -16,7 +16,7 @@
 
 package testdata
 
-import models.{P800Reference, FullName, NationalInsuranceNumber}
+import models.{AmountInPence, FullName, IdentityVerificationResponse, IdentityVerified, NationalInsuranceNumber, P800Reference}
 import models.dateofbirth.{DateOfBirth, DayOfMonth, Month, Year}
 
 import java.time.{Instant, LocalDateTime, ZoneOffset}
@@ -46,4 +46,7 @@ trait TdBase {
   lazy val dateOfBirthFormatted: String = "01 January 2000"
 
   lazy val nationalInsuranceNumber: NationalInsuranceNumber = NationalInsuranceNumber("MA000003A")
+
+  lazy val identityVerifiedResponse: IdentityVerificationResponse = IdentityVerificationResponse(IdentityVerified(true), AmountInPence(1234))
+  lazy val identityNotVerifiedResponse: IdentityVerificationResponse = IdentityVerificationResponse(IdentityVerified(false), AmountInPence(1234))
 }

@@ -84,7 +84,7 @@ class DoYouWantToSignInController @Inject() (
         form = formWithErrors
       ))), {
         case DoYouWantToSignInFormValue.Yes =>
-          Future.successful(Redirect(appConfig.ptaSignInUrl))
+          Future.successful(Redirect(appConfig.PersonalTaxAccountUrls.personalTaxAccountSignInUrl))
         case DoYouWantToSignInFormValue.No =>
           journeyService
             .upsert(journey.transformInto[JourneyDoYouWantToSignInNo])

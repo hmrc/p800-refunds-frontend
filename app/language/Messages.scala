@@ -194,7 +194,7 @@ object Messages {
       english = "This usually takes a few seconds. You can <a href='#' class='govuk-link'>refresh this page</a> if it doesn't update automatically."
     )
   }
-  object ChooseAnotherOption {
+  object ChooseAnotherWayToReceiveYourRefund {
     val `Choose another way to receive your refund`: Message = Message(
       english = "Choose another way to receive your refund"
     )
@@ -205,6 +205,10 @@ object Messages {
 
     val `Cheque`: Message = Message(
       english = "Cheque"
+    )
+
+    val `Select if you want to receive a bank transfer via your personal tax account, or a cheque`: Message = Message(
+      english = "Select if you want to receive a bank transfer via your personal tax account, or a cheque"
     )
   }
 
