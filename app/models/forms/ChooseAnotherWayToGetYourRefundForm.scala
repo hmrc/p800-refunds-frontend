@@ -26,8 +26,8 @@ object ChooseAnotherWayToGetYourRefundForm {
   def form(implicit language: Language): Form[ChooseAnotherWayToGetYourRefundFormValue] = {
     val chooseAnotherWayToGetYourRefundMapping = Forms.of(EnumFormatter.format(
       `enum`                  = ChooseAnotherWayToGetYourRefundFormValue,
-      errorMessageIfMissing   = Messages.ChooseAnotherWayToReceiveYourRefund.`Select if you want to receive a bank transfer or a cheque`.show,
-      errorMessageIfEnumError = Messages.ChooseAnotherWayToReceiveYourRefund.`Select if you want to receive a bank transfer or a cheque`.show
+      errorMessageIfMissing   = Messages.ChooseAnotherWayToReceiveYourRefund.`Select if you want to receive a bank transfer via your personal tax account, or a cheque`.show,
+      errorMessageIfEnumError = Messages.ChooseAnotherWayToReceiveYourRefund.`Select if you want to receive a bank transfer via your personal tax account, or a cheque`.show
     ))
 
     Form(

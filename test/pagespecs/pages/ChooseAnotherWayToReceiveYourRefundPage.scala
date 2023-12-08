@@ -53,7 +53,7 @@ class ChooseAnotherWayToReceiveYourRefundPage(baseUrl: String)(implicit webDrive
       expectedLines =
         """
           |There is a problem
-          |Select if you want to receive a bank transfer or a cheque
+          |Select if you want to receive a bank transfer via your personal tax account, or a cheque
           |""".stripMargin
     )
     assertPageIsDisplayed(errorContent)

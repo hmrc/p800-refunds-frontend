@@ -207,8 +207,8 @@ object Messages {
       english = "Cheque"
     )
 
-    val `Select if you want to receive a bank transfer or a cheque`: Message = Message(
-      english = "Select if you want to receive a bank transfer or a cheque"
+    val `Select if you want to receive a bank transfer via your personal tax account, or a cheque`: Message = Message(
+      english = "Select if you want to receive a bank transfer via your personal tax account, or a cheque"
     )
   }
 
