@@ -63,14 +63,12 @@
                 RadioItem(
                     content = Text(Messages.ChooseAnotherWayToReceiveYourRefund.`Bank transfer via your personal tax account`.show),
                     value = Some(bankTransferKey),
-                    checked = form.data.values.toList.contains(bankTransferKey),
-                    id = Some("bank-transfer")
+                    checked = form.data.values.toList.contains(bankTransferKey)
                 ),
                 RadioItem(
                     content = Text(Messages.ChooseAnotherWayToReceiveYourRefund.`Cheque`.show),
                     value = Some(chequeKey),
-                    checked = form.data.values.toList.contains(chequeKey),
-                    id = Some("cheque")
+                    checked = form.data.values.toList.contains(chequeKey)
                 )
             )
         ).withFormField(form(key)))

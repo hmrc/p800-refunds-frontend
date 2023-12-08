@@ -59,7 +59,7 @@ class ChooseAnotherWayToReceiveYourRefundPage(baseUrl: String)(implicit webDrive
     assertPageIsDisplayed(errorContent)
   }
 
-  def clickBankTransferOption(): Unit = PageUtil.clickByIdOrName("bank-transfer")
-  def clickChequeOption(): Unit = PageUtil.clickByIdOrName("cheque")
+  def clickBankTransferOption(): Unit = PageUtil.clickByIdOrName("way-to-get-refund")
+  def clickChequeOption(): Unit = PageUtil.clickByIdOrName("way-to-get-refund-2")
 
 }
