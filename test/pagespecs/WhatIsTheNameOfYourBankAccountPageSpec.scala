@@ -17,6 +17,7 @@
 package pagespecs
 
 import testsupport.ItSpec
+import testsupport.stubs.EcospendStub
 
 class WhatIsTheNameOfYourBankAccountPageSpec extends ItSpec {
 
@@ -25,11 +26,19 @@ class WhatIsTheNameOfYourBankAccountPageSpec extends ItSpec {
 
     addJourneyIdToSession(tdAll.journeyId)
     upsertJourneyToDatabase(tdAll.journeyIdentityVerified)
+
+    EcospendStub.stubEcospendAuth2xxSucceeded
+    EcospendStub.stubEcospendGetBanks2xx
+
+    ()
   }
 
   "/what-is-the-name-of-your-bank-account renders the what is the name of your bank account page" in {
     pages.whatIsTheNameOfYourBankAccountPage.open()
     pages.whatIsTheNameOfYourBankAccountPage.assertPageIsDisplayed()
+
+    EcospendStub.verifyEcospendAccessToken()
+    EcospendStub.verifyEcospendGetBanks()
   }
 
   "Clicking 'Continue' after selecing a back redirects to 'Give your consent' page" in {
@@ -38,6 +47,9 @@ class WhatIsTheNameOfYourBankAccountPageSpec extends ItSpec {
     pages.whatIsTheNameOfYourBankAccountPage.selectBankAccount(tdAll.bankId)
     pages.whatIsTheNameOfYourBankAccountPage.clickSubmit()
     pages.giveYourConsentPage.assertPageIsDisplayed()
+
+    EcospendStub.verifyEcospendAccessToken()
+    EcospendStub.verifyEcospendGetBanks()
   }
 
   "Clicking 'My account is not listed' redirects to 'Choose another option' page" in {
@@ -45,6 +57,9 @@ class WhatIsTheNameOfYourBankAccountPageSpec extends ItSpec {
     pages.whatIsTheNameOfYourBankAccountPage.assertPageIsDisplayed()
     pages.whatIsTheNameOfYourBankAccountPage.clickMyAccountIsNotListed()
     pages.chooseAnotherWayToReceiveYourRefundPage.assertPageIsDisplayed()
+
+    EcospendStub.verifyEcospendAccessToken()
+    EcospendStub.verifyEcospendGetBanks()
   }
 
   "Clicking 'Continue' without selecting a bank shows error" in {
@@ -52,6 +67,9 @@ class WhatIsTheNameOfYourBankAccountPageSpec extends ItSpec {
     pages.whatIsTheNameOfYourBankAccountPage.assertPageIsDisplayed()
     pages.whatIsTheNameOfYourBankAccountPage.clickSubmit()
     pages.whatIsTheNameOfYourBankAccountPage.assertPageShowsError() // should fail?
+
+    EcospendStub.verifyEcospendAccessToken(numberOfRequests = 2)
+    EcospendStub.verifyEcospendGetBanks(numberOfRequests = 2)
   }
 
   "Clicking 'Back' redirects to /we-have-confirmed-your-identity" in {
@@ -59,5 +77,8 @@ class WhatIsTheNameOfYourBankAccountPageSpec extends ItSpec {
     pages.whatIsTheNameOfYourBankAccountPage.assertPageIsDisplayed()
     pages.whatIsTheNameOfYourBankAccountPage.clickBackButton()
     pages.weHaveConfirmedYourIdentityPage.assertPageIsDisplayed()
+
+    EcospendStub.verifyEcospendAccessToken()
+    EcospendStub.verifyEcospendGetBanks()
   }
 }

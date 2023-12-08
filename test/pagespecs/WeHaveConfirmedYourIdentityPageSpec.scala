@@ -17,6 +17,7 @@
 package pagespecs
 
 import testsupport.ItSpec
+import testsupport.stubs.EcospendStub
 
 class WeHaveConfirmedYourIdentityPageSpec extends ItSpec {
 
@@ -33,10 +34,16 @@ class WeHaveConfirmedYourIdentityPageSpec extends ItSpec {
   }
 
   "clicking submit navigates to What Is The Name Of Your Bank Account page" in {
+    EcospendStub.stubEcospendAuth2xxSucceeded
+    EcospendStub.stubEcospendGetBanks2xx
+
     pages.weHaveConfirmedYourIdentityPage.open()
     pages.weHaveConfirmedYourIdentityPage.assertPageIsDisplayed()
     pages.weHaveConfirmedYourIdentityPage.clickSubmit()
     pages.whatIsTheNameOfYourBankAccountPage.assertPageIsDisplayed()
+
+    EcospendStub.verifyEcospendAccessToken()
+    EcospendStub.verifyEcospendGetBanks()
   }
 
   "clicking back button navigates to Check Your Answers page" in {

@@ -106,4 +106,12 @@ object WireMockHelpers {
       )
   )
 
+  def stubForGetWithResponseBody(url: String, jsonBody: String, responseStatus: Int = Status.OK): StubMapping = stubFor(
+    get(urlPathEqualTo(url)).willReturn(
+      aResponse()
+        .withStatus(responseStatus)
+        .withBody(jsonBody)
+    )
+  )
+
 }

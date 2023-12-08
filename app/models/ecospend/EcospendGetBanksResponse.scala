@@ -21,5 +21,5 @@ import play.api.libs.json.{Json, OFormat}
 final case class EcospendGetBanksResponse(data: List[EcospendBankDescription])
 
 object EcospendGetBanksResponse {
-  implicit val jsonFormat: OFormat[EcospendGetBanksResponse] = Json.format[EcospendGetBanksResponse]
+  implicit val format: OFormat[EcospendGetBanksResponse] = Json.format[EcospendGetBanksResponse]
 }
