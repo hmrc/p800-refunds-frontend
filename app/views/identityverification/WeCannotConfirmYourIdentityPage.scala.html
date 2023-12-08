@@ -47,7 +47,7 @@
             content = Text(Messages.WeCannotConfirmYourIdentity.`Try gain`.show),
             id = Some("try-again")
         ))
-        <a id="choose-another-method-link" class="govuk-link" href=@{routes.ChooseAnotherOptionController.get.url}>
+        <a id="choose-another-method-link" class="govuk-link" href=@{routes.ChooseAnotherWayToGetYourRefundController.get.url}>
             @{Messages.WeCannotConfirmYourIdentity.`Choose another method`.show}
         </a>
     }

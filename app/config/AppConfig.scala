@@ -31,8 +31,6 @@ class AppConfig @Inject() (servicesConfig: ServicesConfig, configuration: Config
 
   val govUkRouteIn: String = readConfigAsValidUrlString("urls.gov-uk.govuk-route-in")
 
-  val ptaSignInUrl: String = readConfigAsValidUrlString("urls.pta-sign-in")
-
   val incomeTaxGeneralEnquiriesUrl: String = readConfigAsValidUrlString("urls.gov-uk.income-tax-general-enquiries")
 
   val contactHmrcChangeDetailsUrl: String = readConfigAsValidUrlString("urls.gov-uk.contact-hmrc-change-details")
@@ -40,6 +38,10 @@ class AppConfig @Inject() (servicesConfig: ServicesConfig, configuration: Config
   val generalEnquiriesUrl: String = readConfigAsValidUrlString("urls.gov-uk.general-enquiries")
 
   val lostNationalInsuranceNumberUrl: String = readConfigAsValidUrlString("urls.gov-uk.lost-national-insurance-number")
+
+  object PersonalTaxAccountUrls {
+    val personalTaxAccountSignInUrl: String = readConfigAsValidUrlString("urls.pta-sign-in")
+  }
 
   object ExternalApiCalls {
     val p800ReferenceValidationBaseUrl: String = servicesConfig.baseUrl("p800-reference-validation")

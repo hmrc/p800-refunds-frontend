@@ -70,7 +70,7 @@
           <h2 class="govuk-heading-s">@{Messages.EnterP800ReferenceMessages.`If you do not know your P800 reference`.show}</h2>
 
           <p class="govuk-body">
-            @{Html(Messages.EnterP800ReferenceMessages.`Sign in or create a personal tax account to claim your refund.`(appConfig.ptaSignInUrl).show)}
+            @{Html(Messages.EnterP800ReferenceMessages.`Sign in or create a personal tax account to claim your refund.`(appConfig.PersonalTaxAccountUrls.personalTaxAccountSignInUrl).show)}
           </p>
           <p class="govuk-body">
             @{Html(Messages.EnterP800ReferenceMessages.`Call or write to the Income Tax helpline (opens in new tab) if you cannot create a personal tax account.`(appConfig.incomeTaxGeneralEnquiriesUrl).show)}

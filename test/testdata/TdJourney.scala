@@ -92,6 +92,25 @@ trait TdJourney { dependencies: TdBase =>
     nationalInsuranceNumber = dependencies.nationalInsuranceNumber
   )
 
+  lazy val journeyIdentityVerified: JourneyIdentityVerified = JourneyIdentityVerified(
+    _id                          = journeyId,
+    createdAt                    = dependencies.instant,
+    p800Reference                = dependencies.p800Reference,
+    fullName                     = dependencies.fullName,
+    dateOfBirth                  = dependencies.dateOfBirth,
+    nationalInsuranceNumber      = dependencies.nationalInsuranceNumber,
+    identityVerificationResponse = dependencies.identityVerifiedResponse
+  )
+  lazy val journeyIdentityNotVerified: JourneyIdentityNotVerified = JourneyIdentityNotVerified(
+    _id                          = journeyId,
+    createdAt                    = dependencies.instant,
+    p800Reference                = dependencies.p800Reference,
+    fullName                     = dependencies.fullName,
+    dateOfBirth                  = dependencies.dateOfBirth,
+    nationalInsuranceNumber      = dependencies.nationalInsuranceNumber,
+    identityVerificationResponse = dependencies.identityNotVerifiedResponse
+  )
+
   lazy val journeyYourChequeWillBePostedToYou: JourneyYourChequeWillBePostedToYou = JourneyYourChequeWillBePostedToYou(
     _id           = journeyId,
     createdAt     = dependencies.instant,

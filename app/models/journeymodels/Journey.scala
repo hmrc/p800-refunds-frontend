@@ -274,6 +274,7 @@ final case class JourneyCheckYourAnswers(
   with JAfterWhatIsYourFullName
   with JAfterWhatIsYourDateOfBirth
   with JAfterWhatIsYourNationalInsuranceNumber
+  with JBeforeIdentityVerified
 
 final case class JourneyIdentityVerified(
     override val _id:                     JourneyId,

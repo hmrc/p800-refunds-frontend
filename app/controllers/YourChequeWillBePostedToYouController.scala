@@ -50,6 +50,7 @@ class YourChequeWillBePostedToYouController @Inject() (
               .transform
           )
           .map(_ => getResult)
+      case _: JourneyIdentityNotVerified                   => Future.successful(getResult)
       case j: JourneyDoYouWantYourRefundViaBankTransferYes => JourneyRouter.sendToCorrespondingPageF(j)
       case j: JAfterDoYouWantYourRefundViaBankTransferYes  => JourneyRouter.sendToCorrespondingPageF(j)
     }
