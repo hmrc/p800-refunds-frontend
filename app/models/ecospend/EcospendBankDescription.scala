@@ -23,14 +23,14 @@ import play.api.libs.json._
 
 final case class EcospendBankDescription(
     bankId:         BankId,
-    name:           String,
-    friendlyName:   String,
+    name:           BankName,
+    friendlyName:   BankFriendlyName,
     isSandbox:      Boolean,
     logoUrl:        Uri,
     standard:       Option[String],
     countryIsoCode: Option[String],
     division:       Option[String],
-    group:          String,
+    group:          BankGroup,
     order:          Int,
     abilities:      EcospendBankAbilities,
     serviceStatus:  Boolean,
@@ -44,14 +44,14 @@ object EcospendBankDescription {
 
   private val reads: Reads[EcospendBankDescription] = (
     (__ \ "bank_id").read[BankId].orElse(Reads(_ => JsError("Could not parse bank_id value"))) and
-    (__ \ "name").read[String].orElse(Reads(_ => JsError("Could not parse name value"))) and
-    (__ \ "friendly_name").read[String].orElse(Reads(_ => JsError("Could not parse friendly_name value"))) and
+    (__ \ "name").read[BankName].orElse(Reads(_ => JsError("Could not parse name value"))) and
+    (__ \ "friendly_name").read[BankFriendlyName].orElse(Reads(_ => JsError("Could not parse friendly_name value"))) and
     (__ \ "is_sandbox").read[Boolean].orElse(Reads(_ => JsError("Could not parse is_sandbox value"))) and
     (__ \ "logo").read[String].orElse(Reads(_ => JsError("Could not parse logo value"))) and
     (__ \ "standard").readNullable[String].orElse(Reads(_ => JsError("Could not parse standard value"))) and
     (__ \ "country_iso_code").readNullable[String].orElse(Reads(_ => JsError("Could not parse country_iso_code value"))) and
     (__ \ "division").readNullable[String].orElse(Reads(_ => JsError("Could not parse division value"))) and
-    (__ \ "group").read[String].orElse(Reads(_ => JsError("Could not parse group value"))) and
+    (__ \ "group").read[BankGroup].orElse(Reads(_ => JsError("Could not parse group value"))) and
     (__ \ "order").read[Int].orElse(Reads(_ => JsError("Could not parse order value"))) and
     (__ \ "abilities").read[EcospendBankAbilities].orElse(Reads(_ => JsError("Could not parse abilities value"))) and
     (__ \ "service_status").read[Boolean].orElse(Reads(_ => JsError("Could not parse service_status value"))) and

@@ -16,20 +16,22 @@
 
 package services
 
-import connectors.EcospendConnector
+import action.JourneyRequest
+import connectors.{EcospendConnector, EcospendAuthServerConnector}
 import models.ecospend.BankDescription
-import uk.gov.hmrc.http.HeaderCarrier
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton()
 class EcospendService @Inject() (
-    ecospendConnector: EcospendConnector
+    ecospendConnector:           EcospendConnector,
+    ecospendAuthServerConnector: EcospendAuthServerConnector
 )(implicit ec: ExecutionContext) {
 
-  def getBanks(implicit hc: HeaderCarrier): Future[List[BankDescription]] = for {
-    getBanksResponse <- ecospendConnector.getListOfAvailableBanks
+  def getBanks(implicit request: JourneyRequest[_]): Future[List[BankDescription]] = for {
+    accessToken <- ecospendAuthServerConnector.accessToken
+    getBanksResponse <- ecospendConnector.getListOfAvailableBanks(accessToken)
 
     banks = getBanksResponse.data.filter(_.serviceStatus).map(_.toFrontendBankDescription)
   } yield banks

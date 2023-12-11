@@ -18,7 +18,7 @@ package controllers
 
 import action.{Actions, JourneyRequest}
 import io.scalaland.chimney.dsl._
-import models.ecospend.BankId
+import models.ecospend.{BankId, BankDescription}
 import models.ecospend.BanksSelectOptions
 import models.forms.WhatIsTheNameOfYourBankAccountForm
 import models.journeymodels._
@@ -26,8 +26,9 @@ import play.api.Logger
 import play.api.mvc._
 import requests.RequestSupport
 import services.{EcospendService, JourneyService}
-import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
+import util.Errors
+import util.SafeEquals._
 import views.Views
 
 import javax.inject.{Inject, Singleton}
@@ -52,17 +53,17 @@ class WhatIsTheNameOfYourBankAccountController @Inject() (
       case j: JBeforeIdentityVerified                     => JourneyRouter.sendToCorrespondingPageF(j)
       case j: JourneyIdentityNotVerified                  => JourneyRouter.sendToCorrespondingPageF(j)
       case _: JourneyIdentityVerified                     => getResult(None)
-      case j: JourneyWhatIsTheNameOfYourBankAccount       => getResult(Some(j.bankId))
+      case j: JourneyWhatIsTheNameOfYourBankAccount       => getResult(Some(j.bankDescription.bankId))
     }
   }
 
   private def getResult(maybeBankId: Option[BankId])(implicit request: JourneyRequest[_]): Future[Result] = {
     maybeBankId.fold(
-      getBankSelectOptions(requestSupport.hc).map { banks =>
+      getBankSelectOptions.map { banks =>
         Ok(views.whatIsTheNameOfYourBankAccountPage(banks, WhatIsTheNameOfYourBankAccountForm.form))
       }
     ) { bankId =>
-        getBankSelectOptions(requestSupport.hc).map { banks =>
+        getBankSelectOptions.map { banks =>
           Ok(views.whatIsTheNameOfYourBankAccountPage(banks, WhatIsTheNameOfYourBankAccountForm.form.fill(bankId)))
         }
       }
@@ -84,34 +85,47 @@ class WhatIsTheNameOfYourBankAccountController @Inject() (
       .bindFromRequest()
       .fold(
         formWithErrors => {
-          getBankSelectOptions(hc).map { banks =>
+          getBankSelectOptions.map { banks =>
             BadRequest(views.whatIsTheNameOfYourBankAccountPage(banks, formWithErrors))
           }
         },
         bankId => {
-          val newJourney = journey match {
-            case j: JourneyIdentityNotVerified => j
-            case j: JourneyIdentityVerified =>
-              j.into[JourneyWhatIsTheNameOfYourBankAccount]
-                .withFieldConst(_.bankId, bankId)
-                .transform
-            case j: JAfterIdentityVerified =>
-              j
-                .into[JourneyWhatIsTheNameOfYourBankAccount]
-                .enableInheritedAccessors
-                .withFieldConst(_.bankId, bankId)
-                .transform
-          }
-          journeyService
-            .upsert(newJourney)
-            .map(_ => Redirect(controllers.routes.GiveYourConsentController.get))
+          for {
+            bankDescription <- bankDescriptionForBankId(bankId)
+            newJourney = journey match {
+              case _: JourneyIdentityNotVerified =>
+                Errors.throwServerErrorException("WhatIsTheNameOfYourBankAccountController reached invalid case. This should never happen!")
+              case j: JourneyIdentityVerified =>
+                j.into[JourneyWhatIsTheNameOfYourBankAccount]
+                  .withFieldConst(_.bankDescription, bankDescription)
+                  .transform
+              case j: JAfterIdentityVerified =>
+                j
+                  .into[JourneyWhatIsTheNameOfYourBankAccount]
+                  .enableInheritedAccessors
+                  .withFieldConst(_.bankDescription, bankDescription)
+                  .transform
+            }
+            response <- journeyService
+              .upsert(newJourney)
+              .map(_ => Redirect(controllers.routes.GiveYourConsentController.get))
+          } yield response
         }
       )
   }
 
-  private def getBankSelectOptions(implicit hc: HeaderCarrier): Future[Seq[BanksSelectOptions]] =
-    ecospendService.getBanks(hc).map { banks =>
-      if (banks.isEmpty) Logger(getClass).warn("notification critical : Bank list from Ecospend is empty")
+  private def bankDescriptionForBankId(bankId: BankId)(implicit request: JourneyRequest[_]): Future[BankDescription] =
+    ecospendService.getBanks.map { banks =>
+      if (banks.isEmpty) Logger(getClass).warn("Notification critical : Bank list from Ecospend is empty")
+
+      val xs = banks.filter(_.bankId === bankId)
+      if (xs.size === 1) xs.headOption.getOrElse(Errors.throwServerErrorException("Unable to get BankDescription for given BankId"))
+      else Errors.throwServerErrorException("Unable to find BankDescription for given BankId")
+    }
+
+  private def getBankSelectOptions(implicit request: JourneyRequest[_]): Future[Seq[BanksSelectOptions]] =
+    ecospendService.getBanks.map { banks =>
+      if (banks.isEmpty) Logger(getClass).warn("Notification critical : Bank list from Ecospend is empty")
       BanksSelectOptions.noBankOption :: banks.map(b => BanksSelectOptions(b.bankId, b.name)).sorted
     }
 }

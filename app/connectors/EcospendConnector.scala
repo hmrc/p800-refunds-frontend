@@ -16,47 +16,41 @@
 
 package connectors
 
+import action.JourneyRequest
 import config.AppConfig
-import connectors.EcospendConnector.EcospendConnectorException
-import models.ecospend.EcospendGetBanksResponse
-import play.api.Logger
-import uk.gov.hmrc.http.HeaderCarrier
+import models.ecospend.{EcospendAccessToken, EcospendGetBanksResponse}
+import requests.RequestSupport
 import uk.gov.hmrc.http.HttpClient
 import uk.gov.hmrc.http.HttpReads.Implicits._
+import util.JourneyLogger
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class EcospendConnector @Inject() (
-    appConfig:                   AppConfig,
-    httpClient:                  HttpClient,
-    ecospendAuthServerConnector: EcospendAuthServerConnector
+    appConfig:      AppConfig,
+    httpClient:     HttpClient,
+    requestSupport: RequestSupport
 )(implicit ec: ExecutionContext) {
+
+  import requestSupport._
 
   private val banksUrl: String = appConfig.ExternalApiCalls.ecospendUrl + "/banks"
 
-  def getListOfAvailableBanks(implicit hc: HeaderCarrier): Future[EcospendGetBanksResponse] = captureException {
-    for {
-      accessToken <- ecospendAuthServerConnector.accessToken
-
-      banks <- httpClient.GET[EcospendGetBanksResponse](
-        banksUrl,
-        headers = Seq(("Authorization", s"Bearer ${accessToken.token}"))
-      )
-    } yield banks
+  def getListOfAvailableBanks(accessToken: EcospendAccessToken)(implicit request: JourneyRequest[_]): Future[EcospendGetBanksResponse] = captureException {
+    httpClient.GET[EcospendGetBanksResponse](
+      banksUrl,
+      headers = Seq(("Authorization", s"Bearer ${accessToken.token}"))
+    )
   }
 
-  private def captureException[A](future: => Future[A]): Future[A] =
+  private def captureException[A](future: => Future[A])(implicit request: JourneyRequest[_]): Future[A] =
     future.recover {
       case ex =>
-        Logger(getClass).warn(s"Ecospend call failed with exception: ${ex.toString}")
-        throw EcospendConnectorException(ex.getClass.getName, ex.getMessage)
+        JourneyLogger.warn(s"Ecospend call failed with exception: ${ex.toString}")
+        throw ex
     }
 
-}
-
-object EcospendConnector {
-  final case class EcospendConnectorException(name: String, message: String) extends Exception
 }
 

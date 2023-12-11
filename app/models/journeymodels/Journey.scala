@@ -18,7 +18,7 @@ package models.journeymodels
 
 import models.dateofbirth.DateOfBirth
 import models.{FullName, IdentityVerificationResponse, NationalInsuranceNumber, P800Reference}
-import models.ecospend.BankId
+import models.ecospend.BankDescription
 import play.api.libs.json.OFormat
 
 import java.time.{Clock, Instant}
@@ -323,7 +323,7 @@ final case class JourneyWhatIsTheNameOfYourBankAccount(
     override val dateOfBirth:                  DateOfBirth,
     override val nationalInsuranceNumber:      NationalInsuranceNumber,
     override val identityVerificationResponse: IdentityVerificationResponse,
-    bankId:                                    BankId
+    bankDescription:                           BankDescription
 ) extends Journey
   with JAfterStarted
   with JAfterDoYouWantToSignInNo
@@ -392,7 +392,7 @@ sealed trait JAfterWhatIsTheNameOfYourBankAccount extends Journey {
   val dateOfBirth: DateOfBirth
   val nationalInsuranceNumber: NationalInsuranceNumber
   val identityVerificationResponse: IdentityVerificationResponse
-  val bankId: BankId
+  val bankDescription: BankDescription
 }
 
 sealed trait JBeforeDoYouWantToSignInNo extends Journey

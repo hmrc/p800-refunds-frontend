@@ -30,6 +30,6 @@ object EcospendAccessToken {
     (__ \ "expires_in").read[Int].orElse(Reads(_ => JsError("Could not parse expires_in value"))) and
     (__ \ "token_type").read[String].orElse(Reads(_ => JsError("Could not parse token_type value"))) and
     (__ \ "scope").read[String].orElse(Reads(_ => JsError("Could not parse scope value")))
-  )((token, expiry, _, _) => EcospendAccessToken(token, LocalDateTime.now(clock).plusNanos(expiry)))
+  )((token, expiry, _, _) => EcospendAccessToken(token, LocalDateTime.now(clock).plusSeconds(expiry)))
 }
 

@@ -16,16 +16,10 @@
 
 package models.ecospend
 
-final case class BanksSelectOptions(bankId: Option[BankId], bankName: Option[BankName])
+import play.api.libs.json.{Format, Json}
 
-object BanksSelectOptions {
-  def noBankOption: BanksSelectOptions =
-    BanksSelectOptions(None, Some(BankName("Choose your bank")))
+final case class BankGroup(value: String)
 
-  def apply(bankId: BankId, bankName: BankName): BanksSelectOptions =
-    BanksSelectOptions(Some(bankId), Some(bankName))
-
-  implicit val banksSelectOptionsOrdering: Ordering[BanksSelectOptions] =
-    Ordering.by(_.bankName.getOrElse(BankName("")).value)
+object BankGroup {
+  implicit val format: Format[BankGroup] = Json.valueFormat[BankGroup]
 }
-

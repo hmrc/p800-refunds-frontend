@@ -22,10 +22,10 @@ import models.UriFormats.uriJsonFormat
 
 final case class BankDescription(
     bankId:       BankId,
-    name:         String,
-    friendlyName: String,
+    name:         BankName,
+    friendlyName: BankFriendlyName,
     logoUrl:      Uri,
-    group:        String,
+    group:        BankGroup,
     iconUrl:      Uri,
     hasFdp:       Boolean
 )

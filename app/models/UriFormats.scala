@@ -23,7 +23,6 @@ import play.api.libs.json._
 import scala.util.{Try, Success, Failure}
 
 object UriFormats {
-  // TODO: Re-write this, don't want to pollute new repo with cor lib
   implicit class ReadsOps[A](val r: Reads[A]) extends AnyVal {
     def jsrFlatMap[B](f: A => JsResult[B]): Reads[B] = Reads[B](json =>
       r.reads(json).flatMap(a => f(a)))

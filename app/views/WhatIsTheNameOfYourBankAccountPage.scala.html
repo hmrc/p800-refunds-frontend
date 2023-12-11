@@ -15,8 +15,7 @@
  *@
 
 @import language.Messages
-@import models.ecospend.BankId
-@import models.ecospend.BanksSelectOptions
+@import models.ecospend.{BankId, BanksSelectOptions, BankName}
 @import play.api.data.Form
 @import uk.gov.hmrc.govukfrontend.views.html.components._
 @import uk.gov.hmrc.govukfrontend.views.html.components.implicits._
@@ -48,7 +47,6 @@
     backLinkUrlOverride = Some(controllers.routes.WeHaveConfirmedYourIdentityController.get.url)
 ) {
 
-
     @if(form.errors.nonEmpty) {
         @viewsHelpers.govukErrorSummary(ErrorSummary(errorList = form.errors.asTextErrorLinks, title = Text(Messages.CommonMessages.`There is a problem`.show)))
     }
@@ -67,7 +65,7 @@
                 items = banks.map { bank =>
                     SelectItem(
                         value = bank.bankId.map(_.value),
-                        text = bank.bankName.getOrElse(""),
+                        text = bank.bankName.getOrElse(BankName("")).value,
                         selected = form.value.equals(bank.bankId)
                     )
                 }
@@ -85,56 +83,10 @@
         </a>
     }
 
-    <link @{CSPNonce.attr} rel="stylesheet" media="screen" href='@routes.Assets.versioned("stylesheets/accessible-autocomplete.css")' type="text/css" />
-    <script @{CSPNonce.attr} type="text/javascript" src='@routes.Assets.versioned("javascripts/accessible-autocomplete.js")'></script>
+    <link @{CSPNonce.attr} rel="stylesheet" media="screen" href='@routes.Assets.versioned("lib/accessible-autocomplete/dist/accessible-autocomplete.min.css")' type="text/css" />
+    <script @{CSPNonce.attr} type="text/javascript" src='@routes.Assets.versioned("lib/accessible-autocomplete/dist/accessible-autocomplete.min.js")'></script>
 
-    <script @{CSPNonce.attr} type="text/javascript">
-      const inputId = "@{key}" || "selectedBankId"
-
-      window.addEventListener("load", function(event) {
-        var originalSelect = document.querySelector(`#${inputId}-select`);
-        var form = document.querySelector("form");
-        var combo = form.querySelector('[role="combobox"]');
-
-        @if(form.hasErrors) {
-          document.getElementById(inputId).className += " govuk-input--error input-error";
-          document.getElementById(inputId).setAttribute("aria-describedby", `${inputId}-hint ${inputId}-error`)
-        }
-
-        form.addEventListener('submit', function(e) {
-          e.stopPropagation();
-          e.preventDefault();
-          var $this = $(this);
-
-          if (originalSelect.querySelectorAll('[selected]').length > 0 || originalSelect.value > "") {
-            var resetSelect = false;
-
-            if (originalSelect.value) {
-                if (combo.value != originalSelect.querySelector(`option[value="${originalSelect.value}"]`).text) {
-                resetSelect = true;
-              }
-            }
-
-            if (resetSelect) {
-              originalSelect.value = "";
-              if (originalSelect.querySelectorAll('[selected]').length > 0) {
-                originalSelect.querySelectorAll('[selected]')[0].removeAttribute('selected');
-              }
-            }
-          }
-
-          $this.submit();
-        });
-      });
-
-      accessibleAutocomplete.enhanceSelectElement({
-        confirmOnBlur: true,
-        defaultValue: '',
-        selectElement: document.querySelector(`#${inputId}`),
-        showAllValues: true,
-        displayMenu: 'overlay',
-        autoselect: true
-      })
-    </script>
+    <!-- Hint: Make sure the inputId in the javascript matches the value of 'key' set in this file. -->
+    <script @{CSPNonce.attr} type="text/javascript" src='@routes.Assets.versioned("javascripts/WhatIsTheNameOfYourBankAccountPageJavaScript.js")'></script>
 
 }
