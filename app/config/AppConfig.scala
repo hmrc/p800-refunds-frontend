@@ -46,6 +46,14 @@ class AppConfig @Inject() (servicesConfig: ServicesConfig, configuration: Config
   object ExternalApiCalls {
     val p800ReferenceValidationBaseUrl: String = servicesConfig.baseUrl("p800-reference-validation")
     val npsBaseUrl: String = servicesConfig.baseUrl("nps")
+
+    val ecospendApiVersionPath: String = "/api/v2.0"
+    val ecospendAuthServerUrl: String = servicesConfig.baseUrl("ecospend-auth")
+    val ecospendUrl: String = servicesConfig.baseUrl("ecospend") + "/api/v2.0"
+
+    val ecospendAuthClientId: String = configuration.get[String]("ecospend.oauth.clientId")
+    val ecospendAuthClientSecret: String = configuration.get[String]("ecospend.oauth.clientSecret")
+    val ecospendAuthScope: String = configuration.get[String]("ecospend.oauth.scope")
   }
 
   /**

@@ -76,6 +76,7 @@ class WhatIsYourFullNameController @Inject() (
         case j: JourneyCheckYourAnswers                  => j.into[JourneyWhatIsYourFullName].withFieldConst(_.fullName, fullName).transform
         case j: JourneyIdentityVerified                  => j.into[JourneyWhatIsYourFullName].withFieldConst(_.fullName, fullName).transform
         case j: JourneyIdentityNotVerified               => j.into[JourneyWhatIsYourFullName].withFieldConst(_.fullName, fullName).transform
+        case j: JourneyWhatIsTheNameOfYourBankAccount    => j.into[JourneyWhatIsYourFullName].withFieldConst(_.fullName, fullName).transform
       }
     WhatIsYourFullNameForm
       .form

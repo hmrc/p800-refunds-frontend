@@ -1,0 +1,136 @@
+@*
+ * Copyright 2023 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import language.Messages
+@import models.ecospend.BankId
+@import models.ecospend.BanksSelectOptions
+@import play.api.data.Form
+@import uk.gov.hmrc.govukfrontend.views.html.components._
+@import uk.gov.hmrc.govukfrontend.views.html.components.implicits._
+@import views.html.helper.CSPNonce
+@import views.html.templates.Layout
+
+@this(
+    layout: Layout,
+    viewsHelpers: views.ViewsHelpers
+)
+
+@(
+    banks:  Seq[BanksSelectOptions],
+    form: Form[BankId]
+)(implicit request: Request[_])
+
+@import viewsHelpers.requestSupport._
+
+@title = @{
+    Messages.WhatIsTheNameOfYourBankAccount.`What is the name of your bank account?`.show
+}
+
+@key = @{
+    "selectedBankId"
+}
+
+@layout(pageTitle = Some(title)) {
+
+    @if(form.errors.nonEmpty) {
+        @viewsHelpers.govukErrorSummary(ErrorSummary(errorList = form.errors.asTextErrorLinks, title = Text(Messages.CommonMessages.`There is a problem`.show)))
+    }
+
+    @viewsHelpers.formWithCsrf(action = controllers.routes.WhatIsTheNameOfYourBankAccountController.post) {
+        <h1 class="govuk-heading-xl">@title</h1>
+
+        <div id="selectedBankId-hint" class="govuk-hint js-enabled">
+            @{Messages.WhatIsTheNameOfYourBankAccount.`Select a UK bank or building society that you’d like your refund to be sent to.`.show}
+        </div>
+
+        <div id="container" class="autocomplete__wrapper govuk-input--width-20">
+            @viewsHelpers.govukSelect(Select(
+                id = key,
+                name = key,
+                items = banks.map { bank =>
+                    SelectItem(
+                        value = bank.bankId.map(_.value),
+                        text = bank.bankName.getOrElse(""),
+                        selected = form.value.equals(bank.bankId)
+                    )
+                }
+            ).withFormField(form(key)))
+        </div>
+
+        @viewsHelpers.govukButton(Button(
+            content = Text(Messages.CommonMessages.`continue`.show),
+            id      = Some("continue"),
+            classes = "select-bank-button"
+        ))
+
+        <a role="button" class="govuk-button govuk-button--secondary select-bank-button" data-module="govuk-button" href="@controllers.routes.ChooseAnotherOptionController.get.url">
+            @{Messages.WhatIsTheNameOfYourBankAccount.`My account is not listed`.show}
+        </a>
+    }
+
+    <link @{CSPNonce.attr} rel="stylesheet" media="screen" href='@routes.Assets.versioned("stylesheets/accessible-autocomplete.css")' type="text/css" />
+    <script @{CSPNonce.attr} type="text/javascript" src='@routes.Assets.versioned("javascripts/accessible-autocomplete.js")'></script>
+
+    <script @{CSPNonce.attr} type="text/javascript">
+      const inputId = "@{key}" || "selectedBankId"
+
+      window.addEventListener("load", function(event) {
+        var originalSelect = document.querySelector(`#${inputId}-select`);
+        var form = document.querySelector("form");
+        var combo = form.querySelector('[role="combobox"]');
+
+        @if(form.hasErrors) {
+          document.getElementById(inputId).className += " govuk-input--error input-error";
+          document.getElementById(inputId).setAttribute("aria-describedby", `${inputId}-hint ${inputId}-error`)
+        }
+
+        form.addEventListener('submit', function(e) {
+          e.stopPropagation();
+          e.preventDefault();
+          var $this = $(this);
+
+          if (originalSelect.querySelectorAll('[selected]').length > 0 || originalSelect.value > "") {
+            var resetSelect = false;
+
+            if (originalSelect.value) {
+                if (combo.value != originalSelect.querySelector(`option[value="${originalSelect.value}"]`).text) {
+                resetSelect = true;
+              }
+            }
+
+            if (resetSelect) {
+              originalSelect.value = "";
+              if (originalSelect.querySelectorAll('[selected]').length > 0) {
+                originalSelect.querySelectorAll('[selected]')[0].removeAttribute('selected');
+              }
+            }
+          }
+
+          $this.submit();
+        });
+      });
+
+      accessibleAutocomplete.enhanceSelectElement({
+        confirmOnBlur: true,
+        defaultValue: '',
+        selectElement: document.querySelector(`#${inputId}`),
+        showAllValues: true,
+        displayMenu: 'overlay',
+        autoselect: true
+      })
+    </script>
+
+}

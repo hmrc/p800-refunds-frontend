@@ -62,6 +62,7 @@
 
 @scripts = {
     <script src="@{controllers.routes.Assets.versioned("javascripts/application.js")}" @{CSPNonce.attr}></script>
+    <script src="@{controllers.routes.Assets.versioned("javascripts/jquery-3.7.1.min.js")}" @{CSPNonce.attr}></script>
     @additionalScripts.getOrElse(Html(""))
 }
 

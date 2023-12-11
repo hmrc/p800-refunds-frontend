@@ -60,3 +60,4 @@ GET         /choose-another-way-to-receive-your-refund                        co
 POST        /choose-another-way-to-receive-your-refund                        controllers.ChooseAnotherWayToGetYourRefundController.post
 
 GET         /what-is-the-name-of-your-bank-account                           controllers.WhatIsTheNameOfYourBankAccountController.get
+POST        /what-is-the-name-of-your-bank-account                           controllers.WhatIsTheNameOfYourBankAccountController.post

@@ -18,6 +18,7 @@ package models.journeymodels
 
 import models.dateofbirth.DateOfBirth
 import models.{FullName, IdentityVerificationResponse, NationalInsuranceNumber, P800Reference}
+import models.ecospend.BankId
 import play.api.libs.json.OFormat
 
 import java.time.{Clock, Instant}
@@ -314,6 +315,27 @@ final case class JourneyIdentityNotVerified(
   with JAfterWhatIsYourNationalInsuranceNumber
   with JAfterCheckYourAnswers
 
+final case class JourneyWhatIsTheNameOfYourBankAccount(
+    override val _id:                          JourneyId,
+    override val createdAt:                    Instant,
+    override val p800Reference:                P800Reference,
+    override val fullName:                     FullName,
+    override val dateOfBirth:                  DateOfBirth,
+    override val nationalInsuranceNumber:      NationalInsuranceNumber,
+    override val identityVerificationResponse: IdentityVerificationResponse,
+    bankId:                                    BankId
+) extends Journey
+  with JAfterStarted
+  with JAfterDoYouWantToSignInNo
+  with JAfterWhatIsYourP800Reference
+  with JAfterCheckYourReferenceValid
+  with JAfterDoYouWantYourRefundViaBankTransferYes
+  with JAfterWhatIsYourFullName
+  with JAfterWhatIsYourDateOfBirth
+  with JAfterWhatIsYourNationalInsuranceNumber
+  with JAfterCheckYourAnswers
+  with JAfterIdentityVerified
+
 /*
  * Below marking traits for all [[Journey]]s after/before certain state
  */
@@ -364,6 +386,15 @@ sealed trait JAfterIdentityVerified extends Journey {
   val identityVerificationResponse: IdentityVerificationResponse
 }
 
+sealed trait JAfterWhatIsTheNameOfYourBankAccount extends Journey {
+  val p800Reference: P800Reference
+  val fullName: FullName
+  val dateOfBirth: DateOfBirth
+  val nationalInsuranceNumber: NationalInsuranceNumber
+  val identityVerificationResponse: IdentityVerificationResponse
+  val bankId: BankId
+}
+
 sealed trait JBeforeDoYouWantToSignInNo extends Journey
 sealed trait JBeforeWhatIsYourP800Reference extends Journey
 sealed trait JBeforeCheckYourReferenceValid extends Journey
@@ -375,6 +406,7 @@ sealed trait JBeforeWhatIsYourDateOfBirth extends Journey
 sealed trait JBeforeWhatIsYourNationalInsuranceNumber extends Journey
 sealed trait JBeforeCheckYourAnswers extends Journey
 sealed trait JBeforeIdentityVerified extends Journey
+sealed trait JBeforeWhatIsTheNameOfYourBankAccount extends Journey
 
 /**
  * Marking trait for [[Journey]] in terminal state
