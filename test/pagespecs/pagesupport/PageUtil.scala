@@ -46,6 +46,9 @@ object PageUtil {
   }
   def getContentByIdOrName(idOrName: String)(implicit webDriver: WebDriver): String = findElement(idOrName).text
 
+  def setSelectByIdAndValue(id: String, value: String)(implicit webDriver: WebDriver): Unit =
+    singleSel(id).value_=(value)
+
   /**
    * Gets the value attribute of element identified by id or name
    */

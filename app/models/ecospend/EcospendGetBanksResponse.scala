@@ -14,14 +14,12 @@
  * limitations under the License.
  */
 
-package pagespecs
+package models.ecospend
 
-import testsupport.ItSpec
+import play.api.libs.json.{Json, OFormat}
 
-class GiveYourConsentPageSpec extends ItSpec {
+final case class EcospendGetBanksResponse(data: List[EcospendBankDescription])
 
-  "/give-your-consent renders the give your consent page" in {
-    pages.giveYourConsentPage.open()
-    pages.giveYourConsentPage.assertPageIsDisplayed()
-  }
+object EcospendGetBanksResponse {
+  implicit val format: OFormat[EcospendGetBanksResponse] = Json.format[EcospendGetBanksResponse]
 }

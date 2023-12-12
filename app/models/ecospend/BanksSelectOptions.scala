@@ -14,14 +14,18 @@
  * limitations under the License.
  */
 
-package pagespecs
+package models.ecospend
 
-import testsupport.ItSpec
+final case class BanksSelectOptions(bankId: Option[BankId], bankName: Option[BankName])
 
-class GiveYourConsentPageSpec extends ItSpec {
+object BanksSelectOptions {
+  def noBankOption: BanksSelectOptions =
+    BanksSelectOptions(None, Some(BankName("Choose your bank")))
 
-  "/give-your-consent renders the give your consent page" in {
-    pages.giveYourConsentPage.open()
-    pages.giveYourConsentPage.assertPageIsDisplayed()
-  }
+  def apply(bankId: BankId, bankName: BankName): BanksSelectOptions =
+    BanksSelectOptions(Some(bankId), Some(bankName))
+
+  implicit val banksSelectOptionsOrdering: Ordering[BanksSelectOptions] =
+    Ordering.by(_.bankName.getOrElse(BankName("")).value)
 }
+

@@ -14,14 +14,24 @@
  * limitations under the License.
  */
 
-package pagespecs
+package models.ecospend
 
-import testsupport.ItSpec
+import akka.http.scaladsl.model.Uri
+import play.api.libs.json.{Json, OFormat}
+import models.UriFormats.uriJsonFormat
 
-class GiveYourConsentPageSpec extends ItSpec {
+final case class BankDescription(
+    bankId:       BankId,
+    name:         BankName,
+    friendlyName: BankFriendlyName,
+    logoUrl:      Uri,
+    group:        BankGroup,
+    iconUrl:      Uri,
+    hasFdp:       Boolean
+)
 
-  "/give-your-consent renders the give your consent page" in {
-    pages.giveYourConsentPage.open()
-    pages.giveYourConsentPage.assertPageIsDisplayed()
-  }
+@SuppressWarnings(Array("org.wartremover.warts.Any"))
+object BankDescription {
+  implicit val format: OFormat[BankDescription] = Json.format[BankDescription]
 }
+

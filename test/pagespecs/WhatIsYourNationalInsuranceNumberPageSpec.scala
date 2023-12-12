@@ -70,7 +70,7 @@ class WhatIsYourNationalInsuranceNumberPageSpec extends ItSpec {
   "Prepopulate the form if the user has already entered it" in {
     upsertJourneyToDatabase(tdAll.journeyWhatIsYourNationalInsuranceNumber)
     pages.whatIsYourNationalInsuranceNumberPage.open()
-    pages.whatIsYourNationalInsuranceNumberPage.assertDataPrepopulated("MA000003A")
+    pages.whatIsYourNationalInsuranceNumberPage.assertDataPrepopulated("LM001014C")
   }
 
 }

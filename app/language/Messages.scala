@@ -410,6 +410,24 @@ object Messages {
     )
   }
 
+  object WhatIsTheNameOfYourBankAccount {
+    val `What is the name of your bank account?`: Message = Message(
+      english = "What is the name of your bank account?"
+    )
+
+    val `Select a UK bank or building society that you’d like your refund to be sent to.`: Message = Message(
+      english = "Select a UK bank or building society that you’d like your refund to be sent to."
+    )
+
+    val `My account is not listed`: Message = Message(
+      english = "My account is not listed"
+    )
+
+    val `Select a bank from the list`: Message = Message(
+      english = "Select a bank from the list"
+    )
+  }
+
   object YourChequeWillBePostedToYou {
     val `Your cheque will be posted to you`: Message = Message(
       english = "Your cheque will be posted to you"

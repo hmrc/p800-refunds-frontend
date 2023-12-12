@@ -14,14 +14,12 @@
  * limitations under the License.
  */
 
-package pagespecs
+package models.ecospend
 
-import testsupport.ItSpec
+import play.api.libs.json.{Format, Json}
 
-class GiveYourConsentPageSpec extends ItSpec {
+final case class BankId(value: String) extends AnyVal
 
-  "/give-your-consent renders the give your consent page" in {
-    pages.giveYourConsentPage.open()
-    pages.giveYourConsentPage.assertPageIsDisplayed()
-  }
+object BankId {
+  implicit val formats: Format[BankId] = Json.valueFormat[BankId]
 }

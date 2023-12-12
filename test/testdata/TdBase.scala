@@ -21,6 +21,7 @@ import models.dateofbirth.{DateOfBirth, DayOfMonth, Month, Year}
 
 import java.time.{Instant, LocalDateTime, ZoneOffset}
 import java.time.format.DateTimeFormatter
+import models.ecospend.BankId
 
 trait TdBase {
 
@@ -45,8 +46,10 @@ trait TdBase {
   lazy val dateOfBirth: DateOfBirth = DateOfBirth(dayOfMonth, month, year)
   lazy val dateOfBirthFormatted: String = "01 January 2000"
 
-  lazy val nationalInsuranceNumber: NationalInsuranceNumber = NationalInsuranceNumber("MA000003A")
+  lazy val nationalInsuranceNumber: NationalInsuranceNumber = NationalInsuranceNumber("LM001014C")
 
   lazy val identityVerifiedResponse: IdentityVerificationResponse = IdentityVerificationResponse(IdentityVerified(true), AmountInPence(1234))
   lazy val identityNotVerifiedResponse: IdentityVerificationResponse = IdentityVerificationResponse(IdentityVerified(false), AmountInPence(1234))
+
+  lazy val bankId: BankId = BankId("obie-barclays-personal")
 }

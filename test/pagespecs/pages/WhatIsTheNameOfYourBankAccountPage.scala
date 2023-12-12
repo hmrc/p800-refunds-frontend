@@ -16,6 +16,7 @@
 
 package pagespecs.pages
 
+import models.ecospend.BankId
 import org.openqa.selenium.WebDriver
 import pagespecs.pagesupport.{ContentExpectation, Page, PageUtil}
 
@@ -24,7 +25,16 @@ class WhatIsTheNameOfYourBankAccountPage(baseUrl: String)(implicit webDriver: We
   path = "/get-an-income-tax-refund/what-is-the-name-of-your-bank-account"
 ) {
 
-  override def expectedH1: String = "Under Construction"
+  override def expectedH1: String = "What is the name of your bank account?"
+
+  override def clickSubmit()(implicit webDriver: WebDriver): Unit =
+    PageUtil.clickByIdOrName("continue")
+
+  def clickMyAccountIsNotListed()(implicit webDriver: WebDriver): Unit =
+    PageUtil.clickByIdOrName("myAccountIsNotListed")
+
+  def selectBankAccount(bankId: BankId)(implicit webDriver: WebDriver): Unit =
+    PageUtil.setSelectByIdAndValue("selectedBankId", bankId.value)
 
   override def assertPageIsDisplayed(extraExpectations: ContentExpectation*): Unit = withPageClue {
 
@@ -32,8 +42,8 @@ class WhatIsTheNameOfYourBankAccountPage(baseUrl: String)(implicit webDriver: We
       atXpath       = PageUtil.Xpath.mainContent,
       expectedLines =
         """
-          |Under Construction
-          |This page has not been developed yet
+          |What is the name of your bank account?
+          |Select a UK bank or building society that you’d like your refund to be sent to.
           |""".stripMargin
     )) ++ extraExpectations
 
@@ -43,6 +53,19 @@ class WhatIsTheNameOfYourBankAccountPage(baseUrl: String)(implicit webDriver: We
       h1                  = expectedH1,
       title               = PageUtil.standardTitle(expectedH1),
       contentExpectations = contentExpectations: _*
+    )
+  }
+
+  def assertPageShowsError(): Unit = withPageClue {
+    assertPageIsDisplayed(
+      ContentExpectation(
+        atXpath       = PageUtil.Xpath.mainContent,
+        expectedLines =
+          """
+            |There is a problem
+            |Select a bank from the list
+            |""".stripMargin
+      )
     )
   }
 

@@ -38,7 +38,7 @@ class Pages(baseUrl: String)(implicit webDriver: WebDriver) {
   val requestNotSubmittedPage = new RequestNotSubmittedPage(baseUrl = baseUrl)
   val verifyBankAccountPage = new VerifyBankAccountPage(baseUrl = baseUrl)
   val chooseAnotherWayToReceiveYourRefundPage = new ChooseAnotherWayToReceiveYourRefundPage(baseUrl = baseUrl)
-  val giveYourConsentPageSpecPage = new GiveYourConsentPage(baseUrl = baseUrl)
+  val giveYourConsentPage = new GiveYourConsentPage(baseUrl = baseUrl)
 
   val yourChequeWillBePostedToYouPage = new YourCheckWillBePostedToYouPage(baseUrl = baseUrl)
   val chequeRequestReceivedPage = new ChequeRequestReceivedPage(baseUrl = baseUrl)
