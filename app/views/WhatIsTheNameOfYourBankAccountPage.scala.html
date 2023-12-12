@@ -52,9 +52,13 @@
     }
 
     @viewsHelpers.formWithCsrf(action = controllers.routes.WhatIsTheNameOfYourBankAccountController.post) {
-        <h1 class="govuk-heading-xl">@title</h1>
+        <h1 class="govuk-label-wrapper">
+            <label class="govuk-label govuk-label--xl" for="selectedBankId">
+                @title
+            </label>
+        </h1>
 
-        <div id="selectedBankId-hint" class="govuk-hint js-enabled">
+        <div id="selectedBankId-hint" class="govuk-hint">
             @{Messages.WhatIsTheNameOfYourBankAccount.`Select a UK bank or building society that you’d like your refund to be sent to.`.show}
         </div>
 
@@ -62,6 +66,7 @@
             @viewsHelpers.govukSelect(Select(
                 id = key,
                 name = key,
+                describedBy = Option("selectedBankId-hint"),
                 items = banks.map { bank =>
                     SelectItem(
                         value = bank.bankId.map(_.value),
