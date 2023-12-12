@@ -95,7 +95,17 @@ flowchart TD;
     --> TBC...
 ```
 
+---
 
+### Navigating through quickly with Tampermonkey
+A script has been created to be used with [Tampermonkey](https://www.tampermonkey.net/) to enable fast navigation through
+the service to make testing easier. To make use of it, install the Tampermonkey browser extension on your browser and
+then install [this script](https://raw.githubusercontent.com/hmrc/p800-refunds-frontend/main/tampermonkey/quickJourney.js). After
+installation, a green "Quick submit" button will be visible near the top-left of each page in the service. Clicking this
+button will autocomplete the inputs on the page (including the test-only start page) and automatically click the continue
+button on that page.
+
+---
 
 ### License
 
