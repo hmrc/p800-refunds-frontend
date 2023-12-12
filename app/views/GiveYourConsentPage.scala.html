@@ -17,13 +17,14 @@
 @import language.Messages
 @import uk.gov.hmrc.govukfrontend.views.html.components._
 @import views.html.templates.Layout
+@import models.ecospend.BankFriendlyName
 
 @this(
     layout: Layout,
     viewsHelpers: views.ViewsHelpers
 )
 
-@()(implicit request: Request[_])
+@(bankName: BankFriendlyName, amountInPence: AmountInPence)(implicit request: Request[_])
 
 @import viewsHelpers.requestSupport._
 
@@ -32,13 +33,18 @@
 }
 
 @layout(
-    pageTitle = Some(title)
+    pageTitle = Some(title),
+    backLinkUrlOverride = Some(routes.WhatIsTheNameOfYourBankAccountController.get.url)
 ) {
 
     <h1 class="govuk-heading-xl">@title</h1>
 
     <p class="govuk-body">
-        @{Html(Messages.GiveYourConsent.`By choosing approve`("Monzo","342").show) }
+        @{Html(Messages.GiveYourConsent.`By choosing approve`(
+            bankName = bankName,
+            amount = amountInPence,
+            changeBankLink = routes.WhatIsTheNameOfYourBankAccountController.get.url
+        ).show)}
     </p>
 
     <p class="govuk-body">
@@ -64,14 +70,14 @@
     </p>
 
     <div class="govuk-button-group">
-
         @viewsHelpers.govukButton(Button(
-            content = Text(Messages.GiveYourConsent.`Approve this refund`.show)
+            content = Text(Messages.GiveYourConsent.`Approve this refund`.show),
+            href = Some(routes.GiveYourConsentController.approveThisRefund.url),
+            id = Some("approve-this-refund")
         ))
-        <a class="govuk-link" href="#">@{Messages.GiveYourConsent.`Choose another way to get my money`.show}</a>
+        <a id="choose-another-way" class="govuk-link" href="@routes.ChooseAnotherWayToGetYourRefundController.get.url">
+            @{Messages.GiveYourConsent.`Choose another way to get my money`.show}
+        </a>
     </div>
-
-
-
 
 }

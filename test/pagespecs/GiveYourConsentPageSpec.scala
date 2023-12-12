@@ -17,11 +17,51 @@
 package pagespecs
 
 import testsupport.ItSpec
+import testsupport.stubs.EcospendStub
 
 class GiveYourConsentPageSpec extends ItSpec {
+
+  override def beforeEach(): Unit = {
+    super.beforeEach()
+    addJourneyIdToSession(tdAll.journeyId)
+    upsertJourneyToDatabase(tdAll.journeyWhatIsTheNameOfYourBankAccount)
+  }
 
   "/give-your-consent renders the give your consent page" in {
     pages.giveYourConsentPage.open()
     pages.giveYourConsentPage.assertPageIsDisplayed()
+  }
+
+  //todo ticket says url will be determined in another ticket - I think this is right though.
+  "clicking 'Change my bank' redirects to 'What is the name of your bank' page" in {
+    EcospendStub.stubEcospendAuth2xxSucceeded
+    EcospendStub.stubEcospendGetBanks2xx
+    pages.giveYourConsentPage.open()
+    pages.giveYourConsentPage.assertPageIsDisplayed()
+    pages.giveYourConsentPage.clickChangeBank()
+    pages.whatIsTheNameOfYourBankAccountPage.assertPageIsDisplayed()
+  }
+
+  "clicking 'Approve this refund' redirects to 'Verifying bank account'" in {
+    pages.giveYourConsentPage.open()
+    pages.giveYourConsentPage.assertPageIsDisplayed()
+    pages.giveYourConsentPage.clickApproveThisRefund()
+    pages.verifyBankAccountPage.assertPageIsDisplayed()
+  }
+
+  "clicking 'Choose another way to get my money' redirects to 'Choose another way to get my refund' page" in {
+    pages.giveYourConsentPage.open()
+    pages.giveYourConsentPage.assertPageIsDisplayed()
+    pages.giveYourConsentPage.clickChooseAnotherWayToGetMyMoney()
+    pages.chooseAnotherWayToReceiveYourRefundPage.assertPageIsDisplayed()
+  }
+
+  "clicking 'Back' redirects user to 'Select a bank account' page" in {
+    EcospendStub.stubEcospendAuth2xxSucceeded
+    EcospendStub.stubEcospendGetBanks2xx
+    pages.giveYourConsentPage.open()
+    pages.giveYourConsentPage.assertPageIsDisplayed()
+    pages.giveYourConsentPage.clickBackButton()
+    pages.whatIsTheNameOfYourBankAccountPage.assertPageIsDisplayed()
   }
 }

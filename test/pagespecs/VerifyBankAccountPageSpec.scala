@@ -20,6 +20,12 @@ import testsupport.ItSpec
 
 class VerifyBankAccountPageSpec extends ItSpec {
 
+  override def beforeEach(): Unit = {
+    super.beforeEach()
+    addJourneyIdToSession(tdAll.journeyId)
+    upsertJourneyToDatabase(tdAll.journeyWhatIsTheNameOfYourBankAccount)
+  }
+
   "/get-an-income-tax-refund/request-not-submitted renders the request not submitted page" in {
     pages.verifyBankAccountPage.open()
     pages.verifyBankAccountPage.assertPageIsDisplayed()

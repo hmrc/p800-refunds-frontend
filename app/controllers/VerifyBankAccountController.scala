@@ -30,7 +30,7 @@ class VerifyBankAccountController @Inject() (
     actions: Actions
 ) extends FrontendController(mcc) {
 
-  val get: Action[AnyContent] = actions.default { implicit request =>
+  val get: Action[AnyContent] = actions.journeyAction { implicit request =>
     Ok(views.verifyBankAccountPage())
   }
 

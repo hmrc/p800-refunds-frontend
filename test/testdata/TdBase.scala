@@ -16,12 +16,13 @@
 
 package testdata
 
+import akka.http.scaladsl.model.Uri
 import models.{AmountInPence, FullName, IdentityVerificationResponse, IdentityVerified, NationalInsuranceNumber, P800Reference}
 import models.dateofbirth.{DateOfBirth, DayOfMonth, Month, Year}
 
 import java.time.{Instant, LocalDateTime, ZoneOffset}
 import java.time.format.DateTimeFormatter
-import models.ecospend.BankId
+import models.ecospend.{BankDescription, BankFriendlyName, BankGroup, BankId, BankName}
 
 trait TdBase {
 
@@ -52,4 +53,14 @@ trait TdBase {
   lazy val identityNotVerifiedResponse: IdentityVerificationResponse = IdentityVerificationResponse(IdentityVerified(false), AmountInPence(1234))
 
   lazy val bankId: BankId = BankId("obie-barclays-personal")
+  lazy val bankDescription: BankDescription = BankDescription(
+    bankId       = bankId,
+    name         = BankName("Barclays Personal"),
+    friendlyName = BankFriendlyName("Barclays Personal"),
+    logoUrl      = Uri("https://logo.com"),
+    group        = BankGroup("Barclays"),
+    iconUrl      = "https://public.ecospend.com/images/banks/Barclays_icon.svg",
+    hasFdp       = false
+  )
+
 }

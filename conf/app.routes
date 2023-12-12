@@ -30,6 +30,8 @@ GET         /request-received                                                 co
 GET         /request-not-submitted                                            controllers.RequestNotSubmittedController.get
 
 GET         /give-your-consent                                                controllers.GiveYourConsentController.get
+#TODO: maybe we should make this a post? For now it is protected by journey state matching.
+GET         /approve-this-refund                                              controllers.GiveYourConsentController.approveThisRefund
 GET         /verifying-bank-account                                           controllers.VerifyBankAccountController.get
 
 

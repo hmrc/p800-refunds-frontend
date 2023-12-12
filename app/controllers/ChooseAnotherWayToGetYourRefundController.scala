@@ -44,11 +44,12 @@ class ChooseAnotherWayToGetYourRefundController @Inject() (
 
   val get: Action[AnyContent] = actions.journeyAction { implicit request =>
     request.journey match {
-      case j: JTerminal                  => JourneyRouter.handleFinalJourneyOnNonFinalPage(j)
-      case j: JBeforeIdentityVerified    => JourneyRouter.sendToCorrespondingPage(j)
-      case _: JourneyIdentityVerified    => getResult
-      case _: JourneyIdentityNotVerified => getResult
-      case j: JAfterIdentityVerified     => JourneyRouter.sendToCorrespondingPage(j)
+      case j: JTerminal                             => JourneyRouter.handleFinalJourneyOnNonFinalPage(j)
+      case j: JBeforeIdentityVerified               => JourneyRouter.sendToCorrespondingPage(j)
+      case _: JourneyIdentityVerified               => getResult
+      case _: JourneyIdentityNotVerified            => getResult
+      case _: JourneyWhatIsTheNameOfYourBankAccount => getResult
+      case j: JAfterIdentityVerified                => JourneyRouter.sendToCorrespondingPage(j)
     }
   }
 
@@ -56,24 +57,25 @@ class ChooseAnotherWayToGetYourRefundController @Inject() (
 
   val post: Action[AnyContent] = actions.journeyAction.async { implicit request =>
     request.journey match {
-      case j: JTerminal                  => JourneyRouter.handleFinalJourneyOnNonFinalPageF(j)
-      case j: JBeforeIdentityVerified    => JourneyRouter.sendToCorrespondingPageF(j)
-      case j: JourneyIdentityVerified    => JourneyRouter.sendToCorrespondingPageF(j)
-      case j: JourneyIdentityNotVerified => processForm(j)
-      case j: JAfterIdentityVerified     => JourneyRouter.sendToCorrespondingPageF(j)
+      case j: JTerminal                             => JourneyRouter.handleFinalJourneyOnNonFinalPageF(j)
+      case j: JBeforeIdentityVerified               => JourneyRouter.sendToCorrespondingPageF(j)
+      case j: JourneyIdentityVerified               => JourneyRouter.sendToCorrespondingPageF(j)
+      case j: JourneyIdentityNotVerified            => processForm(Left(j))
+      case j: JourneyWhatIsTheNameOfYourBankAccount => processForm(Right(j))
+      case j: JAfterIdentityVerified                => JourneyRouter.sendToCorrespondingPageF(j)
     }
   }
 
-  private def processForm(journey: JourneyIdentityNotVerified)(implicit request: Request[_]): Future[Result] = {
+  private def processForm(journey: Either[JourneyIdentityNotVerified, JourneyWhatIsTheNameOfYourBankAccount])(implicit request: Request[_]): Future[Result] = {
     ChooseAnotherWayToGetYourRefundForm.form.bindFromRequest().fold(
       formWithErrors => Future.successful(
         BadRequest(views.chooseAnotherWayToReceiveYourRefundPage(form = formWithErrors))
       ), (validForm: ChooseAnotherWayToGetYourRefundFormValue) => {
         val (newJourney, redirect) = validForm match {
           case ChooseAnotherWayToGetYourRefundFormValue.BankTransfer =>
-            journey -> appConfig.PersonalTaxAccountUrls.personalTaxAccountSignInUrl
+            journey.merge -> appConfig.PersonalTaxAccountUrls.personalTaxAccountSignInUrl
           case ChooseAnotherWayToGetYourRefundFormValue.Cheque =>
-            journey -> routes.YourChequeWillBePostedToYouController.get.url
+            journey.merge -> routes.YourChequeWillBePostedToYouController.get.url
         }
         journeyService
           .upsert(newJourney)

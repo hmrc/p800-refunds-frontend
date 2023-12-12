@@ -58,6 +58,7 @@ object JourneyRouter {
       case _: JourneyIdentityNotVerified                   => controllers.routes.WeCannotConfirmYourIdentityController.get
       case _: JourneyYourChequeWillBePostedToYou           => controllers.routes.RequestReceivedController.get
       case _: JourneyWhatIsTheNameOfYourBankAccount        => controllers.routes.GiveYourConsentController.get
+      case _: JourneyApprovedRefund                        => controllers.routes.VerifyBankAccountController.get
     }
 
     JourneyLogger.warn(s"Incorrect journey state for this page. Redirecting to ${redirectLocation.url}")
