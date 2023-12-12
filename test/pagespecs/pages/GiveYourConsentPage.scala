@@ -31,7 +31,7 @@ class GiveYourConsentPage(baseUrl: String)(implicit webDriver: WebDriver) extend
       atXpath       = PageUtil.Xpath.mainContent,
       expectedLines =
         """
-          |By choosing approve, you will be redirected to Monzo to securely log in and approve your refund of £342. Change my bank.
+          |By choosing approve, you will be redirected to Barclays Personal to securely log in and approve your refund of £1.23. Change my bank.
           |This is a service provided by Ecospend, an authorised payment institution regulated by the Financial Conduct Authority (FCA), which will initiate a refund directly from HMRC to your bank.
           |Ecospend will have one-off access to:
           |the name on your account
@@ -52,5 +52,9 @@ class GiveYourConsentPage(baseUrl: String)(implicit webDriver: WebDriver) extend
       contentExpectations = contentExpectations: _*
     )
   }
+
+  def clickChangeBank(): Unit = PageUtil.clickByIdOrName("change-bank")
+  def clickApproveThisRefund(): Unit = PageUtil.clickByIdOrName("approve-this-refund")
+  def clickChooseAnotherWayToGetMyMoney(): Unit = PageUtil.clickByIdOrName("choose-another-way")
 
 }

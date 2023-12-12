@@ -17,6 +17,7 @@
 package language
 
 import models.AmountInPence
+import models.ecospend.BankFriendlyName
 
 object Messages {
 
@@ -143,8 +144,9 @@ object Messages {
       english = "Give your consent"
     )
 
-    def `By choosing approve`(bank: String, amount: String): Message = Message(
-      english = s"""By choosing approve, you will be redirected to <strong>$bank</strong> to securely log in and approve your refund of <strong>£$amount</strong>. <a href="#" class="govuk-link">Change my bank</a>."""
+    def `By choosing approve`(bankName: BankFriendlyName, amount: AmountInPence, changeBankLink: String): Message = Message(
+      // language=HTML
+      english = s"""By choosing approve, you will be redirected to <strong>${bankName.value}</strong> to securely log in and approve your refund of <strong>${amount.gdsFormatInPounds}</strong>. <a href="$changeBankLink" id="change-bank" class="govuk-link">Change my bank</a>."""
     )
 
     val `This is a service provided by Ecospend`: Message = Message(

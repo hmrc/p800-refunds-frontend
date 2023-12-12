@@ -111,6 +111,17 @@ trait TdJourney { dependencies: TdBase =>
     identityVerificationResponse = dependencies.identityNotVerifiedResponse
   )
 
+  lazy val journeyWhatIsTheNameOfYourBankAccount: JourneyWhatIsTheNameOfYourBankAccount = JourneyWhatIsTheNameOfYourBankAccount(
+    _id                          = journeyId,
+    createdAt                    = dependencies.instant,
+    p800Reference                = dependencies.p800Reference,
+    fullName                     = dependencies.fullName,
+    dateOfBirth                  = dependencies.dateOfBirth,
+    nationalInsuranceNumber      = dependencies.nationalInsuranceNumber,
+    identityVerificationResponse = dependencies.identityNotVerifiedResponse,
+    bankDescription              = dependencies.bankDescription
+  )
+
   lazy val journeyYourChequeWillBePostedToYou: JourneyYourChequeWillBePostedToYou = JourneyYourChequeWillBePostedToYou(
     _id           = journeyId,
     createdAt     = dependencies.instant,

@@ -54,6 +54,7 @@ class WhatIsTheNameOfYourBankAccountController @Inject() (
       case j: JourneyIdentityNotVerified                  => JourneyRouter.sendToCorrespondingPageF(j)
       case _: JourneyIdentityVerified                     => getResult(None)
       case j: JourneyWhatIsTheNameOfYourBankAccount       => getResult(Some(j.bankDescription.bankId))
+      case j: JourneyApprovedRefund                       => getResult(Some(j.bankDescription.bankId))
     }
   }
 
@@ -76,6 +77,7 @@ class WhatIsTheNameOfYourBankAccountController @Inject() (
       case j: JourneyIdentityNotVerified            => JourneyRouter.sendToCorrespondingPageF(j)
       case j: JourneyIdentityVerified               => processForm(j)
       case j: JourneyWhatIsTheNameOfYourBankAccount => processForm(j)
+      case j: JourneyApprovedRefund                 => processForm(j)
     }
   }
 
@@ -118,7 +120,7 @@ class WhatIsTheNameOfYourBankAccountController @Inject() (
     ecospendService.getBanks.map { banks =>
       if (banks.isEmpty) Logger(getClass).warn("Notification critical : Bank list from Ecospend is empty")
 
-      val xs = banks.filter(_.bankId === bankId)
+      val xs: List[BankDescription] = banks.filter(_.bankId === bankId)
       if (xs.size === 1) xs.headOption.getOrElse(Errors.throwServerErrorException("Unable to get BankDescription for given BankId"))
       else Errors.throwServerErrorException("Unable to find BankDescription for given BankId")
     }

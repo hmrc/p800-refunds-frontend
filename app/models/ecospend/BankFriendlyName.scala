@@ -18,7 +18,7 @@ package models.ecospend
 
 import play.api.libs.json.{Format, Json}
 
-final case class BankFriendlyName(value: String)
+final case class BankFriendlyName(value: String) extends AnyVal
 
 object BankFriendlyName {
   implicit val format: Format[BankFriendlyName] = Json.valueFormat[BankFriendlyName]
