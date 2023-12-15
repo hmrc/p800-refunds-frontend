@@ -14,21 +14,17 @@
  * limitations under the License.
  */
 
-package pagespecs
+package models.ecospend.verification
 
-import testsupport.ItSpec
+import enumeratum._
 
-class RequestNotSubmittedPageSpec extends ItSpec {
+sealed trait VerificationStatus extends EnumEntry
 
-  override def beforeEach(): Unit = {
-    super.beforeEach()
-    addJourneyIdToSession(tdAll.journeyId)
-    upsertJourneyToDatabase(tdAll.journeyRefundConsentGiven)
-  }
+object VerificationStatus extends Enum[VerificationStatus] with PlayJsonEnum[VerificationStatus] {
 
-  "/request-not-submitted renders 'Request not submitted page'" in {
-    pages.requestNotSubmittedPage.open()
-    pages.requestNotSubmittedPage.assertPageIsDisplayed()
-  }
+  val values = findValues
+
+  case object Successful extends VerificationStatus
+  case object UnSuccessful extends VerificationStatus
 
 }

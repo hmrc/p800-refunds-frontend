@@ -192,8 +192,8 @@ object Messages {
       english = "We are verifying your bank account"
     )
 
-    val `This usually takes a few seconds`: Message = Message(
-      english = "This usually takes a few seconds. You can <a href='#' class='govuk-link'>refresh this page</a> if it doesn't update automatically."
+    def `This usually takes a few seconds`(refreshLink: String): Message = Message(
+      english = s"""This usually takes a few seconds. You can <a href="$refreshLink" id="refresh-this-page" class="govuk-link">refresh this page</a> if it doesn't update automatically."""
     )
   }
   object ChooseAnotherWayToReceiveYourRefund {

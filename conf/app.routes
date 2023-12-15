@@ -26,13 +26,15 @@ GET         /your-cheque-will-be-posted-to-you                               con
 POST        /your-cheque-will-be-posted-to-you                               controllers.YourChequeWillBePostedToYouController.post
 
 #TODO: change url to reflect cheque in the name, there will be another request-received page so we want to distinguish between them
-GET         /request-received                                                 controllers.RequestReceivedController.get
-GET         /request-not-submitted                                            controllers.RequestNotSubmittedController.get
+GET         /cheque/request-received                                         controllers.RequestReceivedController.chequeGet
+GET         /bank/request-received                                           controllers.RequestReceivedController.bankTransferGet
 
-GET         /give-your-consent                                                controllers.GiveYourConsentController.get
+GET         /request-not-submitted                                           controllers.RequestNotSubmittedController.get
+
+GET         /give-your-consent                                               controllers.GiveYourConsentController.get
 #TODO: maybe we should make this a post? For now it is protected by journey state matching.
-GET         /approve-this-refund                                              controllers.GiveYourConsentController.approveThisRefund
-GET         /verifying-bank-account                                           controllers.VerifyBankAccountController.get
+GET         /approve-this-refund                                             controllers.GiveYourConsentController.approveThisRefund
+GET         /verifying-bank-account                                          controllers.VerifyBankAccountController.get
 
 
 #we-need-you-to-confirm-your-identity:
@@ -58,8 +60,8 @@ GET         /we-have-confirmed-your-identity                                 con
 GET         /we-cannot-confirm-your-identity                                 controllers.WeCannotConfirmYourIdentityController.get
 POST        /we-cannot-confirm-your-identity                                 controllers.WeCannotConfirmYourIdentityController.tryAgain
 
-GET         /choose-another-way-to-receive-your-refund                        controllers.ChooseAnotherWayToGetYourRefundController.get
-POST        /choose-another-way-to-receive-your-refund                        controllers.ChooseAnotherWayToGetYourRefundController.post
+GET         /choose-another-way-to-receive-your-refund                       controllers.ChooseAnotherWayToGetYourRefundController.get
+POST        /choose-another-way-to-receive-your-refund                       controllers.ChooseAnotherWayToGetYourRefundController.post
 
 GET         /what-is-the-name-of-your-bank-account                           controllers.WhatIsTheNameOfYourBankAccountController.get
 POST        /what-is-the-name-of-your-bank-account                           controllers.WhatIsTheNameOfYourBankAccountController.post

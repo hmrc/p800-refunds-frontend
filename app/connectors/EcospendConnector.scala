@@ -18,6 +18,7 @@ package connectors
 
 import action.JourneyRequest
 import config.AppConfig
+import models.ecospend.verification.{BankVerification, BankVerificationRequest}
 import models.ecospend.{EcospendAccessToken, EcospendGetBanksResponse}
 import requests.RequestSupport
 import uk.gov.hmrc.http.HttpClient
@@ -40,7 +41,7 @@ class EcospendConnector @Inject() (
 
   def getListOfAvailableBanks(accessToken: EcospendAccessToken)(implicit request: JourneyRequest[_]): Future[EcospendGetBanksResponse] = captureException {
     httpClient.GET[EcospendGetBanksResponse](
-      banksUrl,
+      url     = banksUrl,
       headers = Seq(("Authorization", s"Bearer ${accessToken.token}"))
     )
   }
@@ -51,6 +52,19 @@ class EcospendConnector @Inject() (
         JourneyLogger.warn(s"Ecospend call failed with exception: ${ex.toString}")
         throw ex
     }
+
+  private val validateUrl: String = appConfig.ExternalApiCalls.ecospendUrl + "/validate"
+
+  def validate(
+      accessToken:             EcospendAccessToken,
+      bankVerificationRequest: BankVerificationRequest
+  )(implicit journeyRequest: JourneyRequest[_]): Future[BankVerification] = captureException {
+    httpClient.POST[BankVerificationRequest, BankVerification](
+      url     = validateUrl,
+      body    = bankVerificationRequest,
+      headers = Seq(("Authorization", s"Bearer ${accessToken.token}"))
+    )
+  }
 
 }
 

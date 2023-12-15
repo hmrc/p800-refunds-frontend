@@ -34,7 +34,8 @@ object JourneyRouter {
   def handleFinalJourneyOnNonFinalPageF(journey: JTerminal): Future[Result] = Future.successful(handleFinalJourneyOnNonFinalPage(journey))
 
   def handleFinalJourneyOnNonFinalPage(journey: JTerminal): Result = journey match {
-    case _: JourneyYourChequeWillBePostedToYou => Redirect(controllers.routes.RequestReceivedController.get)
+    case _: JourneyYourChequeWillBePostedToYou => Redirect(controllers.routes.RequestReceivedController.chequeGet)
+    case _: JourneyApprovedRefund              => Redirect(controllers.routes.RequestReceivedController.bankTransferGet)
   }
 
   /**
@@ -56,8 +57,9 @@ object JourneyRouter {
       case _: JourneyCheckYourAnswers                      => controllers.routes.WeHaveConfirmedYourIdentityController.get
       case _: JourneyIdentityVerified                      => controllers.routes.WhatIsTheNameOfYourBankAccountController.get
       case _: JourneyIdentityNotVerified                   => controllers.routes.WeCannotConfirmYourIdentityController.get
-      case _: JourneyYourChequeWillBePostedToYou           => controllers.routes.RequestReceivedController.get
+      case _: JourneyYourChequeWillBePostedToYou           => controllers.routes.RequestReceivedController.chequeGet
       case _: JourneyWhatIsTheNameOfYourBankAccount        => controllers.routes.GiveYourConsentController.get
+      case _: JourneyRefundConsentGiven                    => controllers.routes.GiveYourConsentController.get
       case _: JourneyApprovedRefund                        => controllers.routes.VerifyBankAccountController.get
     }
 

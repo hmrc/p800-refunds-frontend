@@ -74,6 +74,6 @@ class YourChequeWillBePostedToYouController @Inject() (
     //TODO: API call
     journeyService
       .upsert(journey.transformInto[JourneyYourChequeWillBePostedToYou])
-      .map(_ => Redirect(controllers.routes.RequestReceivedController.get))
+      .map(_ => Redirect(controllers.routes.RequestReceivedController.chequeGet))
   }
 }
