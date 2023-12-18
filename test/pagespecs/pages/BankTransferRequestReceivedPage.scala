@@ -20,9 +20,9 @@ import org.openqa.selenium.WebDriver
 import pagespecs.pagesupport.{ContentExpectation, Page, PageUtil}
 import testsupport.RichMatchers.convertToAnyShouldWrapper
 
-class ChequeRequestReceivedPage(baseUrl: String)(implicit webDriver: WebDriver) extends Page(
+class BankTransferRequestReceivedPage(baseUrl: String)(implicit webDriver: WebDriver) extends Page(
   baseUrl,
-  path = "/get-an-income-tax-refund/cheque/request-received"
+  path = "/get-an-income-tax-refund/bank/request-received"
 ) {
 
   override def expectedH1: String = "Request received"
@@ -36,7 +36,7 @@ class ChequeRequestReceivedPage(baseUrl: String)(implicit webDriver: WebDriver) 
           |Request received
           |P800 reference
           |P800REFNO1
-          |Your refund of £231.60 will now be processed.
+          |Your refund of £12.34 will now be processed.
           |
           |You should allow up to 6 weeks for your cheque to arrive in the post.
           |

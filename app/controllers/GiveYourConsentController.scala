@@ -19,7 +19,7 @@ package controllers
 import action.{Actions, JourneyRequest}
 import io.scalaland.chimney.dsl._
 import models.AmountInPence
-import models.journeymodels.{JAfterWhatIsTheNameOfYourBankAccount, JBeforeWhatIsTheNameOfYourBankAccount, JTerminal, JourneyApprovedRefund, JourneyWhatIsTheNameOfYourBankAccount}
+import models.journeymodels.{JAfterWhatIsTheNameOfYourBankAccount, JBeforeWhatIsTheNameOfYourBankAccount, JTerminal, JourneyApprovedRefund, JourneyRefundConsentGiven, JourneyWhatIsTheNameOfYourBankAccount}
 import play.api.mvc._
 import services.JourneyService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
@@ -62,17 +62,18 @@ class GiveYourConsentController @Inject() (
   //todo look into whether we should combine this def into the one below and just have one pattern match using JAfterIdentityVerified or something. Would be less duplication, but maybe less clear?
   private def approveThisRefundButton(journey: JourneyWhatIsTheNameOfYourBankAccount)(implicit request: JourneyRequest[_]): Future[Result] = {
     journeyService
-      .upsert(journey.into[JourneyApprovedRefund].transform)
+      .upsert(journey.into[JourneyRefundConsentGiven].transform)
       .map(_ => Redirect(routes.VerifyBankAccountController.get))
   }
 
   private def approveThisRefundButton(journey: JAfterWhatIsTheNameOfYourBankAccount)(implicit request: JourneyRequest[_]): Future[Result] = {
-    val newJourneyTransformer = journey match {
-      case j: JourneyApprovedRefund => j.into[JourneyApprovedRefund]
+    val newJourney = journey match {
+      case j: JourneyRefundConsentGiven => j
+      case j: JourneyApprovedRefund     => j.into[JourneyRefundConsentGiven].transform
     }
 
     journeyService
-      .upsert(newJourneyTransformer.transform)
+      .upsert(newJourney)
       .map(_ => Redirect(routes.VerifyBankAccountController.get))
   }
 

@@ -122,6 +122,28 @@ trait TdJourney { dependencies: TdBase =>
     bankDescription              = dependencies.bankDescription
   )
 
+  lazy val journeyRefundConsentGiven: JourneyRefundConsentGiven = JourneyRefundConsentGiven(
+    _id                          = journeyId,
+    createdAt                    = dependencies.instant,
+    p800Reference                = dependencies.p800Reference,
+    fullName                     = dependencies.fullName,
+    dateOfBirth                  = dependencies.dateOfBirth,
+    nationalInsuranceNumber      = dependencies.nationalInsuranceNumber,
+    identityVerificationResponse = dependencies.identityNotVerifiedResponse,
+    bankDescription              = dependencies.bankDescription
+  )
+
+  lazy val journeyApprovedRefund: JourneyApprovedRefund = JourneyApprovedRefund(
+    _id                          = journeyId,
+    createdAt                    = dependencies.instant,
+    p800Reference                = dependencies.p800Reference,
+    fullName                     = dependencies.fullName,
+    dateOfBirth                  = dependencies.dateOfBirth,
+    nationalInsuranceNumber      = dependencies.nationalInsuranceNumber,
+    identityVerificationResponse = dependencies.identityNotVerifiedResponse,
+    bankDescription              = dependencies.bankDescription
+  )
+
   lazy val journeyYourChequeWillBePostedToYou: JourneyYourChequeWillBePostedToYou = JourneyYourChequeWillBePostedToYou(
     _id           = journeyId,
     createdAt     = dependencies.instant,

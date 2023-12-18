@@ -42,6 +42,7 @@ class Pages(baseUrl: String)(implicit webDriver: WebDriver) {
 
   val yourChequeWillBePostedToYouPage = new YourCheckWillBePostedToYouPage(baseUrl = baseUrl)
   val chequeRequestReceivedPage = new ChequeRequestReceivedPage(baseUrl = baseUrl)
+  val bankTransferRequestReceivedPage = new BankTransferRequestReceivedPage(baseUrl = baseUrl)
 
   val checkYourAnswersPage = new CheckYourAnswersPage(baseUrl = baseUrl)
   val whatIsTheNameOfYourBankAccountPage = new WhatIsTheNameOfYourBankAccountPage(baseUrl = baseUrl)

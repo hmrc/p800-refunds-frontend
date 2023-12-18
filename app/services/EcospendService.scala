@@ -17,8 +17,10 @@
 package services
 
 import action.JourneyRequest
-import connectors.{EcospendConnector, EcospendAuthServerConnector}
+import connectors.{EcospendAuthServerConnector, EcospendConnector}
 import models.ecospend.BankDescription
+import models.ecospend.verification.{BankVerification, BankVerificationRequest}
+import models.journeymodels.JourneyRefundConsentGiven
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
@@ -35,4 +37,10 @@ class EcospendService @Inject() (
 
     banks = getBanksResponse.data.filter(_.serviceStatus).map(_.toFrontendBankDescription)
   } yield banks
+
+  def validate(journey: JourneyRefundConsentGiven)(implicit request: JourneyRequest[_]): Future[BankVerification] = for {
+    accessToken <- ecospendAuthServerConnector.accessToken
+    getBanksResponse <- ecospendConnector.validate(accessToken, BankVerificationRequest(journey.nationalInsuranceNumber.value))
+  } yield getBanksResponse
+
 }

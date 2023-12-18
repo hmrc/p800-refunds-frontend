@@ -16,22 +16,51 @@
 
 package controllers
 
-import action.Actions
+import action.{Actions, JourneyRequest}
+import io.scalaland.chimney.dsl._
+import models.ecospend.verification.{BankVerification, VerificationStatus}
+import models.journeymodels._
 import play.api.mvc._
+import services.{EcospendService, JourneyService}
+import uk.gov.hmrc.http.UpstreamErrorResponse
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import views.Views
+import util.SafeEquals.EqualsOps
 
 import javax.inject.{Inject, Singleton}
+import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class VerifyBankAccountController @Inject() (
-    mcc:     MessagesControllerComponents,
-    views:   Views,
-    actions: Actions
-) extends FrontendController(mcc) {
+    mcc:             MessagesControllerComponents,
+    views:           Views,
+    actions:         Actions,
+    ecospendService: EcospendService,
+    journeyService:  JourneyService
+)(implicit ec: ExecutionContext) extends FrontendController(mcc) {
 
-  val get: Action[AnyContent] = actions.journeyAction { implicit request =>
-    Ok(views.verifyBankAccountPage())
+  val get: Action[AnyContent] = actions.journeyAction.async { implicit request =>
+    request.journey match {
+      case j: JTerminal                             => JourneyRouter.handleFinalJourneyOnNonFinalPageF(j)
+      case j: JBeforeWhatIsTheNameOfYourBankAccount => JourneyRouter.sendToCorrespondingPageF(j)
+      case j: JourneyWhatIsTheNameOfYourBankAccount => JourneyRouter.sendToCorrespondingPageF(j)
+      case j: JourneyRefundConsentGiven             => pageAction(j)
+    }
+  }
+
+  private def pageAction(journey: JourneyRefundConsentGiven)(implicit journeyRequest: JourneyRequest[_]): Future[Result] = {
+    for {
+      maybeBankVerification: BankVerification <- ecospendService.validate(journey)
+      _ <- maybeBankVerification.verificationStatus match {
+        case VerificationStatus.Successful   => journeyService.upsert(journey.into[JourneyApprovedRefund].transform).map(_ => ())
+        case VerificationStatus.UnSuccessful => Future.successful(())
+      }
+    } yield maybeBankVerification
+  }.map(bankVerification => bankVerification.verificationStatus match {
+    case VerificationStatus.Successful   => Redirect(routes.RequestReceivedController.bankTransferGet)
+    case VerificationStatus.UnSuccessful => Redirect(routes.RequestNotSubmittedController.get)
+  }).recover {
+    case e: UpstreamErrorResponse if e.statusCode === PAYMENT_REQUIRED => Ok(views.verifyBankAccountPage())
   }
 
 }

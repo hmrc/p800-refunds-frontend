@@ -54,7 +54,7 @@ class WhatIsTheNameOfYourBankAccountController @Inject() (
       case j: JourneyIdentityNotVerified                  => JourneyRouter.sendToCorrespondingPageF(j)
       case _: JourneyIdentityVerified                     => getResult(None)
       case j: JourneyWhatIsTheNameOfYourBankAccount       => getResult(Some(j.bankDescription.bankId))
-      case j: JourneyApprovedRefund                       => getResult(Some(j.bankDescription.bankId))
+      case j: JourneyRefundConsentGiven                   => getResult(Some(j.bankDescription.bankId))
     }
   }
 
@@ -77,7 +77,7 @@ class WhatIsTheNameOfYourBankAccountController @Inject() (
       case j: JourneyIdentityNotVerified            => JourneyRouter.sendToCorrespondingPageF(j)
       case j: JourneyIdentityVerified               => processForm(j)
       case j: JourneyWhatIsTheNameOfYourBankAccount => processForm(j)
-      case j: JourneyApprovedRefund                 => processForm(j)
+      case j: JourneyRefundConsentGiven             => JourneyRouter.sendToCorrespondingPageF(j)
     }
   }
 

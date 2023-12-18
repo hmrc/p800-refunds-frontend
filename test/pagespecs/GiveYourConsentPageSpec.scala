@@ -43,6 +43,8 @@ class GiveYourConsentPageSpec extends ItSpec {
   }
 
   "clicking 'Approve this refund' redirects to 'Verifying bank account'" in {
+    EcospendStub.stubEcospendAuth2xxSucceeded
+    EcospendStub.ValidateStubs.stubValidateNotValidatedYet
     pages.giveYourConsentPage.open()
     pages.giveYourConsentPage.assertPageIsDisplayed()
     pages.giveYourConsentPage.clickApproveThisRefund()

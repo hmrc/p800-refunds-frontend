@@ -18,11 +18,13 @@ package testsupport.stubs
 
 import com.github.tomakehurst.wiremock.client.WireMock._
 import com.github.tomakehurst.wiremock.stubbing.StubMapping
+import models.ecospend.verification.{BankVerificationRequest, VerificationStatus}
 import play.api.http.Status
 
 object EcospendStub {
   val authUrl: String = "/connect/token"
   val banksUrl: String = "/api/v2.0/banks"
+  val validateUrl: String = "/api/v2.0/validate"
 
   val authJsonResponseBody2xx: String =
     """{
@@ -122,4 +124,23 @@ object EcospendStub {
 
   def verifyEcospendGetBanks(numberOfRequests: Int = 1): Unit =
     verify(exactly(numberOfRequests), getRequestedFor(urlPathEqualTo(banksUrl)))
+
+  object ValidateStubs {
+
+    def stubValidateNotValidatedYet: StubMapping = WireMockHelpers.stubForPostNoResponseBody(validateUrl, Status.PAYMENT_REQUIRED)
+
+    def stubValidatePaymentSuccessful(identifier: String = "AB123456C"): StubMapping =
+      WireMockHelpers.stubForPostWithResponseBody(validateUrl, validateBankVerificationResponseJson(identifier, VerificationStatus.Successful))
+
+    def stubValidatePaymentUnSuccessful(identifier: String = "AB123456C"): StubMapping =
+      WireMockHelpers.stubForPostWithResponseBody(validateUrl, validateBankVerificationResponseJson(identifier, VerificationStatus.UnSuccessful))
+
+    def validateBankVerificationResponseJson(identifier: String, verificationStatus: VerificationStatus): String =
+      //language=JSON
+      s"""{"identifier":"$identifier", "verificationStatus":"${verificationStatus.entryName}"}"""
+
+    def verifyValidate(numberOfRequests: Int = 1): Unit = WireMockHelpers.verifyExactlyWithBodyParse(validateUrl, numberOfRequests)(BankVerificationRequest.format)
+
+  }
+
 }

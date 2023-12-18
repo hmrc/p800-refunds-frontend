@@ -14,21 +14,13 @@
  * limitations under the License.
  */
 
-package pagespecs
+package models.ecospend.verification
 
-import testsupport.ItSpec
+import play.api.libs.json.{Json, OFormat}
 
-class RequestNotSubmittedPageSpec extends ItSpec {
+final case class BankVerification(identifier: String, verificationStatus: VerificationStatus)
 
-  override def beforeEach(): Unit = {
-    super.beforeEach()
-    addJourneyIdToSession(tdAll.journeyId)
-    upsertJourneyToDatabase(tdAll.journeyRefundConsentGiven)
-  }
-
-  "/request-not-submitted renders 'Request not submitted page'" in {
-    pages.requestNotSubmittedPage.open()
-    pages.requestNotSubmittedPage.assertPageIsDisplayed()
-  }
-
+object BankVerification {
+  @SuppressWarnings(Array("org.wartremover.warts.Any"))
+  implicit val format: OFormat[BankVerification] = Json.format[BankVerification]
 }

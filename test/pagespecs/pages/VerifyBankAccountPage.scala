@@ -46,4 +46,6 @@ class VerifyBankAccountPage(baseUrl: String)(implicit webDriver: WebDriver) exte
     )
   }
 
+  def clickRefreshThisPageLink(): Unit = PageUtil.clickByIdOrName("refresh-this-page")
+
 }

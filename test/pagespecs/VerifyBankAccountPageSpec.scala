@@ -17,18 +17,64 @@
 package pagespecs
 
 import testsupport.ItSpec
+import testsupport.stubs.EcospendStub
 
 class VerifyBankAccountPageSpec extends ItSpec {
 
   override def beforeEach(): Unit = {
     super.beforeEach()
     addJourneyIdToSession(tdAll.journeyId)
-    upsertJourneyToDatabase(tdAll.journeyWhatIsTheNameOfYourBankAccount)
+    upsertJourneyToDatabase(tdAll.journeyRefundConsentGiven)
   }
 
-  "/get-an-income-tax-refund/request-not-submitted renders the request not submitted page" in {
+  "/verifying-bank-account renders the 'We are verifying your bank account' page" in {
+    EcospendStub.stubEcospendAuth2xxSucceeded
+    EcospendStub.ValidateStubs.stubValidateNotValidatedYet
     pages.verifyBankAccountPage.open()
     pages.verifyBankAccountPage.assertPageIsDisplayed()
+    EcospendStub.ValidateStubs.verifyValidate()
+  }
+
+  "clicking 'refresh this page' refreshes the page - showing the same page if bank is not verified yet" in {
+    EcospendStub.stubEcospendAuth2xxSucceeded
+    EcospendStub.ValidateStubs.stubValidateNotValidatedYet
+    pages.verifyBankAccountPage.open()
+    pages.verifyBankAccountPage.assertPageIsDisplayed()
+    pages.verifyBankAccountPage.clickRefreshThisPageLink()
+    pages.verifyBankAccountPage.assertPageIsDisplayed()
+    EcospendStub.ValidateStubs.verifyValidate(2)
+  }
+
+  "redirect to bank transfer 'Request received' page when verification call returns Successful" in {
+    EcospendStub.stubEcospendAuth2xxSucceeded
+    EcospendStub.ValidateStubs.stubValidateNotValidatedYet
+    pages.verifyBankAccountPage.open()
+    pages.verifyBankAccountPage.assertPageIsDisplayed()
+    EcospendStub.ValidateStubs.stubValidatePaymentSuccessful()
+    pages.verifyBankAccountPage.clickRefreshThisPageLink()
+    pages.bankTransferRequestReceivedPage.assertPageIsDisplayed()
+    EcospendStub.ValidateStubs.verifyValidate(2)
+  }
+
+  "redirect to 'Request not submitted' page when verification call returns UnSuccessful" in {
+    EcospendStub.stubEcospendAuth2xxSucceeded
+    EcospendStub.ValidateStubs.stubValidateNotValidatedYet
+    pages.verifyBankAccountPage.open()
+    pages.verifyBankAccountPage.assertPageIsDisplayed()
+    EcospendStub.ValidateStubs.stubValidatePaymentUnSuccessful()
+    pages.verifyBankAccountPage.clickRefreshThisPageLink()
+    pages.requestNotSubmittedPage.assertPageIsDisplayed()
+    EcospendStub.ValidateStubs.verifyValidate(2)
+  }
+
+  "clicking 'Back' sends user to 'What is the name of your bank account' page" in {
+    EcospendStub.stubEcospendAuth2xxSucceeded
+    EcospendStub.ValidateStubs.stubValidateNotValidatedYet
+    EcospendStub.stubEcospendGetBanks2xx
+    pages.verifyBankAccountPage.open()
+    pages.verifyBankAccountPage.assertPageIsDisplayed()
+    pages.verifyBankAccountPage.clickBackButton()
+    pages.whatIsTheNameOfYourBankAccountPage.assertPageIsDisplayed()
   }
 
 }
