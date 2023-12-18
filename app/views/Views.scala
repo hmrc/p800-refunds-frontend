@@ -27,7 +27,7 @@ class Views @Inject() (
     val checkYourAnswersPage:                    views.html.identityverification.CheckYourAnswersPage,
     val cannotConfirmReferencePage:              views.html.CannotConfirmReferencePage,
     val yourChequeWillBePostedToYouPage:         views.html.chequejourney.YourChequeWillBePostedToYouPage,
-    val requestReceivedPage:                     views.html.chequejourney.RequestReceivedPage,
+    val chequeRequestReceivedPage:               views.html.chequejourney.ChequeRequestReceivedPage,
     val weNeedYouToConfirmYourIdentityPage:      views.html.identityverification.WeNeedYouToConfirmYourIdentityPage,
     val whatIsYourFullNamePage:                  views.html.identityverification.WhatIsYourFullNamePage,
     val whatIsYourDateOfBirthPage:               views.html.identityverification.WhatIsYourDateOfBirthPage,
@@ -39,7 +39,8 @@ class Views @Inject() (
     val verifyBankAccountPage:                   views.html.VerifyBankAccountPage,
     val doYouWantYourRefundViaBankTransferPage:  views.html.DoYouWantYourRefundViaBankTransferPage,
     val chooseAnotherWayToReceiveYourRefundPage: views.html.ChooseAnotherWayToReceiveYourRefundPage,
-    val whatIsTheNameOfYourBankAccountPage:      views.html.WhatIsTheNameOfYourBankAccountPage
+    val whatIsTheNameOfYourBankAccountPage:      views.html.WhatIsTheNameOfYourBankAccountPage,
+    val bankTransferRequestReceivedPage:         views.html.BankTransferRequestReceivedPage
 )
 
 class ViewsTestOnly @Inject() (

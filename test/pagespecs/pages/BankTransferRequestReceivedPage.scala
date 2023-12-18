@@ -36,9 +36,7 @@ class BankTransferRequestReceivedPage(baseUrl: String)(implicit webDriver: WebDr
           |Request received
           |P800 reference
           |P800REFNO1
-          |Your refund of £12.34 will now be processed.
-          |
-          |You should allow up to 6 weeks for your cheque to arrive in the post.
+          |Your refund of £12.34 will now be paid by 1 December 2023.
           |
           |Print this page
           |
@@ -57,11 +55,13 @@ class BankTransferRequestReceivedPage(baseUrl: String)(implicit webDriver: WebDr
     )
 
     generalEnquiriesHref() shouldBe "https://www.gov.uk/government/organisations/hm-revenue-customs/contact/income-tax-enquiries-for-individuals-pensioners-and-employees"
+    generalEnquiriesTarget() shouldBe "_blank"
     PageUtil.elementDisplayedByClassName("govuk-back-link") shouldBe false
     ()
   }
 
   private def generalEnquiriesHref(): String = PageUtil.getHrefById("general-enquiries-link")
+  private def generalEnquiriesTarget(): String = PageUtil.getTargetById("general-enquiries-link")
 
   def clickPrintThisPage(): Unit = PageUtil.clickByIdOrName("print-page")
 

@@ -60,6 +60,16 @@ object PageUtil {
   }
 
   /**
+   * Gets the target attribute of element identified by id or name
+   */
+  def getTargetById(idOrName: String)(implicit webDriver: WebDriver): String = {
+    val e: WebBrowser.Element = findElement(idOrName)
+    e
+      .attribute("target")
+      .getOrElse(s"Element with id=[$idOrName] didn't have attribute 'target' ${e.toString()}")
+  }
+
+  /**
    * Gets the href attribute of element identified by id or name
    */
   def getHrefById(idOrName: String)(implicit webDriver: WebDriver): String = {

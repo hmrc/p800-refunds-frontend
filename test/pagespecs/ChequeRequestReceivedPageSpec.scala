@@ -26,7 +26,7 @@ class ChequeRequestReceivedPageSpec extends ItSpec {
     upsertJourneyToDatabase(tdAll.journeyYourChequeWillBePostedToYou)
   }
 
-  "/request-received renders the cheque request received page" in {
+  "/cheque/request-received renders the cheque request received page" in {
     pages.chequeRequestReceivedPage.open()
     pages.chequeRequestReceivedPage.assertPageIsDisplayed()
   }

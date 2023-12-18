@@ -527,6 +527,43 @@ object Messages {
     )
 
   }
+
+  object BankTransferRequestReceived {
+    val `Request received`: Message = Message(
+      english = "Request received"
+    )
+
+    val `P800 reference`: Message = Message(
+      english = "P800 reference"
+    )
+
+    def `Your refund of £x.xx will now be processed and paid by...`(amountInPence: AmountInPence, date: String): Message = Message(
+      //language=html
+      english = s"Your refund of <strong>${amountInPence.gdsFormatInPounds}</strong> will now be paid by <strong>$date</strong>."
+    )
+
+    val `Print this page`: Message = Message(
+      english = "Print this page"
+    )
+
+    val `What happens next`: Message = Message(
+      english = "What happens next"
+    )
+
+    val `What do you think`: Message = Message(
+      english = "What did you think of this service?"
+    )
+
+    val `takes 30 seconds`: Message = Message(
+      english = "(takes 30 seconds)"
+    )
+
+    def `If you don’t receive your refund you can call or write...`(generalEnquiriesLink: String): Message = Message(
+      english =
+        s"""If you don’t receive your refund you can <a id="general-enquiries-link" target="_blank" class="govuk-link" href="$generalEnquiriesLink">
+           |call or write to the Income Tax helpline (opens in new tab)</a>. You will need your P800 reference.""".stripMargin
+    )
+  }
   object ServicePhase {
 
     val serviceName: Message = Message(
