@@ -130,8 +130,8 @@ object Messages {
       english = "Your refund request has not been submitted"
     )
 
-    val `We can not verify the bank account you used`: Message = Message(
-      english = "We can not verify the bank account you used."
+    val `We can not process your refund request.`: Message = Message(
+      english = "We can not process your refund request."
     )
 
     val `Choose another way to get my money`: Message = Message(

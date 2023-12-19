@@ -19,7 +19,7 @@ package controllers
 import action.{Actions, JourneyRequest}
 import io.scalaland.chimney.dsl._
 import models.AmountInPence
-import models.journeymodels.{JAfterWhatIsTheNameOfYourBankAccount, JBeforeWhatIsTheNameOfYourBankAccount, JTerminal, JourneyApprovedRefund, JourneyRefundConsentGiven, JourneyWhatIsTheNameOfYourBankAccount}
+import models.journeymodels.{JAfterWhatIsTheNameOfYourBankAccount, JBeforeWhatIsTheNameOfYourBankAccount, JTerminal, JourneyApprovedRefund, JourneyNotApprovedRefund, JourneyRefundConsentGiven, JourneyWhatIsTheNameOfYourBankAccount}
 import play.api.mvc._
 import services.JourneyService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
@@ -27,6 +27,7 @@ import views.Views
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
+import util.Errors
 
 @Singleton
 class GiveYourConsentController @Inject() (
@@ -70,6 +71,7 @@ class GiveYourConsentController @Inject() (
     val newJourney = journey match {
       case j: JourneyRefundConsentGiven => j
       case j: JourneyApprovedRefund     => j.into[JourneyRefundConsentGiven].transform
+      case _: JourneyNotApprovedRefund  => Errors.throwServerErrorException("Invalid state, it should not be possible to go back to GiveYourConsentController while in JourneyNotApprovedRefund state.")
     }
 
     journeyService

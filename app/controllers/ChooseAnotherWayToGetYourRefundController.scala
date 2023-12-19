@@ -18,6 +18,7 @@ package controllers
 
 import action.Actions
 import config.AppConfig
+import io.scalaland.chimney.dsl._
 import models.forms.ChooseAnotherWayToGetYourRefundForm
 import models.forms.enumsforforms.ChooseAnotherWayToGetYourRefundFormValue
 import models.journeymodels._
@@ -44,6 +45,7 @@ class ChooseAnotherWayToGetYourRefundController @Inject() (
 
   val get: Action[AnyContent] = actions.journeyAction { implicit request =>
     request.journey match {
+      case _: JourneyNotApprovedRefund              => getResult
       case j: JTerminal                             => JourneyRouter.handleFinalJourneyOnNonFinalPage(j)
       case j: JBeforeIdentityVerified               => JourneyRouter.sendToCorrespondingPage(j)
       case _: JourneyIdentityVerified               => getResult
@@ -57,6 +59,7 @@ class ChooseAnotherWayToGetYourRefundController @Inject() (
 
   val post: Action[AnyContent] = actions.journeyAction.async { implicit request =>
     request.journey match {
+      case j: JourneyNotApprovedRefund              => processFormNotApprovedRefund(j)
       case j: JTerminal                             => JourneyRouter.handleFinalJourneyOnNonFinalPageF(j)
       case j: JBeforeIdentityVerified               => JourneyRouter.sendToCorrespondingPageF(j)
       case j: JourneyIdentityVerified               => JourneyRouter.sendToCorrespondingPageF(j)
@@ -76,6 +79,28 @@ class ChooseAnotherWayToGetYourRefundController @Inject() (
             journey.merge -> appConfig.PersonalTaxAccountUrls.personalTaxAccountSignInUrl
           case ChooseAnotherWayToGetYourRefundFormValue.Cheque =>
             journey.merge -> routes.YourChequeWillBePostedToYouController.get.url
+        }
+        journeyService
+          .upsert(newJourney)
+          .map(_ => Redirect(redirect))
+      }
+    )
+  }
+
+  private def processFormNotApprovedRefund(journey: JourneyNotApprovedRefund)(implicit request: Request[_]): Future[Result] = {
+    ChooseAnotherWayToGetYourRefundForm.form.bindFromRequest().fold(
+      formWithErrors => Future.successful(
+        BadRequest(views.chooseAnotherWayToReceiveYourRefundPage(form = formWithErrors))
+      ), (validForm: ChooseAnotherWayToGetYourRefundFormValue) => {
+        val (newJourney, redirect) = validForm match {
+          case ChooseAnotherWayToGetYourRefundFormValue.BankTransfer =>
+            journey -> appConfig.PersonalTaxAccountUrls.personalTaxAccountSignInUrl
+          case ChooseAnotherWayToGetYourRefundFormValue.Cheque =>
+            journey
+              .into[JourneyDoYouWantYourRefundViaBankTransferNo]
+              .enableInheritedAccessors
+              .transform ->
+              routes.YourChequeWillBePostedToYouController.get.url
         }
         journeyService
           .upsert(newJourney)

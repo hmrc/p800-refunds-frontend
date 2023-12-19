@@ -36,6 +36,7 @@ object JourneyRouter {
   def handleFinalJourneyOnNonFinalPage(journey: JTerminal): Result = journey match {
     case _: JourneyYourChequeWillBePostedToYou => Redirect(controllers.routes.RequestReceivedController.chequeGet)
     case _: JourneyApprovedRefund              => Redirect(controllers.routes.RequestReceivedController.bankTransferGet)
+    case _: JourneyNotApprovedRefund           => Redirect(controllers.routes.RequestNotSubmittedController.get)
   }
 
   /**
@@ -61,6 +62,7 @@ object JourneyRouter {
       case _: JourneyWhatIsTheNameOfYourBankAccount        => controllers.routes.GiveYourConsentController.get
       case _: JourneyRefundConsentGiven                    => controllers.routes.GiveYourConsentController.get
       case _: JourneyApprovedRefund                        => controllers.routes.VerifyBankAccountController.get
+      case _: JourneyNotApprovedRefund                     => controllers.routes.RequestNotSubmittedController.get
     }
 
     JourneyLogger.warn(s"Incorrect journey state for this page. Redirecting to ${redirectLocation.url}")

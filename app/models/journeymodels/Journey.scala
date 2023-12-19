@@ -68,6 +68,7 @@ final case class JourneyStarted(
   with JBeforeWhatIsTheNameOfYourBankAccount
   with JBeforeRefundConsentGiven
   with JBeforeApprovedRefund
+  with JBeforeNotApprovedRefund
 
 /**
  * [[Journey]] when finishing submission on DoYouWantToSignIn page,
@@ -91,6 +92,7 @@ final case class JourneyDoYouWantToSignInNo(
   with JBeforeWhatIsTheNameOfYourBankAccount
   with JBeforeRefundConsentGiven
   with JBeforeApprovedRefund
+  with JBeforeNotApprovedRefund
 
 /**
  * [[Journey]] when finishing submission on WhatIsYourP800Reference page.
@@ -114,6 +116,7 @@ final case class JourneyWhatIsYourP800Reference(
   with JBeforeWhatIsTheNameOfYourBankAccount
   with JBeforeRefundConsentGiven
   with JBeforeApprovedRefund
+  with JBeforeNotApprovedRefund
 
 /**
  * [[Journey]] when finishing submission on CheckYourReference page,
@@ -138,6 +141,7 @@ final case class JourneyCheckYourReferenceValid(
   with JBeforeWhatIsTheNameOfYourBankAccount
   with JBeforeRefundConsentGiven
   with JBeforeApprovedRefund
+  with JBeforeNotApprovedRefund
 
 /**
  * [[Journey]] when finishing submission on DoYouWantYourRefundViaBankTransfer page,
@@ -160,6 +164,7 @@ final case class JourneyDoYouWantYourRefundViaBankTransferYes(
   with JBeforeWhatIsTheNameOfYourBankAccount
   with JBeforeRefundConsentGiven
   with JBeforeApprovedRefund
+  with JBeforeNotApprovedRefund
 
 /**
  * [[Journey]] when finishing submission on DoYouWantYourRefundViaBankTransfer page,
@@ -179,6 +184,7 @@ final case class JourneyDoYouWantYourRefundViaBankTransferNo(
   with JBeforeWhatIsTheNameOfYourBankAccount
   with JBeforeRefundConsentGiven
   with JBeforeApprovedRefund
+  with JBeforeNotApprovedRefund
 
 /**
  * [[Journey]] when finishing submission on YourChequeWillBePostedToYou page.
@@ -199,6 +205,7 @@ final case class JourneyYourChequeWillBePostedToYou(
   with JBeforeWhatIsTheNameOfYourBankAccount
   with JBeforeRefundConsentGiven
   with JBeforeApprovedRefund
+  with JBeforeNotApprovedRefund
 
 /**
  * [[Journey]] when finishing submission on WhatIsYourFullName page.
@@ -221,6 +228,7 @@ final case class JourneyWhatIsYourFullName(
   with JBeforeWhatIsTheNameOfYourBankAccount
   with JBeforeRefundConsentGiven
   with JBeforeApprovedRefund
+  with JBeforeNotApprovedRefund
 
 /**
  * [[Journey]] when finishing submission on WhatIsYourDateOfBirth page,
@@ -245,6 +253,7 @@ final case class JourneyWhatIsYourDateOfBirth(
   with JBeforeWhatIsTheNameOfYourBankAccount
   with JBeforeRefundConsentGiven
   with JBeforeApprovedRefund
+  with JBeforeNotApprovedRefund
 
 final case class JourneyWhatIsYourNationalInsuranceNumber(
     override val _id:           JourneyId,
@@ -266,6 +275,7 @@ final case class JourneyWhatIsYourNationalInsuranceNumber(
   with JBeforeWhatIsTheNameOfYourBankAccount
   with JBeforeRefundConsentGiven
   with JBeforeApprovedRefund
+  with JBeforeNotApprovedRefund
 
 /**
  * This state represents journey leaving CheckYourAnswers page via the "Change" link
@@ -290,6 +300,7 @@ final case class JourneyCheckYourAnswersChange(
   with JBeforeWhatIsTheNameOfYourBankAccount
   with JBeforeRefundConsentGiven
   with JBeforeApprovedRefund
+  with JBeforeNotApprovedRefund
 
 final case class JourneyCheckYourAnswers(
     override val _id:                     JourneyId,
@@ -312,6 +323,7 @@ final case class JourneyCheckYourAnswers(
   with JBeforeWhatIsTheNameOfYourBankAccount
   with JBeforeRefundConsentGiven
   with JBeforeApprovedRefund
+  with JBeforeNotApprovedRefund
 
 final case class JourneyIdentityVerified(
     override val _id:                     JourneyId,
@@ -334,6 +346,7 @@ final case class JourneyIdentityVerified(
   with JBeforeWhatIsTheNameOfYourBankAccount
   with JBeforeRefundConsentGiven
   with JBeforeApprovedRefund
+  with JBeforeNotApprovedRefund
 
 final case class JourneyIdentityNotVerified(
     override val _id:                     JourneyId,
@@ -356,6 +369,7 @@ final case class JourneyIdentityNotVerified(
   with JBeforeWhatIsTheNameOfYourBankAccount
   with JBeforeRefundConsentGiven
   with JBeforeApprovedRefund
+  with JBeforeNotApprovedRefund
 
 final case class JourneyWhatIsTheNameOfYourBankAccount(
     override val _id:                          JourneyId,
@@ -379,6 +393,7 @@ final case class JourneyWhatIsTheNameOfYourBankAccount(
   with JAfterIdentityVerified
   with JBeforeRefundConsentGiven
   with JBeforeApprovedRefund
+  with JBeforeNotApprovedRefund
 
 final case class JourneyRefundConsentGiven(
     override val _id:                          JourneyId,
@@ -402,8 +417,33 @@ final case class JourneyRefundConsentGiven(
   with JAfterIdentityVerified
   with JAfterWhatIsTheNameOfYourBankAccount
   with JBeforeApprovedRefund
+  with JBeforeNotApprovedRefund
 
 final case class JourneyApprovedRefund(
+    override val _id:                          JourneyId,
+    override val createdAt:                    Instant,
+    override val p800Reference:                P800Reference,
+    override val fullName:                     FullName,
+    override val dateOfBirth:                  DateOfBirth,
+    override val nationalInsuranceNumber:      NationalInsuranceNumber,
+    override val identityVerificationResponse: IdentityVerificationResponse,
+    override val bankDescription:              BankDescription
+) extends Journey
+  with JTerminal
+  with JAfterStarted
+  with JAfterDoYouWantToSignInNo
+  with JAfterWhatIsYourP800Reference
+  with JAfterCheckYourReferenceValid
+  with JAfterDoYouWantYourRefundViaBankTransferYes
+  with JAfterWhatIsYourFullName
+  with JAfterWhatIsYourDateOfBirth
+  with JAfterWhatIsYourNationalInsuranceNumber
+  with JAfterCheckYourAnswers
+  with JAfterIdentityVerified
+  with JAfterWhatIsTheNameOfYourBankAccount
+  with JAfterRefundConsentGiven
+
+final case class JourneyNotApprovedRefund(
     override val _id:                          JourneyId,
     override val createdAt:                    Instant,
     override val p800Reference:                P800Reference,
@@ -495,6 +535,15 @@ sealed trait JAfterRefundConsentGiven extends Journey {
   val bankDescription: BankDescription
 }
 
+sealed trait JAfterNotApprovedRefund extends Journey {
+  val p800Reference: P800Reference
+  val fullName: FullName
+  val dateOfBirth: DateOfBirth
+  val nationalInsuranceNumber: NationalInsuranceNumber
+  val identityVerificationResponse: IdentityVerificationResponse
+  val bankDescription: BankDescription
+}
+
 sealed trait JBeforeDoYouWantToSignInNo extends Journey
 sealed trait JBeforeWhatIsYourP800Reference extends Journey
 sealed trait JBeforeCheckYourReferenceValid extends Journey
@@ -509,6 +558,7 @@ sealed trait JBeforeIdentityVerified extends Journey
 sealed trait JBeforeWhatIsTheNameOfYourBankAccount extends Journey
 sealed trait JBeforeRefundConsentGiven extends Journey
 sealed trait JBeforeApprovedRefund extends Journey
+sealed trait JBeforeNotApprovedRefund extends Journey
 
 /**
  * Marking trait for [[Journey]] in terminal state

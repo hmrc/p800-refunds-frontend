@@ -79,6 +79,7 @@ class WhatIsYourFullNameController @Inject() (
         case j: JourneyWhatIsTheNameOfYourBankAccount    => j.into[JourneyWhatIsYourFullName].withFieldConst(_.fullName, fullName).transform
         case j: JourneyRefundConsentGiven                => j.into[JourneyWhatIsYourFullName].withFieldConst(_.fullName, fullName).transform
         case j: JourneyApprovedRefund                    => j.into[JourneyWhatIsYourFullName].withFieldConst(_.fullName, fullName).transform
+        case j: JourneyNotApprovedRefund                 => j.into[JourneyWhatIsYourFullName].withFieldConst(_.fullName, fullName).transform
       }
     WhatIsYourFullNameForm
       .form

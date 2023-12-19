@@ -53,7 +53,7 @@ class VerifyBankAccountController @Inject() (
       maybeBankVerification: BankVerification <- ecospendService.validate(journey)
       _ <- maybeBankVerification.verificationStatus match {
         case VerificationStatus.Successful   => journeyService.upsert(journey.into[JourneyApprovedRefund].transform).map(_ => ())
-        case VerificationStatus.UnSuccessful => Future.successful(())
+        case VerificationStatus.UnSuccessful => journeyService.upsert(journey.into[JourneyNotApprovedRefund].transform).map(_ => ())
       }
     } yield maybeBankVerification
   }.map(bankVerification => bankVerification.verificationStatus match {

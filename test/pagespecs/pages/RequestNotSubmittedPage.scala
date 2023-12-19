@@ -24,6 +24,8 @@ class RequestNotSubmittedPage(baseUrl: String)(implicit webDriver: WebDriver) ex
   path = "/get-an-income-tax-refund/request-not-submitted"
 ) {
 
+  def clickTryAgain(): Unit = PageUtil.clickByIdOrName("try-again")
+
   override def expectedH1: String = "Your refund request has not been submitted"
 
   override def assertPageIsDisplayed(errors: ContentExpectation*): Unit = withPageClue {
@@ -32,7 +34,7 @@ class RequestNotSubmittedPage(baseUrl: String)(implicit webDriver: WebDriver) ex
       expectedLines =
         """
           |Your refund request has not been submitted
-          |We can not verify the bank account you used.
+          |We can not process your refund request.
           |Choose another way to get my money
           |""".stripMargin
     )) ++ errors
