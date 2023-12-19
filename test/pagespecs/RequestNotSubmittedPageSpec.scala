@@ -17,18 +17,46 @@
 package pagespecs
 
 import testsupport.ItSpec
+import testsupport.stubs.EcospendStub
 
 class RequestNotSubmittedPageSpec extends ItSpec {
 
   override def beforeEach(): Unit = {
     super.beforeEach()
+
     addJourneyIdToSession(tdAll.journeyId)
-    upsertJourneyToDatabase(tdAll.journeyRefundConsentGiven)
+    upsertJourneyToDatabase(tdAll.journeyNotApprovedRefund)
   }
 
-  "/request-not-submitted renders 'Request not submitted page'" in {
+  "/request-not-submitted renders 'Request not submitted' page" in {
     pages.requestNotSubmittedPage.open()
     pages.requestNotSubmittedPage.assertPageIsDisplayed()
+  }
+
+  "Clicking 'Choose another way to you my money' redirects to 'Choose another way to recive your refund' page" in {
+    pages.requestNotSubmittedPage.open()
+    pages.requestNotSubmittedPage.assertPageIsDisplayed()
+    pages.requestNotSubmittedPage.clickTryAgain()
+    pages.chooseAnotherWayToReceiveYourRefundPage.assertPageIsDisplayed()
+  }
+
+  "Clicking browser back button should remain on 'Request not submitted' page" in {
+    // setup the history in the browser:
+    upsertJourneyToDatabase(tdAll.journeyRefundConsentGiven)
+
+    EcospendStub.stubEcospendAuth2xxSucceeded
+    EcospendStub.ValidateStubs.stubValidateNotValidatedYet
+    pages.verifyBankAccountPage.open()
+    pages.verifyBankAccountPage.assertPageIsDisplayed()
+    EcospendStub.ValidateStubs.stubValidatePaymentUnSuccessful()
+    pages.verifyBankAccountPage.clickRefreshThisPageLink()
+
+    // then assert we stay on the page after the back button is clicked
+    pages.requestNotSubmittedPage.assertPageIsDisplayed()
+    pages.requestNotSubmittedPage.clickBackButtonInBrowser()
+    pages.requestNotSubmittedPage.assertPageIsDisplayed()
+
+    EcospendStub.ValidateStubs.verifyValidate(2)
   }
 
 }

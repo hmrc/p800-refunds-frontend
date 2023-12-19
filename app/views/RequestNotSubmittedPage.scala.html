@@ -32,18 +32,20 @@
 }
 
 @layout(
-    pageTitle = Some(title)
+    pageTitle = Some(title),
+    showBackLink = false
 ) {
 
     <h1 class="govuk-heading-xl">@title</h1>
 
     <p class="govuk-body">
-        @{Messages.RequestNotSubmitted.`We can not verify the bank account you used`.show}
+        @{Messages.RequestNotSubmitted.`We can not process your refund request.`.show}
     </p>
 
 
     @viewsHelpers.govukButton(Button(
         content = Text(Messages.RequestNotSubmitted.`Choose another way to get my money`.show),
-        id      = Some("try-again")
+        id      = Some("try-again"),
+        href = Some(controllers.routes.ChooseAnotherWayToGetYourRefundController.get.url)
     ))
 }
