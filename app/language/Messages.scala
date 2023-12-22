@@ -52,8 +52,8 @@ object Messages {
       english = "Do you want to sign in?"
     )
 
-    val `Sign in with your Government Gateway user ID.`: Message = Message(
-      english = "Sign in with your Government Gateway user ID. You’ll have fewer details to enter this way."
+    val `You’ll have fewer details to enter if you sign in using your Government Gateway user ID.`: Message = Message(
+      english = "You’ll have fewer details to enter if you sign in using your Government Gateway user ID."
     )
 
     val `Yes, sign in`: Message = Message(
