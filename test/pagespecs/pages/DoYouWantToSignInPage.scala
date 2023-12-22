@@ -32,7 +32,7 @@ class DoYouWantToSignInPage(baseUrl: String)(implicit webDriver: WebDriver) exte
       expectedLines =
         """
           |Do you want to sign in?
-          |Sign in with your Government Gateway user ID. You’ll have fewer details to enter this way.
+          |You’ll have fewer details to enter if you sign in using your Government Gateway user ID.
           |""".stripMargin
     )
 
@@ -53,7 +53,7 @@ class DoYouWantToSignInPage(baseUrl: String)(implicit webDriver: WebDriver) exte
           |There is a problem
           |Select yes if you want to sign in to your tax account
           |Do you want to sign in?
-          |Sign in with your Government Gateway user ID. You’ll have fewer details to enter this way.
+          |You’ll have fewer details to enter if you sign in using your Government Gateway user ID.
           |""".stripMargin
     )
     PageUtil.assertPage(
