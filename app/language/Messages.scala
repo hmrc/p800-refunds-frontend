@@ -427,12 +427,12 @@ object Messages {
   }
 
   object YourChequeWillBePostedToYou {
-    val `Your cheque will be posted to you`: Message = Message(
-      english = "Your cheque will be posted to you"
+    val `Complete your refund request to get your cheque`: Message = Message(
+      english = "Complete your refund request to get your cheque"
     )
 
-    val `Your cheque will be sent to the same address as your p800 letter.`: Message = Message(
-      english = "Your cheque will be sent to the same address as your p800 letter."
+    val `Your cheque will be sent to the same address as your tax calculation letter.`: Message = Message(
+      english = "Your cheque will be sent to the same address as your tax calculation letter."
     )
 
     val `My cheque needs to go to a different address`: Message = Message(
@@ -455,8 +455,8 @@ object Messages {
       english = "Restart your refund request."
     )
 
-    val `Submit refund request`: Message = Message(
-      english = "Submit refund request"
+    val `Complete refund request`: Message = Message(
+      english = "Complete refund request"
     )
   }
 

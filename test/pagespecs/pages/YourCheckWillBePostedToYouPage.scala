@@ -22,10 +22,10 @@ import testsupport.RichMatchers.convertToAnyShouldWrapper
 
 class YourCheckWillBePostedToYouPage(baseUrl: String)(implicit webDriver: WebDriver) extends Page(
   baseUrl,
-  path = "/get-an-income-tax-refund/your-cheque-will-be-posted-to-you"
+  path = "/get-an-income-tax-refund/complete-your-refunds-request-to-get-your-cheque"
 ) {
 
-  override def expectedH1: String = "Your cheque will be posted to you"
+  override def expectedH1: String = "Complete your refund request to get your cheque"
 
   override def assertPageIsDisplayed(extraExpectations: ContentExpectation*): Unit = withPageClue {
     val contentExpectations: Seq[ContentExpectation] = Seq(
@@ -33,10 +33,10 @@ class YourCheckWillBePostedToYouPage(baseUrl: String)(implicit webDriver: WebDri
         atXpath       = PageUtil.Xpath.mainContent,
         expectedLines =
           """
-                  |Your cheque will be posted to you
-                  |Your cheque will be sent to the same address as your p800 letter.
+                  |Complete your refund request to get your cheque
+                  |Your cheque will be sent to the same address as your tax calculation letter.
                   |My cheque needs to go to a different address
-                  |Submit refund request
+                  |Complete your refund request
                   |""".stripMargin
       ),
       ContentExpectation(

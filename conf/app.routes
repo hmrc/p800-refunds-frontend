@@ -22,8 +22,8 @@ GET         /we-cannot-confirm-your-reference                                con
 GET         /do-you-want-your-refund-via-bank-transfer                       controllers.DoYouWantYourRefundViaBankTransferController.get
 POST        /do-you-want-your-refund-via-bank-transfer                       controllers.DoYouWantYourRefundViaBankTransferController.post
 
-GET         /your-cheque-will-be-posted-to-you                               controllers.YourChequeWillBePostedToYouController.get
-POST        /your-cheque-will-be-posted-to-you                               controllers.YourChequeWillBePostedToYouController.post
+GET         /complete-your-refunds-request-to-get-your-cheque                controllers.YourChequeWillBePostedToYouController.get
+POST        /complete-your-refunds-request-to-get-your-cheque                controllers.YourChequeWillBePostedToYouController.post
 
 #TODO: change url to reflect cheque in the name, there will be another request-received page so we want to distinguish between them
 GET         /cheque/request-received                                         controllers.RequestReceivedController.chequeGet
