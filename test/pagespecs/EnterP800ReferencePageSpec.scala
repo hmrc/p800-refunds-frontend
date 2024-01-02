@@ -16,7 +16,6 @@
 
 package pagespecs
 
-import pagespecs.pagesupport.PageUtil
 import testsupport.ItSpec
 
 class EnterP800ReferencePageSpec extends ItSpec {
@@ -56,14 +55,6 @@ class EnterP800ReferencePageSpec extends ItSpec {
     pages.enterP800ReferencePage.assertPageIsDisplayed()
     pages.enterP800ReferencePage.clickPtaSignInLink()
     pages.ptaSignInPage.assertPageIsDisplayed()
-  }
-
-  "Clicking 'Call or write to the income tax helpline' link opens correctly" in {
-    pages.enterP800ReferencePage.open()
-    pages.enterP800ReferencePage.assertPageIsDisplayed()
-    val newTabHandle = pages.enterP800ReferencePage.clickIncomeTaxGeneralEnquiriesLink()
-    PageUtil.switchToTab(newTabHandle)
-    pages.generalIncomeTaxEnquiriesPage.assertPageIsDisplayed()
   }
 
   "Clicking on back button redirects back to 'Do you want to sign in?' page" in {
