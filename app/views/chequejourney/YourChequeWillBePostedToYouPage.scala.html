@@ -30,7 +30,7 @@
 @import viewsHelpers.requestSupport._
 
 @title = @{
-    Messages.YourChequeWillBePostedToYou.`Your cheque will be posted to you`.show
+    Messages.YourChequeWillBePostedToYou.`Complete your refund request to get your cheque`.show
 }
 
 @progressiveRevealHtmlContent = {
@@ -50,7 +50,7 @@
     <h1 class="govuk-heading-xl">@{title}</h1>
 
     <p class="govuk-body">
-        @{Messages.YourChequeWillBePostedToYou.`Your cheque will be sent to the same address as your p800 letter.`.show}
+        @{Messages.YourChequeWillBePostedToYou.`Your cheque will be sent to the same address as your tax calculation letter.`.show}
     </p>
 
     @viewsHelpers.govukDetails(
@@ -64,7 +64,7 @@
 
     @viewsHelpers.formWithCsrf(action = controllers.routes.YourChequeWillBePostedToYouController.post) {
         @viewsHelpers.govukButton(Button(
-            content = Text(Messages.YourChequeWillBePostedToYou.`Submit refund request`.show),
+            content = Text(Messages.YourChequeWillBePostedToYou.`Complete refund request`.show),
             id      = Some("submit-refund-request")
         ))
     }
