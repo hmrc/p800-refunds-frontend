@@ -510,8 +510,8 @@ object Messages {
       english = "Do you want your refund by bank transfer?"
     )
 
-    val `Bank transfers are faster, safer, ...`: Message = Message(
-      english = "Bank transfers are faster, safer and better for the environment. You'll need to have your online or mobile banking details ready."
+    val `Bank transfers are faster and safer. ...`: Message = Message(
+      english = "Bank transfers are faster and safer. You’ll need to have your online or mobile banking details ready."
     )
 
     val `Yes`: Message = Message(

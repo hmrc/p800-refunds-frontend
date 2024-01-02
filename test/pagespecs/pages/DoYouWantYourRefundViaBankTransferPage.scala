@@ -33,7 +33,7 @@ class DoYouWantYourRefundViaBankTransferPage(baseUrl: String)(implicit webDriver
         expectedLines =
           """
             |Do you want your refund by bank transfer?
-            |Bank transfers are faster, safer and better for the environment. You'll need to have your online or mobile banking details ready.
+            |Bank transfers are faster and safer. You’ll need to have your online or mobile banking details ready.
             |Yes
             |No, I want a cheque
             |Continue
