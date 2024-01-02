@@ -74,20 +74,16 @@ object Messages {
       english = "What is your P800 reference?"
     )
 
-    val `It’s on the letter HMRC sent you about your tax calculation, also known as a ‘P800’.`: Message = Message(
-      english = "It’s on the letter HMRC sent you about your tax calculation, also known as a ‘P800’. For example, ‘P800REFNO1’."
+    val `It’s on the letter HMRC sent you about your tax calculation, also known as a ‘P800’, and is up to 10 digits long.`: Message = Message(
+      english = "It is on the letter HMRC sent you about your tax calculation, also known as a ‘P800’, and is up to 10 digits long. For example, 1002033400."
     )
 
     val `If you do not know your P800 reference`: Message = Message(
       english = "If you do not know your P800 reference"
     )
 
-    def `Sign in or create a personal tax account to claim your refund.`(link: String): Message = Message(
-      english = s"""<a id="personal-tax-account-sign-in" class="govuk-link" href="$link">Sign in or create a personal tax account</a> to claim your refund."""
-    )
-
-    def `Call or write to the Income Tax helpline (opens in new tab) if you cannot create a personal tax account.`(link: String): Message = Message(
-      english = s"""<a id="income-tax-general-enquiries" class="govuk-link" href="$link" rel="noreferrer noopener" target="_blank">Call or write to the Income Tax helpline (opens in new tab)</a> if you cannot create a personal tax account."""
+    def `Sign in using your Government Gateway user ID to claim your refund.`(link: String): Message = Message(
+      english = s"""<a id="personal-tax-account-sign-in" class="govuk-link" href="$link">Sign in using your Government Gateway user ID</a> to claim your refund."""
     )
 
     val `Enter your P800 reference`: Message = Message(

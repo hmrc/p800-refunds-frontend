@@ -105,11 +105,6 @@ object PageUtil {
     WebBrowser.find(ClassNameQuery(className)).isDefined
   }
 
-  def switchToTab(handle: String)(implicit webDriver: WebDriver): Unit = {
-    webDriver.switchTo().window(handle)
-    ()
-  }
-
   /**
    * Gets the part of the current url after host and port.
    * In other words from
