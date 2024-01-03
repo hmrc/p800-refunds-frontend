@@ -25,7 +25,7 @@ class ChequeRequestReceivedPage(baseUrl: String)(implicit webDriver: WebDriver) 
   path = "/get-an-income-tax-refund/cheque/request-received"
 ) {
 
-  override def expectedH1: String = "Request received"
+  override def expectedH1: String = "Cheque request received"
 
   override def assertPageIsDisplayed(extraExpectations: ContentExpectation*): Unit = withPageClue {
 
@@ -33,17 +33,15 @@ class ChequeRequestReceivedPage(baseUrl: String)(implicit webDriver: WebDriver) 
       atXpath       = PageUtil.Xpath.mainContent,
       expectedLines =
         """
-          |Request received
-          |P800 reference
+          |Cheque request received
+          |Your P800 reference
           |P800REFNO1
-          |Your refund of £231.60 will now be processed.
-          |
-          |You should allow up to 6 weeks for your cheque to arrive in the post.
+          |Your refund of £231.60 will arrive in the post by 16 January 2024.
           |
           |Print this page
           |
           |What happens next
-          |If you don’t receive your refund you can call or write to the Income Tax helpline (opens in new tab). You will need your P800 reference.
+          |If you do not receive your refund you can call or write to the Income Tax helpline (opens in new tab). You will need your P800 reference.
           |What did you think of this service? (takes 30 seconds)
           |""".stripMargin
     )

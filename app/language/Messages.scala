@@ -19,6 +19,10 @@ package language
 import models.AmountInPence
 import models.ecospend.BankFriendlyName
 
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
+import java.util.Locale
+
 object Messages {
 
   object CommonMessages {
@@ -461,20 +465,17 @@ object Messages {
   }
 
   object ChequeRequestReceived {
-    val `Request received`: Message = Message(
-      english = "Request received"
+    val `Cheque request received`: Message = Message(
+      english = "Cheque request received"
     )
 
-    val `P800 reference`: Message = Message(
-      english = "P800 reference"
+    val `Your P800 reference`: Message = Message(
+      english = "Your P800 reference"
     )
 
-    def `Your refund of £x.xx will now be processed.`(amountInPence: AmountInPence): Message = Message(
-      english = s"Your refund of <strong>${amountInPence.gdsFormatInPounds}</strong> will now be processed."
-    )
-
-    val `You should allow up to 6 weeks for your cheque to arrive in the post.`: Message = Message(
-      english = "You should allow up to 6 weeks for your cheque to arrive in the post."
+    private val formatter = DateTimeFormatter.ofPattern("d MMMM yyyy", Locale.UK)
+    def `Your refund of £x.xx will arrive in the post by DATE.`(amountInPence: AmountInPence, chequeArriveByDate: LocalDate): Message = Message(
+      english = s"Your refund of <strong>${amountInPence.gdsFormatInPounds}</strong> will arrive in the post by <strong>${chequeArriveByDate.format(formatter)}</strong>."
     )
 
     val `Print this page`: Message = Message(
@@ -493,9 +494,9 @@ object Messages {
       english = "(takes 30 seconds)"
     )
 
-    def `If you don’t receive your refund you can call or write...`(generalEnquiriesLink: String): Message = Message(
+    def `If you do not receive your refund you can call or write...`(generalEnquiriesLink: String): Message = Message(
       english =
-        s"""If you don’t receive your refund you can <a id="general-enquiries-link" target="_blank" class="govuk-link" href="$generalEnquiriesLink">
+        s"""If you do not receive your refund you can <a id="general-enquiries-link" target="_blank" class="govuk-link" href="$generalEnquiriesLink">
            |call or write to the Income Tax helpline (opens in new tab)</a>. You will need your P800 reference.""".stripMargin
     )
   }
