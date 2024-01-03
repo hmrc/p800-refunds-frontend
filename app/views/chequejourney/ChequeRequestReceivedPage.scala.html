@@ -14,11 +14,12 @@
  * limitations under the License.
  *@
 
+@import config.AppConfig
+@import java.time.LocalDate
 @import language.Messages
 @import uk.gov.hmrc.govukfrontend.views.html.components._
-@import views.html.templates.Layout
-@import config.AppConfig
 @import views.html.helper.CSPNonce
+@import views.html.templates.Layout
 
 @this(
     layout: Layout,
@@ -28,13 +29,14 @@
 
 @(
     p800Reference: P800Reference,
-    refundAmountInPence: AmountInPence
+    refundAmountInPence: AmountInPence,
+    chequeArriveBy: LocalDate
 )(implicit request: Request[_])
 
 @import viewsHelpers.requestSupport._
 
 @title = @{
-    Messages.ChequeRequestReceived.`Request received`.show
+    Messages.ChequeRequestReceived.`Cheque request received`.show
 }
 
 @additionalScript = { <script src="@{controllers.routes.Assets.versioned("javascripts/print-dialogue.js")}" @{CSPNonce.attr}></script> }
@@ -49,15 +51,11 @@
         headingLevel = 1,
         title        = Text(title),
         classes      = "govuk-!-margin-bottom-7",
-        content      = HtmlContent(s"""${Messages.ChequeRequestReceived.`P800 reference`.show}<br><strong>${p800Reference.value}</strong>""")
+        content      = HtmlContent(s"""${Messages.ChequeRequestReceived.`Your P800 reference`.show}<br><strong>${p800Reference.value}</strong>""")
     ))
 
     <p class="govuk-body">
-        @{Html(Messages.ChequeRequestReceived.`Your refund of £x.xx will now be processed.`(refundAmountInPence).show)}
-    </p>
-
-    <p class="govuk-body">
-        @{Messages.ChequeRequestReceived.`You should allow up to 6 weeks for your cheque to arrive in the post.`.show}
+        @{Html(Messages.ChequeRequestReceived.`Your refund of £x.xx will arrive in the post by DATE.`(refundAmountInPence, chequeArriveBy).show)}
     </p>
 
     <p class="govuk-body js-visible">
@@ -71,7 +69,7 @@
     </h2>
 
     <p class="govuk-body">
-        @{Html(Messages.ChequeRequestReceived.`If you don’t receive your refund you can call or write...`(appConfig.generalEnquiriesUrl).show)}
+        @{Html(Messages.ChequeRequestReceived.`If you do not receive your refund you can call or write...`(appConfig.generalEnquiriesUrl).show)}
     </p>
 
     <div class="govuk-body">

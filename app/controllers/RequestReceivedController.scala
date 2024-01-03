@@ -23,6 +23,7 @@ import play.api.mvc._
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import views.Views
 
+import java.time.LocalDate
 import javax.inject.{Inject, Singleton}
 
 @Singleton
@@ -53,6 +54,7 @@ class RequestReceivedController @Inject() (
   //todo just move this into the chequeGet when we revisit the pages/reorder journey, don't need the def.
   private def getResult(implicit request: Request[_]) = {
     val (dummyP800Ref, refundAmountInPence) = P800Reference("P800REFNO1") -> AmountInPence(231.60)
-    Ok(views.chequeRequestReceivedPage(dummyP800Ref, refundAmountInPence))
+    val dummyDate = LocalDate.of(2024, 1, 16)
+    Ok(views.chequeRequestReceivedPage(dummyP800Ref, refundAmountInPence, dummyDate))
   }
 }
