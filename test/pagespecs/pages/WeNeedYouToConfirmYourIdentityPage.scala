@@ -35,10 +35,9 @@ class WeNeedYouToConfirmYourIdentityPage(baseUrl: String)(implicit webDriver: We
           |We need you to confirm your identity
           |Before we pay your refund, we need to ask you some security questions to confirm your identity.
           |We will need to ask you for your:
-          |name
-          |address
+          |P800 reference
+          |national insurance number
           |date of birth
-          |National Insurance number
           |We do this to protect your security.
           |""".stripMargin
     )) ++ extraExpectations
