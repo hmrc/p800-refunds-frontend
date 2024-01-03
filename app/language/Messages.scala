@@ -274,20 +274,16 @@ object Messages {
       english = "We will need to ask you for your:"
     )
 
-    val `name`: Message = Message(
-      english = "name"
-    )
-
-    val `address`: Message = Message(
-      english = "address"
+    val `P800 reference`: Message = Message(
+      english = "P800 reference"
     )
 
     val `date of birth`: Message = Message(
       english = "date of birth"
     )
 
-    val `National Insurance number`: Message = Message(
-      english = "National Insurance number"
+    val `national insurance number`: Message = Message(
+      english = "national insurance number"
     )
 
     val `We do this to protect your security`: Message = Message(
