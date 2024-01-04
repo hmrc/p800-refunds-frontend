@@ -472,7 +472,9 @@ final case class JourneyNotApprovedRefund(
  */
 
 sealed trait JAfterStarted extends Journey
-sealed trait JAfterDoYouWantToSignInNo extends Journey
+sealed trait JAfterDoYouWantToSignInNo extends Journey {
+  val p800Reference: P800Reference
+}
 sealed trait JAfterWhatIsYourP800Reference extends Journey {
   val p800Reference: P800Reference
 }

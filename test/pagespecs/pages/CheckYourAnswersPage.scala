@@ -16,7 +16,7 @@
 
 package pagespecs.pages
 
-import models.{FullName, NationalInsuranceNumber}
+import models.{P800Reference, NationalInsuranceNumber}
 import org.openqa.selenium.WebDriver
 import pagespecs.pagesupport.{ContentExpectation, Page, PageUtil}
 import testsupport.RichMatchers.convertToAnyShouldWrapper
@@ -29,14 +29,14 @@ class CheckYourAnswersPage(baseUrl: String)(implicit webDriver: WebDriver) exten
   override def expectedH1: String = "Check your answers"
 
   def assertPageIsDisplayed(
-      fullName:                FullName,
+      p800Reference:           P800Reference,
       dateOfBirth:             String,
       nationalInsuranceNumber: NationalInsuranceNumber
   ): Unit = withPageClue {
 
-    val nameExpectation: ContentExpectation = ContentExpectation(
-      atXpath       = """//*[@id="full-name"]""",
-      expectedLines = fullName.value
+    val p800ReferenceExpectation: ContentExpectation = ContentExpectation(
+      atXpath       = """//*[@id="p800-reference"]""",
+      expectedLines = p800Reference.value
     )
 
     val dateOfBirthExpectation: ContentExpectation = ContentExpectation(
@@ -50,7 +50,7 @@ class CheckYourAnswersPage(baseUrl: String)(implicit webDriver: WebDriver) exten
     )
 
     assertPageIsDisplayed(
-      nameExpectation,
+      p800ReferenceExpectation,
       dateOfBirthExpectation,
       nationalInsuranceNumberExpectation
     )
@@ -63,15 +63,16 @@ class CheckYourAnswersPage(baseUrl: String)(implicit webDriver: WebDriver) exten
       expectedLines =
         """
           |Check your answers
-          |Full name
           |
+          |P800 reference
           |Change
-          |Date of birth
           |
-          |Change
           |National Insurance number
-          |
           |Change
+          |
+          |Date of birth
+          |Change
+          |
           |Continue
           |""".stripMargin
     )
@@ -90,7 +91,7 @@ class CheckYourAnswersPage(baseUrl: String)(implicit webDriver: WebDriver) exten
     ()
   }
 
-  def clickChangeName(): Unit = PageUtil.clickByIdOrName("change-full-name")
+  def clickChangeP800Reference(): Unit = PageUtil.clickByIdOrName("change-p800-reference")
   def clickChangeDateOfBirth(): Unit = PageUtil.clickByIdOrName("change-date-of-birth")
   def clickChangeNationalInsuranceNumber(): Unit = PageUtil.clickByIdOrName("change-national-insurance-number")
 }

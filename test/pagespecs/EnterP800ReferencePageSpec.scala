@@ -16,6 +16,7 @@
 
 package pagespecs
 
+import models.P800Reference
 import testsupport.ItSpec
 
 class EnterP800ReferencePageSpec extends ItSpec {
@@ -30,7 +31,7 @@ class EnterP800ReferencePageSpec extends ItSpec {
   "Entering valid p800 reference and clicking Continue redirects to /check-your-reference" in {
     pages.enterP800ReferencePage.open()
     pages.enterP800ReferencePage.assertPageIsDisplayed()
-    pages.enterP800ReferencePage.enterP800Reference(tdAll.p800Reference.value)
+    pages.enterP800ReferencePage.enterP800Reference(tdAll.p800Reference)
     pages.enterP800ReferencePage.clickSubmit()
     pages.checkYourReferencePage.assertPageIsDisplayed()
   }
@@ -45,7 +46,8 @@ class EnterP800ReferencePageSpec extends ItSpec {
   "Clicking Continue with invalid reference shows error" in {
     pages.enterP800ReferencePage.open()
     pages.enterP800ReferencePage.assertPageIsDisplayed()
-    pages.enterP800ReferencePage.enterP800Reference("this is a really long and invalid reference")
+    val p800Reference: P800Reference = P800Reference("this is a really long and invalid reference")
+    pages.enterP800ReferencePage.enterP800Reference(p800Reference)
     pages.enterP800ReferencePage.clickSubmit()
     pages.enterP800ReferencePage.assertPageShowsErrorReferenceFormat()
   }

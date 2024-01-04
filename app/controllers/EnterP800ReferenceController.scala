@@ -18,13 +18,13 @@ package controllers
 
 import action.Actions
 import io.scalaland.chimney.dsl._
+import models.P800Reference
 import models.forms.EnterP800ReferenceForm
 import models.journeymodels._
 import play.api.mvc._
 import requests.RequestSupport
 import services.JourneyService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
-import util.Errors
 import views.Views
 
 import javax.inject.{Inject, Singleton}
@@ -43,9 +43,10 @@ class EnterP800ReferenceController @Inject() (
 
   val get: Action[AnyContent] = actions.journeyAction.async { implicit request =>
     request.journey match {
-      case j: JTerminal                  => JourneyRouter.handleFinalJourneyOnNonFinalPageF(j)
-      case j: JBeforeDoYouWantToSignInNo => JourneyRouter.sendToCorrespondingPageF(j)
-      case _: JourneyDoYouWantToSignInNo => Future.successful(getResult)
+      case j: JTerminal                     => JourneyRouter.handleFinalJourneyOnNonFinalPageF(j)
+      case j: JBeforeDoYouWantToSignInNo    => JourneyRouter.sendToCorrespondingPageF(j)
+      case _: JourneyDoYouWantToSignInNo    => Future.successful(getResult(None))
+      case j: JourneyCheckYourAnswersChange => Future.successful(getResult(Some(j.p800Reference)))
       case j: JAfterDoYouWantToSignInNo =>
         journeyService
           .upsert(
@@ -54,31 +55,26 @@ class EnterP800ReferenceController @Inject() (
               .enableInheritedAccessors
               .transform
           )
-          .map(_ => getResult)
+          .map(_ => getResult(Some(j.p800Reference)))
     }
   }
 
-  private def getResult(implicit request: Request[_]): Result = Ok(views.enterP800ReferencePage(
-    form = EnterP800ReferenceForm.form
-  ))
+  private def getResult(maybeP800Reference: Option[P800Reference])(implicit request: Request[_]): Result =
+    maybeP800Reference.fold(
+      Ok(views.enterP800ReferencePage(EnterP800ReferenceForm.form))
+    ) { p800Reference: P800Reference =>
+        Ok(views.enterP800ReferencePage(EnterP800ReferenceForm.form.fill(p800Reference)))
+      }
 
   val post: Action[AnyContent] = actions.journeyAction.async { implicit request =>
     request.journey match {
       case j: JTerminal                  => JourneyRouter.handleFinalJourneyOnNonFinalPageF(j)
       case j: JBeforeDoYouWantToSignInNo => JourneyRouter.sendToCorrespondingPageF(j)
-      case j: JourneyDoYouWantToSignInNo => processForm(j)
-      case _: JAfterDoYouWantToSignInNo =>
-        Errors.throwServerErrorException(s"This endpoint supports only ${classOf[JourneyDoYouWantToSignInNo].toString}")
-      //TODO: discuss alternative approach
-      //val journey = j
-      //              .into[JourneyStarted]
-      //              .enableInheritedAccessors
-      //              .transform
-      //processForm(j)
+      case j: JAfterStarted              => processForm(j)
     }
   }
 
-  private def processForm(journey: JourneyDoYouWantToSignInNo)(implicit request: Request[_]): Future[Result] =
+  private def processForm(journey: JAfterStarted)(implicit request: Request[_]): Future[Result] =
     EnterP800ReferenceForm
       .form
       .bindFromRequest()
@@ -87,14 +83,18 @@ class EnterP800ReferenceController @Inject() (
           form = formWithErrors
         ))),
         p800Reference => {
+          val newJourney = journey match {
+            case j: JourneyDoYouWantToSignInNo    => j.into[JourneyWhatIsYourP800Reference].withFieldConst(_.p800Reference, p800Reference).transform
+            case j: JourneyCheckYourAnswersChange => j.into[JourneyWhatIsYourNationalInsuranceNumber].enableInheritedAccessors.withFieldConst(_.p800Reference, p800Reference).transform
+            case j: JAfterDoYouWantToSignInNo     => j.into[JourneyWhatIsYourP800Reference].enableInheritedAccessors.withFieldConst(_.p800Reference, p800Reference).transform
+          }
           journeyService
-            .upsert(
-              journey
-                .into[JourneyWhatIsYourP800Reference]
-                .withFieldConst(_.p800Reference, p800Reference)
-                .transform
-            )
-            .map(_ => Redirect(controllers.routes.CheckYourReferenceController.get))
+            .upsert(newJourney)
+            .map(_ =>
+              journey match {
+                case _: JourneyCheckYourAnswersChange => Redirect(controllers.routes.CheckYourAnswersController.get)
+                case _                                => Redirect(controllers.routes.CheckYourReferenceController.get)
+              })
         }
       )
 }

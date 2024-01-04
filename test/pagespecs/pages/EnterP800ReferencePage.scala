@@ -16,6 +16,7 @@
 
 package pagespecs.pages
 
+import models.P800Reference
 import org.openqa.selenium.WebDriver
 import pagespecs.pagesupport.{ContentExpectation, Page, PageUtil}
 
@@ -30,7 +31,8 @@ class EnterP800ReferencePage(baseUrl: String)(implicit webDriver: WebDriver) ext
 
   private val p800ReferenceFieldId: String = "reference"
 
-  def enterP800Reference(p800Reference: String): Unit = PageUtil.setTextFieldById(p800ReferenceFieldId, p800Reference)
+  def enterP800Reference(p800Reference: P800Reference): Unit =
+    PageUtil.setTextFieldById(p800ReferenceFieldId, p800Reference.value)
 
   def clickPtaSignInLink(): Unit = PageUtil.clickByIdOrName("personal-tax-account-sign-in")
 

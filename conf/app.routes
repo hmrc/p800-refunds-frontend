@@ -51,7 +51,7 @@ POST        /what-is-your-national-insurance-number                          con
 
 GET         /check-your-answers                                              controllers.CheckYourAnswersController.get
 POST        /check-your-answers                                              controllers.CheckYourAnswersController.post
-GET         /check-your-answers/change-your-full-name                        controllers.CheckYourAnswersController.changeFullName
+GET         /check-your-answers/change-your-p800-reference                   controllers.CheckYourAnswersController.changeP800Reference
 GET         /check-your-answers/change-your-date-of-birth                    controllers.CheckYourAnswersController.changeDateOfBirth
 GET         /check-your-answers/change-your-national-insurance-number        controllers.CheckYourAnswersController.changeNationalInsuranceNumber
 
