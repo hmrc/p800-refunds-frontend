@@ -220,8 +220,8 @@ object Messages {
       english = "Check your answers"
     )
 
-    val `Full name`: Message = Message(
-      english = "Full name"
+    val `P800 reference`: Message = Message(
+      english = "P800 reference"
     )
 
     val `Date of birth`: Message = Message(

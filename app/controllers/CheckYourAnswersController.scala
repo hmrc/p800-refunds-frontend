@@ -21,7 +21,7 @@ import io.scalaland.chimney.dsl._
 import language.Messages
 import models.dateofbirth.DateOfBirth
 import models.journeymodels._
-import models.{FullName, IdentityVerificationResponse, IdentityVerified, NationalInsuranceNumber}
+import models.{P800Reference, IdentityVerificationResponse, IdentityVerified, NationalInsuranceNumber}
 import play.api.mvc._
 import requests.RequestSupport
 import services.{IdentityVerificationService, JourneyService}
@@ -52,8 +52,8 @@ class CheckYourAnswersController @Inject() (
     request.journey match {
       case j: JTerminal                                   => JourneyRouter.handleFinalJourneyOnNonFinalPage(j)
       case j: JBeforeWhatIsYourNationalInsuranceNumber    => JourneyRouter.sendToCorrespondingPage(j)
-      case j: JourneyWhatIsYourNationalInsuranceNumber    => getResult(j.fullName, j.dateOfBirth, j.nationalInsuranceNumber)
-      case j: JAfterWhatIsYourNationalInsuranceNumber     => getResult(j.fullName, j.dateOfBirth, j.nationalInsuranceNumber)
+      case j: JourneyWhatIsYourNationalInsuranceNumber    => getResult(j.p800Reference, j.dateOfBirth, j.nationalInsuranceNumber)
+      case j: JAfterWhatIsYourNationalInsuranceNumber     => getResult(j.p800Reference, j.dateOfBirth, j.nationalInsuranceNumber)
       case j: JourneyDoYouWantYourRefundViaBankTransferNo => JourneyRouter.sendToCorrespondingPage(j)
     }
   }
@@ -61,7 +61,7 @@ class CheckYourAnswersController @Inject() (
   //Warn: These have to be `def`s otherwise it won't work.
   //If those actions are eagerly evaluated, play framework (or actually its reverse routes mechanism)
   //won't add `/get-an-income-tax-refund` path in the generated URLs.
-  def changeFullName: Action[AnyContent] = change(controllers.routes.WhatIsYourFullNameController.get)
+  def changeP800Reference: Action[AnyContent] = change(controllers.routes.EnterP800ReferenceController.get)
   def changeDateOfBirth: Action[AnyContent] = change(controllers.routes.WhatIsYourDateOfBirthController.get)
   def changeNationalInsuranceNumber: Action[AnyContent] = change(controllers.routes.WhatIsYourNationalInsuranceNumberController.get)
 
@@ -90,11 +90,11 @@ class CheckYourAnswersController @Inject() (
   }
 
   private def getResult(
-      fullName:                FullName,
+      p800Reference:           P800Reference,
       dateOfBirth:             DateOfBirth,
       nationalInsuranceNumber: NationalInsuranceNumber
   )(implicit request: Request[_]) = Ok(views.checkYourAnswersPage(
-    summaryList = buildSummaryList(fullName, dateOfBirth, nationalInsuranceNumber)
+    summaryList = buildSummaryList(p800Reference, dateOfBirth, nationalInsuranceNumber)
   ))
 
   val post: Action[AnyContent] = actions.journeyAction.async { implicit request =>
@@ -129,29 +129,29 @@ class CheckYourAnswersController @Inject() (
   }
 
   def buildSummaryList(
-      fullName:                FullName,
+      p800Reference:           P800Reference,
       dateOfBirth:             DateOfBirth,
       nationalInsuranceNumber: NationalInsuranceNumber
   )(implicit request: Request[_]): SummaryList = {
 
     SummaryList(rows = Seq(
       buildSummaryListRow(
-        Messages.CheckYourAnswersMessages.`Full name`.show,
-        id = "full-name",
-        fullName.value,
-        controllers.routes.CheckYourAnswersController.changeFullName
-      ),
-      buildSummaryListRow(
-        Messages.CheckYourAnswersMessages.`Date of birth`.show,
-        id = "date-of-birth",
-        formatDateOfBirth(dateOfBirth),
-        controllers.routes.CheckYourAnswersController.changeDateOfBirth
+        Messages.CheckYourAnswersMessages.`P800 reference`.show,
+        id = "p800-reference",
+        p800Reference.value,
+        controllers.routes.CheckYourAnswersController.changeP800Reference
       ),
       buildSummaryListRow(
         Messages.CheckYourAnswersMessages.`National Insurance Number`.show,
         id = "national-insurance-number",
         s"""${nationalInsuranceNumber.value}""",
         controllers.routes.CheckYourAnswersController.changeNationalInsuranceNumber
+      ),
+      buildSummaryListRow(
+        Messages.CheckYourAnswersMessages.`Date of birth`.show,
+        id = "date-of-birth",
+        formatDateOfBirth(dateOfBirth),
+        controllers.routes.CheckYourAnswersController.changeDateOfBirth
       )
     ))
   }

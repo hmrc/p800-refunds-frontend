@@ -16,7 +16,7 @@
 
 package pagespecs
 
-import models.{FullName, NationalInsuranceNumber}
+import models.{P800Reference, NationalInsuranceNumber}
 import testsupport.ItSpec
 import testsupport.stubs.IdentityVerificationStub
 
@@ -25,22 +25,22 @@ class CheckYourAnswersSpec extends ItSpec {
   "page renders correctly" in {
     pages.checkYourAnswersPage.open()
     pages.checkYourAnswersPage.assertPageIsDisplayed(
-      tdAll.fullName,
+      tdAll.p800Reference,
       tdAll.dateOfBirthFormatted,
       tdAll.nationalInsuranceNumber
     )
   }
 
-  "changing name" in {
+  "changing P800 reference" in {
     pages.checkYourAnswersPage.open()
     pages.checkYourAnswersPage.assertPageIsDisplayed()
-    pages.checkYourAnswersPage.clickChangeName()
-    pages.whatIsYourFullNamePage.assertPageIsDisplayed()
-    val newName: FullName = FullName("NewName")
-    pages.whatIsYourFullNamePage.enterFullName(newName)
-    pages.whatIsYourFullNamePage.clickSubmit()
+    pages.checkYourAnswersPage.clickChangeP800Reference()
+    pages.enterP800ReferencePage.assertPageIsDisplayed()
+    val newP800Reference: P800Reference = P800Reference("ASDFASDF")
+    pages.enterP800ReferencePage.enterP800Reference(newP800Reference)
+    pages.enterP800ReferencePage.clickSubmit()
     pages.checkYourAnswersPage.assertPageIsDisplayed(
-      newName,
+      newP800Reference,
       tdAll.dateOfBirthFormatted,
       tdAll.nationalInsuranceNumber
     ) withClue "user is navigated back to check your answers page"
@@ -56,7 +56,7 @@ class CheckYourAnswersSpec extends ItSpec {
     pages.whatIsYourDateOfBirthPage.enterYear("1971")
     pages.whatIsYourDateOfBirthPage.clickSubmit()
     pages.checkYourAnswersPage.assertPageIsDisplayed(
-      tdAll.fullName,
+      tdAll.p800Reference,
       "11 December 1971",
       tdAll.nationalInsuranceNumber
     ) withClue "user is navigated back to check your answers page"
@@ -71,7 +71,7 @@ class CheckYourAnswersSpec extends ItSpec {
     pages.whatIsYourNationalInsuranceNumberPage.enterNationalInsuranceNumber(newNationalInsuranceNumber)
     pages.whatIsYourNationalInsuranceNumberPage.clickSubmit()
     pages.checkYourAnswersPage.assertPageIsDisplayed(
-      tdAll.fullName,
+      tdAll.p800Reference,
       tdAll.dateOfBirthFormatted,
       newNationalInsuranceNumber
     ) withClue "user is navigated back to check your answers page"
