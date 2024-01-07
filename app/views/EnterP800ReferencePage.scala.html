@@ -43,7 +43,7 @@
 
 @layout(
     pageTitle = Some(title),
-    backLinkUrlOverride = Some(controllers.routes.DoYouWantToSignInController.get.url)
+    backLinkUrlOverride = Some(controllers.routes.WeNeedYouToConfirmYourIdentityController.get.url)
 ) {
 
     @if(form.errors.nonEmpty) {

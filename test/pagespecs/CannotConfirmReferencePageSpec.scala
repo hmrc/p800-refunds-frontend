@@ -27,7 +27,7 @@ class CannotConfirmReferencePageSpec extends ItSpec {
 
   "clicking 'Try again' should redirect to /enter-P800-reference" in {
     addJourneyIdToSession(tdAll.journeyId)
-    upsertJourneyToDatabase(tdAll.journeyWhatIsYourP800Reference)
+    upsertJourneyToDatabase(tdAll.BankTransfer.journeyEnteredDateOfBirth)
     pages.cannotConfirmReferencePage.open()
     pages.cannotConfirmReferencePage.clickTryAgain()
     pages.enterP800ReferencePage.assertPageIsDisplayed()
@@ -35,7 +35,7 @@ class CannotConfirmReferencePageSpec extends ItSpec {
 
   "clicking 'Back' should redirect to /check-your-reference" in {
     addJourneyIdToSession(tdAll.journeyId)
-    upsertJourneyToDatabase(tdAll.journeyWhatIsYourP800Reference)
+    upsertJourneyToDatabase(tdAll.BankTransfer.journeyEnteredDateOfBirth)
     pages.cannotConfirmReferencePage.open()
     pages.cannotConfirmReferencePage.clickBackButton()
     pages.checkYourReferencePage.assertPageIsDisplayed()

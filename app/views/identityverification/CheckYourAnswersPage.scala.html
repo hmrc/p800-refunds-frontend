@@ -18,6 +18,7 @@
 @import uk.gov.hmrc.govukfrontend.views.html.components._
 @import views.ViewsHelpers
 @import views.html.templates.Layout
+@import models.journeymodels.JourneyType
 
 @this(
     layout: Layout,
@@ -25,7 +26,8 @@
 )
 
 @(
-    summaryList: SummaryList
+    summaryList: SummaryList,
+    journeyType: JourneyType
 )(implicit request: Request[_])
 
 @import viewsHelpers.requestSupport._
@@ -34,10 +36,12 @@
     Messages.CheckYourAnswersMessages.`Check your answers`.show
 }
 
-
 @layout(
     pageTitle = Some(heading),
-    backLinkUrlOverride = Some(controllers.routes.WhatIsYourNationalInsuranceNumberController.get.url)
+    backLinkUrlOverride = Some(journeyType match {
+        case JourneyType.BankTransfer => controllers.routes.WhatIsYourDateOfBirthController.get.url
+        case JourneyType.Cheque => controllers.routes.WhatIsYourNationalInsuranceNumberController.get.url
+    })
 ) {
 
     <h1 class="govuk-heading-xl">@heading</h1>

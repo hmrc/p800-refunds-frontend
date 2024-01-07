@@ -79,7 +79,7 @@ class CheckYourAnswersSpec extends ItSpec {
 
   "clicking submit redirects to 'Your identity has been confirmed' if response from NPS indicates identity verification is successful" in {
     IdentityVerificationStub.stubIdentityVerification2xxSucceeded
-    upsertJourneyToDatabase(tdAll.journeyCheckYourAnswers)
+    upsertJourneyToDatabase(tdAll.BankTransfer.journeyEnteredDateOfBirth)
     pages.checkYourAnswersPage.open()
     pages.checkYourAnswersPage.assertPageIsDisplayed()
     pages.checkYourAnswersPage.clickSubmit()
@@ -106,6 +106,6 @@ class CheckYourAnswersSpec extends ItSpec {
   override def beforeEach(): Unit = {
     super.beforeEach()
     addJourneyIdToSession(tdAll.journeyId)
-    upsertJourneyToDatabase(tdAll.journeyWhatIsYourNationalInsuranceNumber)
+    upsertJourneyToDatabase(tdAll.BankTransfer.journeyEnteredDateOfBirth)
   }
 }

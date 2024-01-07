@@ -31,7 +31,8 @@ class WeNeedYouToConfirmYourIdentityController @Inject() (
 ) extends FrontendController(mcc) {
 
   val get: Action[AnyContent] = actions.journeyInProgress { implicit request =>
-    Ok(views.weNeedYouToConfirmYourIdentityPage())
+
+    Ok(views.weNeedYouToConfirmYourIdentityPage(request.journey.getJourneyType))
   }
 
   val post: Action[AnyContent] = actions.journeyInProgress { _ =>

@@ -22,7 +22,7 @@ import testsupport.RichMatchers.convertToAnyShouldWrapper
 
 class BankTransferRequestReceivedPage(baseUrl: String)(implicit webDriver: WebDriver) extends Page(
   baseUrl,
-  path = "/get-an-income-tax-refund/bank/request-received"
+  path = "/get-an-income-tax-refund/request-received"
 ) {
 
   override def expectedH1: String = "Request received"

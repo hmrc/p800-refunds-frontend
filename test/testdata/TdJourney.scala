@@ -21,144 +21,111 @@ import models.journeymodels._
 /**
  * Test Data (Td) Journey. It has journey examples in all possible states.
  */
-trait TdJourney { dependencies: TdBase =>
+trait TdJourney {
+  dependencies: TdBase =>
 
   lazy val journeyId: JourneyId = JourneyId("64886ed616fe8b501cbf0088")
 
-  lazy val journeyStarted: JourneyStarted = JourneyStarted(
-    _id       = journeyId,
-    createdAt = dependencies.instant
-  )
-
-  lazy val journeyDoYouWantToSignInNo: JourneyDoYouWantToSignInNo = JourneyDoYouWantToSignInNo(
-    _id       = journeyId,
-    createdAt = dependencies.instant
-  )
-
-  lazy val journeyWhatIsYourP800Reference: JourneyWhatIsYourP800Reference = JourneyWhatIsYourP800Reference(
-    _id           = journeyId,
-    createdAt     = dependencies.instant,
-    p800Reference = dependencies.p800Reference
-  )
-
-  lazy val journeyCheckYourReferenceValid: JourneyCheckYourReferenceValid = JourneyCheckYourReferenceValid(
-    _id           = journeyId,
-    createdAt     = dependencies.instant,
-    p800Reference = dependencies.p800Reference
-  )
-
-  lazy val journeyDoYouWantYourRefundViaBankTransferNo: JourneyDoYouWantYourRefundViaBankTransferNo = JourneyDoYouWantYourRefundViaBankTransferNo(
-    _id           = journeyId,
-    createdAt     = dependencies.instant,
-    p800Reference = dependencies.p800Reference
-  )
-
-  lazy val journeyDoYouWantYourRefundViaBankTransferYes: JourneyDoYouWantYourRefundViaBankTransferYes = JourneyDoYouWantYourRefundViaBankTransferYes(
-    _id           = journeyId,
-    createdAt     = dependencies.instant,
-    p800Reference = dependencies.p800Reference
-  )
-
-  lazy val journeyWhatIsYourFullName: JourneyWhatIsYourFullName = JourneyWhatIsYourFullName(
-    _id           = journeyId,
-    createdAt     = dependencies.instant,
-    p800Reference = dependencies.p800Reference,
-    fullName      = dependencies.fullName
-  )
-
-  lazy val journeyWhatIsYourDateOfBirth: JourneyWhatIsYourDateOfBirth = JourneyWhatIsYourDateOfBirth(
-    _id           = journeyId,
-    createdAt     = dependencies.instant,
-    p800Reference = dependencies.p800Reference,
-    fullName      = dependencies.fullName,
-    dateOfBirth   = dependencies.dateOfBirth
-  )
-
-  lazy val journeyWhatIsYourNationalInsuranceNumber: JourneyWhatIsYourNationalInsuranceNumber = JourneyWhatIsYourNationalInsuranceNumber(
-    _id                     = journeyId,
-    createdAt               = dependencies.instant,
-    p800Reference           = dependencies.p800Reference,
-    fullName                = dependencies.fullName,
-    dateOfBirth             = dependencies.dateOfBirth,
-    nationalInsuranceNumber = dependencies.nationalInsuranceNumber
-  )
-
-  lazy val journeyCheckYourAnswers: JourneyCheckYourAnswers = JourneyCheckYourAnswers(
-    _id                     = journeyId,
-    createdAt               = dependencies.instant,
-    p800Reference           = dependencies.p800Reference,
-    fullName                = dependencies.fullName,
-    dateOfBirth             = dependencies.dateOfBirth,
-    nationalInsuranceNumber = dependencies.nationalInsuranceNumber
-  )
-
-  lazy val journeyIdentityVerified: JourneyIdentityVerified = JourneyIdentityVerified(
+  lazy val journeyStarted: Journey = Journey(
     _id                          = journeyId,
     createdAt                    = dependencies.instant,
-    p800Reference                = dependencies.p800Reference,
-    fullName                     = dependencies.fullName,
-    dateOfBirth                  = dependencies.dateOfBirth,
-    nationalInsuranceNumber      = dependencies.nationalInsuranceNumber,
-    identityVerificationResponse = dependencies.identityVerifiedResponse
-  )
-  lazy val journeyIdentityNotVerified: JourneyIdentityNotVerified = JourneyIdentityNotVerified(
-    _id                          = journeyId,
-    createdAt                    = dependencies.instant,
-    p800Reference                = dependencies.p800Reference,
-    fullName                     = dependencies.fullName,
-    dateOfBirth                  = dependencies.dateOfBirth,
-    nationalInsuranceNumber      = dependencies.nationalInsuranceNumber,
-    identityVerificationResponse = dependencies.identityNotVerifiedResponse
+    hasFinished                  = false,
+    journeyType                  = None,
+    p800Reference                = None,
+    nationalInsuranceNumber      = None,
+    isChanging                   = false,
+    dateOfBirth                  = None,
+    identityVerificationResponse = None,
+    bankDescription              = None
   )
 
-  lazy val journeyWhatIsTheNameOfYourBankAccount: JourneyWhatIsTheNameOfYourBankAccount = JourneyWhatIsTheNameOfYourBankAccount(
-    _id                          = journeyId,
-    createdAt                    = dependencies.instant,
-    p800Reference                = dependencies.p800Reference,
-    fullName                     = dependencies.fullName,
-    dateOfBirth                  = dependencies.dateOfBirth,
-    nationalInsuranceNumber      = dependencies.nationalInsuranceNumber,
-    identityVerificationResponse = dependencies.identityNotVerifiedResponse,
-    bankDescription              = dependencies.bankDescription
-  )
+  object BankTransfer {
 
-  lazy val journeyRefundConsentGiven: JourneyRefundConsentGiven = JourneyRefundConsentGiven(
-    _id                          = journeyId,
-    createdAt                    = dependencies.instant,
-    p800Reference                = dependencies.p800Reference,
-    fullName                     = dependencies.fullName,
-    dateOfBirth                  = dependencies.dateOfBirth,
-    nationalInsuranceNumber      = dependencies.nationalInsuranceNumber,
-    identityVerificationResponse = dependencies.identityNotVerifiedResponse,
-    bankDescription              = dependencies.bankDescription
-  )
+    lazy val journeySelectedType: Journey = journeyStarted.copy(
+      journeyType = Some(JourneyType.BankTransfer)
+    )
 
-  lazy val journeyApprovedRefund: JourneyApprovedRefund = JourneyApprovedRefund(
-    _id                          = journeyId,
-    createdAt                    = dependencies.instant,
-    p800Reference                = dependencies.p800Reference,
-    fullName                     = dependencies.fullName,
-    dateOfBirth                  = dependencies.dateOfBirth,
-    nationalInsuranceNumber      = dependencies.nationalInsuranceNumber,
-    identityVerificationResponse = dependencies.identityNotVerifiedResponse,
-    bankDescription              = dependencies.bankDescription
-  )
+    lazy val journeyEnteredP800Reference: Journey = journeySelectedType.copy(
+      p800Reference = Some(dependencies.p800Reference)
+    )
 
-  lazy val journeyYourChequeWillBePostedToYou: JourneyYourChequeWillBePostedToYou = JourneyYourChequeWillBePostedToYou(
-    _id           = journeyId,
-    createdAt     = dependencies.instant,
-    p800Reference = dependencies.p800Reference
-  )
+    lazy val journeyEnteredNino: Journey = journeyEnteredP800Reference.copy(
+      nationalInsuranceNumber = Some(dependencies.nationalInsuranceNumber)
+    )
 
-  lazy val journeyNotApprovedRefund: JourneyNotApprovedRefund = JourneyNotApprovedRefund(
-    _id                          = journeyId,
-    createdAt                    = dependencies.instant,
-    p800Reference                = dependencies.p800Reference,
-    fullName                     = dependencies.fullName,
-    dateOfBirth                  = dependencies.dateOfBirth,
-    nationalInsuranceNumber      = dependencies.nationalInsuranceNumber,
-    identityVerificationResponse = dependencies.identityNotVerifiedResponse,
-    bankDescription              = dependencies.bankDescription
-  )
+    lazy val journeyEnteredDateOfBirth: Journey = journeyEnteredNino.copy(
+      dateOfBirth = Some(dependencies.dateOfBirth)
+    )
+
+    lazy val journeyIdentityVerified: Journey = journeyEnteredDateOfBirth.copy(
+      identityVerificationResponse = Some(dependencies.identityVerifiedResponse)
+    )
+
+    lazy val journeyIdentityNotVerified: Journey = {
+      val j = journeyEnteredDateOfBirth.copy(
+        identityVerificationResponse = Some(dependencies.identityNotVerifiedResponse)
+      )
+      require(j.isIdentityVerified, "this journey instance has to have verified identity")
+      j
+    }
+
+    lazy val journeySelectedBank: Journey = journeyIdentityVerified.copy(
+      bankDescription = Some(dependencies.bankDescription)
+    )
+
+    lazy val journeyConsentGiven: Journey = {
+      //TODO: here responsed from consent API
+      journeySelectedBank
+    }
+
+    lazy val journeyReceivedNotificationFromEcospend: Journey =
+      //TODO: API responses
+      journeyConsentGiven
+
+    lazy val journeyClaimedOverpayment: Journey =
+      //TODO: API responses
+      journeyConsentGiven
+
+    lazy val journeyClaimOverpaymentFailed: Journey =
+      //TODO: API responses
+      journeyConsentGiven
+
+  }
+
+  object Cheque {
+
+    lazy val journeySelectedType: Journey = journeyStarted.copy(
+      journeyType = Some(JourneyType.Cheque)
+    )
+
+    lazy val journeyEnteredP800Reference: Journey = journeySelectedType.copy(
+      p800Reference = Some(dependencies.p800Reference)
+    )
+
+    lazy val journeyEnteredNino: Journey = journeyEnteredP800Reference.copy(
+      nationalInsuranceNumber = Some(dependencies.nationalInsuranceNumber)
+    )
+
+    lazy val journeyIdentityVerified: Journey = journeyEnteredNino.copy(
+      identityVerificationResponse = Some(dependencies.identityVerifiedResponse)
+    )
+
+    lazy val journeyIdentityNotVerified: Journey = {
+      val j = journeyEnteredNino.copy(
+        identityVerificationResponse = Some(dependencies.identityNotVerifiedResponse)
+      )
+      require(j.isIdentityVerified, "this journey instance has to have verified identity")
+      j
+    }
+
+    lazy val journeyClaimedOverpayment: Journey =
+      //TODO: API responses
+      journeyIdentityVerified
+
+    lazy val journeyClaimOverpaymentFailed: Journey =
+      //TODO: API responses
+      journeyIdentityVerified
+
+  }
 
 }

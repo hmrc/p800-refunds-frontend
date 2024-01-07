@@ -49,6 +49,7 @@ class CheckYourAnswersController @Inject() (
 
   val get: Action[AnyContent] = actions.journeyInProgress { implicit request =>
     val journey: Journey = request.journey
+
     val summaryList = journey.getJourneyType match {
       case JourneyType.BankTransfer => buildSummaryList(
         p800Reference           = journey.getP800Reference,
@@ -60,7 +61,10 @@ class CheckYourAnswersController @Inject() (
         nationalInsuranceNumber = journey.getNationalInsuranceNumber
       )
     }
-    Ok(views.checkYourAnswersPage(summaryList = summaryList))
+    Ok(views.checkYourAnswersPage(
+      summaryList = summaryList,
+      journeyType = request.journey.getJourneyType
+    ))
   }
 
   val changeNationalInsuranceNumber: Action[AnyContent] = actions.journeyInProgress.async { implicit request =>
