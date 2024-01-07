@@ -57,10 +57,11 @@
     </p>
 
 
-    @viewsHelpers.govukButton(Button(
-        content = Text(Messages.CommonMessages.`continue`.show),
-        id      = Some("submit"),
-        classes = "govuk-!-margin-top-4",
-        href    = Some(routes.WhatIsYourFullNameController.get.url)
-    ))
+    @viewsHelpers.formWithCsrf(action = routes.WeNeedYouToConfirmYourIdentityController.post) {
+        @viewsHelpers.govukButton(Button(
+            content = Text(Messages.CommonMessages.`continue`.show),
+            id = Some("submit"),
+            classes = "govuk-!-margin-top-4"
+        ))
+    }
 }

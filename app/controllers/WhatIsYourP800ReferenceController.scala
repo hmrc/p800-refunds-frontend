@@ -17,8 +17,8 @@
 package controllers
 
 import action.Actions
-import models.forms.DoYouWantYourRefundViaBankTransferForm
-import models.forms.enumsforforms.DoYouWantYourRefundViaBankTransferFormValue
+import models.P800Reference
+import models.forms.EnterP800ReferenceForm
 import models.journeymodels._
 import play.api.mvc._
 import requests.RequestSupport
@@ -28,9 +28,10 @@ import views.Views
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
+import CheckYourAnswersController._
 
 @Singleton
-class DoYouWantYourRefundViaBankTransferController @Inject() (
+class WhatIsYourP800ReferenceController @Inject() (
     mcc:            MessagesControllerComponents,
     requestSupport: RequestSupport,
     journeyService: JourneyService,
@@ -41,30 +42,45 @@ class DoYouWantYourRefundViaBankTransferController @Inject() (
   import requestSupport._
 
   val get: Action[AnyContent] = actions.journeyInProgress { implicit request =>
-    Ok(views.doYouWantYourRefundViaBankTransferPage(
-      DoYouWantYourRefundViaBankTransferForm.form
+    val journey: Journey = request.journey
+    getResult(journey.p800Reference)
+  }
+
+  private def getResult(maybeP800Reference: Option[P800Reference])(implicit request: Request[_]): Result = {
+    Ok(views.enterP800ReferencePage(
+      form = maybeP800Reference.fold(
+        EnterP800ReferenceForm.form
+      )(
+          EnterP800ReferenceForm.form.fill
+        )
     ))
+      .makeChanging()
   }
 
   val post: Action[AnyContent] = actions.journeyInProgress.async { implicit request =>
-    val journey = request.journey
-    DoYouWantYourRefundViaBankTransferForm
+    processForm(request.journey)
+  }
+
+  private def processForm(journey: Journey)(implicit request: Request[_]): Future[Result] = {
+    /**
+     * It must navigate to the next page or to the checkYourAnswers page depending if it was a "change" or not.
+     */
+    val nextCall = if (journey.isChanging) controllers.routes.CheckYourAnswersController.get else controllers.routes.WhatIsYourNationalInsuranceNumberController.get
+
+    EnterP800ReferenceForm
       .form
       .bindFromRequest()
       .fold(
-        formWithErrors =>
-          Future.successful(BadRequest(views.doYouWantYourRefundViaBankTransferPage(
-            form = formWithErrors
-          ))), {
-          formValue =>
-
-            val journeyType: JourneyType = formValue match {
-              case DoYouWantYourRefundViaBankTransferFormValue.Yes => JourneyType.BankTransfer
-              case DoYouWantYourRefundViaBankTransferFormValue.No  => JourneyType.Cheque
-            }
-            journeyService
-              .upsert(journey.copy(journeyType = Some(journeyType)))
-              .map(_ => Redirect(controllers.routes.WeNeedYouToConfirmYourIdentityController.get))
+        formWithErrors => Future.successful(BadRequest(views.enterP800ReferencePage(
+          form = formWithErrors
+        ))),
+        p800Reference => {
+          journeyService
+            .upsert(journey.copy(
+              p800Reference = Some(p800Reference),
+              isChanging    = false
+            ))
+            .map(_ => Redirect(nextCall))
         }
       )
   }

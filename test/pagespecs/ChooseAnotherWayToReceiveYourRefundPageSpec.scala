@@ -43,7 +43,7 @@ class ChooseAnotherWayToReceiveYourRefundPageSpec extends ItSpec {
     pages.chooseAnotherWayToReceiveYourRefundPage.assertPageIsDisplayed()
     pages.chooseAnotherWayToReceiveYourRefundPage.clickChequeOption()
     pages.chooseAnotherWayToReceiveYourRefundPage.clickSubmit()
-    pages.yourChequeWillBePostedToYouPage.assertPageIsDisplayed()
+    pages.completeYourRefundRequestPage.assertPageIsDisplayed()
   }
   //todo un ignore this test when we know where the back button is supposed to go.
   "Clicking 'Back' sends user to 'What is the name of your bank account' page" ignore {

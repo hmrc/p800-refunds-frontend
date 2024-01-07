@@ -17,15 +17,13 @@
 package controllers
 
 import action.{Actions, JourneyRequest}
-import play.api.mvc._
-import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
-import views.Views
-import models.NationalInsuranceNumber
 import models.forms.WhatIsYourNationalInsuranceNumberForm
 import models.journeymodels._
+import play.api.mvc._
 import requests.RequestSupport
 import services.JourneyService
-import io.scalaland.chimney.dsl._
+import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
+import views.Views
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
@@ -41,35 +39,30 @@ class WhatIsYourNationalInsuranceNumberController @Inject() (
 
   import requestSupport._
 
-  val get: Action[AnyContent] = actions.journeyAction { implicit request =>
-    request.journey match {
-      case j: JTerminal                                   => JourneyRouter.handleFinalJourneyOnNonFinalPage(j)
-      case j: JourneyDoYouWantYourRefundViaBankTransferNo => JourneyRouter.sendToCorrespondingPage(j)
-      case j: JBeforeWhatIsYourDateOfBirth                => JourneyRouter.sendToCorrespondingPage(j)
-      case _: JourneyWhatIsYourDateOfBirth                => getResult(None)
-      case j: JourneyWhatIsYourNationalInsuranceNumber    => getResult(Some(j.nationalInsuranceNumber))
-      case j: JAfterWhatIsYourNationalInsuranceNumber     => getResult(Some(j.nationalInsuranceNumber))
+  val get: Action[AnyContent] = actions.journeyInProgress { implicit request =>
+    val journey: Journey = request.journey
+
+    Ok(views.whatIsYourNationalInsuranceNumberPage(
+      form = journey.nationalInsuranceNumber.fold(
+        WhatIsYourNationalInsuranceNumberForm.form
+      )(
+          WhatIsYourNationalInsuranceNumberForm.form.fill
+        )
+    ))
+  }
+
+  val post: Action[AnyContent] = actions.journeyInProgress.async { implicit request: JourneyRequest[_] =>
+    val journey: Journey = request.journey
+    processForm(journey)
+  }
+
+  private def processForm(journey: Journey)(implicit request: JourneyRequest[_]): Future[Result] = {
+    val defaultNextCall = journey.getJourneyType match {
+      case JourneyType.BankTransfer => controllers.routes.WhatIsYourDateOfBirthController.get
+      case JourneyType.Cheque       => controllers.routes.CheckYourAnswersController.get
     }
-  }
+    val nextCall = if (request.journey.isChanging) controllers.routes.CheckYourAnswersController.get else defaultNextCall
 
-  private def getResult(maybeNationalInsuranceNumber: Option[NationalInsuranceNumber])(implicit request: JourneyRequest[_]): Result = {
-    maybeNationalInsuranceNumber.fold(
-      Ok(views.whatIsYourNationalInsuranceNumberPage(WhatIsYourNationalInsuranceNumberForm.form))
-    ) { nationalInsuranceNumber: NationalInsuranceNumber =>
-        Ok(views.whatIsYourNationalInsuranceNumberPage(WhatIsYourNationalInsuranceNumberForm.form.fill(nationalInsuranceNumber)))
-      }
-  }
-
-  val post: Action[AnyContent] = actions.journeyAction.async { implicit request: JourneyRequest[_] =>
-    request.journey match {
-      case j: JTerminal                                   => JourneyRouter.handleFinalJourneyOnNonFinalPageF(j)
-      case j: JourneyDoYouWantYourRefundViaBankTransferNo => JourneyRouter.sendToCorrespondingPageF(j)
-      case j: JBeforeWhatIsYourDateOfBirth                => JourneyRouter.sendToCorrespondingPageF(j)
-      case j: JAfterDoYouWantYourRefundViaBankTransferYes => processForm(j)
-    }
-  }
-
-  private def processForm(journey: JAfterDoYouWantYourRefundViaBankTransferYes)(implicit request: JourneyRequest[_]): Future[Result] = {
     WhatIsYourNationalInsuranceNumberForm
       .form
       .bindFromRequest()
@@ -77,23 +70,16 @@ class WhatIsYourNationalInsuranceNumberController @Inject() (
         formWithErrors => {
           Future.successful(BadRequest(views.whatIsYourNationalInsuranceNumberPage(form = formWithErrors)))
         },
-        nationalInsuranceNumber => {
-          val newJourney = journey match {
-            case j: JourneyWhatIsYourFullName => j
-            case j: JourneyWhatIsYourDateOfBirth => j.into[JourneyWhatIsYourNationalInsuranceNumber]
-              .withFieldConst(_.nationalInsuranceNumber, nationalInsuranceNumber)
-              .transform
-            case j: JAfterWhatIsYourDateOfBirth =>
-              j
-                .into[JourneyWhatIsYourNationalInsuranceNumber]
-                .enableInheritedAccessors
-                .withFieldConst(_.nationalInsuranceNumber, nationalInsuranceNumber)
-                .transform
-          }
+        nationalInsuranceNumber =>
           journeyService
-            .upsert(newJourney)
-            .map(_ => Redirect(controllers.routes.CheckYourAnswersController.get))
-        }
+            .upsert(journey.copy(
+              nationalInsuranceNumber = Some(nationalInsuranceNumber),
+              isChanging              = false
+            ))
+            .map(_ => Redirect(nextCall))
+
       )
   }
+
 }
+

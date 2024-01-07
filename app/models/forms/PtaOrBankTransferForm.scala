@@ -17,17 +17,21 @@
 package models.forms
 
 import language.{Language, Messages}
-import models.forms.enumsforforms.ChooseAnotherWayToGetYourRefundFormValue
-import play.api.data.{Form, Forms}
+import models.forms.enumsforforms.PtaOrBankTransferFormValue
 import play.api.data.Forms.mapping
+import play.api.data.{Form, Forms}
 import util.EnumFormatter
 
-object ChooseAnotherWayToGetYourRefundForm {
-  def form(implicit language: Language): Form[ChooseAnotherWayToGetYourRefundFormValue] = {
+/**
+ * Form for choosing Bank Transfer Via Personal Tax Account (Pta) or Bank Transfer Logged Out
+ */
+object PtaOrBankTransferForm {
+
+  def form(implicit language: Language): Form[PtaOrBankTransferFormValue] = {
     val chooseAnotherWayToGetYourRefundMapping = Forms.of(EnumFormatter.format(
-      `enum`                  = ChooseAnotherWayToGetYourRefundFormValue,
-      errorMessageIfMissing   = Messages.ChooseAnotherWayToReceiveYourRefund.`Select if you want to receive a bank transfer via your personal tax account, or a cheque`.show,
-      errorMessageIfEnumError = Messages.ChooseAnotherWayToReceiveYourRefund.`Select if you want to receive a bank transfer via your personal tax account, or a cheque`.show
+      `enum`                  = PtaOrBankTransferFormValue,
+      errorMessageIfMissing   = Messages.ChooseAnotherWayToReceiveYourRefund.`Select if you want to receive a bank transfer via your personal tax account, or a bank transfer logged out`.show,
+      errorMessageIfEnumError = Messages.ChooseAnotherWayToReceiveYourRefund.`Select if you want to receive a bank transfer via your personal tax account, or a bank transfer logged out`.show
     ))
 
     Form(

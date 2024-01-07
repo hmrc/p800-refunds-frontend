@@ -17,44 +17,39 @@
 package controllers
 
 import action.Actions
-import config.AppConfig
-import models.forms.DoYouWantToSignInForm
-import models.forms.enumsforforms.DoYouWantToSignInFormValue
+import models.journeymodels._
 import play.api.mvc._
-import requests.RequestSupport
+import services.JourneyService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
+import util.Errors
+import util.SafeEquals.EqualsOps
 import views.Views
 
 import javax.inject.{Inject, Singleton}
+import scala.annotation.unused
+import scala.concurrent.ExecutionContext
 
 @Singleton
-class DoYouWantToSignInController @Inject() (
+class CompleteYourRefundRequestController @Inject() (
     mcc:            MessagesControllerComponents,
-    requestSupport: RequestSupport,
     views:          Views,
     actions:        Actions,
-    appConfig:      AppConfig
-) extends FrontendController(mcc) {
-
-  import requestSupport._
+    journeyService: JourneyService
+)(implicit @unused ec: ExecutionContext) extends FrontendController(mcc) {
 
   val get: Action[AnyContent] = actions.journeyInProgress{ implicit request =>
-    Ok(views.doYouWantToSignInPage(
-      form = DoYouWantToSignInForm.form
-    ))
+    Errors.require(request.journey.getJourneyType === JourneyType.Cheque, "This endpoint supports only Cheque journey")
+    Ok(views.completeYourRefundRequestPage())
   }
 
-  val post: Action[AnyContent] = actions.journeyInProgress { implicit request =>
-    DoYouWantToSignInForm.form.bindFromRequest().fold(
-      formWithErrors => BadRequest(views.doYouWantToSignInPage(
-        form = formWithErrors
-      )), {
-        case DoYouWantToSignInFormValue.Yes =>
-          Redirect(appConfig.PersonalTaxAccountUrls.personalTaxAccountSignInUrl)
-        case DoYouWantToSignInFormValue.No =>
-          Redirect(controllers.routes.DoYouWantYourRefundViaBankTransferController.get)
-      }
-    )
+  val post: Action[AnyContent] = actions.journeyInProgress.async { implicit request =>
+    val journey: Journey = request.journey
+    Errors.require(journey.getJourneyType === JourneyType.Cheque, "This endpoint supports only Cheque journey")
+
+    //TODO: API call
+    journeyService
+      .upsert(journey.copy(hasFinished = true)) //TODO: update journey with results of the API call
+      .map(_ => Redirect(controllers.routes.RequestReceivedController.get))
   }
 
 }

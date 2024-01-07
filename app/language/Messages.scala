@@ -212,9 +212,18 @@ object Messages {
     val `Select if you want to receive a bank transfer via your personal tax account, or a cheque`: Message = Message(
       english = "Select if you want to receive a bank transfer via your personal tax account, or a cheque"
     )
+
+    //TODO: confirm with Content designer this text
+    val `Select if you want to receive a bank transfer via your personal tax account, or a bank transfer logged out`: Message = Message(
+      english = "Select if you want to receive a bank transfer via your personal tax account, or a bank transfer logged out"
+    )
   }
 
   object CheckYourAnswersMessages {
+
+    val `Reference`: Message = Message(
+      english = "Reference"
+    )
 
     val `Check your answers`: Message = Message(
       english = "Check your answers"

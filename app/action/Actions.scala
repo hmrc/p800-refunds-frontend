@@ -23,12 +23,34 @@ import javax.inject.{Inject, Singleton}
 @Singleton
 class Actions @Inject() (
     actionBuilder:           DefaultActionBuilder,
-    getJourneyActionRefiner: GetJourneyActionRefiner
+    getJourneyActionRefiner: GetJourneyActionRefiner,
+    ensureJourney:           EnsureJourney
 ) {
 
   val default: ActionBuilder[Request, AnyContent] = actionBuilder
 
   @SuppressWarnings(Array("org.wartremover.warts.Any"))
-  val journeyAction: ActionBuilder[JourneyRequest, AnyContent] = actionBuilder.andThen(getJourneyActionRefiner)
+  val journeyFinished: ActionBuilder[JourneyRequest, AnyContent] =
+    actionBuilder
+      .andThen(getJourneyActionRefiner)
+      .andThen(
+        ensureJourney.ensureJourney(
+          _.hasFinished,
+          controllers.routes.DoYouWantToSignInController.get, //or discover where to send it (actually there is no business requirement to handle such cases)
+          "Journey is not finished"
+        )
+      )
+
+  @SuppressWarnings(Array("org.wartremover.warts.Any"))
+  val journeyInProgress: ActionBuilder[JourneyRequest, AnyContent] =
+    actionBuilder
+      .andThen(getJourneyActionRefiner)
+      .andThen(
+        ensureJourney.ensureJourney(
+          !_.hasFinished,
+          controllers.routes.RequestReceivedController.get,
+          "Journey is finished"
+        )
+      )
 
 }

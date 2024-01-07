@@ -39,7 +39,7 @@ class DoYouWantYourRefundViaBankTransferPageSpec extends ItSpec {
     pages.doYouWantYourRefundViaBankTransferPage.assertPageIsDisplayed()
     pages.doYouWantYourRefundViaBankTransferPage.selectNo()
     pages.doYouWantToSignInPage.clickSubmit()
-    pages.yourChequeWillBePostedToYouPage.assertPageIsDisplayed()
+    pages.completeYourRefundRequestPage.assertPageIsDisplayed()
   }
 
   "Clicking 'Back' redirects user to 'Check your reference' page" in {

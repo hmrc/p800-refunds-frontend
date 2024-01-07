@@ -17,11 +17,10 @@
 package controllers
 
 import action.{Actions, JourneyRequest}
-import io.scalaland.chimney.dsl._
 import language.Messages
 import models.dateofbirth.DateOfBirth
 import models.journeymodels._
-import models.{FullName, IdentityVerificationResponse, IdentityVerified, NationalInsuranceNumber}
+import models.{IdentityVerificationResponse, NationalInsuranceNumber, P800Reference}
 import play.api.mvc._
 import requests.RequestSupport
 import services.{IdentityVerificationService, JourneyService}
@@ -48,112 +47,107 @@ class CheckYourAnswersController @Inject() (
 
   import requestSupport._
 
-  val get: Action[AnyContent] = actions.journeyAction { implicit request =>
-    request.journey match {
-      case j: JTerminal                                   => JourneyRouter.handleFinalJourneyOnNonFinalPage(j)
-      case j: JBeforeWhatIsYourNationalInsuranceNumber    => JourneyRouter.sendToCorrespondingPage(j)
-      case j: JourneyWhatIsYourNationalInsuranceNumber    => getResult(j.fullName, j.dateOfBirth, j.nationalInsuranceNumber)
-      case j: JAfterWhatIsYourNationalInsuranceNumber     => getResult(j.fullName, j.dateOfBirth, j.nationalInsuranceNumber)
-      case j: JourneyDoYouWantYourRefundViaBankTransferNo => JourneyRouter.sendToCorrespondingPage(j)
+  val get: Action[AnyContent] = actions.journeyInProgress { implicit request =>
+    val journey: Journey = request.journey
+    val summaryList = journey.getJourneyType match {
+      case JourneyType.BankTransfer => buildSummaryList(
+        p800Reference           = journey.getP800Reference,
+        nationalInsuranceNumber = journey.getNationalInsuranceNumber,
+        dateOfBirth             = journey.getDateOfBirth
+      )
+      case JourneyType.Cheque => buildSummaryList(
+        p800Reference           = journey.getP800Reference,
+        nationalInsuranceNumber = journey.getNationalInsuranceNumber
+      )
     }
+    Ok(views.checkYourAnswersPage(summaryList = summaryList))
   }
 
-  //Warn: These have to be `def`s otherwise it won't work.
-  //If those actions are eagerly evaluated, play framework (or actually its reverse routes mechanism)
-  //won't add `/get-an-income-tax-refund` path in the generated URLs.
-  def changeFullName: Action[AnyContent] = change(controllers.routes.WhatIsYourFullNameController.get)
-  def changeDateOfBirth: Action[AnyContent] = change(controllers.routes.WhatIsYourDateOfBirthController.get)
-  def changeNationalInsuranceNumber: Action[AnyContent] = change(controllers.routes.WhatIsYourNationalInsuranceNumberController.get)
-
-  /**
-   * When user decides to change details ([[FullName]], [[NationalInsuranceNumber]] or [[DateOfBirth]])
-   * he is send to the relevant page. When submitting edits, he needs to be navigate back to the  CheckYourAnswersPage.
-   * This is achieved by introducing [[JourneyCheckYourAnswersChange]] journey state.
-   *
-   * This creates an action which changes journey state to [[JourneyCheckYourAnswersChange]] and redirects to user to proper page
-   * (defined using `call` parameter) where he can enter new details.
-   */
-  private def change(call: Call): Action[AnyContent] = actions.journeyAction.async { implicit request =>
-    request.journey match {
-      case j: JTerminal                                => JourneyRouter.handleFinalJourneyOnNonFinalPageF(j)
-      case j: JBeforeWhatIsYourNationalInsuranceNumber => JourneyRouter.sendToCorrespondingPageF(j)
-      case j: JourneyWhatIsYourNationalInsuranceNumber =>
-        journeyService
-          .upsert(j.into[JourneyCheckYourAnswersChange].transform)
-          .map(_ => Redirect(call))
-      case j: JAfterWhatIsYourNationalInsuranceNumber =>
-        journeyService
-          .upsert(j.into[JourneyCheckYourAnswersChange].enableInheritedAccessors.transform)
-          .map(_ => Redirect(call))
-      case j: JourneyDoYouWantYourRefundViaBankTransferNo => JourneyRouter.sendToCorrespondingPageF(j)
-    }
+  val changeNationalInsuranceNumber: Action[AnyContent] = actions.journeyInProgress.async { implicit request =>
+    val journey = request.journey
+    journeyService
+      .upsert(journey.copy(isChanging = true))
+      .map(_ =>
+        Redirect(controllers.routes.WhatIsYourNationalInsuranceNumberController.get))
   }
 
-  private def getResult(
-      fullName:                FullName,
-      dateOfBirth:             DateOfBirth,
-      nationalInsuranceNumber: NationalInsuranceNumber
-  )(implicit request: Request[_]) = Ok(views.checkYourAnswersPage(
-    summaryList = buildSummaryList(fullName, dateOfBirth, nationalInsuranceNumber)
+  val changeDateOfBirth: Action[AnyContent] = actions.journeyInProgress { _ =>
+    Redirect(controllers.routes.WhatIsYourDateOfBirthController.get)
+  }
+
+  val changeP800Reference: Action[AnyContent] = actions.journeyInProgress.async { implicit request =>
+    val journey = request.journey
+    journeyService
+      .upsert(journey.copy(isChanging = true))
+      .map(_ =>
+        Redirect(controllers.routes.WhatIsYourP800ReferenceController.get))
+  }
+
+  val post: Action[AnyContent] = actions.journeyInProgress.async { implicit request =>
+    val journey: Journey = request.journey
+    processForm(journey)
+  }
+
+  private def processForm(journey: Journey)(implicit request: JourneyRequest[AnyContent]): Future[Result] = {
+    //TODO: call attempts service in case of failures
+    //TODO: distinguish between cheque and bank transfer journey. They have different verification steps
+    for {
+      identityVerificationResponse <- identityVerificationService.verifyIdentity(journey.getNationalInsuranceNumber)
+      newJourney = journey.copy(
+        identityVerificationResponse = Some(identityVerificationResponse)
+      )
+      _ <- journeyService.upsert(newJourney)
+    } yield Redirect(nextCall(identityVerificationResponse))
+  }
+
+  private def nextCall(identityVerificationResponse: IdentityVerificationResponse): Call = {
+    if (identityVerificationResponse.identityVerified.value) controllers.routes.WeHaveConfirmedYourIdentityController.get
+    else controllers.routes.WeCannotConfirmYourIdentityController.get
+  }
+
+  private def buildSummaryList(
+      p800Reference:           P800Reference,
+      nationalInsuranceNumber: NationalInsuranceNumber,
+      dateOfBirth:             DateOfBirth
+  )(implicit request: Request[_]): SummaryList = SummaryList(rows = Seq(
+    p800ReferenceSummaryRow(p800Reference),
+    dateOfBirthSummaryRow(dateOfBirth),
+    nationalInsuranceNumberSummaryRow(nationalInsuranceNumber)
   ))
 
-  val post: Action[AnyContent] = actions.journeyAction.async { implicit request =>
-    request.journey match {
-      case j: JTerminal                                   => JourneyRouter.handleFinalJourneyOnNonFinalPageF(j)
-      case j: JBeforeWhatIsYourNationalInsuranceNumber    => JourneyRouter.sendToCorrespondingPageF(j)
-      case j: JourneyWhatIsYourNationalInsuranceNumber    => processForm(j)
-      case j: JAfterWhatIsYourNationalInsuranceNumber     => processForm(j.into[JourneyWhatIsYourNationalInsuranceNumber].enableInheritedAccessors.transform)
-      case j: JourneyDoYouWantYourRefundViaBankTransferNo => JourneyRouter.sendToCorrespondingPageF(j)
-    }
-  }
-
-  private def processForm(journey: JourneyWhatIsYourNationalInsuranceNumber)(implicit request: JourneyRequest[AnyContent]): Future[Result] = {
-    for {
-      identityVerificationResponse <- identityVerificationService.verifyIdentity(journey.nationalInsuranceNumber)
-      (newJourney, redirect) = identityVerificationResponse match {
-        case idVerifiedResponse @ IdentityVerificationResponse(IdentityVerified(true), _) =>
-          val j: JourneyIdentityVerified = journey
-            .into[JourneyIdentityVerified]
-            .withFieldConst(_.identityVerificationResponse, idVerifiedResponse)
-            .transform
-          j -> controllers.routes.WeHaveConfirmedYourIdentityController.get
-        case idVerifiedResponse @ IdentityVerificationResponse(IdentityVerified(false), _) =>
-          val j: JourneyIdentityNotVerified = journey
-            .into[JourneyIdentityNotVerified]
-            .withFieldConst(_.identityVerificationResponse, idVerifiedResponse)
-            .transform
-          j -> controllers.routes.WeCannotConfirmYourIdentityController.get
-      }
-      _ <- journeyService.upsert(newJourney)
-    } yield Redirect(redirect)
-  }
-
-  def buildSummaryList(
-      fullName:                FullName,
-      dateOfBirth:             DateOfBirth,
+  private def buildSummaryList(
+      p800Reference:           P800Reference,
       nationalInsuranceNumber: NationalInsuranceNumber
-  )(implicit request: Request[_]): SummaryList = {
+  )(implicit request: Request[_]): SummaryList = SummaryList(rows = Seq(
+    p800ReferenceSummaryRow(p800Reference),
+    nationalInsuranceNumberSummaryRow(nationalInsuranceNumber)
+  ))
 
-    SummaryList(rows = Seq(
-      buildSummaryListRow(
-        Messages.CheckYourAnswersMessages.`Full name`.show,
-        id = "full-name",
-        fullName.value,
-        controllers.routes.CheckYourAnswersController.changeFullName
-      ),
-      buildSummaryListRow(
-        Messages.CheckYourAnswersMessages.`Date of birth`.show,
-        id = "date-of-birth",
-        formatDateOfBirth(dateOfBirth),
-        controllers.routes.CheckYourAnswersController.changeDateOfBirth
-      ),
-      buildSummaryListRow(
-        Messages.CheckYourAnswersMessages.`National Insurance Number`.show,
-        id = "national-insurance-number",
-        s"""${nationalInsuranceNumber.value}""",
-        controllers.routes.CheckYourAnswersController.changeNationalInsuranceNumber
-      )
-    ))
+  private def nationalInsuranceNumberSummaryRow(nationalInsuranceNumber: NationalInsuranceNumber)(implicit request: Request[_]): SummaryListRow = {
+    buildSummaryListRow(
+      Messages.CheckYourAnswersMessages.`National Insurance Number`.show,
+      id    = "national-insurance-number",
+      value = s"""${nationalInsuranceNumber.value}""",
+      call  = controllers.routes.CheckYourAnswersController.changeNationalInsuranceNumber
+    )
+  }
+
+  private def dateOfBirthSummaryRow(dateOfBirth: DateOfBirth)(implicit request: Request[_]): SummaryListRow = {
+    buildSummaryListRow(
+      Messages.CheckYourAnswersMessages.`Date of birth`.show,
+      id    = "date-of-birth",
+      value = formatDateOfBirth(dateOfBirth),
+      call  = controllers.routes.CheckYourAnswersController.changeDateOfBirth
+    )
+  }
+
+  private def p800ReferenceSummaryRow(p800Reference: P800Reference)(implicit request: Request[_]): SummaryListRow = {
+    buildSummaryListRow(
+      Messages.CheckYourAnswersMessages.`Reference`.show,
+      id    = "reference",
+      value = p800Reference.value,
+      call  = controllers.routes.CheckYourAnswersController.changeP800Reference
+    )
   }
 
   private def buildSummaryListRow(key: String, id: String, value: String, call: Call)(implicit request: Request[_]): SummaryListRow = SummaryListRow(
@@ -183,5 +177,26 @@ class CheckYourAnswersController @Inject() (
         s"${dateOfBirth.dayOfMonth.value} ${dateOfBirth.month.value} ${dateOfBirth.year.value} "
     }
   }
+
 }
 
+object CheckYourAnswersController {
+
+  private val key: String = "p800-refunds-frontend.changing-from-check-your-answers-page"
+
+  def isChanging(implicit request: Request[_]): Boolean = request.flash.get(key).isDefined
+
+  implicit class ResultOps(r: Result) {
+    def makeChanging(): Result = {
+      r.flashing(key -> "changing")
+    }
+
+    def continueChanging()(implicit request: Request[_]): Result = {
+      if (isChanging)
+        r.makeChanging()
+      else
+        r
+    }
+  }
+
+}

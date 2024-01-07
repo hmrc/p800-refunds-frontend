@@ -34,7 +34,7 @@
 
 @layout(
     pageTitle = Some(title),
-    backLinkUrlOverride = Some(routes.WhatIsTheNameOfYourBankAccountController.get.url)
+    backLinkUrlOverride = Some(routes.WhatIsTheNameOfYourBankController.get.url)
 ) {
 
     <h1 class="govuk-heading-xl">@title</h1>
@@ -43,7 +43,7 @@
         @{Html(Messages.GiveYourConsent.`By choosing approve`(
             bankName = bankName,
             amount = amountInPence,
-            changeBankLink = routes.WhatIsTheNameOfYourBankAccountController.get.url
+            changeBankLink = controllers.routes.WhatIsTheNameOfYourBankController.get.url
         ).show)}
     </p>
 
@@ -70,11 +70,14 @@
     </p>
 
     <div class="govuk-button-group">
-        @viewsHelpers.govukButton(Button(
-            content = Text(Messages.GiveYourConsent.`Approve this refund`.show),
-            href = Some(routes.GiveYourConsentController.approveThisRefund.url),
-            id = Some("approve-this-refund")
-        ))
+
+        @viewsHelpers.formWithCsrf(action = controllers.routes.GiveYourConsentController.post) {
+            @viewsHelpers.govukButton(Button(
+                content = Text(Messages.GiveYourConsent.`Approve this refund`.show),
+                id      = Some("approve-this-refund")
+            ))
+        }
+
         <a id="choose-another-way" class="govuk-link" href="@routes.ChooseAnotherWayToGetYourRefundController.get.url">
             @{Messages.GiveYourConsent.`Choose another way to get my money`.show}
         </a>

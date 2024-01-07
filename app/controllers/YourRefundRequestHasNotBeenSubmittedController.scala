@@ -20,26 +20,21 @@ import action.{Actions, JourneyRequest}
 import models.journeymodels._
 import play.api.mvc._
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
+import util.Errors
+import util.SafeEquals.EqualsOps
 import views.Views
 
 import javax.inject.{Inject, Singleton}
 
 @Singleton
-class RequestNotSubmittedController @Inject() (
+class YourRefundRequestHasNotBeenSubmittedController @Inject() (
     mcc:     MessagesControllerComponents,
     views:   Views,
     actions: Actions
 ) extends FrontendController(mcc) {
 
-  val get: Action[AnyContent] = actions.journeyAction { implicit request: JourneyRequest[_] =>
-    request.journey match {
-      case _: JourneyNotApprovedRefund => getResult
-      case j: JTerminal                => JourneyRouter.handleFinalJourneyOnNonFinalPage(j)
-      case j: JBeforeNotApprovedRefund => JourneyRouter.sendToCorrespondingPage(j)
-    }
-  }
-
-  private def getResult(implicit request: JourneyRequest[_]): Result = {
+  val get: Action[AnyContent] = actions.journeyInProgress { implicit request: JourneyRequest[_] =>
+    Errors.require(request.journey.getJourneyType === JourneyType.BankTransfer, "This page is only for BankTransfer journey")
     Ok(views.requestNotSubmittedPage())
   }
 

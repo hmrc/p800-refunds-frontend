@@ -34,9 +34,9 @@ class ChequeRequestReceivedPageSpec extends ItSpec {
   "user is kept in the final page if clicked browser's back button" in {
     //setup the history in the browser:
     upsertJourneyToDatabase(tdAll.journeyDoYouWantYourRefundViaBankTransferNo)
-    pages.yourChequeWillBePostedToYouPage.open()
-    pages.yourChequeWillBePostedToYouPage.assertPageIsDisplayed()
-    pages.yourChequeWillBePostedToYouPage.clickSubmitRefundRequest()
+    pages.completeYourRefundRequestPage.open()
+    pages.completeYourRefundRequestPage.assertPageIsDisplayed()
+    pages.completeYourRefundRequestPage.clickSubmitRefundRequest()
 
     pages.chequeRequestReceivedPage.open()
     pages.chequeRequestReceivedPage.assertPageIsDisplayed()

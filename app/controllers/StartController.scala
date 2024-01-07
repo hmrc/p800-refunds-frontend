@@ -16,7 +16,7 @@
 
 package controllers
 
-import action.JourneyIdKey
+import action.{Actions, JourneyIdKey}
 import play.api.mvc._
 import services.JourneyService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
@@ -27,10 +27,11 @@ import scala.concurrent.ExecutionContext
 @Singleton
 class StartController @Inject() (
     mcc:            MessagesControllerComponents,
-    journeyService: JourneyService
+    journeyService: JourneyService,
+    actions:        Actions
 )(implicit ec: ExecutionContext) extends FrontendController(mcc) {
 
-  val get: Action[AnyContent] = Action.async { implicit request =>
+  val get: Action[AnyContent] = actions.default.async { implicit request =>
     journeyService
       .newJourney()
       .map(journey => Redirect(

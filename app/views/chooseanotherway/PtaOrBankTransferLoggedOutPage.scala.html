@@ -18,14 +18,14 @@
 @import uk.gov.hmrc.govukfrontend.views.html.components._
 @import uk.gov.hmrc.govukfrontend.views.html.components.implicits._
 @import views.html.templates.Layout
-@import models.forms.enumsforforms.ChooseAnotherWayToGetYourRefundFormValue
+@import models.forms.enumsforforms.PtaOrBankTransferFormValue
 
 @this(
     layout: Layout,
     viewsHelpers: views.ViewsHelpers
 )
 
-@(form: Form[ChooseAnotherWayToGetYourRefundFormValue])(implicit request: Request[_])
+@(form: Form[PtaOrBankTransferFormValue])(implicit request: Request[_])
 
 @import viewsHelpers.requestSupport._
 
@@ -37,8 +37,8 @@
     "way-to-get-refund"
 }
 
-@bankTransferKey = @{ChooseAnotherWayToGetYourRefundFormValue.BankTransfer.toString}
-@chequeKey = @{ChooseAnotherWayToGetYourRefundFormValue.Cheque.toString}
+@ptaKey = @{PtaOrBankTransferFormValue.BankTransferViaPta.toString}
+@bankTransferKey = @{PtaOrBankTransferFormValue.BankTransferLoggedOut.toString}
 
 @layout(
     pageTitle = Some(title)
@@ -48,7 +48,7 @@
         @viewsHelpers.govukErrorSummary(ErrorSummary(errorList = form.errors.asTextErrorLinks, title = Text(Messages.CommonMessages.`There is a problem`.show)))
     }
 
-    @viewsHelpers.formWithCsrf(action = controllers.routes.ChooseAnotherWayToGetYourRefundController.post) {
+    @viewsHelpers.formWithCsrf(action = controllers.routes.ChooseAnotherWayToGetYourRefundController.postBankTransferViaPtaOrBankTransferLoggedOut) {
         @viewsHelpers.govukRadios(Radios(
             fieldset = Some(Fieldset(
                 legend = Some(Legend(
@@ -62,13 +62,13 @@
             items = Seq(
                 RadioItem(
                     content = Text(Messages.ChooseAnotherWayToReceiveYourRefund.`Bank transfer via your personal tax account`.show),
-                    value = Some(bankTransferKey),
-                    checked = form.data.values.toList.contains(bankTransferKey)
+                    value = Some(ptaKey),
+                    checked = form.data.values.toList.contains(ptaKey)
                 ),
                 RadioItem(
                     content = Text(Messages.ChooseAnotherWayToReceiveYourRefund.`Cheque`.show),
-                    value = Some(chequeKey),
-                    checked = form.data.values.toList.contains(chequeKey)
+                    value = Some(bankTransferKey),
+                    checked = form.data.values.toList.contains(bankTransferKey)
                 )
             )
         ).withFormField(form(key)))

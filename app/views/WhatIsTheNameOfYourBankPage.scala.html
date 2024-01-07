@@ -51,7 +51,7 @@
         @viewsHelpers.govukErrorSummary(ErrorSummary(errorList = form.errors.asTextErrorLinks, title = Text(Messages.CommonMessages.`There is a problem`.show)))
     }
 
-    @viewsHelpers.formWithCsrf(action = controllers.routes.WhatIsTheNameOfYourBankAccountController.post) {
+    @viewsHelpers.formWithCsrf(action = controllers.routes.WhatIsTheNameOfYourBankController.post) {
         <h1 class="govuk-label-wrapper">
             <label class="govuk-label govuk-label--xl" for="selectedBankId">
                 @title

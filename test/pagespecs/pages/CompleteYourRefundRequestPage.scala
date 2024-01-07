@@ -20,7 +20,7 @@ import org.openqa.selenium.WebDriver
 import pagespecs.pagesupport.{ContentExpectation, Page, PageUtil}
 import testsupport.RichMatchers.convertToAnyShouldWrapper
 
-class YourCheckWillBePostedToYouPage(baseUrl: String)(implicit webDriver: WebDriver) extends Page(
+class CompleteYourRefundRequestPage(baseUrl: String)(implicit webDriver: WebDriver) extends Page(
   baseUrl,
   path = "/get-an-income-tax-refund/complete-your-refunds-request-to-get-your-cheque"
 ) {

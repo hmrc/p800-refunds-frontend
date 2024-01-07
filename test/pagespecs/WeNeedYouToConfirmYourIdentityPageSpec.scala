@@ -50,7 +50,7 @@ class WeNeedYouToConfirmYourIdentityPageSpec extends ItSpec {
 
   forAll(Table(
     ("journeyState", "expectedPage"),
-    (tdAll.journeyDoYouWantYourRefundViaBankTransferNo, pages.yourChequeWillBePostedToYouPage),
+    (tdAll.journeyDoYouWantYourRefundViaBankTransferNo, pages.completeYourRefundRequestPage),
     (tdAll.journeyStarted, pages.doYouWantToSignInPage),
     (tdAll.journeyDoYouWantToSignInNo, pages.enterP800ReferencePage),
     (tdAll.journeyWhatIsYourP800Reference, pages.checkYourReferencePage),

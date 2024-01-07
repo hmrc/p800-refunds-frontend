@@ -17,22 +17,26 @@
 package models.forms
 
 import language.{Language, Messages}
-import models.forms.enumsforforms.CheckYourReferenceFormValue
+import models.forms.enumsforforms.PtaOrChequeFormValue
 import play.api.data.Forms.mapping
 import play.api.data.{Form, Forms}
 import util.EnumFormatter
 
-object CheckYourReferenceForm {
-  def form(implicit language: Language): Form[CheckYourReferenceFormValue] = {
-    val checkYourReferenceMapping = Forms.of(EnumFormatter.format(
-      `enum`                  = CheckYourReferenceFormValue,
-      errorMessageIfMissing   = Messages.CheckYourReferenceMessages.`Select yes if you entered the correct reference`.show,
-      errorMessageIfEnumError = Messages.CheckYourReferenceMessages.`Select yes if you entered the correct reference`.show
+/**
+ * Form for choosing Bank Transfer Via Personal Tax Account (Pta) or Cheque
+ */
+object PtaOrChequeForm {
+
+  def form(implicit language: Language): Form[PtaOrChequeFormValue] = {
+    val chooseAnotherWayToGetYourRefundMapping = Forms.of(EnumFormatter.format(
+      `enum`                  = PtaOrChequeFormValue,
+      errorMessageIfMissing   = Messages.ChooseAnotherWayToReceiveYourRefund.`Select if you want to receive a bank transfer via your personal tax account, or a cheque`.show,
+      errorMessageIfEnumError = Messages.ChooseAnotherWayToReceiveYourRefund.`Select if you want to receive a bank transfer via your personal tax account, or a cheque`.show
     ))
 
     Form(
       mapping = mapping(
-        "reference-check" -> checkYourReferenceMapping
+        "way-to-get-refund" -> chooseAnotherWayToGetYourRefundMapping
       )(identity)(Some(_))
     )
   }

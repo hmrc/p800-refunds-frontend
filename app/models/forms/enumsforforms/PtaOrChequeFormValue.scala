@@ -17,12 +17,13 @@
 package models.forms.enumsforforms
 
 import enumeratum.Enum
+
 import scala.collection.immutable.IndexedSeq
 
-sealed trait ChooseAnotherWayToGetYourRefundFormValue extends enumeratum.EnumEntry
+sealed trait PtaOrChequeFormValue extends enumeratum.EnumEntry
 
-object ChooseAnotherWayToGetYourRefundFormValue extends Enum[ChooseAnotherWayToGetYourRefundFormValue] {
-  case object BankTransfer extends ChooseAnotherWayToGetYourRefundFormValue
-  case object Cheque extends ChooseAnotherWayToGetYourRefundFormValue
-  override def values: IndexedSeq[ChooseAnotherWayToGetYourRefundFormValue] = findValues
+object PtaOrChequeFormValue extends Enum[PtaOrChequeFormValue] {
+  case object BankTransferViaPta extends PtaOrChequeFormValue
+  case object Cheque extends PtaOrChequeFormValue
+  override def values: IndexedSeq[PtaOrChequeFormValue] = findValues
 }

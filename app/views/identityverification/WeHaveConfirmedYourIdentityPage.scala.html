@@ -17,10 +17,11 @@
 @import language.Messages
 @import uk.gov.hmrc.govukfrontend.views.html.components._
 @import views.html.templates.Layout
+@import models.journeymodels.JourneyType
 
 @this(
-        layout: Layout,
-        viewsHelpers: views.ViewsHelpers
+    layout: Layout,
+    viewsHelpers: views.ViewsHelpers
 )
 
 @()(implicit request: Request[_])
@@ -39,9 +40,10 @@
 
     <h1 class="govuk-heading-xl">@title</h1>
 
-    @viewsHelpers.govukButton(Button(
-        content = Text(Messages.CommonMessages.`continue`.show),
-        id      = Some("submit"),
-        href    = Some(controllers.routes.WhatIsTheNameOfYourBankAccountController.get.url)
-    ))
+    @viewsHelpers.formWithCsrf(action = controllers.routes.WeHaveConfirmedYourIdentityController.post) {
+        @viewsHelpers.govukButton(Button(
+            content = Text(Messages.CommonMessages.`continue`.show),
+            id = Some("submit")
+        ))
+    }
 }

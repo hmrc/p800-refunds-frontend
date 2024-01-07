@@ -14,23 +14,16 @@
  * limitations under the License.
  */
 
-package controllers
+package models.forms.enumsforforms
 
-import action.Actions
-import play.api.mvc._
-import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
-import views.Views
+import enumeratum.Enum
 
-import javax.inject.{Inject, Singleton}
+import scala.collection.immutable.IndexedSeq
 
-@Singleton
-class CannotConfirmReferenceController @Inject() (
-    mcc:     MessagesControllerComponents,
-    views:   Views,
-    actions: Actions
-) extends FrontendController(mcc) {
+sealed trait PtaOrBankTransferFormValue extends enumeratum.EnumEntry
 
-  val get: Action[AnyContent] = actions.default { implicit request =>
-    Ok(views.cannotConfirmReferencePage())
-  }
+object PtaOrBankTransferFormValue extends Enum[PtaOrBankTransferFormValue] {
+  case object BankTransferViaPta extends PtaOrBankTransferFormValue
+  case object BankTransferLoggedOut extends PtaOrBankTransferFormValue
+  override def values: IndexedSeq[PtaOrBankTransferFormValue] = findValues
 }

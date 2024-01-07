@@ -17,6 +17,7 @@
 package controllers
 
 import action.Actions
+import models.journeymodels.JourneyType
 import play.api.mvc._
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import views.Views
@@ -30,8 +31,18 @@ class WeHaveConfirmedYourIdentityController @Inject() (
     actions: Actions
 ) extends FrontendController(mcc) {
 
-  val get: Action[AnyContent] = actions.journeyAction { implicit request =>
+  val get: Action[AnyContent] = actions.journeyInProgress { implicit request =>
     Ok(views.weHaveConfirmedYourIdentityPage())
   }
 
+  val post: Action[AnyContent] = actions.journeyInProgress { implicit request =>
+    val journey = request.journey
+    val nextCall: Call = journey.getJourneyType match {
+      case JourneyType.BankTransfer => controllers.routes.WhatIsTheNameOfYourBankController.get
+      case JourneyType.Cheque       => controllers.routes.CompleteYourRefundRequestController.get
+    }
+    Redirect(nextCall.url)
+  }
+
 }
+

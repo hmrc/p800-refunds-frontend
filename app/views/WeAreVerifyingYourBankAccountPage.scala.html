@@ -33,13 +33,13 @@
 
 @layout(
     pageTitle = Some(title),
-    backLinkUrlOverride = Some(routes.WhatIsTheNameOfYourBankAccountController.get.url)
+    backLinkUrlOverride = Some(routes.WhatIsTheNameOfYourBankController.get.url)
 ) {
 
     <h1 class="govuk-heading-xl">@title</h1>
 
     <p class="govuk-body">
-        @{Html(Messages.VerifyBankAccount.`This usually takes a few seconds`(routes.VerifyBankAccountController.get.url).show)}
+        @{Html(Messages.VerifyBankAccount.`This usually takes a few seconds`(routes.WeAreVerifyingYourBankAccountController.get.url).show)}
     </p>
 
 
