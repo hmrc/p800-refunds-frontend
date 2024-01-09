@@ -47,7 +47,7 @@ class CheckYourAnswersController @Inject() (
 
   import requestSupport._
 
-  val get: Action[AnyContent] = actions.journeyInProgress { implicit request =>
+  def get: Action[AnyContent] = actions.journeyInProgress { implicit request =>
     val journey: Journey = request.journey
 
     val summaryList = journey.getJourneyType match {
@@ -67,7 +67,7 @@ class CheckYourAnswersController @Inject() (
     ))
   }
 
-  val changeNationalInsuranceNumber: Action[AnyContent] = actions.journeyInProgress.async { implicit request =>
+  def changeNationalInsuranceNumber: Action[AnyContent] = actions.journeyInProgress.async { implicit request =>
     val journey = request.journey
     journeyService
       .upsert(journey.copy(isChanging = true))
@@ -75,11 +75,11 @@ class CheckYourAnswersController @Inject() (
         Redirect(controllers.routes.WhatIsYourNationalInsuranceNumberController.get))
   }
 
-  val changeDateOfBirth: Action[AnyContent] = actions.journeyInProgress { _ =>
+  def changeDateOfBirth: Action[AnyContent] = actions.journeyInProgress { _ =>
     Redirect(controllers.routes.WhatIsYourDateOfBirthController.get)
   }
 
-  val changeP800Reference: Action[AnyContent] = actions.journeyInProgress.async { implicit request =>
+  def changeP800Reference: Action[AnyContent] = actions.journeyInProgress.async { implicit request =>
     val journey = request.journey
     journeyService
       .upsert(journey.copy(isChanging = true))
@@ -87,7 +87,7 @@ class CheckYourAnswersController @Inject() (
         Redirect(controllers.routes.WhatIsYourP800ReferenceController.get))
   }
 
-  val post: Action[AnyContent] = actions.journeyInProgress.async { implicit request =>
+  def post: Action[AnyContent] = actions.journeyInProgress.async { implicit request =>
     val journey: Journey = request.journey
     processForm(journey)
   }

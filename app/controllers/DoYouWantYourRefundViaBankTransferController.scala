@@ -40,13 +40,13 @@ class DoYouWantYourRefundViaBankTransferController @Inject() (
 
   import requestSupport._
 
-  val get: Action[AnyContent] = actions.journeyInProgress { implicit request =>
+  def get: Action[AnyContent] = actions.journeyInProgress { implicit request =>
     Ok(views.doYouWantYourRefundViaBankTransferPage(
       DoYouWantYourRefundViaBankTransferForm.form
     ))
   }
 
-  val post: Action[AnyContent] = actions.journeyInProgress.async { implicit request =>
+  def post: Action[AnyContent] = actions.journeyInProgress.async { implicit request =>
     val journey = request.journey
     DoYouWantYourRefundViaBankTransferForm
       .form

@@ -31,7 +31,7 @@ class StartController @Inject() (
     actions:        Actions
 )(implicit ec: ExecutionContext) extends FrontendController(mcc) {
 
-  val get: Action[AnyContent] = actions.default.async { implicit request =>
+  def get: Action[AnyContent] = actions.default.async { implicit request =>
     journeyService
       .newJourney()
       .map(journey => Redirect(

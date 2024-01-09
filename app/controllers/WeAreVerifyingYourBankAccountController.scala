@@ -33,7 +33,7 @@ class WeAreVerifyingYourBankAccountController @Inject() (
     actions: Actions
 ) extends FrontendController(mcc) {
 
-  val get: Action[AnyContent] = actions.journeyInProgress { implicit request =>
+  def get: Action[AnyContent] = actions.journeyInProgress { implicit request =>
     val journey: Journey = request.journey
     Errors.require(journey.getJourneyType === JourneyType.BankTransfer, "This endpoint supports only BankTransfer journey")
 

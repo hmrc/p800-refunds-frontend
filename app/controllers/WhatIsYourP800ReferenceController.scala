@@ -41,7 +41,7 @@ class WhatIsYourP800ReferenceController @Inject() (
 
   import requestSupport._
 
-  val get: Action[AnyContent] = actions.journeyInProgress { implicit request =>
+  def get: Action[AnyContent] = actions.journeyInProgress { implicit request =>
     val journey: Journey = request.journey
     getResult(journey.p800Reference)
   }
@@ -57,7 +57,7 @@ class WhatIsYourP800ReferenceController @Inject() (
       .makeChanging()
   }
 
-  val post: Action[AnyContent] = actions.journeyInProgress.async { implicit request =>
+  def post: Action[AnyContent] = actions.journeyInProgress.async { implicit request =>
     processForm(request.journey)
   }
 

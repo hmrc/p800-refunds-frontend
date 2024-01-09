@@ -30,8 +30,8 @@ class Actions @Inject() (
   val default: ActionBuilder[Request, AnyContent] = actionBuilder
 
   @SuppressWarnings(Array("org.wartremover.warts.Any"))
-  val journeyFinished: ActionBuilder[JourneyRequest, AnyContent] =
-    actionBuilder
+  def journeyFinished: ActionBuilder[JourneyRequest, AnyContent] =
+    default
       .andThen(getJourneyActionRefiner)
       .andThen(
         ensureJourney.ensureJourney(
@@ -42,8 +42,8 @@ class Actions @Inject() (
       )
 
   @SuppressWarnings(Array("org.wartremover.warts.Any"))
-  val journeyInProgress: ActionBuilder[JourneyRequest, AnyContent] =
-    actionBuilder
+  def journeyInProgress: ActionBuilder[JourneyRequest, AnyContent] =
+    default
       .andThen(getJourneyActionRefiner)
       .andThen(
         ensureJourney.ensureJourney(

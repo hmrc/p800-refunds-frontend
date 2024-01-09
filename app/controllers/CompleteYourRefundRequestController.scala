@@ -37,12 +37,12 @@ class CompleteYourRefundRequestController @Inject() (
     journeyService: JourneyService
 )(implicit @unused ec: ExecutionContext) extends FrontendController(mcc) {
 
-  val get: Action[AnyContent] = actions.journeyInProgress{ implicit request =>
+  def get: Action[AnyContent] = actions.journeyInProgress{ implicit request =>
     Errors.require(request.journey.getJourneyType === JourneyType.Cheque, "This endpoint supports only Cheque journey")
     Ok(views.completeYourRefundRequestPage())
   }
 
-  val post: Action[AnyContent] = actions.journeyInProgress.async { implicit request =>
+  def post: Action[AnyContent] = actions.journeyInProgress.async { implicit request =>
     val journey: Journey = request.journey
     Errors.require(journey.getJourneyType === JourneyType.Cheque, "This endpoint supports only Cheque journey")
 

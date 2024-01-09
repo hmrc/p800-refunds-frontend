@@ -30,12 +30,12 @@ class WeNeedYouToConfirmYourIdentityController @Inject() (
     actions: Actions
 ) extends FrontendController(mcc) {
 
-  val get: Action[AnyContent] = actions.journeyInProgress { implicit request =>
+  def get: Action[AnyContent] = actions.journeyInProgress { implicit request =>
 
     Ok(views.weNeedYouToConfirmYourIdentityPage(request.journey.getJourneyType))
   }
 
-  val post: Action[AnyContent] = actions.journeyInProgress { _ =>
+  def post: Action[AnyContent] = actions.journeyInProgress { _ =>
     Redirect(routes.WhatIsYourP800ReferenceController.get.url)
   }
 

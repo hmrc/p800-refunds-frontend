@@ -44,7 +44,7 @@ class ChooseAnotherWayToGetYourRefundController @Inject() (
 
   import requestSupport._
 
-  val get: Action[AnyContent] = actions.journeyInProgress { implicit request: JourneyRequest[AnyContent] =>
+  def get: Action[AnyContent] = actions.journeyInProgress { implicit request: JourneyRequest[AnyContent] =>
     val journey = request.journey
     journey.getJourneyType match {
       case JourneyType.BankTransfer => Ok(views.chooseAnotherWayPtaOrChequePage(form = PtaOrChequeForm.form))
@@ -52,7 +52,7 @@ class ChooseAnotherWayToGetYourRefundController @Inject() (
     }
   }
 
-  val postBankTransferViaPtaOrCheque: Action[AnyContent] = actions.journeyInProgress.async { implicit request =>
+  def postBankTransferViaPtaOrCheque: Action[AnyContent] = actions.journeyInProgress.async { implicit request =>
     val journey: Journey = request.journey
     Errors.require(journey.getJourneyType === JourneyType.BankTransfer, "This endpoint supports only BankTransfer journey")
 
@@ -84,7 +84,7 @@ class ChooseAnotherWayToGetYourRefundController @Inject() (
     )
   }
 
-  val postBankTransferViaPtaOrBankTransferLoggedOut: Action[AnyContent] = actions.journeyInProgress.async { implicit request =>
+  def postBankTransferViaPtaOrBankTransferLoggedOut: Action[AnyContent] = actions.journeyInProgress.async { implicit request =>
     val journey: Journey = request.journey
     Errors.require(journey.getJourneyType === JourneyType.Cheque, "This endpoint supports only Cheque journey")
 

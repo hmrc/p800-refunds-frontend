@@ -31,11 +31,11 @@ class WeHaveConfirmedYourIdentityController @Inject() (
     actions: Actions
 ) extends FrontendController(mcc) {
 
-  val get: Action[AnyContent] = actions.journeyInProgress { implicit request =>
+  def get: Action[AnyContent] = actions.journeyInProgress { implicit request =>
     Ok(views.weHaveConfirmedYourIdentityPage())
   }
 
-  val post: Action[AnyContent] = actions.journeyInProgress { implicit request =>
+  def post: Action[AnyContent] = actions.journeyInProgress { implicit request =>
     val journey = request.journey
     val nextCall: Call = journey.getJourneyType match {
       case JourneyType.BankTransfer => controllers.routes.WhatIsTheNameOfYourBankController.get

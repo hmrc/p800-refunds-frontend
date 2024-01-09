@@ -38,13 +38,13 @@ class DoYouWantToSignInController @Inject() (
 
   import requestSupport._
 
-  val get: Action[AnyContent] = actions.journeyInProgress{ implicit request =>
+  def get: Action[AnyContent] = actions.journeyInProgress{ implicit request =>
     Ok(views.doYouWantToSignInPage(
       form = DoYouWantToSignInForm.form
     ))
   }
 
-  val post: Action[AnyContent] = actions.journeyInProgress { implicit request =>
+  def post: Action[AnyContent] = actions.journeyInProgress { implicit request =>
     DoYouWantToSignInForm.form.bindFromRequest().fold(
       formWithErrors => BadRequest(views.doYouWantToSignInPage(
         form = formWithErrors

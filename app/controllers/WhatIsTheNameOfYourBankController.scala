@@ -44,7 +44,7 @@ class WhatIsTheNameOfYourBankController @Inject() (
 
   import requestSupport._
 
-  val get: Action[AnyContent] = actions.journeyInProgress.async { implicit request: JourneyRequest[_] =>
+  def get: Action[AnyContent] = actions.journeyInProgress.async { implicit request: JourneyRequest[_] =>
     val journey: Journey = request.journey
     Errors.require(request.journey.getJourneyType === JourneyType.BankTransfer, "This endpoint supports only BankTransfer journey")
 
@@ -58,7 +58,7 @@ class WhatIsTheNameOfYourBankController @Inject() (
     }
   }
 
-  val post: Action[AnyContent] = actions.journeyInProgress.async { implicit request: JourneyRequest[_] =>
+  def post: Action[AnyContent] = actions.journeyInProgress.async { implicit request: JourneyRequest[_] =>
     val journey: Journey = request.journey
     Errors.require(request.journey.getJourneyType === JourneyType.BankTransfer, "This endpoint supports only BankTransfer journey")
 

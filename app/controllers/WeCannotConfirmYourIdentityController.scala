@@ -30,16 +30,16 @@ class WeCannotConfirmYourIdentityController @Inject() (
     actions: Actions
 ) extends FrontendController(mcc) {
 
-  val get: Action[AnyContent] = actions.journeyInProgress { implicit request =>
+  def get: Action[AnyContent] = actions.journeyInProgress { implicit request =>
     //TODO: call attempts service (use IpAddress) and based on the result display apropriate page.
     Ok(views.weCannotConfirmYourIdentityPage())
   }
 
-  val tryAgain: Action[AnyContent] = actions.journeyInProgress { _ =>
+  def tryAgain: Action[AnyContent] = actions.journeyInProgress { _ =>
     Redirect(routes.WeNeedYouToConfirmYourIdentityController.get)
   }
 
-  val choseAnotherMethod: Action[AnyContent] = actions.journeyInProgress { _ =>
+  def choseAnotherMethod: Action[AnyContent] = actions.journeyInProgress { _ =>
     Redirect(routes.ChooseAnotherWayToGetYourRefundController.get)
   }
 

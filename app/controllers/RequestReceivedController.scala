@@ -32,7 +32,7 @@ class RequestReceivedController @Inject() (
     actions: Actions
 ) extends FrontendController(mcc) {
 
-  val get: Action[AnyContent] = actions.journeyFinished { implicit request =>
+  def get: Action[AnyContent] = actions.journeyFinished { implicit request =>
     val journey: Journey = request.journey
     journey.getJourneyType match {
       case JourneyType.Cheque       => getResultCheque(journey)

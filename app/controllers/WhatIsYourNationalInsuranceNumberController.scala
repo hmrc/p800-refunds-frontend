@@ -39,7 +39,7 @@ class WhatIsYourNationalInsuranceNumberController @Inject() (
 
   import requestSupport._
 
-  val get: Action[AnyContent] = actions.journeyInProgress { implicit request =>
+  def get: Action[AnyContent] = actions.journeyInProgress { implicit request =>
     val journey: Journey = request.journey
 
     Ok(views.whatIsYourNationalInsuranceNumberPage(
@@ -51,7 +51,7 @@ class WhatIsYourNationalInsuranceNumberController @Inject() (
     ))
   }
 
-  val post: Action[AnyContent] = actions.journeyInProgress.async { implicit request: JourneyRequest[_] =>
+  def post: Action[AnyContent] = actions.journeyInProgress.async { implicit request: JourneyRequest[_] =>
     val journey: Journey = request.journey
     processForm(journey)
   }

@@ -41,7 +41,7 @@ class WhatIsYourDateOfBirthController @Inject() (
 
   import requestSupport._
 
-  val get: Action[AnyContent] = actions.journeyInProgress { implicit request: JourneyRequest[_] =>
+  def get: Action[AnyContent] = actions.journeyInProgress { implicit request: JourneyRequest[_] =>
     val journey: Journey = request.journey
     Errors.require(journey.getJourneyType === JourneyType.BankTransfer, "This page is only for BankTransfer journey")
 
@@ -53,7 +53,7 @@ class WhatIsYourDateOfBirthController @Inject() (
     ))
   }
 
-  val post: Action[AnyContent] = actions.journeyInProgress.async { implicit request =>
+  def post: Action[AnyContent] = actions.journeyInProgress.async { implicit request =>
     val journey: Journey = request.journey
     processForm(journey)
   }
