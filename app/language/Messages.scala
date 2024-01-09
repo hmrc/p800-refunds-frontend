@@ -474,8 +474,8 @@ object Messages {
       english = "Cheque request received"
     )
 
-    val `Your P800 reference`: Message = Message(
-      english = "Your P800 reference"
+    val `Your P800 reference:`: Message = Message(
+      english = "Your P800 reference:"
     )
 
     private val formatter = DateTimeFormatter.ofPattern("d MMMM yyyy", Locale.UK)

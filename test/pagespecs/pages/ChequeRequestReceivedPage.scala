@@ -34,7 +34,7 @@ class ChequeRequestReceivedPage(baseUrl: String)(implicit webDriver: WebDriver) 
       expectedLines =
         """
           |Cheque request received
-          |Your P800 reference
+          |Your P800 reference:
           |P800REFNO1
           |Your refund of £231.60 will arrive in the post by 16 January 2024.
           |
