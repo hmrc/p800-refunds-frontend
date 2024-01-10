@@ -26,15 +26,15 @@ class WhatIsYourP800ReferencePageSpec extends ItSpec {
   }
 
   "Entering valid p800 reference and clicking Continue redirects to WhatIsYourNationalInsuranceNumberPage" - {
-    "bank transfer transfer" in {
+    "bank transfer" in {
       upsertJourneyToDatabase(tdAll.BankTransfer.journeySelectedType)
       test()
       getJourneyFromDatabase(tdAll.journeyId) shouldBeLike tdAll.BankTransfer.journeyEnteredP800Reference
     }
     "cheque" in {
-      upsertJourneyToDatabase(tdAll.BankTransfer.journeySelectedType)
+      upsertJourneyToDatabase(tdAll.Cheque.journeySelectedType)
       test()
-      getJourneyFromDatabase(tdAll.journeyId) shouldBeLike tdAll.BankTransfer.journeyEnteredP800Reference
+      getJourneyFromDatabase(tdAll.journeyId) shouldBeLike tdAll.Cheque.journeyEnteredP800Reference
     }
 
       def test(): Unit = {
@@ -46,33 +46,82 @@ class WhatIsYourP800ReferencePageSpec extends ItSpec {
       }
   }
 
-  "Clicking Continue with empty text input shows error" in {
-    pages.whatIsYourP800ReferencePage.open()
-    pages.whatIsYourP800ReferencePage.assertPageIsDisplayed()
-    pages.whatIsYourP800ReferencePage.clickSubmit()
-    pages.whatIsYourP800ReferencePage.assertPageShowsErrorRequired()
+  "Clicking Continue with empty text input shows error" - {
+    "bank transfer" in {
+      upsertJourneyToDatabase(tdAll.BankTransfer.journeySelectedType)
+      test()
+      getJourneyFromDatabase(tdAll.journeyId) shouldBeLike tdAll.BankTransfer.journeySelectedType
+    }
+    "cheque" in {
+      upsertJourneyToDatabase(tdAll.Cheque.journeySelectedType)
+      test()
+      getJourneyFromDatabase(tdAll.journeyId) shouldBeLike tdAll.Cheque.journeySelectedType
+    }
+
+      def test(): Unit = {
+        pages.whatIsYourP800ReferencePage.open()
+        pages.whatIsYourP800ReferencePage.assertPageIsDisplayed()
+        pages.whatIsYourP800ReferencePage.clickSubmit()
+        pages.whatIsYourP800ReferencePage.assertPageShowsErrorRequired()
+      }
   }
 
-  "Clicking Continue with invalid reference shows error" in {
-    pages.whatIsYourP800ReferencePage.open()
-    pages.whatIsYourP800ReferencePage.assertPageIsDisplayed()
-    pages.whatIsYourP800ReferencePage.enterP800Reference("this is a really long and invalid reference")
-    pages.whatIsYourP800ReferencePage.clickSubmit()
-    pages.whatIsYourP800ReferencePage.assertPageShowsErrorReferenceFormat()
+  "Clicking Continue with invalid reference shows error" - {
+
+    "bank transfer" in {
+      upsertJourneyToDatabase(tdAll.BankTransfer.journeySelectedType)
+      test()
+      getJourneyFromDatabase(tdAll.journeyId) shouldBeLike tdAll.BankTransfer.journeySelectedType
+    }
+    "cheque" in {
+      upsertJourneyToDatabase(tdAll.Cheque.journeySelectedType)
+      test()
+      getJourneyFromDatabase(tdAll.journeyId) shouldBeLike tdAll.Cheque.journeySelectedType
+    }
+      def test(): Unit = {
+        pages.whatIsYourP800ReferencePage.open()
+        pages.whatIsYourP800ReferencePage.assertPageIsDisplayed()
+        pages.whatIsYourP800ReferencePage.enterP800Reference("this is a really long and invalid reference")
+        pages.whatIsYourP800ReferencePage.clickSubmit()
+        pages.whatIsYourP800ReferencePage.assertPageShowsErrorReferenceFormat()
+      }
   }
 
-  "Clicking 'Sign in or create a personal tax account' link opens correctly" in {
-    pages.whatIsYourP800ReferencePage.open()
-    pages.whatIsYourP800ReferencePage.assertPageIsDisplayed()
-    pages.whatIsYourP800ReferencePage.clickPtaSignInLink()
-    pages.ptaSignInPage.assertPageIsDisplayed()
+  "Clicking 'Sign in or create a personal tax account' link opens correctly" - {
+    "bank transfer" in {
+      upsertJourneyToDatabase(tdAll.BankTransfer.journeySelectedType)
+      test()
+      getJourneyFromDatabase(tdAll.journeyId) shouldBeLike tdAll.BankTransfer.journeySelectedType
+    }
+    "cheque" in {
+      upsertJourneyToDatabase(tdAll.Cheque.journeySelectedType)
+      test()
+      getJourneyFromDatabase(tdAll.journeyId) shouldBeLike tdAll.Cheque.journeySelectedType
+    }
+      def test(): Unit = {
+        pages.whatIsYourP800ReferencePage.open()
+        pages.whatIsYourP800ReferencePage.assertPageIsDisplayed()
+        pages.whatIsYourP800ReferencePage.clickPtaSignInLink()
+        pages.ptaSignInPage.assertPageIsDisplayed()
+      }
   }
 
-  "Clicking on back button redirects back to 'Do you want to sign in?' page" in {
-    pages.whatIsYourP800ReferencePage.open()
-    pages.whatIsYourP800ReferencePage.assertPageIsDisplayed()
-    pages.whatIsYourP800ReferencePage.clickBackButton()
-    pages.doYouWantToSignInPage.assertPageIsDisplayed()
+  "Clicking on back button redirects back to 'Do you want to sign in?' page" - {
+    "bank transfer" in {
+      upsertJourneyToDatabase(tdAll.BankTransfer.journeySelectedType)
+      test()
+      getJourneyFromDatabase(tdAll.journeyId) shouldBeLike tdAll.BankTransfer.journeySelectedType
+    }
+    "cheque" in {
+      upsertJourneyToDatabase(tdAll.Cheque.journeySelectedType)
+      test()
+      getJourneyFromDatabase(tdAll.journeyId) shouldBeLike tdAll.Cheque.journeySelectedType
+    }
+      def test() = {
+        pages.whatIsYourP800ReferencePage.open()
+        pages.whatIsYourP800ReferencePage.assertPageIsDisplayed()
+        pages.whatIsYourP800ReferencePage.clickBackButton()
+        pages.doYouWantToSignInPage.assertPageIsDisplayed()
+      }
   }
-
 }
