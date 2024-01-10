@@ -16,7 +16,8 @@
 
 package pagespecs.pages
 
-import models.{FullName, NationalInsuranceNumber}
+import models.journeymodels.JourneyType
+import models.{NationalInsuranceNumber, P800Reference}
 import org.openqa.selenium.WebDriver
 import pagespecs.pagesupport.{ContentExpectation, Page, PageUtil}
 import testsupport.RichMatchers.convertToAnyShouldWrapper
@@ -28,15 +29,15 @@ class CheckYourAnswersPage(baseUrl: String)(implicit webDriver: WebDriver) exten
 
   override def expectedH1: String = "Check your answers"
 
-  def assertPageIsDisplayed(
-      fullName:                FullName,
+  def assertPageIsDisplayedForBankTransfer(
+      p800Reference:           P800Reference,
       dateOfBirth:             String,
       nationalInsuranceNumber: NationalInsuranceNumber
   ): Unit = withPageClue {
 
-    val nameExpectation: ContentExpectation = ContentExpectation(
-      atXpath       = """//*[@id="full-name"]""",
-      expectedLines = fullName.value
+    val referenceExpectation: ContentExpectation = ContentExpectation(
+      atXpath       = """//*[@id="reference"]""",
+      expectedLines = p800Reference.value
     )
 
     val dateOfBirthExpectation: ContentExpectation = ContentExpectation(
@@ -50,31 +51,69 @@ class CheckYourAnswersPage(baseUrl: String)(implicit webDriver: WebDriver) exten
     )
 
     assertPageIsDisplayed(
-      nameExpectation,
+      JourneyType.BankTransfer,
+      referenceExpectation,
       dateOfBirthExpectation,
       nationalInsuranceNumberExpectation
     )
   }
 
-  def assertPageIsDisplayed(extraExpectations: ContentExpectation*): Unit = withPageClue {
+  def assertPageIsDisplayedForCheque(
+      p800Reference:           P800Reference,
+      nationalInsuranceNumber: NationalInsuranceNumber
+  ): Unit = withPageClue {
 
-    val contentExpectation: ContentExpectation = ContentExpectation(
-      atXpath       = PageUtil.Xpath.mainContent,
-      expectedLines =
-        """
-          |Check your answers
-          |Full name
-          |
-          |Change
-          |Date of birth
-          |
-          |Change
-          |National Insurance number
-          |
-          |Change
-          |Continue
-          |""".stripMargin
+    val referenceExpectation: ContentExpectation = ContentExpectation(
+      atXpath       = """//*[@id="reference"]""",
+      expectedLines = p800Reference.value
     )
+
+    val nationalInsuranceNumberExpectation: ContentExpectation = ContentExpectation(
+      atXpath       = """//*[@id="national-insurance-number"]""",
+      expectedLines = nationalInsuranceNumber.value
+    )
+
+    assertPageIsDisplayed(
+      JourneyType.Cheque,
+      referenceExpectation,
+      nationalInsuranceNumberExpectation
+    )
+  }
+
+  override def assertPageIsDisplayed(extraExpectations: ContentExpectation*): Unit = sys.error("Use other variants")
+
+  def assertPageIsDisplayed(journeyType: JourneyType, extraExpectations: ContentExpectation*): Unit = withPageClue {
+
+    val contentExpectation: ContentExpectation = journeyType match {
+      case JourneyType.BankTransfer =>
+        ContentExpectation(
+          atXpath       = PageUtil.Xpath.mainContent,
+          expectedLines =
+            """
+              |Check your answers
+              |Reference
+              |Change
+              |National insurance number
+              |Change
+              |Date of birth
+              |Change
+              |Continue
+              |""".stripMargin
+        )
+      case JourneyType.Cheque =>
+        ContentExpectation(
+          atXpath       = PageUtil.Xpath.mainContent,
+          expectedLines =
+            """
+              |Check your answers
+              |Reference
+              |Change
+              |National insurance number
+              |Change
+              |Continue
+              |""".stripMargin
+        )
+    }
 
     val contentExpectations = contentExpectation :: extraExpectations.toList
 
@@ -90,7 +129,8 @@ class CheckYourAnswersPage(baseUrl: String)(implicit webDriver: WebDriver) exten
     ()
   }
 
-  def clickChangeName(): Unit = PageUtil.clickByIdOrName("change-full-name")
+  def clickChangeReference(): Unit = PageUtil.clickByIdOrName("change-reference")
   def clickChangeDateOfBirth(): Unit = PageUtil.clickByIdOrName("change-date-of-birth")
   def clickChangeNationalInsuranceNumber(): Unit = PageUtil.clickByIdOrName("change-national-insurance-number")
+
 }

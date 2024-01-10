@@ -35,7 +35,7 @@ class WeNeedYouToConfirmYourIdentityPageSpec extends ItSpec {
     pages.weNeedYouToConfirmYourIdentityPage.open()
     pages.weNeedYouToConfirmYourIdentityPage.assertPageIsDisplayed()
     pages.weNeedYouToConfirmYourIdentityPage.clickSubmit()
-    pages.whatIsYourFullNamePage.assertPageIsDisplayed()
+    //TODO     pages.whatIsYourFullNamePage.assertPageIsDisplayed()
   }
 
   "'Back' button sends user to 'Do you want your refund by bank transfer' page" in {

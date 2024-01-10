@@ -221,28 +221,20 @@ object Messages {
 
   object CheckYourAnswersMessages {
 
-    val `reference`: Message = Message(
-      english = "reference"
+    val `Reference`: Message = Message(
+      english = "Reference"
     )
 
     val `Check your answers`: Message = Message(
       english = "Check your answers"
     )
 
-    val `Full name`: Message = Message(
-      english = "Full name"
-    )
-
     val `Date of birth`: Message = Message(
       english = "Date of birth"
     )
 
-    val `Address`: Message = Message(
-      english = "Address"
-    )
-
-    val `National Insurance Number`: Message = Message(
-      english = "National Insurance number"
+    val `National insurance number`: Message = Message(
+      english = "National insurance number"
     )
 
     val `Change`: Message = Message(

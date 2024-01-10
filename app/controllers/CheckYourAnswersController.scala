@@ -129,7 +129,7 @@ class CheckYourAnswersController @Inject() (
 
   private def nationalInsuranceNumberSummaryRow(nationalInsuranceNumber: NationalInsuranceNumber)(implicit request: Request[_]): SummaryListRow = {
     buildSummaryListRow(
-      Messages.CheckYourAnswersMessages.`National Insurance Number`.show,
+      Messages.CheckYourAnswersMessages.`National insurance number`.show,
       id    = "national-insurance-number",
       value = s"""${nationalInsuranceNumber.value}""",
       call  = controllers.routes.CheckYourAnswersController.changeNationalInsuranceNumber
@@ -147,7 +147,7 @@ class CheckYourAnswersController @Inject() (
 
   private def p800ReferenceSummaryRow(p800Reference: P800Reference)(implicit request: Request[_]): SummaryListRow = {
     buildSummaryListRow(
-      Messages.CheckYourAnswersMessages.`reference`.show,
+      Messages.CheckYourAnswersMessages.`Reference`.show,
       id    = "reference",
       value = p800Reference.value,
       call  = controllers.routes.CheckYourAnswersController.changeP800Reference

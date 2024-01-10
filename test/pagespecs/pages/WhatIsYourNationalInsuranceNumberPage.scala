@@ -100,7 +100,7 @@ class WhatIsYourNationalInsuranceNumberPage(baseUrl: String)(implicit webDriver:
     )
   }
 
-  def assertDataPrepopulated(nationalInsuranceNumber: String): Assertion = withPageClue {
-    PageUtil.getValueById("nationalInsuranceNumber") shouldBe nationalInsuranceNumber
+  def assertDataPrepopulated(nationalInsuranceNumber: NationalInsuranceNumber): Assertion = withPageClue {
+    PageUtil.getValueById("nationalInsuranceNumber") shouldBe nationalInsuranceNumber.value
   }
 }
