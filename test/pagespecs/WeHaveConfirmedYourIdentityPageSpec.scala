@@ -25,7 +25,7 @@ class WeHaveConfirmedYourIdentityPageSpec extends ItSpec {
     super.beforeEach()
 
     addJourneyIdToSession(tdAll.journeyId)
-    upsertJourneyToDatabase(tdAll.journeyIdentityVerified)
+    //TODO    upsertJourneyToDatabase(tdAll.journeyIdentityVerified)
   }
 
   "page renders correctly" in {

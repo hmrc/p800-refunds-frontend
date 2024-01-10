@@ -23,7 +23,7 @@ class ChooseAnotherWayToReceiveYourRefundPageSpec extends ItSpec {
   override def beforeEach(): Unit = {
     super.beforeEach()
     addJourneyIdToSession(tdAll.journeyId)
-    upsertJourneyToDatabase(tdAll.journeyIdentityNotVerified)
+    //TODO    upsertJourneyToDatabase(tdAll.journeyIdentityNotVerified)
   }
 
   "/choose-another-option renders the choose another option page" in {

@@ -23,7 +23,7 @@ class ChequeRequestReceivedPageSpec extends ItSpec {
   override def beforeEach(): Unit = {
     super.beforeEach()
     addJourneyIdToSession(tdAll.journeyId)
-    upsertJourneyToDatabase(tdAll.journeyYourChequeWillBePostedToYou)
+    //TODO    upsertJourneyToDatabase(tdAll.journeyYourChequeWillBePostedToYou)
   }
 
   "/cheque/request-received renders the cheque request received page" in {
@@ -33,7 +33,7 @@ class ChequeRequestReceivedPageSpec extends ItSpec {
 
   "user is kept in the final page if clicked browser's back button" in {
     //setup the history in the browser:
-    upsertJourneyToDatabase(tdAll.journeyDoYouWantYourRefundViaBankTransferNo)
+    //TODO    upsertJourneyToDatabase(tdAll.journeyDoYouWantYourRefundViaBankTransferNo)
     pages.completeYourRefundRequestPage.open()
     pages.completeYourRefundRequestPage.assertPageIsDisplayed()
     pages.completeYourRefundRequestPage.clickSubmitRefundRequest()

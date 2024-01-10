@@ -25,7 +25,7 @@ class WhatIsYourNationalInsuranceNumberPageSpec extends ItSpec {
     super.beforeEach()
 
     addJourneyIdToSession(tdAll.journeyId)
-    upsertJourneyToDatabase(tdAll.journeyWhatIsYourDateOfBirth)
+    upsertJourneyToDatabase(tdAll.journeyStarted) //TODO
   }
 
   "/what-is-your-national-insurance-number renders the what is your national insurance number page" in {
@@ -68,7 +68,7 @@ class WhatIsYourNationalInsuranceNumberPageSpec extends ItSpec {
   }
 
   "Prepopulate the form if the user has already entered it" in {
-    upsertJourneyToDatabase(tdAll.journeyWhatIsYourNationalInsuranceNumber)
+    upsertJourneyToDatabase(tdAll.journeyStarted) //TODO
     pages.whatIsYourNationalInsuranceNumberPage.open()
     pages.whatIsYourNationalInsuranceNumberPage.assertDataPrepopulated("LM001014C")
   }

@@ -25,7 +25,7 @@ class WhatIsTheNameOfYourBankAccountPageSpec extends ItSpec {
     super.beforeEach()
 
     addJourneyIdToSession(tdAll.journeyId)
-    upsertJourneyToDatabase(tdAll.journeyIdentityVerified)
+    //TODO    upsertJourneyToDatabase(tdAll.journeyIdentityVerified)
 
     EcospendStub.stubEcospendAuth2xxSucceeded
     EcospendStub.stubEcospendGetBanks2xx

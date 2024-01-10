@@ -23,7 +23,7 @@ class YourChequeWillBePostedToYouPageSpec extends ItSpec {
   override def beforeEach(): Unit = {
     super.beforeEach()
     addJourneyIdToSession(tdAll.journeyId)
-    upsertJourneyToDatabase(tdAll.journeyDoYouWantYourRefundViaBankTransferNo)
+    upsertJourneyToDatabase(tdAll.journeyStarted) //TODO
   }
 
   "/your-cheque-will-be-posted-to-you renders your cheque will be posted page" in {

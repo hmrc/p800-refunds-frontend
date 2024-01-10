@@ -26,6 +26,17 @@ class WeNeedYouToConfirmYourIdentityPage(baseUrl: String)(implicit webDriver: We
 
   override def expectedH1: String = "We need you to confirm your identity"
 
+  def assertPageIsDisplayedForChequeJourney(): Unit = {
+    assertPageIsDisplayed()
+  }
+
+  def assertPageIsDisplayedForBankTransferJourney(): Unit = assertPageIsDisplayed(
+    ContentExpectation(
+      atXpath       = PageUtil.Xpath.mainContent,
+      expectedLines = "date of birth"
+    )
+  )
+
   override def assertPageIsDisplayed(extraExpectations: ContentExpectation*): Unit = withPageClue {
 
     val contentExpectations: Seq[ContentExpectation] = Seq(ContentExpectation(
@@ -35,9 +46,8 @@ class WeNeedYouToConfirmYourIdentityPage(baseUrl: String)(implicit webDriver: We
           |We need you to confirm your identity
           |Before we pay your refund, we need to ask you some security questions to confirm your identity.
           |We will need to ask you for your:
-          |P800 reference
+          |reference
           |national insurance number
-          |date of birth
           |We do this to protect your security.
           |""".stripMargin
     )) ++ extraExpectations

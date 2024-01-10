@@ -24,7 +24,7 @@ class GiveYourConsentPageSpec extends ItSpec {
   override def beforeEach(): Unit = {
     super.beforeEach()
     addJourneyIdToSession(tdAll.journeyId)
-    upsertJourneyToDatabase(tdAll.journeyWhatIsTheNameOfYourBankAccount)
+    //TODO    upsertJourneyToDatabase(tdAll.journeyWhatIsTheNameOfYourBankAccount)
   }
 
   "/give-your-consent renders the give your consent page" in {

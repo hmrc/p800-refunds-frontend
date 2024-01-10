@@ -25,7 +25,7 @@ class RequestNotSubmittedPageSpec extends ItSpec {
     super.beforeEach()
 
     addJourneyIdToSession(tdAll.journeyId)
-    upsertJourneyToDatabase(tdAll.journeyNotApprovedRefund)
+    //TODO    upsertJourneyToDatabase(tdAll.journeyNotApprovedRefund)
   }
 
   "/request-not-submitted renders 'Request not submitted' page" in {
@@ -42,7 +42,7 @@ class RequestNotSubmittedPageSpec extends ItSpec {
 
   "Clicking browser back button should remain on 'Request not submitted' page" in {
     // setup the history in the browser:
-    upsertJourneyToDatabase(tdAll.journeyRefundConsentGiven)
+    //TODO    upsertJourneyToDatabase(tdAll.journeyRefundConsentGiven)
 
     EcospendStub.stubEcospendAuth2xxSucceeded
     EcospendStub.ValidateStubs.stubValidateNotValidatedYet

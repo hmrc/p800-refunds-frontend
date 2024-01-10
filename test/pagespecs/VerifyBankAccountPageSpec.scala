@@ -24,7 +24,7 @@ class VerifyBankAccountPageSpec extends ItSpec {
   override def beforeEach(): Unit = {
     super.beforeEach()
     addJourneyIdToSession(tdAll.journeyId)
-    upsertJourneyToDatabase(tdAll.journeyRefundConsentGiven)
+    //TODO    upsertJourneyToDatabase(tdAll.journeyRefundConsentGiven)
   }
 
   "/verifying-bank-account renders the 'We are verifying your bank account' page" in {

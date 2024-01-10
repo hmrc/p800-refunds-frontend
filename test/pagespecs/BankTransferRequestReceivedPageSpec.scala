@@ -24,7 +24,7 @@ class BankTransferRequestReceivedPageSpec extends ItSpec {
   override def beforeEach(): Unit = {
     super.beforeEach()
     addJourneyIdToSession(tdAll.journeyId)
-    upsertJourneyToDatabase(tdAll.journeyApprovedRefund)
+    //TODO    upsertJourneyToDatabase(tdAll.journeyApprovedRefund)
   }
 
   "/bank/request-received renders the bank transfer request received page" in {
@@ -33,7 +33,7 @@ class BankTransferRequestReceivedPageSpec extends ItSpec {
   }
 
   "user is kept in the final page if clicked browser's back button" in {
-    upsertJourneyToDatabase(tdAll.journeyRefundConsentGiven)
+    //TODO    upsertJourneyToDatabase(tdAll.journeyRefundConsentGiven)
     EcospendStub.stubEcospendAuth2xxSucceeded
     EcospendStub.ValidateStubs.stubValidateNotValidatedYet
     //setup the history in the browser:

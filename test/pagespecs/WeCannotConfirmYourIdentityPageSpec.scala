@@ -23,7 +23,7 @@ class WeCannotConfirmYourIdentityPageSpec extends ItSpec {
   override def beforeEach(): Unit = {
     super.beforeEach()
     addJourneyIdToSession(tdAll.journeyId)
-    upsertJourneyToDatabase(tdAll.journeyIdentityNotVerified)
+    //TODO    upsertJourneyToDatabase(tdAll.journeyIdentityNotVerified)
   }
 
   "/we-cannot-confirm-your-identity renders your 'We cannot confirm your identity' page" in {

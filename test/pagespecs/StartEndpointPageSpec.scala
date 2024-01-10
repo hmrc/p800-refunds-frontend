@@ -23,5 +23,6 @@ class StartEndpointPageSpec extends ItSpec {
   "navigating to /start redirects to /do-you-want-to-sign-in" in {
     pages.startEndpoint.open()
     pages.doYouWantToSignInPage.assertPageIsDisplayed()
+    getJourneyFromDatabase(tdAll.journeyId) shouldBeLike tdAll.journeyStarted
   }
 }

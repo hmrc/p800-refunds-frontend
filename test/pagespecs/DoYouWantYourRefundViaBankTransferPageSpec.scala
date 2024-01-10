@@ -23,30 +23,33 @@ class DoYouWantYourRefundViaBankTransferPageSpec extends ItSpec {
   override def beforeEach(): Unit = {
     super.beforeEach()
     addJourneyIdToSession(tdAll.journeyId)
-    upsertJourneyToDatabase(tdAll.journeyCheckYourReferenceValid)
+    upsertJourneyToDatabase(tdAll.journeyStarted)
   }
 
-  "Selecting 'Yes' redirects to ConfirmYourIdentityPage" in {
+  "Selecting 'Yes' redirects to WeNeedYouToConfirmYourIdentityPage" in {
     pages.doYouWantYourRefundViaBankTransferPage.open()
     pages.doYouWantYourRefundViaBankTransferPage.assertPageIsDisplayed()
     pages.doYouWantYourRefundViaBankTransferPage.selectYes()
-    pages.doYouWantToSignInPage.clickSubmit()
-    pages.weNeedYouToConfirmYourIdentityPage.assertPageIsDisplayed()
+    pages.doYouWantYourRefundViaBankTransferPage.clickSubmit()
+    pages.weNeedYouToConfirmYourIdentityPage.assertPageIsDisplayedForBankTransferJourney()
+    getJourneyFromDatabase(tdAll.journeyId) shouldBeLike tdAll.BankTransfer.journeySelectedType withClue "JourneyType becomes BankTransfer"
   }
 
-  "Selecting 'No, continue without signing in' redirects to 'What is your P800 Reference' page" in {
+  "Selecting 'No, also redirects to WeNeedYouToConfirmYourIdentityPage LOL" in {
     pages.doYouWantYourRefundViaBankTransferPage.open()
     pages.doYouWantYourRefundViaBankTransferPage.assertPageIsDisplayed()
     pages.doYouWantYourRefundViaBankTransferPage.selectNo()
-    pages.doYouWantToSignInPage.clickSubmit()
-    pages.completeYourRefundRequestPage.assertPageIsDisplayed()
+    pages.doYouWantYourRefundViaBankTransferPage.clickSubmit()
+    pages.weNeedYouToConfirmYourIdentityPage.assertPageIsDisplayedForChequeJourney()
+    getJourneyFromDatabase(tdAll.journeyId) shouldBeLike tdAll.Cheque.journeySelectedType withClue "however the journey type becomes Cheque"
   }
 
   "Clicking 'Back' redirects user to 'Check your reference' page" in {
     pages.doYouWantYourRefundViaBankTransferPage.open()
     pages.doYouWantYourRefundViaBankTransferPage.assertPageIsDisplayed()
     pages.doYouWantYourRefundViaBankTransferPage.clickBackButton()
-    pages.checkYourReferencePage.assertPageIsDisplayed()
+    pages.doYouWantToSignInPage.assertPageIsDisplayed()
+    getJourneyFromDatabase(tdAll.journeyId) shouldBeLike tdAll.journeyStarted
   }
 
   "Selecting nothing and clicking continue shows error" in {
@@ -54,5 +57,6 @@ class DoYouWantYourRefundViaBankTransferPageSpec extends ItSpec {
     pages.doYouWantYourRefundViaBankTransferPage.assertPageIsDisplayed()
     pages.doYouWantYourRefundViaBankTransferPage.clickSubmit()
     pages.doYouWantYourRefundViaBankTransferPage.assertPageShowsWithErrors()
+    getJourneyFromDatabase(tdAll.journeyId) shouldBeLike tdAll.journeyStarted
   }
 }

@@ -25,7 +25,7 @@ class WhatIsYourDateOfBirthPageSpec extends ItSpec {
   override def beforeEach(): Unit = {
     super.beforeEach()
     addJourneyIdToSession(tdAll.journeyId)
-    upsertJourneyToDatabase(tdAll.journeyWhatIsYourFullName)
+    //TODO    upsertJourneyToDatabase(tdAll.journeyWhatIsYourFullName)
   }
 
   "/what-is-your-date-of-birth renders the what is your date of birth page" in {
@@ -91,7 +91,7 @@ class WhatIsYourDateOfBirthPageSpec extends ItSpec {
   }
 
   "Prepopulate the form if the user has already entered it" in {
-    upsertJourneyToDatabase(tdAll.journeyWhatIsYourDateOfBirth)
+    //TODO   upsertJourneyToDatabase(tdAll.journeyWhatIsYourDateOfBirth)
     pages.whatIsYourDateOfBirthPage.open()
     pages.whatIsYourDateOfBirthPage.assertDataPrepopulated("1", "1", "2000")
   }

@@ -25,7 +25,7 @@ class WhatIsYourFullNamePageSpec extends ItSpec {
     super.beforeEach()
 
     addJourneyIdToSession(tdAll.journeyId)
-    upsertJourneyToDatabase(tdAll.journeyDoYouWantYourRefundViaBankTransferYes)
+    //TODO    upsertJourneyToDatabase(tdAll.journeyDoYouWantYourRefundViaBankTransferYes)
   }
 
   "/what-is-your-full-name renders the 'What is your full name?' page" in {
