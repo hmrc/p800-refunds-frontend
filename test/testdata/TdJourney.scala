@@ -73,22 +73,22 @@ trait TdJourney {
       bankDescription = Some(dependencies.bankDescription)
     )
 
-    lazy val journeyConsentGiven: Journey = {
+    lazy val journeyPermissionGiven: Journey = {
       //TODO: here responsed from consent API
       journeySelectedBank
     }
 
     lazy val journeyReceivedNotificationFromEcospend: Journey =
       //TODO: API responses
-      journeyConsentGiven
+      journeyPermissionGiven
 
     lazy val journeyClaimedOverpayment: Journey =
       //TODO: API responses
-      journeyConsentGiven
+      journeyPermissionGiven
 
     lazy val journeyClaimOverpaymentFailed: Journey =
       //TODO: API responses
-      journeyConsentGiven
+      journeyPermissionGiven
 
   }
 

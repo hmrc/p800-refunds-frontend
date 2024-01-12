@@ -139,9 +139,9 @@ object Messages {
     )
   }
 
-  object GiveYourConsent {
-    val `Give your consent`: Message = Message(
-      english = "Give your consent"
+  object GiveYourPermission {
+    val `Give your permission`: Message = Message(
+      english = "Give your permission"
     )
 
     def `By choosing approve`(bankName: BankFriendlyName, amount: AmountInPence, changeBankLink: String): Message = Message(

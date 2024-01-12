@@ -29,7 +29,7 @@ import javax.inject.{Inject, Singleton}
 import scala.concurrent.ExecutionContext
 
 @Singleton
-class GiveYourConsentController @Inject() (
+class GiveYourPermissionController @Inject() (
     mcc:            MessagesControllerComponents,
     views:          Views,
     actions:        Actions,
@@ -40,7 +40,7 @@ class GiveYourConsentController @Inject() (
     val journey: Journey = request.journey
     Errors.require(journey.getJourneyType === JourneyType.BankTransfer, "This endpoint supports only BankTransfer journey")
 
-    Ok(views.giveYourConsentPage(
+    Ok(views.giveYourPermissionPage(
       bankName      = journey.getBankDescription.friendlyName,
       amountInPence = journey.getIdentityVerificationResponse.amount
     ))

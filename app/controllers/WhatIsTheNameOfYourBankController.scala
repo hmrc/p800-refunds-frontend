@@ -78,7 +78,7 @@ class WhatIsTheNameOfYourBankController @Inject() (
               bankDescription = Some(bankDescription)
             )
             _ <- journeyService.upsert(newJourney)
-          } yield Redirect(controllers.routes.GiveYourConsentController.get)
+          } yield Redirect(controllers.routes.GiveYourPermissionController.get)
         }
       )
 

@@ -32,7 +32,7 @@ class Views @Inject() (
     val weHaveConfirmedYourIdentityPage:                views.html.identityverification.WeHaveConfirmedYourIdentityPage,
     val weCannotConfirmYourIdentityPage:                views.html.identityverification.WeCannotConfirmYourIdentityPage,
     val requestNotSubmittedPage:                        views.html.RequestNotSubmittedPage,
-    val giveYourConsentPage:                            views.html.GiveYourConsentPage,
+    val giveYourPermissionPage:                         views.html.GiveYourPermissionPage,
     val weAreVerifyingYourBankAccountPage:              views.html.WeAreVerifyingYourBankAccountPage,
     val doYouWantYourRefundViaBankTransferPage:         views.html.DoYouWantYourRefundViaBankTransferPage,
     val chooseAnotherWayPtaOrChequePage:                views.html.chooseanotherway.PtaOrChequePage,

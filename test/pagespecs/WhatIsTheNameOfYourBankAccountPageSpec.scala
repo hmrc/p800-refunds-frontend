@@ -41,12 +41,12 @@ class WhatIsTheNameOfYourBankAccountPageSpec extends ItSpec {
     EcospendStub.verifyEcospendGetBanks()
   }
 
-  "Clicking 'Continue' after selecing a bank name redirects to 'Give your consent' page" in {
+  "Clicking 'Continue' after selecing a bank name redirects to 'Give your permission' page" in {
     pages.whatIsTheNameOfYourBankAccountPage.open()
     pages.whatIsTheNameOfYourBankAccountPage.assertPageIsDisplayed()
     pages.whatIsTheNameOfYourBankAccountPage.selectBankAccount(tdAll.bankId)
     pages.whatIsTheNameOfYourBankAccountPage.clickSubmit()
-    pages.giveYourConsentPage.assertPageIsDisplayed()
+    pages.giveYourPermissionPage.assertPageIsDisplayed()
 
     EcospendStub.verifyEcospendAccessToken(numberOfRequests = 2)
     EcospendStub.verifyEcospendGetBanks(numberOfRequests = 2)

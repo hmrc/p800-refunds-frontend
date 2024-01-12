@@ -50,8 +50,8 @@ GET         /what-is-the-name-of-your-bank-account                        contro
 POST        /what-is-the-name-of-your-bank-account                        controllers.WhatIsTheNameOfYourBankController.post
 
 #bank transfer only
-GET         /give-your-consent                                            controllers.GiveYourConsentController.get
-POST        /give-your-consent                                            controllers.GiveYourConsentController.post
+GET         /give-your-permission                                         controllers.GiveYourPermissionController.get
+POST        /give-your-permission                                         controllers.GiveYourPermissionController.post
 
 #bank transfer only
 GET         /we-are-verifying-your-bank-account                           controllers.WeAreVerifyingYourBankAccountController.get

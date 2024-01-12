@@ -19,19 +19,19 @@ package pagespecs.pages
 import org.openqa.selenium.WebDriver
 import pagespecs.pagesupport.{ContentExpectation, Page, PageUtil}
 
-class GiveYourConsentPage(baseUrl: String)(implicit webDriver: WebDriver) extends Page(
+class GiveYourPermissionPage(baseUrl: String)(implicit webDriver: WebDriver) extends Page(
   baseUrl,
-  path = "/get-an-income-tax-refund/give-your-consent"
+  path = "/get-an-income-tax-refund/give-your-permission"
 ) {
 
-  override def expectedH1: String = "Give your consent"
+  override def expectedH1: String = "Give your permission"
 
   override def assertPageIsDisplayed(errors: ContentExpectation*): Unit = withPageClue {
     val contentExpectations: Seq[ContentExpectation] = Seq(ContentExpectation(
       atXpath       = PageUtil.Xpath.mainContent,
       expectedLines =
         """
-          |By choosing approve, you will be redirected to Barclays Personal to securely log in and approve your refund of £1.23. Change my bank.
+          |By choosing approve, you will be redirected to Barclays Personal to securely log in and approve your refund of £12.34. Change my bank.
           |This is a service provided by Ecospend, an authorised payment institution regulated by the Financial Conduct Authority (FCA), which will initiate a refund directly from HMRC to your bank.
           |Ecospend will have one-off access to:
           |the name on your account

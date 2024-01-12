@@ -19,51 +19,56 @@ package pagespecs
 import testsupport.ItSpec
 import testsupport.stubs.EcospendStub
 
-class GiveYourConsentPageSpec extends ItSpec {
+class GiveYourPermissionPageSpec extends ItSpec {
 
   override def beforeEach(): Unit = {
     super.beforeEach()
     addJourneyIdToSession(tdAll.journeyId)
-    //TODO    upsertJourneyToDatabase(tdAll.journeyWhatIsTheNameOfYourBankAccount)
+    upsertJourneyToDatabase(tdAll.BankTransfer.journeySelectedBank)
   }
 
-  "/give-your-consent renders the give your consent page" in {
-    pages.giveYourConsentPage.open()
-    pages.giveYourConsentPage.assertPageIsDisplayed()
+  "/give-your-permission renders the give your permission page" in {
+    pages.giveYourPermissionPage.open()
+    pages.giveYourPermissionPage.assertPageIsDisplayed()
+    getJourneyFromDatabase(tdAll.journeyId) shouldBeLike tdAll.BankTransfer.journeyPermissionGiven
   }
 
   //todo ticket says url will be determined in another ticket - I think this is right though.
   "clicking 'Change my bank' redirects to 'What is the name of your bank' page" in {
     EcospendStub.stubEcospendAuth2xxSucceeded
     EcospendStub.stubEcospendGetBanks2xx
-    pages.giveYourConsentPage.open()
-    pages.giveYourConsentPage.assertPageIsDisplayed()
-    pages.giveYourConsentPage.clickChangeBank()
+    pages.giveYourPermissionPage.open()
+    pages.giveYourPermissionPage.assertPageIsDisplayed()
+    pages.giveYourPermissionPage.clickChangeBank()
     pages.whatIsTheNameOfYourBankAccountPage.assertPageIsDisplayed()
+    getJourneyFromDatabase(tdAll.journeyId) shouldBeLike tdAll.BankTransfer.journeyPermissionGiven
   }
 
   "clicking 'Approve this refund' redirects to 'Verifying bank account'" in {
     EcospendStub.stubEcospendAuth2xxSucceeded
     EcospendStub.ValidateStubs.stubValidateNotValidatedYet
-    pages.giveYourConsentPage.open()
-    pages.giveYourConsentPage.assertPageIsDisplayed()
-    pages.giveYourConsentPage.clickApproveThisRefund()
+    pages.giveYourPermissionPage.open()
+    pages.giveYourPermissionPage.assertPageIsDisplayed()
+    pages.giveYourPermissionPage.clickApproveThisRefund()
     pages.verifyBankAccountPage.assertPageIsDisplayed()
+    getJourneyFromDatabase(tdAll.journeyId) shouldBeLike tdAll.BankTransfer.journeyPermissionGiven
   }
 
   "clicking 'Choose another way to get my money' redirects to 'Choose another way to get my refund' page" in {
-    pages.giveYourConsentPage.open()
-    pages.giveYourConsentPage.assertPageIsDisplayed()
-    pages.giveYourConsentPage.clickChooseAnotherWayToGetMyMoney()
+    pages.giveYourPermissionPage.open()
+    pages.giveYourPermissionPage.assertPageIsDisplayed()
+    pages.giveYourPermissionPage.clickChooseAnotherWayToGetMyMoney()
     pages.chooseAnotherWayToReceiveYourRefundPage.assertPageIsDisplayed()
+    getJourneyFromDatabase(tdAll.journeyId) shouldBeLike tdAll.BankTransfer.journeyPermissionGiven
   }
 
   "clicking 'Back' redirects user to 'Select a bank account' page" in {
     EcospendStub.stubEcospendAuth2xxSucceeded
     EcospendStub.stubEcospendGetBanks2xx
-    pages.giveYourConsentPage.open()
-    pages.giveYourConsentPage.assertPageIsDisplayed()
-    pages.giveYourConsentPage.clickBackButton()
+    pages.giveYourPermissionPage.open()
+    pages.giveYourPermissionPage.assertPageIsDisplayed()
+    pages.giveYourPermissionPage.clickBackButton()
     pages.whatIsTheNameOfYourBankAccountPage.assertPageIsDisplayed()
+    getJourneyFromDatabase(tdAll.journeyId) shouldBeLike tdAll.BankTransfer.journeyPermissionGiven
   }
 }
