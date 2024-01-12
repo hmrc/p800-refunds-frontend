@@ -31,10 +31,8 @@ class Pages(baseUrl: String)(implicit webDriver: WebDriver) {
 
   val whatIsYourP800ReferencePage = new WhatIsYourP800ReferencePage(baseUrl = baseUrl)
   val whatIsYourNationalInsuranceNumberPage = new WhatIsYourNationalInsuranceNumberPage(baseUrl = baseUrl)
-
-  val cannotConfirmReferencePage = new CannotConfirmReferencePage(baseUrl = baseUrl)
-
   val whatIsYourDateOfBirthPage = new WhatIsYourDateOfBirthPage(baseUrl = baseUrl)
+
   val weHaveConfirmedYourIdentityPage = new WeHaveConfirmedYourIdentityPage(baseUrl = baseUrl)
   val weCannotConfirmYourIdentityPage = new WeCannotConfirmYourIdentityPage(baseUrl = baseUrl)
   val requestNotSubmittedPage = new RequestNotSubmittedPage(baseUrl = baseUrl)
