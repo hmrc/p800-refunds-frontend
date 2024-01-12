@@ -20,29 +20,71 @@ import testsupport.ItSpec
 
 class WeNeedYouToConfirmYourIdentityPageSpec extends ItSpec {
 
+  private val journeyBankTransfer = tdAll.BankTransfer.journeySelectedType
+  private val journeyCheque = tdAll.Cheque.journeySelectedType
+
   override def beforeEach(): Unit = {
     super.beforeEach()
     addJourneyIdToSession(tdAll.journeyId)
-    //TODO    upsertJourneyToDatabase(tdAll.journeyDoYouWantYourRefundViaBankTransferYes)
   }
 
-  "/confirm-your-identity renders the we need to confirm your identity page" in {
-    pages.weNeedYouToConfirmYourIdentityPage.open()
-    pages.weNeedYouToConfirmYourIdentityPage.assertPageIsDisplayed()
+  "render weNeedYouToConfirmYourIdentityPage" - {
+    "bank transfer" in {
+      upsertJourneyToDatabase(journeyBankTransfer)
+      test()
+      getJourneyFromDatabase(tdAll.journeyId) shouldBeLike journeyBankTransfer
+    }
+    "cheque" in {
+      upsertJourneyToDatabase(journeyCheque)
+      test()
+      getJourneyFromDatabase(tdAll.journeyId) shouldBeLike journeyCheque
+    }
+
+      def test(): Unit = {
+        pages.weNeedYouToConfirmYourIdentityPage.open()
+        pages.weNeedYouToConfirmYourIdentityPage.assertPageIsDisplayed()
+      }
   }
 
-  "'Continue' button sends user to 'What is your full name' page" in {
-    pages.weNeedYouToConfirmYourIdentityPage.open()
-    pages.weNeedYouToConfirmYourIdentityPage.assertPageIsDisplayed()
-    pages.weNeedYouToConfirmYourIdentityPage.clickSubmit()
-    //TODO     pages.whatIsYourFullNamePage.assertPageIsDisplayed()
+  "'Continue' button sends user to whatIsYourP800ReferencePage" - {
+    "bank transfer" in {
+      upsertJourneyToDatabase(journeyBankTransfer)
+      test()
+      getJourneyFromDatabase(tdAll.journeyId) shouldBeLike journeyBankTransfer
+    }
+    "cheque" in {
+      upsertJourneyToDatabase(journeyCheque)
+      test()
+      getJourneyFromDatabase(tdAll.journeyId) shouldBeLike journeyCheque
+    }
+
+      def test(): Unit = {
+        pages.weNeedYouToConfirmYourIdentityPage.open()
+        pages.weNeedYouToConfirmYourIdentityPage.assertPageIsDisplayed()
+        pages.weNeedYouToConfirmYourIdentityPage.clickSubmit()
+        pages.whatIsYourP800ReferencePage.assertPageIsDisplayed()
+      }
   }
 
-  "'Back' button sends user to 'Do you want your refund by bank transfer' page" in {
-    pages.weNeedYouToConfirmYourIdentityPage.open()
-    pages.weNeedYouToConfirmYourIdentityPage.assertPageIsDisplayed()
-    pages.weNeedYouToConfirmYourIdentityPage.clickBackButton()
-    pages.doYouWantYourRefundViaBankTransferPage.assertPageIsDisplayed()
+  "'Back' button sends user to 'Do you want your refund by bank transfer' page" - {
+    "bank transfer" in {
+      upsertJourneyToDatabase(journeyBankTransfer)
+      test()
+      getJourneyFromDatabase(tdAll.journeyId) shouldBeLike journeyBankTransfer
+    }
+    "cheque" in {
+      upsertJourneyToDatabase(journeyCheque)
+      test()
+      getJourneyFromDatabase(tdAll.journeyId) shouldBeLike journeyCheque
+    }
+
+      def test(): Unit = {
+        pages.weNeedYouToConfirmYourIdentityPage.open()
+        pages.weNeedYouToConfirmYourIdentityPage.assertPageIsDisplayed()
+        pages.weNeedYouToConfirmYourIdentityPage.clickBackButton()
+        pages.doYouWantYourRefundViaBankTransferPage.assertPageIsDisplayed()
+      }
+
   }
 
   //Pawel TODO
