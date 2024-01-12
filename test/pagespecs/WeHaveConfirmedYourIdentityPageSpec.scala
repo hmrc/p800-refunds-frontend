@@ -75,11 +75,21 @@ class WeHaveConfirmedYourIdentityPageSpec extends ItSpec {
     "bank transfer" in {
       upsertJourneyToDatabase(tdAll.BankTransfer.journeyIdentityVerified)
       test()
+      pages.checkYourAnswersPage.assertPageIsDisplayedForBankTransfer(
+        tdAll.p800Reference,
+        tdAll.dateOfBirthFormatted,
+        tdAll.nationalInsuranceNumber
+      )
       getJourneyFromDatabase(tdAll.journeyId) shouldBeLike tdAll.BankTransfer.journeyIdentityVerified
     }
+
     "cheque" in {
       upsertJourneyToDatabase(tdAll.Cheque.journeyIdentityVerified)
       test()
+      pages.checkYourAnswersPage.assertPageIsDisplayedForCheque(
+        tdAll.p800Reference,
+        tdAll.nationalInsuranceNumber
+      )
       getJourneyFromDatabase(tdAll.journeyId) shouldBeLike tdAll.Cheque.journeyIdentityVerified
     }
 
@@ -87,7 +97,6 @@ class WeHaveConfirmedYourIdentityPageSpec extends ItSpec {
         pages.weHaveConfirmedYourIdentityPage.open()
         pages.weHaveConfirmedYourIdentityPage.assertPageIsDisplayed()
         pages.weHaveConfirmedYourIdentityPage.clickBackButton()
-        pages.checkYourAnswersPage.assertPageIsDisplayed()
       }
   }
 
