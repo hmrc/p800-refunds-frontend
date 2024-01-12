@@ -275,8 +275,8 @@ object Messages {
       english = "We will need to ask you for your:"
     )
 
-    val `reference`: Message = Message(
-      english = "reference"
+    val `P800 reference`: Message = Message(
+      english = "P800 reference"
     )
 
     val `date of birth`: Message = Message(
@@ -410,16 +410,16 @@ object Messages {
   }
 
   object WhatIsTheNameOfYourBankAccount {
-    val `What is the name of your bank account?`: Message = Message(
-      english = "What is the name of your bank account?"
+    val `What is the name of your bank?`: Message = Message(
+      english = "What is the name of your bank?"
     )
 
-    val `Select a UK bank or building society that you’d like your refund to be sent to.`: Message = Message(
-      english = "Select a UK bank or building society that you’d like your refund to be sent to."
+    val `Start typing the name of a UK bank that you want your refund to be sent to.`: Message = Message(
+      english = "Start typing the name of a UK bank that you want your refund to be sent to."
     )
 
-    val `My account is not listed`: Message = Message(
-      english = "My account is not listed"
+    val `My bank is not listed`: Message = Message(
+      english = "My bank is not listed"
     )
 
     val `Select a bank from the list`: Message = Message(

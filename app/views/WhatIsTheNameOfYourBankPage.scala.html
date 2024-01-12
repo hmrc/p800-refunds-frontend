@@ -35,7 +35,7 @@
 @import viewsHelpers.requestSupport._
 
 @title = @{
-    Messages.WhatIsTheNameOfYourBankAccount.`What is the name of your bank account?`.show
+    Messages.WhatIsTheNameOfYourBankAccount.`What is the name of your bank?`.show
 }
 
 @key = @{
@@ -59,7 +59,7 @@
         </h1>
 
         <div id="selectedBankId-hint" class="govuk-hint">
-            @{Messages.WhatIsTheNameOfYourBankAccount.`Select a UK bank or building society that you’d like your refund to be sent to.`.show}
+            @{Messages.WhatIsTheNameOfYourBankAccount.`Start typing the name of a UK bank that you want your refund to be sent to.`.show}
         </div>
 
         <div id="container" class="autocomplete__wrapper govuk-input--width-20">
@@ -84,7 +84,7 @@
         ))
 
         <a id="myAccountIsNotListed" role="button" class="govuk-button govuk-button--secondary select-bank-button" data-module="govuk-button" href="@controllers.routes.ChooseAnotherWayToGetYourRefundController.get.url">
-            @{Messages.WhatIsTheNameOfYourBankAccount.`My account is not listed`.show}
+            @{Messages.WhatIsTheNameOfYourBankAccount.`My bank is not listed`.show}
         </a>
     }
 
