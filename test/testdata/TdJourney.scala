@@ -65,7 +65,7 @@ trait TdJourney {
       val j = journeyEnteredDateOfBirth.copy(
         identityVerificationResponse = Some(dependencies.identityNotVerifiedResponse)
       )
-      require(j.isIdentityVerified, "this journey instance has to have verified identity")
+      require(!j.isIdentityVerified, "this journey instance has to have NOT verified identity")
       j
     }
 
@@ -114,7 +114,7 @@ trait TdJourney {
       val j = journeyEnteredNino.copy(
         identityVerificationResponse = Some(dependencies.identityNotVerifiedResponse)
       )
-      require(j.isIdentityVerified, "this journey instance has to have verified identity")
+      require(!j.isIdentityVerified, "this journey instance has to have NOT verified identity")
       j
     }
 

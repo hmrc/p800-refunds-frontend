@@ -32,6 +32,7 @@ class Pages(baseUrl: String)(implicit webDriver: WebDriver) {
   val whatIsYourP800ReferencePage = new WhatIsYourP800ReferencePage(baseUrl = baseUrl)
   val whatIsYourNationalInsuranceNumberPage = new WhatIsYourNationalInsuranceNumberPage(baseUrl = baseUrl)
   val whatIsYourDateOfBirthPage = new WhatIsYourDateOfBirthPage(baseUrl = baseUrl)
+  val checkYourAnswersPage = new CheckYourAnswersPage(baseUrl = baseUrl)
 
   val weHaveConfirmedYourIdentityPage = new WeHaveConfirmedYourIdentityPage(baseUrl = baseUrl)
   val weCannotConfirmYourIdentityPage = new WeCannotConfirmYourIdentityPage(baseUrl = baseUrl)
@@ -44,7 +45,6 @@ class Pages(baseUrl: String)(implicit webDriver: WebDriver) {
   val chequeRequestReceivedPage = new ChequeRequestReceivedPage(baseUrl = baseUrl)
   val bankTransferRequestReceivedPage = new BankTransferRequestReceivedPage(baseUrl = baseUrl)
 
-  val checkYourAnswersPage = new CheckYourAnswersPage(baseUrl = baseUrl)
   val whatIsTheNameOfYourBankAccountPage = new WhatIsTheNameOfYourBankAccountPage(baseUrl = baseUrl)
 
   // Page Stubs
