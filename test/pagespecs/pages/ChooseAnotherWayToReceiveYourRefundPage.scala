@@ -32,7 +32,8 @@ class ChooseAnotherWayToReceiveYourRefundPage(baseUrl: String)(implicit webDrive
       expectedLines =
         """
           |Choose another way to receive your refund
-          |Bank transfer via your personal tax account
+          |You will have fewer details to enter if you sign in using your Government Gateway user ID.
+          |Bank transfer using your Government Gateway user ID to sign in
           |Cheque
           |Continue
           |""".stripMargin
@@ -47,16 +48,23 @@ class ChooseAnotherWayToReceiveYourRefundPage(baseUrl: String)(implicit webDrive
     )
   }
 
-  def assertPageShowsWithErrors(): Unit = withPageClue {
+  def assertPtaOrChequePageShowsWithErrors(): Unit = withPageClue {
     val errorContent: ContentExpectation = ContentExpectation(
       atXpath       = PageUtil.Xpath.mainContent,
       expectedLines =
         """
           |There is a problem
-          |Select if you want to receive a bank transfer via your personal tax account, or a cheque
+          |Select the way you want to receive your refund
           |""".stripMargin
     )
-    assertPageIsDisplayed(errorContent)
+
+    PageUtil.assertPage(
+      baseUrl             = baseUrl,
+      path                = path + "/bank-transfer-via-pta-or-cheque",
+      h1                  = expectedH1,
+      title               = PageUtil.standardTitle(expectedH1),
+      contentExpectations = errorContent
+    )
   }
 
   def clickBankTransferOption(): Unit = PageUtil.clickByIdOrName("way-to-get-refund")

@@ -23,7 +23,7 @@ class ChooseAnotherWayToReceiveYourRefundPageSpec extends ItSpec {
   override def beforeEach(): Unit = {
     super.beforeEach()
     addJourneyIdToSession(tdAll.journeyId)
-    //TODO    upsertJourneyToDatabase(tdAll.journeyIdentityNotVerified)
+    upsertJourneyToDatabase(tdAll.BankTransfer.journeySelectedBank)
   }
 
   "/choose-another-option renders the choose another option page" in {
@@ -38,6 +38,7 @@ class ChooseAnotherWayToReceiveYourRefundPageSpec extends ItSpec {
     pages.chooseAnotherWayToReceiveYourRefundPage.clickSubmit()
     //todo assert /tax-your-paid
   }
+
   "Selecting 'Cheque' option sends user to 'Your cheque will be posted to you' page" in {
     pages.chooseAnotherWayToReceiveYourRefundPage.open()
     pages.chooseAnotherWayToReceiveYourRefundPage.assertPageIsDisplayed()
@@ -45,6 +46,7 @@ class ChooseAnotherWayToReceiveYourRefundPageSpec extends ItSpec {
     pages.chooseAnotherWayToReceiveYourRefundPage.clickSubmit()
     pages.completeYourRefundRequestPage.assertPageIsDisplayed()
   }
+
   //todo un ignore this test when we know where the back button is supposed to go.
   "Clicking 'Back' sends user to 'What is the name of your bank account' page" ignore {
     pages.chooseAnotherWayToReceiveYourRefundPage.open()
@@ -57,6 +59,6 @@ class ChooseAnotherWayToReceiveYourRefundPageSpec extends ItSpec {
     pages.chooseAnotherWayToReceiveYourRefundPage.open()
     pages.chooseAnotherWayToReceiveYourRefundPage.assertPageIsDisplayed()
     pages.chooseAnotherWayToReceiveYourRefundPage.clickSubmit()
-    pages.chooseAnotherWayToReceiveYourRefundPage.assertPageShowsWithErrors()
+    pages.chooseAnotherWayToReceiveYourRefundPage.assertPtaOrChequePageShowsWithErrors()
   }
 }

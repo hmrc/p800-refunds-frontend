@@ -196,21 +196,26 @@ object Messages {
       english = s"""This usually takes a few seconds. You can <a href="$refreshLink" id="refresh-this-page" class="govuk-link">refresh this page</a> if it doesn't update automatically."""
     )
   }
+
   object ChooseAnotherWayToReceiveYourRefund {
     val `Choose another way to receive your refund`: Message = Message(
       english = "Choose another way to receive your refund"
     )
 
-    val `Bank transfer via your personal tax account`: Message = Message(
-      english = "Bank transfer via your personal tax account"
+    val `Bank transfer using your Government Gateway user ID to sign in`: Message = Message(
+      english = "Bank transfer using your Government Gateway user ID to sign in"
+    )
+
+    val `You will have fewer details to enter if you sign in using your Government Gateway user ID.`: Message = Message(
+      english = "You will have fewer details to enter if you sign in using your Government Gateway user ID."
     )
 
     val `Cheque`: Message = Message(
       english = "Cheque"
     )
 
-    val `Select if you want to receive a bank transfer via your personal tax account, or a cheque`: Message = Message(
-      english = "Select if you want to receive a bank transfer via your personal tax account, or a cheque"
+    val `Select the way you want to receive your refund`: Message = Message(
+      english = "Select the way you want to receive your refund"
     )
 
     //TODO: confirm with Content designer this text
