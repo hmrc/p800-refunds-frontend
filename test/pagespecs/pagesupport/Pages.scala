@@ -33,9 +33,9 @@ class Pages(baseUrl: String)(implicit webDriver: WebDriver) {
   val whatIsYourNationalInsuranceNumberPage = new WhatIsYourNationalInsuranceNumberPage(baseUrl = baseUrl)
   val whatIsYourDateOfBirthPage = new WhatIsYourDateOfBirthPage(baseUrl = baseUrl)
   val checkYourAnswersPage = new CheckYourAnswersPage(baseUrl = baseUrl)
-
   val weHaveConfirmedYourIdentityPage = new WeHaveConfirmedYourIdentityPage(baseUrl = baseUrl)
   val weCannotConfirmYourIdentityPage = new WeCannotConfirmYourIdentityPage(baseUrl = baseUrl)
+
   val requestNotSubmittedPage = new RequestNotSubmittedPage(baseUrl = baseUrl)
   val verifyBankAccountPage = new VerifyBankAccountPage(baseUrl = baseUrl)
   val chooseAnotherWayToReceiveYourRefundPage = new ChooseAnotherWayToReceiveYourRefundPage(baseUrl = baseUrl)

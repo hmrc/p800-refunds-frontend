@@ -23,33 +23,93 @@ class WeCannotConfirmYourIdentityPageSpec extends ItSpec {
   override def beforeEach(): Unit = {
     super.beforeEach()
     addJourneyIdToSession(tdAll.journeyId)
-    //TODO    upsertJourneyToDatabase(tdAll.journeyIdentityNotVerified)
   }
 
-  "/we-cannot-confirm-your-identity renders your 'We cannot confirm your identity' page" in {
-    pages.weCannotConfirmYourIdentityPage.open()
-    pages.weCannotConfirmYourIdentityPage.assertPageIsDisplayed()
+  "/we-cannot-confirm-your-identity renders your 'We cannot confirm your identity' page" - {
+    "bank transfer" in {
+      upsertJourneyToDatabase(tdAll.BankTransfer.journeyIdentityNotVerified)
+      test()
+      getJourneyFromDatabase(tdAll.journeyId) shouldBeLike tdAll.BankTransfer.journeyIdentityNotVerified
+    }
+    "cheque" in {
+      upsertJourneyToDatabase(tdAll.Cheque.journeyIdentityNotVerified)
+      test()
+      getJourneyFromDatabase(tdAll.journeyId) shouldBeLike tdAll.Cheque.journeyIdentityNotVerified
+    }
+
+      def test(): Unit = {
+        pages.weCannotConfirmYourIdentityPage.open()
+        pages.weCannotConfirmYourIdentityPage.assertPageIsDisplayed()
+      }
   }
 
-  "clicking 'Back' sends user to check your answers" in {
-    pages.weCannotConfirmYourIdentityPage.open()
-    pages.weCannotConfirmYourIdentityPage.assertPageIsDisplayed()
-    pages.weCannotConfirmYourIdentityPage.clickBackButton()
-    pages.checkYourAnswersPage.assertPageIsDisplayed()
+  "clicking 'Back' sends user to check your answers" - {
+
+    "bank transfer" in {
+      upsertJourneyToDatabase(tdAll.BankTransfer.journeyIdentityNotVerified)
+      test()
+      pages.checkYourAnswersPage.assertPageIsDisplayedForBankTransfer(
+        tdAll.p800Reference,
+        tdAll.dateOfBirthFormatted,
+        tdAll.nationalInsuranceNumber
+      )
+      getJourneyFromDatabase(tdAll.journeyId) shouldBeLike tdAll.BankTransfer.journeyIdentityNotVerified
+    }
+    "cheque" in {
+      upsertJourneyToDatabase(tdAll.Cheque.journeyIdentityNotVerified)
+      test()
+      pages.checkYourAnswersPage.assertPageIsDisplayedForCheque(
+        tdAll.p800Reference,
+        tdAll.nationalInsuranceNumber
+      )
+      getJourneyFromDatabase(tdAll.journeyId) shouldBeLike tdAll.Cheque.journeyIdentityNotVerified
+    }
+
+      def test(): Unit = {
+        pages.weCannotConfirmYourIdentityPage.open()
+        pages.weCannotConfirmYourIdentityPage.assertPageIsDisplayed()
+        pages.weCannotConfirmYourIdentityPage.clickBackButton()
+      }
+
   }
 
-  "clicking 'Try again' sends user to 'We need you to confirm your identity page'" in {
-    pages.weCannotConfirmYourIdentityPage.open()
-    pages.weCannotConfirmYourIdentityPage.assertPageIsDisplayed()
-    pages.weCannotConfirmYourIdentityPage.clickTryAgain()
-    pages.weNeedYouToConfirmYourIdentityPage.assertPageIsDisplayed()
+  "clicking 'Try again' sends user to 'We need you to confirm your identity page'" - {
+    "bank transfer" in {
+      upsertJourneyToDatabase(tdAll.BankTransfer.journeyIdentityNotVerified)
+      test()
+      getJourneyFromDatabase(tdAll.journeyId) shouldBeLike tdAll.BankTransfer.journeyIdentityNotVerified
+    }
+    "cheque" in {
+      upsertJourneyToDatabase(tdAll.Cheque.journeyIdentityNotVerified)
+      test()
+      getJourneyFromDatabase(tdAll.journeyId) shouldBeLike tdAll.Cheque.journeyIdentityNotVerified
+    }
+
+      def test(): Unit = {
+        pages.weCannotConfirmYourIdentityPage.open()
+        pages.weCannotConfirmYourIdentityPage.assertPageIsDisplayed()
+        pages.weCannotConfirmYourIdentityPage.clickTryAgain()
+        pages.weNeedYouToConfirmYourIdentityPage.assertPageIsDisplayed()
+      }
   }
 
-  "clicking 'Choose another method' sends user to 'Choose another way to receive your refund page'" in {
-    pages.weCannotConfirmYourIdentityPage.open()
-    pages.weCannotConfirmYourIdentityPage.assertPageIsDisplayed()
-    pages.weCannotConfirmYourIdentityPage.clickChooseAnotherWay()
-    pages.chooseAnotherWayToReceiveYourRefundPage.assertPageIsDisplayed()
-  }
+  "clicking 'Choose another method' sends user to 'Choose another way to receive your refund page'" - {
+    "bank transfer" in {
+      upsertJourneyToDatabase(tdAll.BankTransfer.journeyIdentityNotVerified)
+      test()
+      getJourneyFromDatabase(tdAll.journeyId) shouldBeLike tdAll.BankTransfer.journeyIdentityNotVerified
+    }
+    "cheque" in {
+      upsertJourneyToDatabase(tdAll.Cheque.journeyIdentityNotVerified)
+      test()
+      getJourneyFromDatabase(tdAll.journeyId) shouldBeLike tdAll.Cheque.journeyIdentityNotVerified
+    }
 
+      def test(): Unit = {
+        pages.weCannotConfirmYourIdentityPage.open()
+        pages.weCannotConfirmYourIdentityPage.assertPageIsDisplayed()
+        pages.weCannotConfirmYourIdentityPage.clickChooseAnotherWay()
+        pages.chooseAnotherWayToReceiveYourRefundPage.assertPageIsDisplayed()
+      }
+  }
 }
