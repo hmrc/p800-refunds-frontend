@@ -48,7 +48,11 @@ class CompleteYourRefundRequestController @Inject() (
 
     //TODO: API call
     journeyService
-      .upsert(journey.copy(hasFinished = true)) //TODO: update journey with results of the API call
+      .upsert(
+        //TODO: update journey with results of the API call
+        //TODO: hasFinished=true is for happy an unhappy path
+        journey.copy(hasFinished = HasFinished.No)
+      )
       .map(_ => Redirect(controllers.routes.RequestReceivedController.get))
   }
 

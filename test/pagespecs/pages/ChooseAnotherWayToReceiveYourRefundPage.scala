@@ -26,7 +26,9 @@ class ChooseAnotherWayToReceiveYourRefundPage(baseUrl: String)(implicit webDrive
 
   override def expectedH1: String = "Choose another way to receive your refund"
 
-  override def assertPageIsDisplayed(errors: ContentExpectation*): Unit = withPageClue {
+  override def assertPageIsDisplayed(errors: ContentExpectation*): Unit = sys.error("User another variant for asserting page")
+
+  def assertPageIsDisplayedPtaOrCheque(errors: ContentExpectation*): Unit = withPageClue {
     val contentExpectations: Seq[ContentExpectation] = Seq(ContentExpectation(
       atXpath       = PageUtil.Xpath.mainContent,
       expectedLines =
@@ -35,6 +37,27 @@ class ChooseAnotherWayToReceiveYourRefundPage(baseUrl: String)(implicit webDrive
           |You will have fewer details to enter if you sign in using your Government Gateway user ID.
           |Bank transfer using your Government Gateway user ID to sign in
           |Cheque
+          |Continue
+          |""".stripMargin
+    )) ++ errors
+
+    PageUtil.assertPage(
+      baseUrl             = baseUrl,
+      path                = path,
+      h1                  = expectedH1,
+      title               = PageUtil.standardTitle(expectedH1),
+      contentExpectations = contentExpectations: _*
+    )
+  }
+
+  def assertPageIsDisplayedPtaOrBankTransfer(errors: ContentExpectation*): Unit = withPageClue {
+    val contentExpectations: Seq[ContentExpectation] = Seq(ContentExpectation(
+      atXpath       = PageUtil.Xpath.mainContent,
+      expectedLines =
+        """
+          |Choose another way to receive your refund
+          |Bank transfer using your Government Gateway user ID to sign in
+          |Bank transfer logged out
           |Continue
           |""".stripMargin
     )) ++ errors

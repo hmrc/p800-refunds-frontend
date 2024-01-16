@@ -19,23 +19,35 @@ package controllers
 import action.{Actions, JourneyRequest}
 import models.journeymodels._
 import play.api.mvc._
+import services.JourneyService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import util.Errors
 import util.SafeEquals.EqualsOps
 import views.Views
 
 import javax.inject.{Inject, Singleton}
+import scala.concurrent.ExecutionContext
 
 @Singleton
 class YourRefundRequestHasNotBeenSubmittedController @Inject() (
-    mcc:     MessagesControllerComponents,
-    views:   Views,
-    actions: Actions
-) extends FrontendController(mcc) {
+    mcc:            MessagesControllerComponents,
+    views:          Views,
+    actions:        Actions,
+    journeyService: JourneyService
+)(implicit ec: ExecutionContext) extends FrontendController(mcc) {
 
-  def get: Action[AnyContent] = actions.journeyInProgress { implicit request: JourneyRequest[_] =>
+  def get: Action[AnyContent] = actions.journeyFinished { implicit request: JourneyRequest[_] =>
     Errors.require(request.journey.getJourneyType === JourneyType.BankTransfer, "This page is only for BankTransfer journey")
     Ok(views.requestNotSubmittedPage())
+  }
+
+  def post: Action[AnyContent] = actions.journeyFinished.async { implicit request: JourneyRequest[_] =>
+    Errors.require(request.journey.getJourneyType === JourneyType.BankTransfer, "This page is only for BankTransfer journey")
+
+    journeyService
+      .upsert(request.journey.copy(hasFinished = HasFinished.No))
+      //TODO: invalidate API calls
+      .map(_ => Redirect(controllers.routes.ChooseAnotherWayToGetYourRefundController.get))
   }
 
 }

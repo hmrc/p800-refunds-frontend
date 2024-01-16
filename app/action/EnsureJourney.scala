@@ -30,15 +30,16 @@ class EnsureJourney @Inject() ()(implicit ec: ExecutionContext) {
   /**
    * Check if journey matches predicate. If it doesn't, it will send the Redirect.
    */
-  def ensureJourney(predicate: Journey => Boolean, redirect: Call, hintWhyRedirecting: String): ActionFilter[JourneyRequest] = new ActionFilter[JourneyRequest] {
+  def ensureJourney(predicate: Journey => Boolean, redirectF: Journey => Call, hintWhyRedirecting: String): ActionFilter[JourneyRequest] = new ActionFilter[JourneyRequest] {
     override def filter[A](request: JourneyRequest[A]): Future[Option[Result]] = {
       implicit val r: JourneyRequest[A] = request
       val journey = request.journey
       val result: Option[Result] =
         if (predicate(journey)) None
         else {
-          JourneyLogger.warn(s"Can't display page in that journey ($hintWhyRedirecting), redirecting to [${redirect.url}]")
-          Some(Redirect(redirect))
+          val call = redirectF(journey)
+          JourneyLogger.warn(s"Can't display page in that journey ($hintWhyRedirecting), redirecting to [${call.url}]")
+          Some(Redirect(call))
         }
       Future.successful(result)
     }

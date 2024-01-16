@@ -16,6 +16,7 @@
 
 package models.journeymodels
 
+import julienrf.json.derived
 import models.dateofbirth.DateOfBirth
 import models.ecospend.BankDescription
 import models.{IdentityVerificationResponse, NationalInsuranceNumber, P800Reference}
@@ -25,13 +26,32 @@ import util.Errors
 
 import java.time.{Clock, Instant}
 
+sealed trait HasFinished
+object HasFinished {
+
+  def hasFinished(hasFinished: HasFinished): Boolean = hasFinished match {
+    case No           => false
+    case YesSucceeded => true
+    case YesFailed    => true
+  }
+
+  def isInProgress(hasFinished: HasFinished): Boolean = !HasFinished.hasFinished(hasFinished)
+
+  case object No extends HasFinished
+  case object YesSucceeded extends HasFinished
+  case object YesFailed extends HasFinished
+
+  @SuppressWarnings(Array("org.wartremover.warts.Any"))
+  implicit val format: OFormat[HasFinished] = derived.oformat()
+}
+
 /**
  * This is internal representation of the journey. Don't use it.
  */
 final case class Journey(
     _id:                          JourneyId,
     createdAt:                    Instant,
-    hasFinished:                  Boolean,
+    hasFinished:                  HasFinished,
     journeyType:                  Option[JourneyType],
     p800Reference:                Option[P800Reference],
     nationalInsuranceNumber:      Option[NationalInsuranceNumber],

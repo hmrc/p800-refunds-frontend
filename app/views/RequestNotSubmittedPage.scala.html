@@ -42,10 +42,10 @@
         @{Messages.RequestNotSubmitted.`We can not process your refund request.`.show}
     </p>
 
-
-    @viewsHelpers.govukButton(Button(
-        content = Text(Messages.RequestNotSubmitted.`Choose another way to get my money`.show),
-        id      = Some("try-again"),
-        href = Some(controllers.routes.ChooseAnotherWayToGetYourRefundController.get.url)
-    ))
+    @viewsHelpers.formWithCsrf(action = controllers.routes.YourRefundRequestHasNotBeenSubmittedController.post) {
+        @viewsHelpers.govukButton(Button(
+            content = Text(Messages.RequestNotSubmitted.`Choose another way to get my money`.show),
+            id = Some("try-again")
+        ))
+    }
 }

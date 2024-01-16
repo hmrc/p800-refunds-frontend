@@ -59,3 +59,4 @@ GET         /we-are-verifying-your-bank-account                           contro
 GET         /request-received                                             controllers.RequestReceivedController.get
 
 GET         /your-refund-request-has-not-been-submitted                   controllers.YourRefundRequestHasNotBeenSubmittedController.get
+POST        /your-refund-request-has-not-been-submitted                   controllers.YourRefundRequestHasNotBeenSubmittedController.post

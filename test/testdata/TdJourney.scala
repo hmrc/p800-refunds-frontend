@@ -29,7 +29,7 @@ trait TdJourney {
   lazy val journeyStarted: Journey = Journey(
     _id                          = journeyId,
     createdAt                    = dependencies.instant,
-    hasFinished                  = false,
+    hasFinished                  = HasFinished.No,
     journeyType                  = None,
     p800Reference                = None,
     nationalInsuranceNumber      = None,
@@ -84,11 +84,25 @@ trait TdJourney {
 
     lazy val journeyClaimedOverpayment: Journey =
       //TODO: API responses
-      journeyPermissionGiven
+      journeyReceivedNotificationFromEcospend.copy(
+        hasFinished = HasFinished.YesSucceeded
+      )
 
     lazy val journeyClaimOverpaymentFailed: Journey =
       //TODO: API responses
-      journeyPermissionGiven
+      journeyReceivedNotificationFromEcospend.copy(
+        hasFinished = HasFinished.YesFailed
+      )
+
+    /**
+     * When user was on ClaimOverpaymentFailed but clicked TryAgain button
+     * (journey no more final)
+     */
+    lazy val journeyClaimOverpaymentFailedButIsTryingAgain: Journey =
+      //TODO: API responses
+      journeyClaimOverpaymentFailed.copy(
+        hasFinished = HasFinished.No
+      )
 
   }
 
@@ -120,12 +134,9 @@ trait TdJourney {
 
     lazy val journeyClaimedOverpayment: Journey =
       //TODO: API responses
-      journeyIdentityVerified
-
-    lazy val journeyClaimOverpaymentFailed: Journey =
-      //TODO: API responses
-      journeyIdentityVerified
-
+      journeyIdentityVerified.copy(
+        hasFinished = HasFinished.YesSucceeded
+      )
   }
 
 }

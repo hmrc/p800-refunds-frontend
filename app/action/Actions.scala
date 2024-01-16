@@ -16,7 +16,8 @@
 
 package action
 
-import play.api.mvc.{ActionBuilder, AnyContent, DefaultActionBuilder, Request}
+import models.journeymodels.{HasFinished, Journey}
+import play.api.mvc.{ActionBuilder, AnyContent, Call, DefaultActionBuilder, Request}
 
 import javax.inject.{Inject, Singleton}
 
@@ -35,8 +36,8 @@ class Actions @Inject() (
       .andThen(getJourneyActionRefiner)
       .andThen(
         ensureJourney.ensureJourney(
-          _.hasFinished,
-          controllers.routes.DoYouWantToSignInController.get, //or discover where to send it (actually there is no business requirement to handle such cases)
+          j => HasFinished.hasFinished(j.hasFinished),
+          redirectWhenJourneyIsInProgress,
           "Journey is not finished"
         )
       )
@@ -47,10 +48,23 @@ class Actions @Inject() (
       .andThen(getJourneyActionRefiner)
       .andThen(
         ensureJourney.ensureJourney(
-          !_.hasFinished,
-          controllers.routes.RequestReceivedController.get,
+          j => HasFinished.isInProgress(j.hasFinished),
+          redirectWhenJourneyIsFinished,
           "Journey is finished"
         )
       )
+
+  private def redirectWhenJourneyIsFinished(journey: Journey): Call = journey.hasFinished match {
+    case HasFinished.YesSucceeded => controllers.routes.RequestReceivedController.get
+    case HasFinished.YesFailed    => controllers.routes.YourRefundRequestHasNotBeenSubmittedController.get
+    case HasFinished.No           => throw new RuntimeException(s"This case is not supported, journey should be already in one of finished states [${journey.id.toString}] [${journey.hasFinished.toString}]")
+  }
+
+  //TODO: this might need some extra refinement
+  private def redirectWhenJourneyIsInProgress(journey: Journey): Call = journey.hasFinished match {
+    case HasFinished.YesSucceeded => throw new RuntimeException(s"This case is not supported, journey should be in progress [${journey.id.toString}] [${journey.hasFinished.toString}]")
+    case HasFinished.YesFailed    => throw new RuntimeException(s"This case is not supported, journey should be in progress [${journey.id.toString}] [${journey.hasFinished.toString}]")
+    case HasFinished.No           => controllers.routes.DoYouWantToSignInController.get
+  }
 
 }

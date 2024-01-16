@@ -63,7 +63,7 @@ class VerifyBankAccountPageSpec extends ItSpec {
     pages.verifyBankAccountPage.assertPageIsDisplayed()
     EcospendStub.ValidateStubs.stubValidatePaymentUnSuccessful()
     pages.verifyBankAccountPage.clickRefreshThisPageLink()
-    pages.requestNotSubmittedPage.assertPageIsDisplayed()
+    pages.yourRequestHasNotBeenSubmittedPage.assertPageIsDisplayed()
     EcospendStub.ValidateStubs.verifyValidate(2)
   }
 

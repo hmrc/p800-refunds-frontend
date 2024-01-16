@@ -82,7 +82,7 @@ class CheckYourAnswersPage(baseUrl: String)(implicit webDriver: WebDriver) exten
 
   override def assertPageIsDisplayed(extraExpectations: ContentExpectation*): Unit = sys.error("Use 'assertPageIsDisplayedForCheque' or 'assertPageIsDisplayedForBankTransfer' or other variants")
 
-  def assertPageIsDisplayed(journeyType: JourneyType, extraExpectations: ContentExpectation*): Unit = withPageClue {
+  private def assertPageIsDisplayed(journeyType: JourneyType, extraExpectations: ContentExpectation*): Unit = withPageClue {
 
     val contentExpectation: ContentExpectation = journeyType match {
       case JourneyType.BankTransfer =>
