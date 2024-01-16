@@ -23,12 +23,13 @@ class YourChequeWillBePostedToYouPageSpec extends ItSpec {
   override def beforeEach(): Unit = {
     super.beforeEach()
     addJourneyIdToSession(tdAll.journeyId)
-    upsertJourneyToDatabase(tdAll.journeyStarted) //TODO
+    upsertJourneyToDatabase(tdAll.Cheque.journeyIdentityVerified)
   }
 
   "/your-cheque-will-be-posted-to-you renders your cheque will be posted page" in {
     pages.completeYourRefundRequestPage.open()
     pages.completeYourRefundRequestPage.assertPageIsDisplayed()
+    getJourneyFromDatabase(tdAll.journeyId) shouldBeLike tdAll.Cheque.journeyIdentityVerified
   }
 
   "clicking Submit refund request cta button redirects to cheque request received" in {
@@ -36,14 +37,16 @@ class YourChequeWillBePostedToYouPageSpec extends ItSpec {
     pages.completeYourRefundRequestPage.assertPageIsDisplayed()
     pages.completeYourRefundRequestPage.clickSubmitRefundRequest()
     // will there be an api call made at this point? todo add wiremock check for that call, if not remove this comment.
-    pages.chequeRequestReceivedPage.assertPageIsDisplayed()
+    pages.requestReceivedPage.assertPageIsDisplayedForCheque()
+    getJourneyFromDatabase(tdAll.journeyId) shouldBeLike tdAll.Cheque.journeyClaimedOverpayment
   }
 
-  "back button sends user to do you want your refund via bank transfer page" in {
+  "back button sends user to we have confirmed your identity" in {
     pages.completeYourRefundRequestPage.open()
     pages.completeYourRefundRequestPage.assertPageIsDisplayed()
     pages.completeYourRefundRequestPage.clickBackButton()
-    pages.doYouWantYourRefundViaBankTransferPage.assertPageIsDisplayed()
+    pages.weHaveConfirmedYourIdentityPage.assertPageIsDisplayed()
+    getJourneyFromDatabase(tdAll.journeyId) shouldBeLike tdAll.Cheque.journeyIdentityVerified
   }
 
 }

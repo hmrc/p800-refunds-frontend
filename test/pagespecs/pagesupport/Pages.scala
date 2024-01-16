@@ -43,9 +43,10 @@ class Pages(baseUrl: String)(implicit webDriver: WebDriver) {
 
   val completeYourRefundRequestPage = new CompleteYourRefundRequestPage(baseUrl = baseUrl)
   val chequeRequestReceivedPage = new ChequeRequestReceivedPage(baseUrl = baseUrl)
-  val bankTransferRequestReceivedPage = new BankTransferRequestReceivedPage(baseUrl = baseUrl)
 
   val whatIsTheNameOfYourBankAccountPage = new WhatIsTheNameOfYourBankAccountPage(baseUrl = baseUrl)
+
+  val requestReceivedPage = new RequestReceivedPage(baseUrl = baseUrl)
 
   // Page Stubs
   val govUkRouteInPage = new GovUkRouteInPage(baseUrl = baseUrl)

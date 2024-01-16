@@ -20,28 +20,33 @@ import org.openqa.selenium.WebDriver
 import pagespecs.pagesupport.{ContentExpectation, Page, PageUtil}
 import testsupport.RichMatchers.convertToAnyShouldWrapper
 
-class BankTransferRequestReceivedPage(baseUrl: String)(implicit webDriver: WebDriver) extends Page(
+class RequestReceivedPage(baseUrl: String)(implicit webDriver: WebDriver) extends Page(
   baseUrl,
   path = "/get-an-income-tax-refund/request-received"
 ) {
 
   override def expectedH1: String = "Request received"
 
-  override def assertPageIsDisplayed(extraExpectations: ContentExpectation*): Unit = withPageClue {
+  val expectedBankTransferH1: String = "Bank transfer request received"
+  val expectedChequeH1: String = "Cheque request received"
 
+  override def assertPageIsDisplayed(extraExpectations: ContentExpectation*): Unit =
+    sys.error("Use 'assertPageIsDisplayedForCheque' or 'assertPageIsDisplayedForBankTransfer' or other variants")
+
+  def assertPageIsDisplayedForBankTransfer(): Unit = {
     val contentExpectation: ContentExpectation = ContentExpectation(
       atXpath       = PageUtil.Xpath.mainContent,
       expectedLines =
         """
-          |Request received
-          |P800 reference
+          |Bank transfer request received
+          |Your P800 reference:
           |P800REFNO1
           |Your refund of £12.34 will now be paid by 1 December 2023.
           |
           |Print this page
           |
           |What happens next
-          |If you don’t receive your refund you can call or write to the Income Tax helpline (opens in new tab). You will need your P800 reference.
+          |If you do not receive your refund you can call or write to the Income Tax helpline (opens in new tab). You will need your P800 reference.
           |What did you think of this service? (takes 30 seconds)
           |""".stripMargin
     )
@@ -49,8 +54,8 @@ class BankTransferRequestReceivedPage(baseUrl: String)(implicit webDriver: WebDr
     PageUtil.assertPage(
       baseUrl             = baseUrl,
       path                = path,
-      h1                  = expectedH1,
-      title               = PageUtil.standardTitle(expectedH1),
+      h1                  = expectedBankTransferH1,
+      title               = PageUtil.standardTitle(expectedBankTransferH1),
       contentExpectations = contentExpectation
     )
 
@@ -60,7 +65,39 @@ class BankTransferRequestReceivedPage(baseUrl: String)(implicit webDriver: WebDr
     ()
   }
 
+  def assertPageIsDisplayedForCheque(): Unit = {
+    val contentExpectation: ContentExpectation = ContentExpectation(
+      atXpath       = PageUtil.Xpath.mainContent,
+      expectedLines =
+        """
+          |Cheque request received
+          |Your P800 reference:
+          |P800REFNO1
+          |Your refund of £12.34 will arrive in the post by 16 January 2024.
+          |
+          |Print this page
+          |
+          |What happens next
+          |If you do not receive your refund you can call or write to the Income Tax helpline (opens in new tab). You will need your P800 reference.
+          |What did you think of this service? (takes 30 seconds)
+          |""".stripMargin
+    )
+
+    PageUtil.assertPage(
+      baseUrl             = baseUrl,
+      path                = path,
+      h1                  = expectedChequeH1,
+      title               = PageUtil.standardTitle(expectedChequeH1),
+      contentExpectations = contentExpectation
+    )
+
+    generalEnquiriesHref() shouldBe "https://www.gov.uk/government/organisations/hm-revenue-customs/contact/income-tax-enquiries-for-individuals-pensioners-and-employees"
+    PageUtil.elementDisplayedByClassName("govuk-back-link") shouldBe false
+    ()
+  }
+
   private def generalEnquiriesHref(): String = PageUtil.getHrefById("general-enquiries-link")
+
   private def generalEnquiriesTarget(): String = PageUtil.getTargetById("general-enquiries-link")
 
   def clickPrintThisPage(): Unit = PageUtil.clickByIdOrName("print-page")
