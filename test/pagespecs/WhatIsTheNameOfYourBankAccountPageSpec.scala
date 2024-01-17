@@ -56,7 +56,7 @@ class WhatIsTheNameOfYourBankAccountPageSpec extends ItSpec {
     pages.whatIsTheNameOfYourBankAccountPage.open()
     pages.whatIsTheNameOfYourBankAccountPage.assertPageIsDisplayed()
     pages.whatIsTheNameOfYourBankAccountPage.clickMyAccountIsNotListed()
-    pages.chooseAnotherWayToReceiveYourRefundPage.assertPageIsDisplayed()
+    pages.chooseAnotherWayToReceiveYourRefundPage.assertPageIsDisplayedPtaOrCheque()
 
     EcospendStub.verifyEcospendAccessToken()
     EcospendStub.verifyEcospendGetBanks()

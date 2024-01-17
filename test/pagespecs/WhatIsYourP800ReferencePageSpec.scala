@@ -106,6 +106,7 @@ class WhatIsYourP800ReferencePageSpec extends ItSpec {
       }
   }
 
+  //todo ask Pawel, shouldn't this be 'We need to confirm your identity'?
   "Clicking on back button redirects back to 'Do you want to sign in?' page" - {
     "bank transfer" in {
       upsertJourneyToDatabase(tdAll.BankTransfer.journeySelectedType)

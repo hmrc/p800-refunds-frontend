@@ -32,7 +32,8 @@ class YourChequeWillBePostedToYouPageSpec extends ItSpec {
     getJourneyFromDatabase(tdAll.journeyId) shouldBeLike tdAll.Cheque.journeyIdentityVerified
   }
 
-  "clicking Submit refund request cta button redirects to cheque request received" in {
+  //TODO unignore when api call added and we update the status to hasFinished.Yes
+  "clicking Submit refund request cta button redirects to cheque request received" ignore {
     pages.completeYourRefundRequestPage.open()
     pages.completeYourRefundRequestPage.assertPageIsDisplayed()
     pages.completeYourRefundRequestPage.clickSubmitRefundRequest()
