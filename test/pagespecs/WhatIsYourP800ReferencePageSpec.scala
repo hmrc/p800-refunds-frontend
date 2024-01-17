@@ -106,8 +106,7 @@ class WhatIsYourP800ReferencePageSpec extends ItSpec {
       }
   }
 
-  //todo ask Pawel, shouldn't this be 'We need to confirm your identity'?
-  "Clicking on back button redirects back to 'Do you want to sign in?' page" - {
+  "Clicking on back button redirects back to 'We need you to confirm your identity' page" - {
     "bank transfer" in {
       upsertJourneyToDatabase(tdAll.BankTransfer.journeySelectedType)
       test()
@@ -122,7 +121,7 @@ class WhatIsYourP800ReferencePageSpec extends ItSpec {
         pages.whatIsYourP800ReferencePage.open()
         pages.whatIsYourP800ReferencePage.assertPageIsDisplayed()
         pages.whatIsYourP800ReferencePage.clickBackButton()
-        pages.doYouWantToSignInPage.assertPageIsDisplayed()
+        pages.weNeedYouToConfirmYourIdentityPage.assertPageIsDisplayed()
       }
   }
 }
