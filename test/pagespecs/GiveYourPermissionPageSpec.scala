@@ -58,7 +58,7 @@ class GiveYourPermissionPageSpec extends ItSpec {
     pages.giveYourPermissionPage.open()
     pages.giveYourPermissionPage.assertPageIsDisplayed()
     pages.giveYourPermissionPage.clickChooseAnotherWayToGetMyMoney()
-    pages.chooseAnotherWayToReceiveYourRefundPage.assertPageIsDisplayed()
+    pages.chooseAnotherWayToReceiveYourRefundPage.assertPageIsDisplayedPtaOrCheque()
     getJourneyFromDatabase(tdAll.journeyId) shouldBeLike tdAll.BankTransfer.journeyPermissionGiven
   }
 
