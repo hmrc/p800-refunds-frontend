@@ -91,7 +91,7 @@ class CheckYourAnswersPage(baseUrl: String)(implicit webDriver: WebDriver) exten
           expectedLines =
             """
               |Check your answers
-              |Reference
+              |P800 reference
               |Change
               |National insurance number
               |Change
@@ -106,7 +106,7 @@ class CheckYourAnswersPage(baseUrl: String)(implicit webDriver: WebDriver) exten
           expectedLines =
             """
               |Check your answers
-              |Reference
+              |P800 reference
               |Change
               |National insurance number
               |Change

@@ -147,7 +147,7 @@ class CheckYourAnswersController @Inject() (
 
   private def p800ReferenceSummaryRow(p800Reference: P800Reference)(implicit request: Request[_]): SummaryListRow = {
     buildSummaryListRow(
-      Messages.CheckYourAnswersMessages.`Reference`.show,
+      Messages.CheckYourAnswersMessages.`P800 reference`.show,
       id    = "reference",
       value = p800Reference.value,
       call  = controllers.routes.CheckYourAnswersController.changeP800Reference

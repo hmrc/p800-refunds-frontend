@@ -230,8 +230,8 @@ object Messages {
 
   object CheckYourAnswersMessages {
 
-    val `Reference`: Message = Message(
-      english = "Reference"
+    val `P800 reference`: Message = Message(
+      english = "P800 reference"
     )
 
     val `Check your answers`: Message = Message(
