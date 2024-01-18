@@ -1,67 +1,62 @@
 # microservice specific routes
 
-->          /hmrc-frontend                                                   hmrcfrontend.Routes
-GET         /assets/*file                                                    controllers.Assets.versioned(path = "/public", file: Asset)
+->          /hmrc-frontend                                                hmrcfrontend.Routes
+GET         /assets/*file                                                 controllers.Assets.versioned(path = "/public", file: Asset)
 
-GET         /start                                                           controllers.StartController.get
+GET         /start                                                        controllers.StartController.get
 
-GET         /do-you-want-to-sign-in                                          controllers.DoYouWantToSignInController.get
-POST        /do-you-want-to-sign-in                                          controllers.DoYouWantToSignInController.post
+GET         /do-you-want-to-sign-in                                       controllers.DoYouWantToSignInController.get
+POST        /do-you-want-to-sign-in                                       controllers.DoYouWantToSignInController.post
 
-# TODO: change URL to match page title (also change code names for journy state, controller, etc)
-# according to GDS "URLs should align with the title of the page"
-# see  https://www.gov.uk/guidance/content-design/url-standards-for-gov-uk
-GET         /enter-P800-reference                                            controllers.EnterP800ReferenceController.get
-POST        /enter-P800-reference                                            controllers.EnterP800ReferenceController.post
+GET         /do-you-want-your-refund-via-bank-transfer                    controllers.DoYouWantYourRefundViaBankTransferController.get
+POST        /do-you-want-your-refund-via-bank-transfer                    controllers.DoYouWantYourRefundViaBankTransferController.post
 
-GET         /check-your-reference                                            controllers.CheckYourReferenceController.get
-POST        /check-your-reference                                            controllers.CheckYourReferenceController.post
+GET         /we-need-you-to-confirm-your-identity                         controllers.WeNeedYouToConfirmYourIdentityController.get
+POST        /we-need-you-to-confirm-your-identity                         controllers.WeNeedYouToConfirmYourIdentityController.post
 
-GET         /we-cannot-confirm-your-reference                                controllers.CannotConfirmReferenceController.get
+GET         /what-is-your-p800-reference                                  controllers.WhatIsYourP800ReferenceController.get
+POST        /what-is-your-p800-reference                                  controllers.WhatIsYourP800ReferenceController.post
 
-GET         /do-you-want-your-refund-via-bank-transfer                       controllers.DoYouWantYourRefundViaBankTransferController.get
-POST        /do-you-want-your-refund-via-bank-transfer                       controllers.DoYouWantYourRefundViaBankTransferController.post
+GET         /what-is-your-national-insurance-number                       controllers.WhatIsYourNationalInsuranceNumberController.get
+POST        /what-is-your-national-insurance-number                       controllers.WhatIsYourNationalInsuranceNumberController.post
 
-GET         /complete-your-refunds-request-to-get-your-cheque                controllers.YourChequeWillBePostedToYouController.get
-POST        /complete-your-refunds-request-to-get-your-cheque                controllers.YourChequeWillBePostedToYouController.post
+#bank transfer only
+GET         /what-is-your-date-of-birth                                   controllers.WhatIsYourDateOfBirthController.get
+POST        /what-is-your-date-of-birth                                   controllers.WhatIsYourDateOfBirthController.post
 
-#TODO: change url to reflect cheque in the name, there will be another request-received page so we want to distinguish between them
-GET         /cheque/request-received                                         controllers.RequestReceivedController.chequeGet
-GET         /bank/request-received                                           controllers.RequestReceivedController.bankTransferGet
+GET         /check-your-answers                                           controllers.CheckYourAnswersController.get
+POST        /check-your-answers                                           controllers.CheckYourAnswersController.post
+GET         /check-your-answers/change-p800-reference                     controllers.CheckYourAnswersController.changeP800Reference
+GET         /check-your-answers/change-national-insurance-number          controllers.CheckYourAnswersController.changeNationalInsuranceNumber
+GET         /check-your-answers/change-date-of-birth                      controllers.CheckYourAnswersController.changeDateOfBirth
 
-GET         /request-not-submitted                                           controllers.RequestNotSubmittedController.get
+GET         /we-have-confirmed-your-identity                              controllers.WeHaveConfirmedYourIdentityController.get
+POST        /we-have-confirmed-your-identity                              controllers.WeHaveConfirmedYourIdentityController.post
 
-GET         /give-your-consent                                               controllers.GiveYourConsentController.get
-#TODO: maybe we should make this a post? For now it is protected by journey state matching.
-GET         /approve-this-refund                                             controllers.GiveYourConsentController.approveThisRefund
-GET         /verifying-bank-account                                          controllers.VerifyBankAccountController.get
+GET         /we-cannot-confirm-your-identity                              controllers.WeCannotConfirmYourIdentityController.get
+POST        /we-cannot-confirm-your-identity                              controllers.WeCannotConfirmYourIdentityController.tryAgain
+GET         /we-cannot-confirm-your-identity/choose-another-method        controllers.WeCannotConfirmYourIdentityController.choseAnotherMethod
 
+GET         /choose-another-way-to-receive-your-refund                    controllers.ChooseAnotherWayToGetYourRefundController.get
+POST        /choose-another-way-to-receive-your-refund/bank-transfer-via-pta-or-cheque                          controllers.ChooseAnotherWayToGetYourRefundController.postBankTransferViaPtaOrCheque
+POST        /choose-another-way-to-receive-your-refund/bank-transfer-via-pta-or-bank-transfer-logged-out        controllers.ChooseAnotherWayToGetYourRefundController.postBankTransferViaPtaOrBankTransferLoggedOut
 
-#we-need-you-to-confirm-your-identity:
-GET         /we-need-you-to-confirm-your-identity                            controllers.WeNeedYouToConfirmYourIdentityController.get
+#cheque only
+GET         /complete-your-refunds-request-to-get-your-cheque             controllers.CompleteYourRefundRequestController.get
+POST        /complete-your-refunds-request-to-get-your-cheque             controllers.CompleteYourRefundRequestController.post
 
-GET         /what-is-your-full-name                                          controllers.WhatIsYourFullNameController.get
-POST        /what-is-your-full-name                                          controllers.WhatIsYourFullNameController.post
+#bank transfer only
+GET         /what-is-the-name-of-your-bank-account                        controllers.WhatIsTheNameOfYourBankController.get
+POST        /what-is-the-name-of-your-bank-account                        controllers.WhatIsTheNameOfYourBankController.post
 
-GET         /what-is-your-date-of-birth                                      controllers.WhatIsYourDateOfBirthController.get
-POST        /what-is-your-date-of-birth                                      controllers.WhatIsYourDateOfBirthController.post
+#bank transfer only
+GET         /give-your-permission                                         controllers.GiveYourPermissionController.get
+POST        /give-your-permission                                         controllers.GiveYourPermissionController.post
 
-GET         /what-is-your-national-insurance-number                          controllers.WhatIsYourNationalInsuranceNumberController.get
-POST        /what-is-your-national-insurance-number                          controllers.WhatIsYourNationalInsuranceNumberController.post
+#bank transfer only
+GET         /we-are-verifying-your-bank-account                           controllers.WeAreVerifyingYourBankAccountController.get
 
-GET         /check-your-answers                                              controllers.CheckYourAnswersController.get
-POST        /check-your-answers                                              controllers.CheckYourAnswersController.post
-GET         /check-your-answers/change-your-full-name                        controllers.CheckYourAnswersController.changeFullName
-GET         /check-your-answers/change-your-date-of-birth                    controllers.CheckYourAnswersController.changeDateOfBirth
-GET         /check-your-answers/change-your-national-insurance-number        controllers.CheckYourAnswersController.changeNationalInsuranceNumber
+GET         /request-received                                             controllers.RequestReceivedController.get
 
-GET         /we-have-confirmed-your-identity                                 controllers.WeHaveConfirmedYourIdentityController.get
-
-GET         /we-cannot-confirm-your-identity                                 controllers.WeCannotConfirmYourIdentityController.get
-POST        /we-cannot-confirm-your-identity                                 controllers.WeCannotConfirmYourIdentityController.tryAgain
-
-GET         /choose-another-way-to-receive-your-refund                       controllers.ChooseAnotherWayToGetYourRefundController.get
-POST        /choose-another-way-to-receive-your-refund                       controllers.ChooseAnotherWayToGetYourRefundController.post
-
-GET         /what-is-the-name-of-your-bank-account                           controllers.WhatIsTheNameOfYourBankAccountController.get
-POST        /what-is-the-name-of-your-bank-account                           controllers.WhatIsTheNameOfYourBankAccountController.post
+GET         /your-refund-request-has-not-been-submitted                   controllers.YourRefundRequestHasNotBeenSubmittedController.get
+POST        /your-refund-request-has-not-been-submitted                   controllers.YourRefundRequestHasNotBeenSubmittedController.post

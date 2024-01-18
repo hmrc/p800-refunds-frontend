@@ -16,7 +16,7 @@
 
 package services
 
-import models.journeymodels.{Journey, JourneyStarted}
+import models.journeymodels.{HasFinished, Journey}
 
 import java.time.{Clock, Instant}
 import javax.inject.{Inject, Singleton}
@@ -27,9 +27,17 @@ class JourneyFactory @Inject() (
     clock:              Clock
 ) {
 
-  def makeNewJourney(): Journey = JourneyStarted(
-    _id       = journeyIdGenerator.nextJourneyId(),
-    createdAt = Instant.now(clock)
+  def makeNewJourney(): Journey = Journey(
+    _id                          = journeyIdGenerator.nextJourneyId(),
+    createdAt                    = Instant.now(clock),
+    hasFinished                  = HasFinished.No,
+    journeyType                  = None,
+    p800Reference                = None,
+    nationalInsuranceNumber      = None,
+    isChanging                   = false,
+    dateOfBirth                  = None,
+    identityVerificationResponse = None,
+    bankDescription              = None
   )
 
 }

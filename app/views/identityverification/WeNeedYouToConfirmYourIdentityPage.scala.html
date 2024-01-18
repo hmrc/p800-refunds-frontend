@@ -17,13 +17,17 @@
 @import language.Messages
 @import uk.gov.hmrc.govukfrontend.views.html.components._
 @import views.html.templates.Layout
+@import models.journeymodels.JourneyType
 
 @this(
     layout: Layout,
     viewsHelpers: views.ViewsHelpers
 )
 
-@()(implicit request: Request[_])
+@(
+    journeyType: JourneyType)(implicit
+    request: Request[_]
+)
 
 @import viewsHelpers.requestSupport._
 
@@ -49,7 +53,14 @@
     <ul  class="govuk-list govuk-list--bullet">
         <li>@{Messages.WeNeedToConfirmYourIdentity.`P800 reference`.show}</li>
         <li>@{Messages.WeNeedToConfirmYourIdentity.`national insurance number`.show}</li>
-        <li>@{Messages.WeNeedToConfirmYourIdentity.`date of birth`.show}</li>
+
+        @{  journeyType match {
+              case JourneyType.Cheque => Html("")
+              case JourneyType.BankTransfer =>
+                <li>{Messages.WeNeedToConfirmYourIdentity.`date of birth`.show}</li>
+            }
+        }
+
     </ul>
 
     <p class="govuk-body">
@@ -57,10 +68,11 @@
     </p>
 
 
-    @viewsHelpers.govukButton(Button(
-        content = Text(Messages.CommonMessages.`continue`.show),
-        id      = Some("submit"),
-        classes = "govuk-!-margin-top-4",
-        href    = Some(routes.WhatIsYourFullNameController.get.url)
-    ))
+    @viewsHelpers.formWithCsrf(action = routes.WeNeedYouToConfirmYourIdentityController.post) {
+        @viewsHelpers.govukButton(Button(
+            content = Text(Messages.CommonMessages.`continue`.show),
+            id = Some("submit"),
+            classes = "govuk-!-margin-top-4"
+        ))
+    }
 }

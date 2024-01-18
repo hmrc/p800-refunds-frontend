@@ -17,15 +17,19 @@
 package testsupport.stubs
 
 import com.github.tomakehurst.wiremock.stubbing.StubMapping
-import models.IdentityVerificationRequest
+import models.{IdentityVerificationRequest, IdentityVerificationResponse}
 import play.api.http.Status
+import play.api.libs.json.Json
 
 object IdentityVerificationStub {
 
   val url = "/verify-identity"
 
-  def stubIdentityVerification2xxSucceeded: StubMapping = WireMockHelpers.stubForPostWithResponseBody(url, """{ "identityVerified": true, "amount": 12312 }""")
-  def stubIdentityVerification2xxFailed: StubMapping = WireMockHelpers.stubForPostWithResponseBody(url, """{ "identityVerified": false, "amount": 12312 }""")
+  def stubIdentityVerification2xx(response: IdentityVerificationResponse): StubMapping =
+    WireMockHelpers.stubForPostWithResponseBody(
+      url,
+      Json.prettyPrint(Json.toJson(response))
+    )
 
   //todo once we have specs, update these and use in tests.
   def stubIdentityVerification5xxBadGateway: StubMapping = WireMockHelpers.stubForPostNoResponseBody(url, Status.BAD_GATEWAY)

@@ -16,6 +16,8 @@
 
 package pagespecs
 
+import models.journeymodels.Journey
+import play.api.libs.json.Json
 import testsupport.ItSpec
 
 class StartEndpointPageSpec extends ItSpec {
@@ -23,5 +25,9 @@ class StartEndpointPageSpec extends ItSpec {
   "navigating to /start redirects to /do-you-want-to-sign-in" in {
     pages.startEndpoint.open()
     pages.doYouWantToSignInPage.assertPageIsDisplayed()
+    goToViaPath("/get-an-income-tax-refund/test-only/show-journey")
+    val journey = Json.parse(webDriver.getPageSource).as[Journey]
+    // relaxed assertion, it has new journeyId when this endpoint is called - we mainly care that it's started
+    getJourneyFromDatabase(journey._id) shouldBeLike tdAll.journeyStarted.copy(_id       = journey.id, createdAt = journey.createdAt)
   }
 }

@@ -32,14 +32,16 @@ class DoYouWantToSignInPageSpec extends ItSpec {
     pages.doYouWantToSignInPage.selectYes()
     pages.doYouWantToSignInPage.clickSubmit()
     pages.ptaSignInPage.assertPageIsDisplayed()
+    getJourneyFromDatabase(tdAll.journeyId) shouldBeLike tdAll.journeyStarted
   }
 
-  "Selecting 'No, continue without signing in' redirects to 'What is your P800 Reference' page" in {
+  "Selecting 'No, continue without signing in' redirects to 'Do you want your refund by bank transfer' page" in {
     pages.doYouWantToSignInPage.open()
     pages.doYouWantToSignInPage.assertPageIsDisplayed()
     pages.doYouWantToSignInPage.selectNo()
     pages.doYouWantToSignInPage.clickSubmit()
-    pages.enterP800ReferencePage.assertPageIsDisplayed()
+    pages.doYouWantYourRefundViaBankTransferPage.assertPageIsDisplayed()
+    getJourneyFromDatabase(tdAll.journeyId) shouldBeLike tdAll.journeyStarted
   }
 
   "Clicking 'Back' redirects back to start page" in {
@@ -47,6 +49,7 @@ class DoYouWantToSignInPageSpec extends ItSpec {
     pages.doYouWantToSignInPage.assertPageIsDisplayed()
     pages.doYouWantToSignInPage.clickBackButton()
     pages.govUkRouteInPage.assertPageIsDisplayed()
+    getJourneyFromDatabase(tdAll.journeyId) shouldBeLike tdAll.journeyStarted
   }
 
   "Selecting nothing and clicking continue shows error" in {
@@ -54,6 +57,7 @@ class DoYouWantToSignInPageSpec extends ItSpec {
     pages.doYouWantToSignInPage.assertPageIsDisplayed()
     pages.doYouWantToSignInPage.clickSubmit()
     pages.doYouWantToSignInPage.assertPageShowsWithErrors()
+    getJourneyFromDatabase(tdAll.journeyId) shouldBeLike tdAll.journeyStarted
   }
 
 }

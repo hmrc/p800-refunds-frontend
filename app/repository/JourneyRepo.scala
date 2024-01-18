@@ -38,7 +38,7 @@ final class JourneyRepo @Inject() (
     collectionName = "journey",
     mongoComponent = mongoComponent,
     indexes        = JourneyRepo.indexes(config.journeyRepoTtl),
-    extraCodecs    = Codecs.playFormatSumCodecs(Journey.format),
+    extraCodecs    = Seq(Codecs.playFormatCodec(Journey.format)),
     replaceIndexes = true
   ) {
 
@@ -51,7 +51,7 @@ object JourneyRepo {
   }
 
   implicit val journeyIdExtractor: IdExtractor[Journey, JourneyId] = new IdExtractor[Journey, JourneyId] {
-    override def id(j: Journey): JourneyId = j.journeyId
+    override def id(j: Journey): JourneyId = j._id
   }
 
   def indexes(cacheTtl: FiniteDuration): Seq[IndexModel] = Seq(

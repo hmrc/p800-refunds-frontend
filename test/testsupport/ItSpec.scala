@@ -20,7 +20,7 @@ import com.google.inject.AbstractModule
 import models.journeymodels.{Journey, JourneyId}
 import org.openqa.selenium.WebDriver
 import org.openqa.selenium.htmlunit.HtmlUnitDriver
-import org.scalatest.BeforeAndAfterEach
+import org.scalatest.{Assertion, BeforeAndAfterEach}
 import org.scalatest.freespec.AnyFreeSpecLike
 import org.scalatest.matchers.should.Matchers
 import org.scalatest.time.{Millis, Seconds, Span}
@@ -107,6 +107,20 @@ trait ItSpec extends AnyFreeSpecLike
     journeyRepo.upsert(journey).futureValue
   }
 
+  def getJourneyFromDatabase(journeyId: JourneyId): Journey = {
+    val journeyRepo: JourneyRepo = app.injector.instanceOf[JourneyRepo]
+    journeyRepo.findById(journeyId).futureValue.value
+  }
+
   lazy val pages = new Pages(baseUrl)
+
+  implicit class JourneyShouldBeOps(j: Journey) {
+    /**
+     * Asserts the journey matches expected Journey ignoring `createdAt`
+     */
+    def shouldBeLike(expected: Journey): Assertion = {
+      j.copy(createdAt = expected.createdAt) shouldBe expected
+    }
+  }
 
 }

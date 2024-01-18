@@ -17,14 +17,14 @@
 package controllers
 
 import action.{Actions, JourneyRequest}
-import io.scalaland.chimney.dsl._
-import models.dateofbirth.DateOfBirth
 import models.forms.WhatIsYourDateOfBirthForm
 import models.journeymodels._
 import play.api.mvc._
 import requests.RequestSupport
 import services.JourneyService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
+import util.Errors
+import util.SafeEquals.EqualsOps
 import views.Views
 
 import javax.inject.{Inject, Singleton}
@@ -41,35 +41,24 @@ class WhatIsYourDateOfBirthController @Inject() (
 
   import requestSupport._
 
-  val get: Action[AnyContent] = actions.journeyAction { implicit request: JourneyRequest[_] =>
-    request.journey match {
-      case j: JTerminal                                   => JourneyRouter.handleFinalJourneyOnNonFinalPage(j)
-      case j: JourneyDoYouWantYourRefundViaBankTransferNo => JourneyRouter.sendToCorrespondingPage(j)
-      case j: JBeforeWhatIsYourFullName                   => JourneyRouter.sendToCorrespondingPage(j)
-      case _: JourneyWhatIsYourFullName                   => getResult(None)
-      case j: JourneyWhatIsYourDateOfBirth                => getResult(Some(j.dateOfBirth))
-      case j: JAfterWhatIsYourDateOfBirth                 => getResult(Some(j.dateOfBirth))
-    }
+  def get: Action[AnyContent] = actions.journeyInProgress { implicit request: JourneyRequest[_] =>
+    val journey: Journey = request.journey
+    Errors.require(journey.getJourneyType === JourneyType.BankTransfer, "This page is only for BankTransfer journey")
+
+    Ok(views.whatIsYourDateOfBirthPage(
+      journey.dateOfBirth.fold(
+        WhatIsYourDateOfBirthForm.form
+      )(dob =>
+          WhatIsYourDateOfBirthForm.form.fill(WhatIsYourDateOfBirthForm(dob)))
+    ))
   }
 
-  private def getResult(maybeDateOfBirth: Option[DateOfBirth])(implicit request: JourneyRequest[_]): Result = {
-    maybeDateOfBirth.fold(
-      Ok(views.whatIsYourDateOfBirthPage(WhatIsYourDateOfBirthForm.form))
-    ) { dateOfBirth: DateOfBirth =>
-        Ok(views.whatIsYourDateOfBirthPage(WhatIsYourDateOfBirthForm.form.fill(WhatIsYourDateOfBirthForm(dateOfBirth))))
-      }
+  def post: Action[AnyContent] = actions.journeyInProgress.async { implicit request =>
+    val journey: Journey = request.journey
+    processForm(journey)
   }
 
-  val post: Action[AnyContent] = actions.journeyAction.async { implicit request =>
-    request.journey match {
-      case j: JTerminal                                   => JourneyRouter.handleFinalJourneyOnNonFinalPageF(j)
-      case j: JourneyDoYouWantYourRefundViaBankTransferNo => JourneyRouter.sendToCorrespondingPageF(j)
-      case j: JBeforeWhatIsYourFullName                   => JourneyRouter.sendToCorrespondingPageF(j)
-      case j: JAfterDoYouWantYourRefundViaBankTransferYes => processForm(j)
-    }
-  }
-
-  private def processForm(journey: JAfterDoYouWantYourRefundViaBankTransferYes)(implicit request: Request[_]): Future[Result] = {
+  private def processForm(journey: Journey)(implicit request: Request[_]): Future[Result] = {
     WhatIsYourDateOfBirthForm
       .form
       .bindFromRequest()
@@ -78,21 +67,14 @@ class WhatIsYourDateOfBirthController @Inject() (
           Future.successful(BadRequest(views.whatIsYourDateOfBirthPage(form = formWithErrors)))
         },
         validForm => {
-          val newJourney: Journey = journey match {
-            case j: JourneyWhatIsYourFullName     => j.into[JourneyWhatIsYourDateOfBirth].withFieldConst(_.dateOfBirth, validForm.date).transform
-            case j: JourneyCheckYourAnswersChange => j.into[JourneyWhatIsYourNationalInsuranceNumber].withFieldConst(_.dateOfBirth, validForm.date).transform
-            case j: JAfterWhatIsYourFullName      => j.into[JourneyWhatIsYourDateOfBirth].enableInheritedAccessors.withFieldConst(_.dateOfBirth, validForm.date).transform
-          }
           journeyService
-            .upsert(newJourney)
-            .map(_ =>
-              //TIP: navigate to the next page or to the checkYourAnswers page depending if it was a change or not.
-              journey match {
-                case _: JourneyCheckYourAnswersChange => Redirect(controllers.routes.CheckYourAnswersController.get)
-                case _                                => Redirect(controllers.routes.WhatIsYourNationalInsuranceNumberController.get)
-              })
+            .upsert(journey.copy(
+              dateOfBirth = Some(validForm.date)
+            ))
+            .map(_ => Redirect(controllers.routes.CheckYourAnswersController.get))
         }
       )
   }
 
 }
+

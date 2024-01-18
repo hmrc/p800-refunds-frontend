@@ -31,9 +31,10 @@ object WireMockHelpers {
   /**
    * Useful wiremock helper to verify that the request body serialises to what we expect.
    * Hint: If it's not working and you can't work out why, check what A you are passing in... :)
-   * @param url: String
-   * @param format: play.api.libs.json.Format as an implicit
-   * @tparam A: Model we want to get format for
+   *
+   * @param url    : String
+   * @param format : play.api.libs.json.Format as an implicit
+   * @tparam A : Model we want to get format for
    */
   def verifyWithBodyParse[A](url: String)(implicit format: Format[A]): Unit = verify(
     postRequestedFor(urlPathEqualTo(url))
@@ -94,6 +95,24 @@ object WireMockHelpers {
         .withStatus(responseStatus)
         .withBody(jsonBody)
     )
+  )
+
+  //TODO rewrite stubs using this method
+  def stubForPost(
+      url:              String,
+      requestBodyJson:  String,
+      responseJsonBody: String,
+      responseStatus:   Int    = Status.OK
+  ): StubMapping = stubFor(
+    post(urlPathEqualTo(url))
+      .withRequestBody(
+        equalToJson(requestBodyJson, true, true)
+      )
+      .willReturn(
+        aResponse()
+          .withStatus(responseStatus)
+          .withBody(responseJsonBody)
+      )
   )
 
   def stubForPostWithRequestBodyMatching(url: String, requestMatchingPath: String, jsonBody: String, responseStatus: Int = Status.OK): StubMapping = stubFor(

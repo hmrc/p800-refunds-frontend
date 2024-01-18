@@ -17,7 +17,6 @@
 package controllers
 
 import action.Actions
-import io.scalaland.chimney.dsl._
 import models.forms.DoYouWantYourRefundViaBankTransferForm
 import models.forms.enumsforforms.DoYouWantYourRefundViaBankTransferFormValue
 import models.journeymodels._
@@ -25,7 +24,6 @@ import play.api.mvc._
 import requests.RequestSupport
 import services.JourneyService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
-import util.Errors
 import views.Views
 
 import javax.inject.{Inject, Singleton}
@@ -42,59 +40,33 @@ class DoYouWantYourRefundViaBankTransferController @Inject() (
 
   import requestSupport._
 
-  val get: Action[AnyContent] = actions.journeyAction.async { implicit request =>
-    request.journey match {
-      case j: JTerminal                      => JourneyRouter.handleFinalJourneyOnNonFinalPageF(j)
-      case j: JBeforeCheckYourReferenceValid => JourneyRouter.sendToCorrespondingPageF(j)
-      case _: JourneyCheckYourReferenceValid => Future.successful(getResult)
-      case j: JAfterCheckYourReferenceValid =>
-        journeyService
-          .upsert(
-            j
-              .into[JourneyCheckYourReferenceValid]
-              .enableInheritedAccessors
-              .transform
-          )
-          .map(_ => getResult)
-    }
+  def get: Action[AnyContent] = actions.journeyInProgress { implicit request =>
+    Ok(views.doYouWantYourRefundViaBankTransferPage(
+      DoYouWantYourRefundViaBankTransferForm.form
+    ))
   }
 
-  private def getResult(implicit request: Request[_]): Result = Ok(views.doYouWantYourRefundViaBankTransferPage(
-    DoYouWantYourRefundViaBankTransferForm.form
-  ))
-
-  val post: Action[AnyContent] = actions.journeyAction.async { implicit request =>
-    request.journey match {
-      case j: JTerminal                      => JourneyRouter.handleFinalJourneyOnNonFinalPageF(j)
-      case j: JBeforeCheckYourReferenceValid => JourneyRouter.sendToCorrespondingPageF(j)
-      case j: JourneyCheckYourReferenceValid => processForm(j)
-      case _: JAfterCheckYourReferenceValid =>
-        Errors.throwServerErrorException(s"This endpoint supports only ${classOf[JourneyCheckYourReferenceValid].toString}")
-      //TODO: discuss alternative approach
-      //val journey = j
-      //              .into[JourneyCheckYourReferenceValid]
-      //              .enableInheritedAccessors
-      //              .transform
-      //processForm(j)
-    }
-  }
-
-  private def processForm(journey: JourneyCheckYourReferenceValid)(implicit request: Request[_]): Future[Result] =
+  def post: Action[AnyContent] = actions.journeyInProgress.async { implicit request =>
+    val journey = request.journey
     DoYouWantYourRefundViaBankTransferForm
       .form
       .bindFromRequest()
       .fold(
-        formWithErrors => Future.successful(BadRequest(views.doYouWantYourRefundViaBankTransferPage(
-          form = formWithErrors
-        ))), {
-          case DoYouWantYourRefundViaBankTransferFormValue.Yes =>
+        formWithErrors =>
+          Future.successful(BadRequest(views.doYouWantYourRefundViaBankTransferPage(
+            form = formWithErrors
+          ))), {
+          formValue =>
+
+            val journeyType: JourneyType = formValue match {
+              case DoYouWantYourRefundViaBankTransferFormValue.Yes => JourneyType.BankTransfer
+              case DoYouWantYourRefundViaBankTransferFormValue.No  => JourneyType.Cheque
+            }
             journeyService
-              .upsert(journey.transformInto[JourneyDoYouWantYourRefundViaBankTransferYes])
+              .upsert(journey.copy(journeyType = Some(journeyType)))
               .map(_ => Redirect(controllers.routes.WeNeedYouToConfirmYourIdentityController.get))
-          case DoYouWantYourRefundViaBankTransferFormValue.No =>
-            journeyService
-              .upsert(journey.transformInto[JourneyDoYouWantYourRefundViaBankTransferNo])
-              .map(_ => Redirect(controllers.routes.YourChequeWillBePostedToYouController.get))
         }
       )
+  }
+
 }

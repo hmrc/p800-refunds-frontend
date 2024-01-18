@@ -25,7 +25,7 @@ class WhatIsTheNameOfYourBankAccountPage(baseUrl: String)(implicit webDriver: We
   path = "/get-an-income-tax-refund/what-is-the-name-of-your-bank-account"
 ) {
 
-  override def expectedH1: String = "What is the name of your bank account?"
+  override def expectedH1: String = "What is the name of your bank?"
 
   override def clickSubmit()(implicit webDriver: WebDriver): Unit =
     PageUtil.clickByIdOrName("continue")
@@ -42,8 +42,10 @@ class WhatIsTheNameOfYourBankAccountPage(baseUrl: String)(implicit webDriver: We
       atXpath       = PageUtil.Xpath.mainContent,
       expectedLines =
         """
-          |What is the name of your bank account?
-          |Select a UK bank or building society that you’d like your refund to be sent to.
+          |What is the name of your bank?
+          |Start typing the name of a UK bank that you want your refund to be sent to.
+          |Continue
+          |My bank is not listed
           |""".stripMargin
     )) ++ extraExpectations
 

@@ -19,20 +19,23 @@ package pagespecs.pages
 import org.openqa.selenium.WebDriver
 import pagespecs.pagesupport.{ContentExpectation, Page, PageUtil}
 
-class ChooseAnotherWayToReceiveYourRefundPage(baseUrl: String)(implicit webDriver: WebDriver) extends Page(
-  baseUrl,
-  path = "/get-an-income-tax-refund/choose-another-way-to-receive-your-refund"
-) {
+class ChooseAnotherWayToReceiveYourRefundPage(
+    baseUrl:           String,
+    override val path: String = "/get-an-income-tax-refund/choose-another-way-to-receive-your-refund"
+)(implicit webDriver: WebDriver) extends Page(baseUrl, path) {
 
   override def expectedH1: String = "Choose another way to receive your refund"
 
-  override def assertPageIsDisplayed(errors: ContentExpectation*): Unit = withPageClue {
+  override def assertPageIsDisplayed(errors: ContentExpectation*): Unit = sys.error("Use another variant for asserting page")
+
+  def assertPageIsDisplayedPtaOrCheque(errors: ContentExpectation*): Unit = withPageClue {
     val contentExpectations: Seq[ContentExpectation] = Seq(ContentExpectation(
       atXpath       = PageUtil.Xpath.mainContent,
       expectedLines =
         """
           |Choose another way to receive your refund
-          |Bank transfer via your personal tax account
+          |You will have fewer details to enter if you sign in using your Government Gateway user ID.
+          |Bank transfer using your Government Gateway user ID to sign in
           |Cheque
           |Continue
           |""".stripMargin
@@ -47,19 +50,53 @@ class ChooseAnotherWayToReceiveYourRefundPage(baseUrl: String)(implicit webDrive
     )
   }
 
-  def assertPageShowsWithErrors(): Unit = withPageClue {
+  def assertPageIsDisplayedPtaOrBankTransfer(errors: ContentExpectation*): Unit = withPageClue {
+    val contentExpectations: Seq[ContentExpectation] = Seq(ContentExpectation(
+      atXpath       = PageUtil.Xpath.mainContent,
+      expectedLines =
+        """
+          |Choose another way to receive your refund
+          |Bank transfer using your Government Gateway user ID to sign in
+          |Bank transfer logged out
+          |Continue
+          |""".stripMargin
+    )) ++ errors
+
+    PageUtil.assertPage(
+      baseUrl             = baseUrl,
+      path                = path,
+      h1                  = expectedH1,
+      title               = PageUtil.standardTitle(expectedH1),
+      contentExpectations = contentExpectations: _*
+    )
+  }
+
+  def assertPtaOrChequePageShowsWithErrors(): Unit = withPageClue {
     val errorContent: ContentExpectation = ContentExpectation(
       atXpath       = PageUtil.Xpath.mainContent,
       expectedLines =
         """
           |There is a problem
-          |Select if you want to receive a bank transfer via your personal tax account, or a cheque
+          |Select the way you want to receive your refund
           |""".stripMargin
     )
-    assertPageIsDisplayed(errorContent)
+
+    PageUtil.assertPage(
+      baseUrl             = baseUrl,
+      path                = path + "/bank-transfer-via-pta-or-cheque",
+      h1                  = expectedH1,
+      title               = PageUtil.standardTitle(expectedH1),
+      contentExpectations = errorContent
+    )
   }
 
-  def clickBankTransferOption(): Unit = PageUtil.clickByIdOrName("way-to-get-refund")
-  def clickChequeOption(): Unit = PageUtil.clickByIdOrName("way-to-get-refund-2")
+  object PtaOrCheque {
+    def selectBankTransferViaPta(): Unit = PageUtil.clickByIdOrName("way-to-get-refund")
+    def selectCheque(): Unit = PageUtil.clickByIdOrName("way-to-get-refund-2")
+  }
+  object PtaOrBankTransfer {
+    def selectBankTransferViaPta(): Unit = PageUtil.clickByIdOrName("way-to-get-refund")
+    def selectBankTransferLoggedOut(): Unit = PageUtil.clickByIdOrName("way-to-get-refund-2")
+  }
 
 }

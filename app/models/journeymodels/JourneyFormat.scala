@@ -16,15 +16,19 @@
 
 package models.journeymodels
 
-import julienrf.json.derived
-import play.api.libs.json.{Json, OFormat, OWrites}
+import play.api.libs.json.{Format, Json, OFormat, OWrites}
 import uk.gov.hmrc.mongo.play.json.formats.MongoJavatimeFormats
+
+import java.time.Instant
 
 private[journeymodels] object JourneyFormat {
 
   val format: OFormat[Journey] = {
+
+    implicit val instantFormat: Format[Instant] = MongoJavatimeFormats.instantFormat
+
     @SuppressWarnings(Array("org.wartremover.warts.Any"))
-    val defaultFormat: OFormat[Journey] = derived.oformat[Journey]()
+    val defaultFormat: OFormat[Journey] = Json.format[Journey]
 
     //we need to write some extra fields on the top of the structure so it's
     //possible to index on them and use them in queries

@@ -43,7 +43,7 @@
 
 @layout(
     pageTitle = Some(title),
-    backLinkUrlOverride = Some(controllers.routes.WhatIsYourDateOfBirthController.get.url)
+    backLinkUrlOverride = Some(controllers.routes.WhatIsYourP800ReferenceController.get.url)
 ) {
     @if(form.errors.nonEmpty) {
         @viewsHelpers.govukErrorSummary(ErrorSummary(errorList = form.errors.asTextErrorLinks, title = Text(Messages.CommonMessages.`There is a problem`.show)))

@@ -17,6 +17,7 @@
 package models.dateofbirth
 
 import play.api.libs.json.{Json, OFormat}
+import util.SafeEquals.EqualsOps
 
 import java.time.LocalDate
 import java.util.{Calendar, Locale}
@@ -41,9 +42,9 @@ object DateOfBirth {
 
   def asLocalDate(dateOfBirth: DateOfBirth): LocalDate = {
     Try {
-      val month: Int = monthStringAndIntValue.toMap
-        .get(dateOfBirth.month.value) //if the month is Jan or January (etc) get associated 0 based index of the month
-        .map(_ + 1) //increase base so January is 1 (not 0)
+      val month: Int = monthStringAndIntValue
+        .find(_._1.toUpperCase() === dateOfBirth.month.value.toUpperCase()) //if the month is Jan or January (etc) get associated 0 based index of the month
+        .map(_._2 + 1) //increase base so January is 1 (not 0)
         .getOrElse(dateOfBirth.month.value.toInt) //if the month is string represetnging integer, cast it to int
 
       LocalDate.of(

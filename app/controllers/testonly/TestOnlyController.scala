@@ -17,7 +17,7 @@
 package controllers.testonly
 
 import action.{Actions, JourneyIdKey}
-import models.journeymodels.{Journey, JourneyId}
+import models.journeymodels.{HasFinished, Journey, JourneyId}
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import services.JourneyService
@@ -61,6 +61,18 @@ class TestOnlyController @Inject() (
 
   def showJourneyById(journeyId: JourneyId): Action[AnyContent] = as.default.async { _ =>
     showJourney(journeyId)
+  }
+
+  //TODO: remove it once we integrate with APIs
+  val finishSucceedBankTransfer: Action[AnyContent] = as.journeyActionForTestOnly.async { implicit r =>
+    journeyService.upsert(r.journey.copy(hasFinished = HasFinished.YesSucceeded)).map(_ =>
+      Redirect(controllers.routes.RequestReceivedController.get))
+  }
+
+  //TODO: remove it once we integrate with APIs
+  val finishFailBankTransfer: Action[AnyContent] = as.journeyActionForTestOnly.async { implicit r =>
+    journeyService.upsert(r.journey.copy(hasFinished = HasFinished.YesFailed)).map(_ =>
+      Redirect(controllers.routes.YourRefundRequestHasNotBeenSubmittedController.get))
   }
 
   def addJourneyIdToSession(journeyId: JourneyId): Action[AnyContent] = as.default { implicit request =>

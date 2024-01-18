@@ -1,0 +1,84 @@
+@*
+ * Copyright 2023 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import language.Messages
+@import uk.gov.hmrc.govukfrontend.views.html.components._
+@import uk.gov.hmrc.govukfrontend.views.html.components.implicits._
+@import views.html.templates.Layout
+@import models.forms.enumsforforms.PtaOrChequeFormValue
+
+@this(
+    layout: Layout,
+    viewsHelpers: views.ViewsHelpers
+)
+
+@(form: Form[PtaOrChequeFormValue])(implicit request: Request[_])
+
+@import viewsHelpers.requestSupport._
+
+@title = @{
+    Messages.ChooseAnotherWayToReceiveYourRefund.`Choose another way to receive your refund`.show
+}
+
+@key = @{
+    "way-to-get-refund"
+}
+
+@ptaKey = @{PtaOrChequeFormValue.BankTransferViaPta.toString}
+@chequeKey = @{PtaOrChequeFormValue.Cheque.toString}
+
+@layout(
+    pageTitle = Some(title)
+) {
+
+    @if(form.errors.nonEmpty) {
+        @viewsHelpers.govukErrorSummary(ErrorSummary(errorList = form.errors.asTextErrorLinks, title = Text(Messages.CommonMessages.`There is a problem`.show)))
+    }
+
+    @viewsHelpers.formWithCsrf(action = controllers.routes.ChooseAnotherWayToGetYourRefundController.postBankTransferViaPtaOrCheque) {
+        @viewsHelpers.govukRadios(Radios(
+            fieldset = Some(Fieldset(
+                legend = Some(Legend(
+                    content = Text(title),
+                    classes = "govuk-fieldset__legend--xl",
+                    isPageHeading = true
+                ))
+            )),
+            idPrefix = Some(key),
+            name = key,
+            hint = Some(Hint(
+                content = Text(Messages.ChooseAnotherWayToReceiveYourRefund.`You will have fewer details to enter if you sign in using your Government Gateway user ID.`.show)
+            )),
+            items = Seq(
+                RadioItem(
+                    content = Text(Messages.ChooseAnotherWayToReceiveYourRefund.`Bank transfer using your Government Gateway user ID to sign in`.show),
+                    value = Some(ptaKey),
+                    checked = form.data.values.toList.contains(ptaKey)
+                ),
+                RadioItem(
+                    content = Text(Messages.ChooseAnotherWayToReceiveYourRefund.`Cheque`.show),
+                    value = Some(chequeKey),
+                    checked = form.data.values.toList.contains(chequeKey)
+                )
+            )
+        ).withFormField(form(key)))
+
+        @viewsHelpers.govukButton(Button(
+            content = Text(Messages.CommonMessages.`continue`.show),
+            id = Some("submit")
+        ))
+    }
+}

@@ -188,7 +188,7 @@ object PageUtil {
    * Runs test using `testF` and reports page related information if the test fails.
    * Handy if debugging failing page specs.
    */
-  def withPageClue[A](pathHint: String, showPageSource: Boolean = false)(testF: => A)(implicit webDriver: WebDriver): A = //eventually(testF).
+  def withPageClue[A](pathHint: String, showPageSource: Boolean = true)(testF: => A)(implicit webDriver: WebDriver): A = //eventually(testF).
     testF.withClue {
       s"""
          |>>>the page: ${this.getClass.getSimpleName}

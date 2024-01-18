@@ -22,32 +22,55 @@
 @import language.Messages.ServicePhase
 
 @this(
-    layout: Layout,
-    viewsHelpers: views.ViewsHelpers
+        layout: Layout,
+        viewsHelpers: views.ViewsHelpers
 )
 
 @(contentBlock: Html)(implicit request: Request[_])
 
-@import viewsHelpers.requestSupport._
+    @import viewsHelpers.requestSupport._
 
-@headBlock = {
-  @Html(s"""<link href='${controllers.routes.Assets.versioned("stylesheets/test-only.css").toString}' media="screen" rel="stylesheet" type="text/css" ${CSPNonce.attr.toString} />""")
-  @*  Prism for colouring jsons*@
-  @Html(s"""<link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.27.0/themes/prism.min.css" rel="stylesheet" ${CSPNonce.attr.toString} />""")
-}
+    @headBlock = {
+    @Html(s"""<link href='${controllers.routes.Assets.versioned("stylesheets/test-only.css").toString}' media="screen" rel="stylesheet" type="text/css" ${CSPNonce.attr.toString} />""")
+        @* Prism for colouring jsons*@
+    @Html(s"""<link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.27.0/themes/prism.min.css" rel="stylesheet" ${CSPNonce.attr.toString} />""")
+    }
 
-@customBeforeContentBlock = {
-  <div class="">
-    <div class="govuk-width-container app-width-container--wide testonly-nav">
-      <a href="@{controllers.testonly.routes.TestOnlyController.govUkRouteIn}">start journey via gov-uk</a> |
-      <a href="@{controllers.testonly.routes.TestOnlyController.showJourney}">show journey json</a>
-    </div>
-  </div>
-}
+    @customBeforeContentBlock = {
+        <div class="">
+            <div class="govuk-width-container app-width-container--wide testonly-nav">
+                <a href="@{
+                    controllers.testonly.routes.TestOnlyController.govUkRouteIn
+                }">start journey via gov-uk</a> |
+                <a href="@{
+                    controllers.testonly.routes.TestOnlyController.showJourney
+                }">show journey json</a>
+            </div>
 
-@layout(
-    headBlock = Some(headBlock),
-    customServiceName = Some(ServicePhase.serviceNameTestOnly.show),
-    customBeforeContentBlock = Some(customBeforeContentBlock))(
-    contentBlock
-)
+            <div class="temporary result-highlight">
+                <p>
+                    Temporary endpoints to test Bank Transfer journey before we integrate with APIs.
+                    Call them when being on "we-are-verifying-you-bank-account" page:
+                </p>
+                <ul>
+                    <li>
+                        <a href="@{
+                            controllers.testonly.routes.TestOnlyController.finishSucceedBankTransfer.url
+                        }" >Finish Succeed</a>
+                    </li>
+                    <li>
+                        <a href="@{
+                            controllers.testonly.routes.TestOnlyController.finishFailBankTransfer.url
+                        }" >Finish Fail</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    }
+
+    @layout(
+        headBlock = Some(headBlock),
+        customServiceName = Some(ServicePhase.serviceNameTestOnly.show),
+        customBeforeContentBlock = Some(customBeforeContentBlock))(
+        contentBlock
+    )

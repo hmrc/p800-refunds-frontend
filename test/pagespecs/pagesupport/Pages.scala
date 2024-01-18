@@ -25,27 +25,29 @@ class Pages(baseUrl: String)(implicit webDriver: WebDriver) {
   val startEndpoint: Endpoint = new Endpoint(baseUrl = baseUrl, path = "/get-an-income-tax-refund/start")
 
   val doYouWantToSignInPage = new DoYouWantToSignInPage(baseUrl = baseUrl)
-  val enterP800ReferencePage = new EnterP800ReferencePage(baseUrl = baseUrl)
-  val cannotConfirmReferencePage = new CannotConfirmReferencePage(baseUrl = baseUrl)
-  val weNeedYouToConfirmYourIdentityPage = new WeNeedYouToConfirmYourIdentityPage(baseUrl = baseUrl)
-  val whatIsYourFullNamePage = new WhatIsYourFullNamePage(baseUrl = baseUrl)
-  val whatIsYourDateOfBirthPage = new WhatIsYourDateOfBirthPage(baseUrl = baseUrl)
-  val whatIsYourNationalInsuranceNumberPage = new WhatIsYourNationalInsuranceNumberPage(baseUrl = baseUrl)
-  val checkYourReferencePage = new CheckYourReferencePage(baseUrl = baseUrl)
   val doYouWantYourRefundViaBankTransferPage = new DoYouWantYourRefundViaBankTransferPage(baseUrl = baseUrl)
+
+  val weNeedYouToConfirmYourIdentityPage = new WeNeedYouToConfirmYourIdentityPage(baseUrl = baseUrl)
+
+  val whatIsYourP800ReferencePage = new WhatIsYourP800ReferencePage(baseUrl = baseUrl)
+  val whatIsYourNationalInsuranceNumberPage = new WhatIsYourNationalInsuranceNumberPage(baseUrl = baseUrl)
+  val whatIsYourDateOfBirthPage = new WhatIsYourDateOfBirthPage(baseUrl = baseUrl)
+  val checkYourAnswersPage = new CheckYourAnswersPage(baseUrl = baseUrl)
   val weHaveConfirmedYourIdentityPage = new WeHaveConfirmedYourIdentityPage(baseUrl = baseUrl)
   val weCannotConfirmYourIdentityPage = new WeCannotConfirmYourIdentityPage(baseUrl = baseUrl)
-  val requestNotSubmittedPage = new RequestNotSubmittedPage(baseUrl = baseUrl)
+
+  val yourRequestHasNotBeenSubmittedPage = new YourRequestHasNotBeenSubmittedPage(baseUrl = baseUrl)
   val verifyBankAccountPage = new VerifyBankAccountPage(baseUrl = baseUrl)
   val chooseAnotherWayToReceiveYourRefundPage = new ChooseAnotherWayToReceiveYourRefundPage(baseUrl = baseUrl)
-  val giveYourConsentPage = new GiveYourConsentPage(baseUrl = baseUrl)
+  val chooseAnotherWayToReceiveYourRefundPtaOrChequePage = new ChooseAnotherWayToReceiveYourRefundPtaOrChequePage(baseUrl = baseUrl)
+  val chooseAnotherWayToReceiveYourRefundPtaOrBankTransferPage = new ChooseAnotherWayToReceiveYourRefundPtaOrBankTransferPage(baseUrl = baseUrl)
+  val giveYourPermissionPage = new GiveYourPermissionPage(baseUrl = baseUrl)
 
-  val yourChequeWillBePostedToYouPage = new YourCheckWillBePostedToYouPage(baseUrl = baseUrl)
-  val chequeRequestReceivedPage = new ChequeRequestReceivedPage(baseUrl = baseUrl)
-  val bankTransferRequestReceivedPage = new BankTransferRequestReceivedPage(baseUrl = baseUrl)
+  val completeYourRefundRequestPage = new CompleteYourRefundRequestPage(baseUrl = baseUrl)
 
-  val checkYourAnswersPage = new CheckYourAnswersPage(baseUrl = baseUrl)
   val whatIsTheNameOfYourBankAccountPage = new WhatIsTheNameOfYourBankAccountPage(baseUrl = baseUrl)
+
+  val requestReceivedPage = new RequestReceivedPage(baseUrl = baseUrl)
 
   // Page Stubs
   val govUkRouteInPage = new GovUkRouteInPage(baseUrl = baseUrl)

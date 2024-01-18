@@ -43,14 +43,14 @@
 
 @layout(
     pageTitle = Some(title),
-    backLinkUrlOverride = Some(controllers.routes.DoYouWantToSignInController.get.url)
+    backLinkUrlOverride = Some(controllers.routes.WeNeedYouToConfirmYourIdentityController.get.url)
 ) {
 
     @if(form.errors.nonEmpty) {
         @viewsHelpers.govukErrorSummary(ErrorSummary(errorList = form.errors.asTextErrorLinks, title = Text(Messages.CommonMessages.`There is a problem`.show)))
     }
 
-    @viewsHelpers.formWithCsrf(action = controllers.routes.EnterP800ReferenceController.post) {
+    @viewsHelpers.formWithCsrf(action = controllers.routes.WhatIsYourP800ReferenceController.post) {
         @viewsHelpers.govukInput(Input(
             id = key,
             name = key,

@@ -139,9 +139,9 @@ object Messages {
     )
   }
 
-  object GiveYourConsent {
-    val `Give your consent`: Message = Message(
-      english = "Give your consent"
+  object GiveYourPermission {
+    val `Give your permission`: Message = Message(
+      english = "Give your permission"
     )
 
     def `By choosing approve`(bankName: BankFriendlyName, amount: AmountInPence, changeBankLink: String): Message = Message(
@@ -196,44 +196,54 @@ object Messages {
       english = s"""This usually takes a few seconds. You can <a href="$refreshLink" id="refresh-this-page" class="govuk-link">refresh this page</a> if it doesn't update automatically."""
     )
   }
+
   object ChooseAnotherWayToReceiveYourRefund {
     val `Choose another way to receive your refund`: Message = Message(
       english = "Choose another way to receive your refund"
     )
 
-    val `Bank transfer via your personal tax account`: Message = Message(
-      english = "Bank transfer via your personal tax account"
+    val `Bank transfer using your Government Gateway user ID to sign in`: Message = Message(
+      english = "Bank transfer using your Government Gateway user ID to sign in"
+    )
+
+    val `You will have fewer details to enter if you sign in using your Government Gateway user ID.`: Message = Message(
+      english = "You will have fewer details to enter if you sign in using your Government Gateway user ID."
     )
 
     val `Cheque`: Message = Message(
       english = "Cheque"
     )
 
-    val `Select if you want to receive a bank transfer via your personal tax account, or a cheque`: Message = Message(
-      english = "Select if you want to receive a bank transfer via your personal tax account, or a cheque"
+    val `Select the way you want to receive your refund`: Message = Message(
+      english = "Select the way you want to receive your refund"
+    )
+
+    //TODO: confirm with Content designer this text
+    val `Select if you want to receive a bank transfer via your personal tax account, or a bank transfer logged out`: Message = Message(
+      english = "Select if you want to receive a bank transfer via your personal tax account, or a bank transfer logged out"
+    )
+
+    val `Bank transfer logged out`: Message = Message(
+      english = "Bank transfer logged out"
     )
   }
 
   object CheckYourAnswersMessages {
 
-    val `Check your answers`: Message = Message(
-      english = "Check your answers"
+    val `P800 reference`: Message = Message(
+      english = "P800 reference"
     )
 
-    val `Full name`: Message = Message(
-      english = "Full name"
+    val `Check your answers`: Message = Message(
+      english = "Check your answers"
     )
 
     val `Date of birth`: Message = Message(
       english = "Date of birth"
     )
 
-    val `Address`: Message = Message(
-      english = "Address"
-    )
-
-    val `National Insurance Number`: Message = Message(
-      english = "National Insurance number"
+    val `National insurance number`: Message = Message(
+      english = "National insurance number"
     )
 
     val `Change`: Message = Message(
@@ -409,16 +419,16 @@ object Messages {
   }
 
   object WhatIsTheNameOfYourBankAccount {
-    val `What is the name of your bank account?`: Message = Message(
-      english = "What is the name of your bank account?"
+    val `What is the name of your bank?`: Message = Message(
+      english = "What is the name of your bank?"
     )
 
-    val `Select a UK bank or building society that you’d like your refund to be sent to.`: Message = Message(
-      english = "Select a UK bank or building society that you’d like your refund to be sent to."
+    val `Start typing the name of a UK bank that you want your refund to be sent to.`: Message = Message(
+      english = "Start typing the name of a UK bank that you want your refund to be sent to."
     )
 
-    val `My account is not listed`: Message = Message(
-      english = "My account is not listed"
+    val `My bank is not listed`: Message = Message(
+      english = "My bank is not listed"
     )
 
     val `Select a bank from the list`: Message = Message(
@@ -522,12 +532,12 @@ object Messages {
   }
 
   object BankTransferRequestReceived {
-    val `Request received`: Message = Message(
-      english = "Request received"
+    val `Bank transfer request received`: Message = Message(
+      english = "Bank transfer request received"
     )
 
-    val `P800 reference`: Message = Message(
-      english = "P800 reference"
+    val `Your P800 reference:`: Message = Message(
+      english = "Your P800 reference:"
     )
 
     def `Your refund of £x.xx will now be processed and paid by...`(amountInPence: AmountInPence, date: String): Message = Message(
@@ -551,9 +561,9 @@ object Messages {
       english = "(takes 30 seconds)"
     )
 
-    def `If you don’t receive your refund you can call or write...`(generalEnquiriesLink: String): Message = Message(
+    def `If you do not receive your refund you can call or write...`(generalEnquiriesLink: String): Message = Message(
       english =
-        s"""If you don’t receive your refund you can <a id="general-enquiries-link" target="_blank" class="govuk-link" href="$generalEnquiriesLink">
+        s"""If you do not receive your refund you can <a id="general-enquiries-link" target="_blank" class="govuk-link" href="$generalEnquiriesLink">
            |call or write to the Income Tax helpline (opens in new tab)</a>. You will need your P800 reference.""".stripMargin
     )
   }

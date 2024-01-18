@@ -16,16 +16,17 @@
 
 package controllers
 
-import action.Actions
+import action.{Actions, JourneyRequest}
 import config.AppConfig
-import io.scalaland.chimney.dsl._
-import models.forms.ChooseAnotherWayToGetYourRefundForm
-import models.forms.enumsforforms.ChooseAnotherWayToGetYourRefundFormValue
+import models.forms.enumsforforms.{PtaOrBankTransferFormValue, PtaOrChequeFormValue}
+import models.forms.{PtaOrBankTransferForm, PtaOrChequeForm}
 import models.journeymodels._
 import play.api.mvc._
 import requests.RequestSupport
 import services.JourneyService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
+import util.Errors
+import util.SafeEquals._
 import views.Views
 
 import javax.inject.{Inject, Singleton}
@@ -43,68 +44,66 @@ class ChooseAnotherWayToGetYourRefundController @Inject() (
 
   import requestSupport._
 
-  val get: Action[AnyContent] = actions.journeyAction { implicit request =>
-    request.journey match {
-      case _: JourneyNotApprovedRefund              => getResult
-      case j: JTerminal                             => JourneyRouter.handleFinalJourneyOnNonFinalPage(j)
-      case j: JBeforeIdentityVerified               => JourneyRouter.sendToCorrespondingPage(j)
-      case _: JourneyIdentityVerified               => getResult
-      case _: JourneyIdentityNotVerified            => getResult
-      case _: JourneyWhatIsTheNameOfYourBankAccount => getResult
-      case j: JAfterIdentityVerified                => JourneyRouter.sendToCorrespondingPage(j)
+  def get: Action[AnyContent] = actions.journeyInProgress { implicit request: JourneyRequest[AnyContent] =>
+    val journey = request.journey
+    journey.getJourneyType match {
+      case JourneyType.BankTransfer => Ok(views.chooseAnotherWayPtaOrChequePage(form = PtaOrChequeForm.form))
+      case JourneyType.Cheque       => Ok(views.chooseAnotherWayPtaOrBankTransferLoggedOutPage(form = PtaOrBankTransferForm.form))
     }
   }
 
-  private def getResult(implicit request: Request[_]) = Ok(views.chooseAnotherWayToReceiveYourRefundPage(form = ChooseAnotherWayToGetYourRefundForm.form))
+  def postBankTransferViaPtaOrCheque: Action[AnyContent] = actions.journeyInProgress.async { implicit request =>
+    val journey: Journey = request.journey
+    Errors.require(journey.getJourneyType === JourneyType.BankTransfer, "This endpoint supports only BankTransfer journey")
 
-  val post: Action[AnyContent] = actions.journeyAction.async { implicit request =>
-    request.journey match {
-      case j: JourneyNotApprovedRefund              => processFormNotApprovedRefund(j)
-      case j: JTerminal                             => JourneyRouter.handleFinalJourneyOnNonFinalPageF(j)
-      case j: JBeforeIdentityVerified               => JourneyRouter.sendToCorrespondingPageF(j)
-      case j: JourneyIdentityVerified               => JourneyRouter.sendToCorrespondingPageF(j)
-      case j: JourneyIdentityNotVerified            => processForm(Left(j))
-      case j: JourneyWhatIsTheNameOfYourBankAccount => processForm(Right(j))
-      case j: JAfterIdentityVerified                => JourneyRouter.sendToCorrespondingPageF(j)
-    }
-  }
-
-  private def processForm(journey: Either[JourneyIdentityNotVerified, JourneyWhatIsTheNameOfYourBankAccount])(implicit request: Request[_]): Future[Result] = {
-    ChooseAnotherWayToGetYourRefundForm.form.bindFromRequest().fold(
+    PtaOrChequeForm.form.bindFromRequest().fold(
       formWithErrors => Future.successful(
-        BadRequest(views.chooseAnotherWayToReceiveYourRefundPage(form = formWithErrors))
-      ), (validForm: ChooseAnotherWayToGetYourRefundFormValue) => {
-        val (newJourney, redirect) = validForm match {
-          case ChooseAnotherWayToGetYourRefundFormValue.BankTransfer =>
-            journey.merge -> appConfig.PersonalTaxAccountUrls.personalTaxAccountSignInUrl
-          case ChooseAnotherWayToGetYourRefundFormValue.Cheque =>
-            journey.merge -> routes.YourChequeWillBePostedToYouController.get.url
-        }
-        journeyService
-          .upsert(newJourney)
-          .map(_ => Redirect(redirect))
+        BadRequest(views.chooseAnotherWayPtaOrChequePage(form = formWithErrors))
+      ),
+      {
+        ptaOrChequeFormValue: PtaOrChequeFormValue =>
+          ptaOrChequeFormValue match {
+            case PtaOrChequeFormValue.BankTransferViaPta =>
+              Future.successful(
+                Redirect(appConfig.PersonalTaxAccountUrls.personalTaxAccountSignInUrl)
+              )
+            case PtaOrChequeFormValue.Cheque =>
+              journeyService
+                .upsert(
+                  journey.copy(journeyType = Some(JourneyType.Cheque))
+                )
+                .map(_ =>
+                  if (journey.isIdentityVerified) {
+                    Redirect(controllers.routes.CompleteYourRefundRequestController.get)
+                  } else {
+                    Redirect(controllers.routes.WeNeedYouToConfirmYourIdentityController.get)
+                  })
+          }
+
       }
     )
   }
 
-  private def processFormNotApprovedRefund(journey: JourneyNotApprovedRefund)(implicit request: Request[_]): Future[Result] = {
-    ChooseAnotherWayToGetYourRefundForm.form.bindFromRequest().fold(
+  def postBankTransferViaPtaOrBankTransferLoggedOut: Action[AnyContent] = actions.journeyInProgress.async { implicit request =>
+    val journey: Journey = request.journey
+    Errors.require(journey.getJourneyType === JourneyType.Cheque, "This endpoint supports only Cheque journey")
+
+    PtaOrBankTransferForm.form.bindFromRequest().fold(
       formWithErrors => Future.successful(
-        BadRequest(views.chooseAnotherWayToReceiveYourRefundPage(form = formWithErrors))
-      ), (validForm: ChooseAnotherWayToGetYourRefundFormValue) => {
-        val (newJourney, redirect) = validForm match {
-          case ChooseAnotherWayToGetYourRefundFormValue.BankTransfer =>
-            journey -> appConfig.PersonalTaxAccountUrls.personalTaxAccountSignInUrl
-          case ChooseAnotherWayToGetYourRefundFormValue.Cheque =>
-            journey
-              .into[JourneyDoYouWantYourRefundViaBankTransferNo]
-              .enableInheritedAccessors
-              .transform ->
-              routes.YourChequeWillBePostedToYouController.get.url
-        }
-        journeyService
-          .upsert(newJourney)
-          .map(_ => Redirect(redirect))
+        BadRequest(views.chooseAnotherWayPtaOrBankTransferLoggedOutPage(form = formWithErrors))
+      ),
+      {
+        case PtaOrBankTransferFormValue.BankTransferViaPta =>
+          Future.successful(
+            Redirect(appConfig.PersonalTaxAccountUrls.personalTaxAccountSignInUrl)
+          )
+        case PtaOrBankTransferFormValue.BankTransferLoggedOut =>
+          journeyService
+            .upsert(
+              journey.copy(journeyType = Some(JourneyType.BankTransfer))
+            )
+            .map(_ =>
+              Redirect(controllers.routes.WeNeedYouToConfirmYourIdentityController.get))
       }
     )
   }

@@ -16,6 +16,7 @@
 
 package util
 
+import play.api.mvc.Request
 import uk.gov.hmrc.http.UpstreamErrorResponse
 
 import scala.concurrent.Future
@@ -26,47 +27,67 @@ object Errors {
    * Creates a requirement which has to pass in order to continue computation.
    * If it fails it will result in Upstream4xxResponse.
    */
-  def require(requirement: Boolean, message: => String): Unit = {
-    if (!requirement) throw UpstreamErrorResponse(message, play.mvc.Http.Status.BAD_REQUEST)
-    else ()
+  def require(requirement: Boolean, message: => String)(implicit request: Request[_]): Unit = {
+    if (!requirement) {
+      JourneyLogger.error(s"Requirement failed: $message")
+      throw UpstreamErrorResponse(message, play.mvc.Http.Status.BAD_REQUEST)
+    } else ()
   }
 
-  def requireF(requirement: Boolean, message: => String): Future[Unit] = {
-    if (!requirement) Future.failed(UpstreamErrorResponse(message, play.mvc.Http.Status.BAD_REQUEST))
-    else Future.successful(())
+  def requireF(requirement: Boolean, message: => String)(implicit request: Request[_]): Future[Unit] = {
+    if (!requirement) {
+      JourneyLogger.error(s"Requirement failed: $message")
+      Future.failed(UpstreamErrorResponse(message, play.mvc.Http.Status.BAD_REQUEST))
+    } else Future.successful(())
   }
 
-  @inline def throwBadRequestException(message: => String): Nothing = throw UpstreamErrorResponse(
-    message,
-    play.mvc.Http.Status.BAD_REQUEST
-  )
+  @inline def throwBadRequestException(message: => String)(implicit request: Request[_]): Nothing = {
+    JourneyLogger.error(message)
+    throw UpstreamErrorResponse(
+      message,
+      play.mvc.Http.Status.BAD_REQUEST
+    )
+  }
 
-  @inline def throwBadRequestExceptionF(message: => String): Future[Nothing] = Future.failed(UpstreamErrorResponse(
-    message,
-    play.mvc.Http.Status.BAD_REQUEST
-  ))
+  @inline def throwBadRequestExceptionF(message: => String)(implicit request: Request[_]): Future[Nothing] = {
+    JourneyLogger.error(message)
+    Future.failed(UpstreamErrorResponse(
+      message,
+      play.mvc.Http.Status.BAD_REQUEST
+    ))
+  }
 
-  @inline def throwNotFoundException(message: => String): Nothing = throw UpstreamErrorResponse(
-    message,
-    play.mvc.Http.Status.NOT_FOUND
-  )
+  @inline def throwNotFoundException(message: => String)(implicit request: Request[_]): Nothing = {
+    JourneyLogger.error(message)
+    throw UpstreamErrorResponse(
+      message,
+      play.mvc.Http.Status.NOT_FOUND
+    )
+  }
 
-  @inline def throwServerErrorException(message: => String): Nothing = throw UpstreamErrorResponse(
-    message,
-    play.mvc.Http.Status.INTERNAL_SERVER_ERROR
-  )
+  @inline def throwServerErrorException(message: => String)(implicit request: Request[_]): Nothing = {
+    JourneyLogger.error(message)
+    throw UpstreamErrorResponse(
+      message,
+      play.mvc.Http.Status.INTERNAL_SERVER_ERROR
+    )
+  }
 
   /**
    * Call this to ensure that we don't do stupid things,
    * like make illegal transitions (eg. from Finished to New)
    */
-  def sanityCheck(requirement: Boolean, message: => String): Unit = {
-    if (!requirement) throw UpstreamErrorResponse(message, play.mvc.Http.Status.INTERNAL_SERVER_ERROR)
-    else ()
+  def sanityCheck(requirement: Boolean, message: => String)(implicit request: Request[_]): Unit = {
+    if (!requirement) {
+      JourneyLogger.error(message)
+      throw UpstreamErrorResponse(message, play.mvc.Http.Status.INTERNAL_SERVER_ERROR)
+    } else ()
   }
 
-  def notImplemented(message: => String = ""): Nothing = {
-    throw UpstreamErrorResponse(s"Unimplemented: $message", play.mvc.Http.Status.NOT_IMPLEMENTED)
+  def notImplemented(message: => String = "")(implicit request: Request[_]): Nothing = {
+    val m = s"Unimplemented: $message"
+    JourneyLogger.error(m)
+    throw UpstreamErrorResponse(m, play.mvc.Http.Status.NOT_IMPLEMENTED)
   }
 
 }

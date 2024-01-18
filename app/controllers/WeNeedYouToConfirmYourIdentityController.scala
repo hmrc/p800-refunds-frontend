@@ -17,7 +17,6 @@
 package controllers
 
 import action.Actions
-import models.journeymodels._
 import play.api.mvc._
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import views.Views
@@ -31,17 +30,13 @@ class WeNeedYouToConfirmYourIdentityController @Inject() (
     actions: Actions
 ) extends FrontendController(mcc) {
 
-  val get: Action[AnyContent] = actions.journeyAction { implicit request =>
-    request.journey match {
-      case j: JTerminal                                    => JourneyRouter.handleFinalJourneyOnNonFinalPage(j)
-      case j: JBeforeDoYouWantYourRefundViaBankTransferYes => JourneyRouter.sendToCorrespondingPage(j)
-      case j: JBeforeDoYouWantYourRefundViaBankTransferNo  => JourneyRouter.sendToCorrespondingPage(j)
-      case j: JAfterDoYouWantYourRefundViaBankTransferNo   => JourneyRouter.sendToCorrespondingPage(j)
-      case j: JourneyDoYouWantYourRefundViaBankTransferNo  => JourneyRouter.sendToCorrespondingPage(j)
-      case _: JAfterDoYouWantYourRefundViaBankTransferYes  => getResult
-      case _: JourneyDoYouWantYourRefundViaBankTransferYes => getResult
-    }
+  def get: Action[AnyContent] = actions.journeyInProgress { implicit request =>
+
+    Ok(views.weNeedYouToConfirmYourIdentityPage(request.journey.getJourneyType))
   }
 
-  private def getResult(implicit request: Request[_]) = Ok(views.weNeedYouToConfirmYourIdentityPage())
+  def post: Action[AnyContent] = actions.journeyInProgress { _ =>
+    Redirect(routes.WhatIsYourP800ReferenceController.get.url)
+  }
+
 }

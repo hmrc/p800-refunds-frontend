@@ -18,78 +18,43 @@ package controllers
 
 import action.Actions
 import config.AppConfig
-import io.scalaland.chimney.dsl._
 import models.forms.DoYouWantToSignInForm
 import models.forms.enumsforforms.DoYouWantToSignInFormValue
-import models.journeymodels._
 import play.api.mvc._
 import requests.RequestSupport
-import services.JourneyService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
-import util.Errors
 import views.Views
 
 import javax.inject.{Inject, Singleton}
-import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class DoYouWantToSignInController @Inject() (
     mcc:            MessagesControllerComponents,
     requestSupport: RequestSupport,
-    journeyService: JourneyService,
     views:          Views,
     actions:        Actions,
     appConfig:      AppConfig
-)(implicit ec: ExecutionContext) extends FrontendController(mcc) {
+) extends FrontendController(mcc) {
 
   import requestSupport._
 
-  val get: Action[AnyContent] = actions.journeyAction.async { implicit request =>
-    request.journey match {
-      case j: JTerminal      => JourneyRouter.handleFinalJourneyOnNonFinalPageF(j)
-      case _: JourneyStarted => Future.successful(getResult)
-      case j: JAfterStarted =>
-        journeyService
-          .upsert(
-            j
-              .into[JourneyStarted]
-              .enableInheritedAccessors
-              .transform
-          )
-          .map(_ => getResult)
-    }
+  def get: Action[AnyContent] = actions.journeyInProgress{ implicit request =>
+    Ok(views.doYouWantToSignInPage(
+      form = DoYouWantToSignInForm.form
+    ))
   }
 
-  private def getResult(implicit request: Request[_]) = Ok(views.doYouWantToSignInPage(
-    form = DoYouWantToSignInForm.form
-  ))
-
-  val post: Action[AnyContent] = actions.journeyAction.async { implicit request =>
-    request.journey match {
-      case j: JourneyStarted => processForm(j)
-      case _: JAfterStarted =>
-        Errors.throwServerErrorException(s"This endpoint supports only ${classOf[JourneyStarted].toString}")
-      //TODO: discuss alternative approach
-      //val journey = j
-      //              .into[JourneyStarted]
-      //              .enableInheritedAccessors
-      //              .transform
-      //processForm(j)
-    }
-  }
-
-  private def processForm(journey: Journey)(implicit request: Request[_]): Future[Result] = {
+  def post: Action[AnyContent] = actions.journeyInProgress { implicit request =>
     DoYouWantToSignInForm.form.bindFromRequest().fold(
-      formWithErrors => Future.successful(BadRequest(views.doYouWantToSignInPage(
+      formWithErrors => BadRequest(views.doYouWantToSignInPage(
         form = formWithErrors
-      ))), {
+      )), {
         case DoYouWantToSignInFormValue.Yes =>
-          Future.successful(Redirect(appConfig.PersonalTaxAccountUrls.personalTaxAccountSignInUrl))
+          Redirect(appConfig.PersonalTaxAccountUrls.personalTaxAccountSignInUrl)
         case DoYouWantToSignInFormValue.No =>
-          journeyService
-            .upsert(journey.transformInto[JourneyDoYouWantToSignInNo])
-            .map(_ => Redirect(controllers.routes.EnterP800ReferenceController.get))
+          Redirect(controllers.routes.DoYouWantYourRefundViaBankTransferController.get)
       }
     )
   }
+
 }

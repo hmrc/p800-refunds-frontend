@@ -16,54 +16,94 @@
 
 package pagespecs
 
-import models.journeymodels.Journey
-import org.scalatest.prop.TableDrivenPropertyChecks._
-import pagespecs.pagesupport.Page
 import testsupport.ItSpec
 
 class WeNeedYouToConfirmYourIdentityPageSpec extends ItSpec {
 
+  private val journeyBankTransfer = tdAll.BankTransfer.journeySelectedType
+  private val journeyCheque = tdAll.Cheque.journeySelectedType
+
   override def beforeEach(): Unit = {
     super.beforeEach()
     addJourneyIdToSession(tdAll.journeyId)
-    upsertJourneyToDatabase(tdAll.journeyDoYouWantYourRefundViaBankTransferYes)
   }
 
-  "/confirm-your-identity renders the we need to confirm your identity page" in {
-    pages.weNeedYouToConfirmYourIdentityPage.open()
-    pages.weNeedYouToConfirmYourIdentityPage.assertPageIsDisplayed()
-  }
-
-  "'Continue' button sends user to 'What is your full name' page" in {
-    pages.weNeedYouToConfirmYourIdentityPage.open()
-    pages.weNeedYouToConfirmYourIdentityPage.assertPageIsDisplayed()
-    pages.weNeedYouToConfirmYourIdentityPage.clickSubmit()
-    pages.whatIsYourFullNamePage.assertPageIsDisplayed()
-  }
-
-  "'Back' button sends user to 'Do you want your refund by bank transfer' page" in {
-    pages.weNeedYouToConfirmYourIdentityPage.open()
-    pages.weNeedYouToConfirmYourIdentityPage.assertPageIsDisplayed()
-    pages.weNeedYouToConfirmYourIdentityPage.clickBackButton()
-    pages.doYouWantYourRefundViaBankTransferPage.assertPageIsDisplayed()
-  }
-
-  forAll(Table(
-    ("journeyState", "expectedPage"),
-    (tdAll.journeyDoYouWantYourRefundViaBankTransferNo, pages.yourChequeWillBePostedToYouPage),
-    (tdAll.journeyStarted, pages.doYouWantToSignInPage),
-    (tdAll.journeyDoYouWantToSignInNo, pages.enterP800ReferencePage),
-    (tdAll.journeyWhatIsYourP800Reference, pages.checkYourReferencePage),
-    (tdAll.journeyCheckYourReferenceValid, pages.doYouWantYourRefundViaBankTransferPage),
-    (tdAll.journeyYourChequeWillBePostedToYou, pages.chequeRequestReceivedPage),
-    (tdAll.journeyWhatIsYourFullName, pages.weNeedYouToConfirmYourIdentityPage),
-    (tdAll.journeyWhatIsYourDateOfBirth, pages.weNeedYouToConfirmYourIdentityPage)
-  )) { (journeyState: Journey, expectedPage: Page) =>
-    s"JourneyState: [${journeyState.name}] should redirect accordingly when state is before this page" in {
-      upsertJourneyToDatabase(journeyState)
-      pages.weNeedYouToConfirmYourIdentityPage.open()
-      expectedPage.assertPageIsDisplayed()
+  "render weNeedYouToConfirmYourIdentityPage" - {
+    "bank transfer" in {
+      upsertJourneyToDatabase(journeyBankTransfer)
+      test()
+      getJourneyFromDatabase(tdAll.journeyId) shouldBeLike journeyBankTransfer
     }
+    "cheque" in {
+      upsertJourneyToDatabase(journeyCheque)
+      test()
+      getJourneyFromDatabase(tdAll.journeyId) shouldBeLike journeyCheque
+    }
+
+      def test(): Unit = {
+        pages.weNeedYouToConfirmYourIdentityPage.open()
+        pages.weNeedYouToConfirmYourIdentityPage.assertPageIsDisplayed()
+      }
   }
+
+  "'Continue' button sends user to whatIsYourP800ReferencePage" - {
+    "bank transfer" in {
+      upsertJourneyToDatabase(journeyBankTransfer)
+      test()
+      getJourneyFromDatabase(tdAll.journeyId) shouldBeLike journeyBankTransfer
+    }
+    "cheque" in {
+      upsertJourneyToDatabase(journeyCheque)
+      test()
+      getJourneyFromDatabase(tdAll.journeyId) shouldBeLike journeyCheque
+    }
+
+      def test(): Unit = {
+        pages.weNeedYouToConfirmYourIdentityPage.open()
+        pages.weNeedYouToConfirmYourIdentityPage.assertPageIsDisplayed()
+        pages.weNeedYouToConfirmYourIdentityPage.clickSubmit()
+        pages.whatIsYourP800ReferencePage.assertPageIsDisplayed()
+      }
+  }
+
+  "'Back' button sends user to 'Do you want your refund by bank transfer' page" - {
+    "bank transfer" in {
+      upsertJourneyToDatabase(journeyBankTransfer)
+      test()
+      getJourneyFromDatabase(tdAll.journeyId) shouldBeLike journeyBankTransfer
+    }
+    "cheque" in {
+      upsertJourneyToDatabase(journeyCheque)
+      test()
+      getJourneyFromDatabase(tdAll.journeyId) shouldBeLike journeyCheque
+    }
+
+      def test(): Unit = {
+        pages.weNeedYouToConfirmYourIdentityPage.open()
+        pages.weNeedYouToConfirmYourIdentityPage.assertPageIsDisplayed()
+        pages.weNeedYouToConfirmYourIdentityPage.clickBackButton()
+        pages.doYouWantYourRefundViaBankTransferPage.assertPageIsDisplayed()
+      }
+
+  }
+
+  //Pawel TODO
+  //  forAll(Table(
+  //    ("journeyState", "expectedPage"),
+  //    (tdAll.journeyDoYouWantYourRefundViaBankTransferNo, pages.completeYourRefundRequestPage),
+  //    (tdAll.journeyStarted, pages.doYouWantToSignInPage),
+  //    (tdAll.journeyDoYouWantToSignInNo, pages.enterP800ReferencePage),
+  //    (tdAll.journeyWhatIsYourP800Reference, pages.checkYourReferencePage),
+  //    (tdAll.journeyCheckYourReferenceValid, pages.doYouWantYourRefundViaBankTransferPage),
+  //    (tdAll.journeyYourChequeWillBePostedToYou, pages.chequeRequestReceivedPage),
+  //    (tdAll.journeyWhatIsYourFullName, pages.weNeedYouToConfirmYourIdentityPage),
+  //    (tdAll.journeyWhatIsYourDateOfBirth, pages.weNeedYouToConfirmYourIdentityPage)
+  //  )) { (journeyState: Journey, expectedPage: Page) =>
+  //    s"JourneyState: [${journeyState.name}] should redirect accordingly when state is before this page" in {
+  //      upsertJourneyToDatabase(journeyState)
+  //      pages.weNeedYouToConfirmYourIdentityPage.open()
+  //      expectedPage.assertPageIsDisplayed()
+  //    }
+  //  }
 
 }

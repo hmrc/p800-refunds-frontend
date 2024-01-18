@@ -35,7 +35,7 @@
 @import viewsHelpers.requestSupport._
 
 @title = @{
-    Messages.BankTransferRequestReceived.`Request received`.show
+    Messages.BankTransferRequestReceived.`Bank transfer request received`.show
 }
 
 @additionalScript = { <script src="@{controllers.routes.Assets.versioned("javascripts/print-dialogue.js")}" @{CSPNonce.attr}></script> }
@@ -50,7 +50,7 @@
         headingLevel = 1,
         title        = Text(title),
         classes      = "govuk-!-margin-bottom-7",
-        content      = HtmlContent(s"""${Messages.BankTransferRequestReceived.`P800 reference`.show}<br><strong>${p800Reference.value}</strong>""")
+        content      = HtmlContent(s"""${Messages.BankTransferRequestReceived.`Your P800 reference:`.show}<br><strong>${p800Reference.value}</strong>""")
     ))
 
     <p class="govuk-body">
@@ -68,7 +68,7 @@
     </h2>
 
     <p class="govuk-body">
-        @{Html(Messages.BankTransferRequestReceived.`If you don’t receive your refund you can call or write...`(appConfig.generalEnquiriesUrl).show)}
+        @{Html(Messages.BankTransferRequestReceived.`If you do not receive your refund you can call or write...`(appConfig.generalEnquiriesUrl).show)}
     </p>
 
     <div class="govuk-body">

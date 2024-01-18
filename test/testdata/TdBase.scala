@@ -17,12 +17,12 @@
 package testdata
 
 import akka.http.scaladsl.model.Uri
-import models.{AmountInPence, FullName, IdentityVerificationResponse, IdentityVerified, NationalInsuranceNumber, P800Reference}
 import models.dateofbirth.{DateOfBirth, DayOfMonth, Month, Year}
+import models.ecospend._
+import models._
 
-import java.time.{Instant, LocalDateTime, ZoneOffset}
 import java.time.format.DateTimeFormatter
-import models.ecospend.{BankDescription, BankFriendlyName, BankGroup, BankId, BankName}
+import java.time.{Instant, LocalDateTime, ZoneOffset}
 
 trait TdBase {
 
@@ -36,8 +36,6 @@ trait TdBase {
   lazy val newInstant: Instant = instant.plusSeconds(20) //used when a new journey is created from existing one
 
   lazy val p800Reference: P800Reference = P800Reference("P800REFNO1")
-
-  lazy val fullName: FullName = FullName("Test Name.-")
 
   lazy val gdsDateTimeFormatter: DateTimeFormatter = DateTimeFormatter.ofPattern("d MMMM Y")
 
