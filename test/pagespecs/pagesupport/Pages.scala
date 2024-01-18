@@ -44,7 +44,6 @@ class Pages(baseUrl: String)(implicit webDriver: WebDriver) {
   val giveYourPermissionPage = new GiveYourPermissionPage(baseUrl = baseUrl)
 
   val completeYourRefundRequestPage = new CompleteYourRefundRequestPage(baseUrl = baseUrl)
-  val chequeRequestReceivedPage = new ChequeRequestReceivedPage(baseUrl = baseUrl)
 
   val whatIsTheNameOfYourBankAccountPage = new WhatIsTheNameOfYourBankAccountPage(baseUrl = baseUrl)
 
