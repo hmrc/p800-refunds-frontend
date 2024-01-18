@@ -18,6 +18,10 @@ package pagespecs.pages
 
 import org.openqa.selenium.WebDriver
 
+/**
+ * This page is used only for testing showing errors on choose-another-way page
+ * (the url changes)
+ */
 class ChooseAnotherWayToReceiveYourRefundPtaOrChequePage(baseUrl: String)(implicit webDriver: WebDriver) extends ChooseAnotherWayToReceiveYourRefundPage(
   baseUrl,
   path = "/get-an-income-tax-refund/choose-another-way-to-receive-your-refund/bank-transfer-via-pta-or-cheque"
