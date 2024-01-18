@@ -17,8 +17,10 @@
 package controllers
 
 import action.Actions
+import models.journeymodels.JourneyType
 import play.api.mvc._
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
+import util.Errors
 import views.Views
 
 import javax.inject.{Inject, Singleton}
@@ -35,8 +37,12 @@ class WeCannotConfirmYourIdentityController @Inject() (
     Ok(views.weCannotConfirmYourIdentityPage())
   }
 
-  def tryAgain: Action[AnyContent] = actions.journeyInProgress { _ =>
-    Redirect(routes.WeNeedYouToConfirmYourIdentityController.get)
+  def tryAgain: Action[AnyContent] = actions.journeyInProgress { implicit request =>
+    request.journey.journeyType match {
+      case Some(JourneyType.BankTransfer) => Redirect(routes.CheckYourAnswersController.get)
+      case Some(JourneyType.Cheque)       => Redirect(routes.WeNeedYouToConfirmYourIdentityController.get)
+      case None                           => Errors.throwServerErrorException("No JourneyType found on WeCannotConfirmYourIdentity page, this should never happen")
+    }
   }
 
   def choseAnotherMethod: Action[AnyContent] = actions.journeyInProgress { _ =>

@@ -73,15 +73,21 @@ class WeCannotConfirmYourIdentityPageSpec extends ItSpec {
 
   }
 
-  "clicking 'Try again' sends user to 'We need you to confirm your identity page'" - {
-    "bank transfer" in {
+  "clicking 'Try again' sends user to" - {
+    "'Check your answers page' for bank transfer transfer" in {
       upsertJourneyToDatabase(tdAll.BankTransfer.journeyIdentityNotVerified)
       test()
+      pages.checkYourAnswersPage.assertPageIsDisplayedForBankTransfer(
+        p800Reference           = tdAll.p800Reference,
+        dateOfBirth             = tdAll.dateOfBirthFormatted,
+        nationalInsuranceNumber = tdAll.nationalInsuranceNumber
+      )
       getJourneyFromDatabase(tdAll.journeyId) shouldBeLike tdAll.BankTransfer.journeyIdentityNotVerified
     }
-    "cheque" in {
+    "'We need you to confirm your identity page' for cheque journey" in {
       upsertJourneyToDatabase(tdAll.Cheque.journeyIdentityNotVerified)
       test()
+      pages.weNeedYouToConfirmYourIdentityPage.assertPageIsDisplayed()
       getJourneyFromDatabase(tdAll.journeyId) shouldBeLike tdAll.Cheque.journeyIdentityNotVerified
     }
 
@@ -89,7 +95,6 @@ class WeCannotConfirmYourIdentityPageSpec extends ItSpec {
         pages.weCannotConfirmYourIdentityPage.open()
         pages.weCannotConfirmYourIdentityPage.assertPageIsDisplayed()
         pages.weCannotConfirmYourIdentityPage.clickTryAgain()
-        pages.weNeedYouToConfirmYourIdentityPage.assertPageIsDisplayed()
       }
   }
 
