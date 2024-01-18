@@ -26,6 +26,7 @@ import views.Views
 import java.time.LocalDate
 import javax.inject.{Inject, Singleton}
 
+
 @Singleton
 class RequestReceivedController @Inject() (
     mcc:     MessagesControllerComponents,
