@@ -18,7 +18,7 @@ package pagespecs
 
 import testsupport.ItSpec
 
-class YourRequestHasNotBeenSubmittedPageSpec extends ItSpec {
+class YourRefundRequestHasNotBeenSubmittedPageSpec extends ItSpec {
 
   override def beforeEach(): Unit = {
     super.beforeEach()
@@ -44,7 +44,7 @@ class YourRequestHasNotBeenSubmittedPageSpec extends ItSpec {
       pages.yourRequestHasNotBeenSubmittedPage.assertPageIsDisplayed()
       pages.yourRequestHasNotBeenSubmittedPage.clickTryAgain()
       pages.chooseAnotherWayToReceiveYourRefundPage.assertPageIsDisplayedPtaOrCheque()
-      getJourneyFromDatabase(tdAll.journeyId) shouldBeLike tdAll.BankTransfer.journeyClaimOverpaymentFailedButIsTryingAgain
+      getJourneyFromDatabase(tdAll.journeyId) shouldBeLike tdAll.BankTransfer.journeyClaimOverpaymentFailedButIsChoosingAnotherWay
     }
   }
 

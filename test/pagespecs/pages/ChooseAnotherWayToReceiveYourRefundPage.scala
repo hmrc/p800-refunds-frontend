@@ -19,10 +19,10 @@ package pagespecs.pages
 import org.openqa.selenium.WebDriver
 import pagespecs.pagesupport.{ContentExpectation, Page, PageUtil}
 
-class ChooseAnotherWayToReceiveYourRefundPage(baseUrl: String)(implicit webDriver: WebDriver) extends Page(
-  baseUrl,
-  path = "/get-an-income-tax-refund/choose-another-way-to-receive-your-refund"
-) {
+class ChooseAnotherWayToReceiveYourRefundPage(
+    baseUrl:           String,
+    override val path: String = "/get-an-income-tax-refund/choose-another-way-to-receive-your-refund"
+)(implicit webDriver: WebDriver) extends Page(baseUrl, path) {
 
   override def expectedH1: String = "Choose another way to receive your refund"
 
@@ -90,7 +90,13 @@ class ChooseAnotherWayToReceiveYourRefundPage(baseUrl: String)(implicit webDrive
     )
   }
 
-  def clickBankTransferOption(): Unit = PageUtil.clickByIdOrName("way-to-get-refund")
-  def clickChequeOption(): Unit = PageUtil.clickByIdOrName("way-to-get-refund-2")
+  object PtaOrCheque {
+    def selectBankTransferViaPta(): Unit = PageUtil.clickByIdOrName("way-to-get-refund")
+    def selectCheque(): Unit = PageUtil.clickByIdOrName("way-to-get-refund-2")
+  }
+  object PtaOrBankTransfer {
+    def selectBankTransferViaPta(): Unit = PageUtil.clickByIdOrName("way-to-get-refund")
+    def selectBankTransferLoggedOut(): Unit = PageUtil.clickByIdOrName("way-to-get-refund-2")
+  }
 
 }

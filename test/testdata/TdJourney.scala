@@ -95,10 +95,10 @@ trait TdJourney {
       )
 
     /**
-     * When user was on ClaimOverpaymentFailed but clicked TryAgain button
+     * When user was on ClaimOverpaymentFailed but clicked "Choose another way" button
      * (journey no more final)
      */
-    lazy val journeyClaimOverpaymentFailedButIsTryingAgain: Journey =
+    lazy val journeyClaimOverpaymentFailedButIsChoosingAnotherWay: Journey =
       //TODO: API responses
       journeyClaimOverpaymentFailed.copy(
         hasFinished = HasFinished.No
