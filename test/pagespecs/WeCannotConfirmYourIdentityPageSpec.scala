@@ -16,6 +16,7 @@
 
 package pagespecs
 
+import models.journeymodels.JourneyType
 import testsupport.ItSpec
 
 class WeCannotConfirmYourIdentityPageSpec extends ItSpec {
@@ -73,28 +74,35 @@ class WeCannotConfirmYourIdentityPageSpec extends ItSpec {
 
   }
 
-  "clicking 'Try again' sends user to" - {
-    "'Check your answers page' for bank transfer transfer" in {
+  "clicking 'Try again' sends user to 'Check your answers page'" - {
+    "bank transfer transfer" in {
       upsertJourneyToDatabase(tdAll.BankTransfer.journeyIdentityNotVerified)
-      test()
-      pages.checkYourAnswersPage.assertPageIsDisplayedForBankTransfer(
-        p800Reference           = tdAll.p800Reference,
-        dateOfBirth             = tdAll.dateOfBirthFormatted,
-        nationalInsuranceNumber = tdAll.nationalInsuranceNumber
-      )
+      test(JourneyType.BankTransfer)
       getJourneyFromDatabase(tdAll.journeyId) shouldBeLike tdAll.BankTransfer.journeyIdentityNotVerified
     }
-    "'We need you to confirm your identity page' for cheque journey" in {
+    "cheque" in {
       upsertJourneyToDatabase(tdAll.Cheque.journeyIdentityNotVerified)
-      test()
-      pages.weNeedYouToConfirmYourIdentityPage.assertPageIsDisplayed()
+      test(JourneyType.Cheque)
       getJourneyFromDatabase(tdAll.journeyId) shouldBeLike tdAll.Cheque.journeyIdentityNotVerified
     }
 
-      def test(): Unit = {
+      def test(journeyType: JourneyType): Unit = {
         pages.weCannotConfirmYourIdentityPage.open()
         pages.weCannotConfirmYourIdentityPage.assertPageIsDisplayed()
         pages.weCannotConfirmYourIdentityPage.clickTryAgain()
+        journeyType match {
+          case JourneyType.Cheque =>
+            pages.checkYourAnswersPage.assertPageIsDisplayedForCheque(
+              p800Reference           = tdAll.p800Reference,
+              nationalInsuranceNumber = tdAll.nationalInsuranceNumber
+            )
+          case JourneyType.BankTransfer =>
+            pages.checkYourAnswersPage.assertPageIsDisplayedForBankTransfer(
+              p800Reference           = tdAll.p800Reference,
+              dateOfBirth             = tdAll.dateOfBirthFormatted,
+              nationalInsuranceNumber = tdAll.nationalInsuranceNumber
+            )
+        }
       }
   }
 
