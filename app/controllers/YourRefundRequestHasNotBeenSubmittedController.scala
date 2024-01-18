@@ -37,8 +37,14 @@ class YourRefundRequestHasNotBeenSubmittedController @Inject() (
 )(implicit ec: ExecutionContext) extends FrontendController(mcc) {
 
   def get: Action[AnyContent] = actions.journeyFinished { implicit request: JourneyRequest[_] =>
-    Errors.require(request.journey.getJourneyType === JourneyType.BankTransfer, "This page is only for BankTransfer journey")
-    Ok(views.requestNotSubmittedPage())
+    val journey = request.journey
+    Errors.require(journey.getJourneyType === JourneyType.BankTransfer, "This page is only for BankTransfer journey")
+
+    if (journey.hasFinished === HasFinished.YesSucceeded) {
+      Redirect(controllers.routes.RequestReceivedController.get)
+    } else {
+      Ok(views.requestNotSubmittedPage())
+    }
   }
 
   def post: Action[AnyContent] = actions.journeyFinished.async { implicit request: JourneyRequest[_] =>

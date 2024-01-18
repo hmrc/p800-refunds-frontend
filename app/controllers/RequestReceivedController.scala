@@ -20,6 +20,7 @@ import action.Actions
 import models.journeymodels._
 import play.api.mvc._
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
+import util.SafeEquals.EqualsOps
 import views.Views
 
 import java.time.LocalDate
@@ -34,9 +35,15 @@ class RequestReceivedController @Inject() (
 
   def get: Action[AnyContent] = actions.journeyFinished { implicit request =>
     val journey: Journey = request.journey
-    journey.getJourneyType match {
-      case JourneyType.Cheque       => getResultCheque(journey)
-      case JourneyType.BankTransfer => getResultBankTransfer(journey)
+
+    if (journey.hasFinished === HasFinished.YesFailed) {
+      Redirect(controllers.routes.YourRefundRequestHasNotBeenSubmittedController.get)
+    } else {
+
+      journey.getJourneyType match {
+        case JourneyType.Cheque       => getResultCheque(journey)
+        case JourneyType.BankTransfer => getResultBankTransfer(journey)
+      }
     }
   }
 

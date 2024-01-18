@@ -31,6 +31,9 @@ class Actions @Inject() (
   val default: ActionBuilder[Request, AnyContent] = actionBuilder
 
   @SuppressWarnings(Array("org.wartremover.warts.Any"))
+  val journeyActionForTestOnly: ActionBuilder[JourneyRequest, AnyContent] = default.andThen(getJourneyActionRefiner)
+
+  @SuppressWarnings(Array("org.wartremover.warts.Any"))
   def journeyFinished: ActionBuilder[JourneyRequest, AnyContent] =
     default
       .andThen(getJourneyActionRefiner)
