@@ -26,7 +26,7 @@ class ChooseAnotherWayToReceiveYourRefundPage(baseUrl: String)(implicit webDrive
 
   override def expectedH1: String = "Choose another way to receive your refund"
 
-  override def assertPageIsDisplayed(errors: ContentExpectation*): Unit = sys.error("User another variant for asserting page")
+  override def assertPageIsDisplayed(errors: ContentExpectation*): Unit = sys.error("Use another variant for asserting page")
 
   def assertPageIsDisplayedPtaOrCheque(errors: ContentExpectation*): Unit = withPageClue {
     val contentExpectations: Seq[ContentExpectation] = Seq(ContentExpectation(

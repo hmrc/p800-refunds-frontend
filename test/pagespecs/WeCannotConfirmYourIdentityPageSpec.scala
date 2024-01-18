@@ -97,11 +97,13 @@ class WeCannotConfirmYourIdentityPageSpec extends ItSpec {
     "bank transfer" in {
       upsertJourneyToDatabase(tdAll.BankTransfer.journeyIdentityNotVerified)
       test()
+      pages.chooseAnotherWayToReceiveYourRefundPage.assertPageIsDisplayedPtaOrCheque()
       getJourneyFromDatabase(tdAll.journeyId) shouldBeLike tdAll.BankTransfer.journeyIdentityNotVerified
     }
     "cheque" in {
       upsertJourneyToDatabase(tdAll.Cheque.journeyIdentityNotVerified)
       test()
+      pages.chooseAnotherWayToReceiveYourRefundPage.assertPageIsDisplayedPtaOrBankTransfer()
       getJourneyFromDatabase(tdAll.journeyId) shouldBeLike tdAll.Cheque.journeyIdentityNotVerified
     }
 
@@ -109,7 +111,6 @@ class WeCannotConfirmYourIdentityPageSpec extends ItSpec {
         pages.weCannotConfirmYourIdentityPage.open()
         pages.weCannotConfirmYourIdentityPage.assertPageIsDisplayed()
         pages.weCannotConfirmYourIdentityPage.clickChooseAnotherWay()
-        pages.chooseAnotherWayToReceiveYourRefundPage.assertPageIsDisplayed()
       }
   }
 }
