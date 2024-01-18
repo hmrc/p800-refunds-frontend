@@ -62,7 +62,7 @@ class WhatIsYourP800ReferenceController @Inject() (
   }
 
   private def processForm(journey: Journey)(implicit request: Request[_]): Future[Result] = {
-    /**
+    /*
      * It must navigate to the next page or to the checkYourAnswers page depending if it was a "change" or not.
      */
     val nextCall = if (journey.isChanging) controllers.routes.CheckYourAnswersController.get else controllers.routes.WhatIsYourNationalInsuranceNumberController.get
