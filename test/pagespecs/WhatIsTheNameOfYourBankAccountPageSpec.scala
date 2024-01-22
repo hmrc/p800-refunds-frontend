@@ -76,7 +76,7 @@ class WhatIsTheNameOfYourBankAccountPageSpec extends ItSpec {
     pages.whatIsTheNameOfYourBankAccountPage.open()
     pages.whatIsTheNameOfYourBankAccountPage.assertPageIsDisplayed()
     pages.whatIsTheNameOfYourBankAccountPage.clickBackButton()
-    pages.weHaveConfirmedYourIdentityPage.assertPageIsDisplayed()
+    pages.weHaveConfirmedYourIdentityBankTransferPage.assertPageIsDisplayed()
 
     EcospendStub.verifyEcospendAccessToken()
     EcospendStub.verifyEcospendGetBanks()

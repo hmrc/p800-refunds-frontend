@@ -16,7 +16,7 @@
 
 package controllers
 
-import action.Actions
+import action.{Actions, JourneyRequest}
 import models.P800Reference
 import models.forms.EnterP800ReferenceForm
 import models.journeymodels._
@@ -41,12 +41,17 @@ class WhatIsYourP800ReferenceController @Inject() (
 
   import requestSupport._
 
-  def get: Action[AnyContent] = actions.journeyInProgress { implicit request =>
+  def getBankTransfer: Action[AnyContent] = actions.journeyInProgress { implicit request: JourneyRequest[_] =>
     val journey: Journey = request.journey
     getResult(journey.p800Reference)
   }
 
-  private def getResult(maybeP800Reference: Option[P800Reference])(implicit request: Request[_]): Result = {
+  def getCheque: Action[AnyContent] = actions.journeyInProgress { implicit request: JourneyRequest[_] =>
+    val journey: Journey = request.journey
+    getResult(journey.p800Reference)
+  }
+
+  private def getResult(maybeP800Reference: Option[P800Reference])(implicit request: JourneyRequest[_]): Result = {
     Ok(views.enterP800ReferencePage(
       form = maybeP800Reference.fold(
         EnterP800ReferenceForm.form
@@ -57,15 +62,21 @@ class WhatIsYourP800ReferenceController @Inject() (
       .makeChanging()
   }
 
-  def post: Action[AnyContent] = actions.journeyInProgress.async { implicit request =>
+  def postBankTransfer: Action[AnyContent] = actions.journeyInProgress.async { implicit request =>
     processForm(request.journey)
   }
 
-  private def processForm(journey: Journey)(implicit request: Request[_]): Future[Result] = {
+  def postCheque: Action[AnyContent] = actions.journeyInProgress.async { implicit request =>
+    processForm(request.journey)
+  }
+
+  private def processForm(journey: Journey)(implicit request: JourneyRequest[_]): Future[Result] = {
     /*
      * It must navigate to the next page or to the checkYourAnswers page depending if it was a "change" or not.
      */
-    val nextCall = if (journey.isChanging) controllers.routes.CheckYourAnswersController.get else controllers.routes.WhatIsYourNationalInsuranceNumberController.get
+    val nextCall =
+      if (journey.isChanging) controllers.CheckYourAnswersController.redirectLocation(request.journey)
+      else WhatIsYourNationalInsuranceNumberController.redirectLocation(request.journey)
 
     EnterP800ReferenceForm
       .form
@@ -85,4 +96,18 @@ class WhatIsYourP800ReferenceController @Inject() (
       )
   }
 
+}
+
+object WhatIsYourP800ReferenceController {
+  def redirectLocation(journey: Journey)(implicit request: Request[_]): Call = Journey.deriveRedirectByJourneyType(
+    journeyType           = journey.getJourneyType,
+    chequeJourneyRedirect = controllers.routes.WhatIsYourP800ReferenceController.getCheque,
+    bankJourneyRedirect   = controllers.routes.WhatIsYourP800ReferenceController.getBankTransfer
+  )
+
+  def derivePostEndpoint(journey: Journey)(implicit request: Request[_]): Call = Journey.deriveRedirectByJourneyType(
+    journeyType           = journey.getJourneyType,
+    chequeJourneyRedirect = controllers.routes.WhatIsYourP800ReferenceController.postCheque,
+    bankJourneyRedirect   = controllers.routes.WhatIsYourP800ReferenceController.postBankTransfer
+  )
 }

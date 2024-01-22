@@ -22,9 +22,9 @@ import org.scalatest.Assertion
 import pagespecs.pagesupport.{ContentExpectation, Page, PageUtil}
 import testsupport.RichMatchers.convertToAnyShouldWrapper
 
-class WhatIsYourNationalInsuranceNumberPage(baseUrl: String)(implicit webDriver: WebDriver) extends Page(
+class WhatIsYourNationalInsuranceNumberPage(baseUrl: String, pathForJourneyType: String)(implicit webDriver: WebDriver) extends Page(
   baseUrl,
-  path = "/get-an-income-tax-refund/what-is-your-national-insurance-number"
+  path = s"/get-an-income-tax-refund/$pathForJourneyType/what-is-your-national-insurance-number"
 ) {
 
   override def expectedH1: String = "What is your National Insurance number?"

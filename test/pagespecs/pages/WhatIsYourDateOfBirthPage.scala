@@ -23,7 +23,7 @@ import testsupport.RichMatchers.convertToAnyShouldWrapper
 
 class WhatIsYourDateOfBirthPage(baseUrl: String)(implicit webDriver: WebDriver) extends Page(
   baseUrl,
-  path = "/get-an-income-tax-refund/what-is-your-date-of-birth"
+  path = "/get-an-income-tax-refund/bank-transfer/what-is-your-date-of-birth"
 ) {
 
   override def expectedH1: String = "What is your date of birth?"

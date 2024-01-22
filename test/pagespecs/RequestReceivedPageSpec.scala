@@ -29,15 +29,15 @@ class RequestReceivedPageSpec extends ItSpec {
   "/request-received should render the relevant page for" - {
     "bank transfer" in {
       upsertJourneyToDatabase(tdAll.BankTransfer.journeyClaimedOverpayment)
-      pages.requestReceivedPage.open()
-      pages.requestReceivedPage.assertPageIsDisplayedForBankTransfer()
+      pages.requestReceivedBankTransferPage.open()
+      pages.requestReceivedBankTransferPage.assertPageIsDisplayedForBankTransfer()
       getJourneyFromDatabase(tdAll.journeyId) shouldBeLike tdAll.BankTransfer.journeyClaimedOverpayment
     }
 
     "cheque" in {
       upsertJourneyToDatabase(tdAll.Cheque.journeyClaimedOverpayment)
-      pages.requestReceivedPage.open()
-      pages.requestReceivedPage.assertPageIsDisplayedForCheque()
+      pages.requestReceivedChequePage.open()
+      pages.requestReceivedChequePage.assertPageIsDisplayedForCheque()
       getJourneyFromDatabase(tdAll.journeyId) shouldBeLike tdAll.Cheque.journeyClaimedOverpayment
     }
   }
@@ -53,9 +53,9 @@ class RequestReceivedPageSpec extends ItSpec {
     pages.verifyBankAccountPage.assertPageIsDisplayed()
     EcospendStub.ValidateStubs.stubValidatePaymentSuccessful()
     pages.verifyBankAccountPage.clickRefreshThisPageLink()
-    pages.requestReceivedPage.assertPageIsDisplayedForBankTransfer()
-    pages.requestReceivedPage.clickBackButtonInBrowser()
-    pages.requestReceivedPage.assertPageIsDisplayedForBankTransfer()
+    pages.requestReceivedBankTransferPage.assertPageIsDisplayedForBankTransfer()
+    pages.requestReceivedBankTransferPage.clickBackButtonInBrowser()
+    pages.requestReceivedBankTransferPage.assertPageIsDisplayedForBankTransfer()
     getJourneyFromDatabase(tdAll.journeyId) shouldBeLike tdAll.BankTransfer.journeyClaimedOverpayment
   }
 
@@ -67,10 +67,10 @@ class RequestReceivedPageSpec extends ItSpec {
     pages.completeYourRefundRequestPage.assertPageIsDisplayed()
     pages.completeYourRefundRequestPage.clickSubmitRefundRequest()
 
-    pages.requestReceivedPage.open()
-    pages.requestReceivedPage.assertPageIsDisplayedForCheque()
-    pages.requestReceivedPage.clickBackButtonInBrowser()
-    pages.requestReceivedPage.assertPageIsDisplayed()
+    pages.requestReceivedChequePage.open()
+    pages.requestReceivedChequePage.assertPageIsDisplayedForCheque()
+    pages.requestReceivedChequePage.clickBackButtonInBrowser()
+    pages.requestReceivedChequePage.assertPageIsDisplayed()
   }
 
 }

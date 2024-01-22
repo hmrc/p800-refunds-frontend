@@ -20,6 +20,7 @@
 @import uk.gov.hmrc.govukfrontend.views.html.components._
 @import uk.gov.hmrc.govukfrontend.views.html.components.implicits._
 @import views.html.templates.Layout
+@import action.JourneyRequest
 
 @this(
     layout: Layout,
@@ -29,7 +30,7 @@
 
 @(
     form: Form[P800Reference]
-)(implicit request: Request[_])
+)(implicit request: JourneyRequest[_])
 
 @import viewsHelpers.requestSupport._
 
@@ -43,14 +44,14 @@
 
 @layout(
     pageTitle = Some(title),
-    backLinkUrlOverride = Some(controllers.routes.WeNeedYouToConfirmYourIdentityController.get.url)
+    backLinkUrlOverride = Some(controllers.WeNeedYouToConfirmYourIdentityController.redirectLocation(request.journey).url)
 ) {
 
     @if(form.errors.nonEmpty) {
         @viewsHelpers.govukErrorSummary(ErrorSummary(errorList = form.errors.asTextErrorLinks, title = Text(Messages.CommonMessages.`There is a problem`.show)))
     }
 
-    @viewsHelpers.formWithCsrf(action = controllers.routes.WhatIsYourP800ReferenceController.post) {
+    @viewsHelpers.formWithCsrf(action = controllers.WhatIsYourP800ReferenceController.derivePostEndpoint(request.journey)) {
         @viewsHelpers.govukInput(Input(
             id = key,
             name = key,

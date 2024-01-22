@@ -16,9 +16,12 @@
 
 package controllers
 
-import action.Actions
+import action.{Actions, JourneyRequest}
+import models.journeymodels.Journey
+import models.journeymodels.JourneyType.{BankTransfer, Cheque}
 import play.api.mvc._
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
+import util.Errors
 import views.Views
 
 import javax.inject.{Inject, Singleton}
@@ -30,13 +33,32 @@ class WeNeedYouToConfirmYourIdentityController @Inject() (
     actions: Actions
 ) extends FrontendController(mcc) {
 
-  def get: Action[AnyContent] = actions.journeyInProgress { implicit request =>
+  def getCheque: Action[AnyContent] = actions.journeyInProgress { implicit request: JourneyRequest[_] =>
+    get
+  }
 
+  def getBankTransfer: Action[AnyContent] = actions.journeyInProgress { implicit request: JourneyRequest[_] =>
+    get
+  }
+
+  private def get(implicit request: JourneyRequest[_]): Result =
     Ok(views.weNeedYouToConfirmYourIdentityPage(request.journey.getJourneyType))
+
+  def post: Action[AnyContent] = actions.journeyInProgress { implicit request =>
+    request.journey.journeyType match {
+      case Some(BankTransfer) => Redirect(routes.WhatIsYourP800ReferenceController.getBankTransfer.url)
+      case Some(Cheque)       => Redirect(routes.WhatIsYourP800ReferenceController.getCheque.url)
+      case None               => Errors.throwServerErrorException("No journey type found in journey, this should never happen")
+    }
+
   }
 
-  def post: Action[AnyContent] = actions.journeyInProgress { _ =>
-    Redirect(routes.WhatIsYourP800ReferenceController.get.url)
-  }
+}
 
+object WeNeedYouToConfirmYourIdentityController {
+  def redirectLocation(journey: Journey)(implicit request: Request[_]): Call = Journey.deriveRedirectByJourneyType(
+    journeyType           = journey.getJourneyType,
+    chequeJourneyRedirect = controllers.routes.WeNeedYouToConfirmYourIdentityController.getCheque,
+    bankJourneyRedirect   = controllers.routes.WeNeedYouToConfirmYourIdentityController.getBankTransfer
+  )
 }

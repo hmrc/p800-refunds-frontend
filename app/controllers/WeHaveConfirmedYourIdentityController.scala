@@ -16,8 +16,8 @@
 
 package controllers
 
-import action.Actions
-import models.journeymodels.JourneyType
+import action.{Actions, JourneyRequest}
+import models.journeymodels.{Journey, JourneyType}
 import play.api.mvc._
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import views.Views
@@ -31,7 +31,15 @@ class WeHaveConfirmedYourIdentityController @Inject() (
     actions: Actions
 ) extends FrontendController(mcc) {
 
-  def get: Action[AnyContent] = actions.journeyInProgress { implicit request =>
+  def getBankTransfer: Action[AnyContent] = actions.journeyInProgress { implicit request =>
+    getResult
+  }
+
+  def getCheque: Action[AnyContent] = actions.journeyInProgress { implicit request =>
+    getResult
+  }
+
+  private def getResult(implicit request: JourneyRequest[_]) = {
     Ok(views.weHaveConfirmedYourIdentityPage())
   }
 
@@ -46,3 +54,10 @@ class WeHaveConfirmedYourIdentityController @Inject() (
 
 }
 
+object WeHaveConfirmedYourIdentityController {
+  def redirectLocation(journey: Journey)(implicit request: Request[_]): Call = Journey.deriveRedirectByJourneyType(
+    journeyType           = journey.getJourneyType,
+    chequeJourneyRedirect = controllers.routes.WeHaveConfirmedYourIdentityController.getCheque,
+    bankJourneyRedirect   = controllers.routes.WeHaveConfirmedYourIdentityController.getBankTransfer
+  )
+}

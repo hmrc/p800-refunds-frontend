@@ -64,7 +64,13 @@ class DoYouWantYourRefundViaBankTransferController @Inject() (
             }
             journeyService
               .upsert(journey.copy(journeyType = Some(journeyType)))
-              .map(_ => Redirect(controllers.routes.WeNeedYouToConfirmYourIdentityController.get))
+              .map { _ =>
+                val redirectLocation: Call = journeyType match {
+                  case JourneyType.Cheque       => controllers.routes.WeNeedYouToConfirmYourIdentityController.getCheque
+                  case JourneyType.BankTransfer => controllers.routes.WeNeedYouToConfirmYourIdentityController.getBankTransfer
+                }
+                Redirect(redirectLocation)
+              }
         }
       )
   }

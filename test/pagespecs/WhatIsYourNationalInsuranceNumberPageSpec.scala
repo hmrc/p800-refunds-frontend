@@ -17,6 +17,7 @@
 package pagespecs
 
 import models.NationalInsuranceNumber
+import models.journeymodels.JourneyType
 import testsupport.ItSpec
 
 class WhatIsYourNationalInsuranceNumberPageSpec extends ItSpec {
@@ -29,17 +30,21 @@ class WhatIsYourNationalInsuranceNumberPageSpec extends ItSpec {
   "whatIsYourNationalInsuranceNumberPage renders the what is your national insurance number page" - {
     "bank transfer" in {
       upsertJourneyToDatabase(tdAll.BankTransfer.journeyEnteredP800Reference)
-      test()
+      test(JourneyType.BankTransfer)
       getJourneyFromDatabase(tdAll.journeyId) shouldBeLike tdAll.BankTransfer.journeyEnteredP800Reference
     }
     "cheque" in {
       upsertJourneyToDatabase(tdAll.Cheque.journeyEnteredP800Reference)
-      test()
+      test(JourneyType.Cheque)
       getJourneyFromDatabase(tdAll.journeyId) shouldBeLike tdAll.Cheque.journeyEnteredP800Reference
     }
-      def test() = {
-        pages.whatIsYourNationalInsuranceNumberPage.open()
-        pages.whatIsYourNationalInsuranceNumberPage.assertPageIsDisplayed()
+      def test(journeyType: JourneyType) = {
+        val page = journeyType match {
+          case JourneyType.BankTransfer => pages.whatIsYourNationalInsuranceNumberBankTransferPage
+          case JourneyType.Cheque       => pages.whatIsYourNationalInsuranceNumberChequePage
+        }
+        page.open()
+        page.assertPageIsDisplayed()
       }
   }
 
@@ -49,27 +54,31 @@ class WhatIsYourNationalInsuranceNumberPageSpec extends ItSpec {
     Seq(tdAll.nationalInsuranceNumber.value, "aa000000a", " AA000000A.", "MA 00 00 03 A").foreach { nino =>
       s"($nino) bank transfer - redirects user to whatIsYourDateOfBirthPage" in {
         upsertJourneyToDatabase(tdAll.BankTransfer.journeyEnteredP800Reference)
-        test()
+        test(JourneyType.BankTransfer)
         pages.whatIsYourDateOfBirthPage.assertPageIsDisplayed()
         val expectedJourney = tdAll.BankTransfer.journeyEnteredNino.copy(nationalInsuranceNumber = Some(NationalInsuranceNumber(cleanNino(nino))))
         getJourneyFromDatabase(tdAll.journeyId) shouldBeLike expectedJourney
       }
       s"($nino) cheque - redirects user to checkYourAnswersPage" in {
         upsertJourneyToDatabase(tdAll.Cheque.journeyEnteredP800Reference)
-        test()
+        test(JourneyType.Cheque)
         val expectedJourney = tdAll.Cheque.journeyEnteredNino.copy(nationalInsuranceNumber = Some(NationalInsuranceNumber(cleanNino(nino))))
-        pages.checkYourAnswersPage.assertPageIsDisplayedForCheque(
+        pages.checkYourAnswersChequePage.assertPageIsDisplayedForCheque(
           expectedJourney.p800Reference.value,
           expectedJourney.nationalInsuranceNumber.value
         )
         getJourneyFromDatabase(tdAll.journeyId) shouldBeLike expectedJourney
       }
 
-        def test(): Unit = {
-          pages.whatIsYourNationalInsuranceNumberPage.open()
-          pages.whatIsYourNationalInsuranceNumberPage.assertPageIsDisplayed()
-          pages.whatIsYourNationalInsuranceNumberPage.enterNationalInsuranceNumber(NationalInsuranceNumber(nino))
-          pages.whatIsYourNationalInsuranceNumberPage.clickSubmit()
+        def test(journeyType: JourneyType): Unit = {
+          val page = journeyType match {
+            case JourneyType.BankTransfer => pages.whatIsYourNationalInsuranceNumberBankTransferPage
+            case JourneyType.Cheque       => pages.whatIsYourNationalInsuranceNumberChequePage
+          }
+          page.open()
+          page.assertPageIsDisplayed()
+          page.enterNationalInsuranceNumber(NationalInsuranceNumber(nino))
+          page.clickSubmit()
         }
 
     }
@@ -79,21 +88,25 @@ class WhatIsYourNationalInsuranceNumberPageSpec extends ItSpec {
     "bank transfer" in {
       val expectedJourney = tdAll.BankTransfer.journeyEnteredP800Reference
       upsertJourneyToDatabase(expectedJourney)
-      test()
+      test(JourneyType.BankTransfer)
       getJourneyFromDatabase(tdAll.journeyId) shouldBeLike expectedJourney
     }
     "cheque" in {
       val expectedJourney = tdAll.Cheque.journeyEnteredP800Reference
       upsertJourneyToDatabase(expectedJourney)
-      test()
+      test(JourneyType.Cheque)
       getJourneyFromDatabase(tdAll.journeyId) shouldBeLike expectedJourney
     }
 
-      def test(): Unit = {
-        pages.whatIsYourNationalInsuranceNumberPage.open()
-        pages.whatIsYourNationalInsuranceNumberPage.assertPageIsDisplayed()
-        pages.whatIsYourNationalInsuranceNumberPage.clickSubmit()
-        pages.whatIsYourNationalInsuranceNumberPage.assertPageShowsErrorEmptyInput()
+      def test(journeyType: JourneyType): Unit = {
+        val page = journeyType match {
+          case JourneyType.BankTransfer => pages.whatIsYourNationalInsuranceNumberBankTransferPage
+          case JourneyType.Cheque       => pages.whatIsYourNationalInsuranceNumberChequePage
+        }
+        page.open()
+        page.assertPageIsDisplayed()
+        page.clickSubmit()
+        page.assertPageShowsErrorEmptyInput()
       }
   }
 
@@ -102,22 +115,26 @@ class WhatIsYourNationalInsuranceNumberPageSpec extends ItSpec {
       s"($nino) bank transfer" in {
         val expectedJourney = tdAll.BankTransfer.journeyEnteredP800Reference
         upsertJourneyToDatabase(expectedJourney)
-        test()
+        test(JourneyType.BankTransfer)
         getJourneyFromDatabase(tdAll.journeyId) shouldBeLike expectedJourney
       }
       s"($nino) cheque" in {
         val expectedJourney = tdAll.Cheque.journeyEnteredP800Reference
         upsertJourneyToDatabase(expectedJourney)
-        test()
+        test(JourneyType.Cheque)
         getJourneyFromDatabase(tdAll.journeyId) shouldBeLike expectedJourney
       }
 
-        def test(): Unit = {
-          pages.whatIsYourNationalInsuranceNumberPage.open()
-          pages.whatIsYourNationalInsuranceNumberPage.assertPageIsDisplayed()
-          pages.whatIsYourNationalInsuranceNumberPage.enterNationalInsuranceNumber(NationalInsuranceNumber(nino))
-          pages.whatIsYourNationalInsuranceNumberPage.clickSubmit()
-          pages.whatIsYourNationalInsuranceNumberPage.assertPageShowsErrorInvalid()
+        def test(journeyType: JourneyType): Unit = {
+          val page = journeyType match {
+            case JourneyType.BankTransfer => pages.whatIsYourNationalInsuranceNumberBankTransferPage
+            case JourneyType.Cheque       => pages.whatIsYourNationalInsuranceNumberChequePage
+          }
+          page.open()
+          page.assertPageIsDisplayed()
+          page.enterNationalInsuranceNumber(NationalInsuranceNumber(nino))
+          page.clickSubmit()
+          page.assertPageShowsErrorInvalid()
         }
     }
   }
@@ -126,21 +143,25 @@ class WhatIsYourNationalInsuranceNumberPageSpec extends ItSpec {
     s"bank transfer" in {
       val expectedJourney = tdAll.BankTransfer.journeyEnteredP800Reference
       upsertJourneyToDatabase(expectedJourney)
-      test()
+      test(JourneyType.BankTransfer)
       getJourneyFromDatabase(tdAll.journeyId) shouldBeLike expectedJourney
     }
     s"cheque" in {
       val expectedJourney = tdAll.Cheque.journeyEnteredP800Reference
       upsertJourneyToDatabase(expectedJourney)
-      test()
+      test(JourneyType.Cheque)
       getJourneyFromDatabase(tdAll.journeyId) shouldBeLike expectedJourney
     }
 
-      def test(): Unit = {
-        pages.whatIsYourNationalInsuranceNumberPage.open()
-        pages.whatIsYourNationalInsuranceNumberPage.assertPageIsDisplayed()
-        pages.whatIsYourNationalInsuranceNumberPage.clickBackButton()
-        pages.whatIsYourP800ReferencePage.assertPageIsDisplayed()
+      def test(journeyType: JourneyType): Unit = {
+        val (startPage, endPage) = journeyType match {
+          case JourneyType.BankTransfer => pages.whatIsYourNationalInsuranceNumberBankTransferPage -> pages.whatIsYourP800ReferenceBankTransferPage
+          case JourneyType.Cheque       => pages.whatIsYourNationalInsuranceNumberBankTransferPage -> pages.whatIsYourP800ReferenceChequePage
+        }
+        startPage.open()
+        startPage.assertPageIsDisplayed()
+        startPage.clickBackButton()
+        endPage.assertPageIsDisplayed()
       }
 
   }
@@ -150,22 +171,25 @@ class WhatIsYourNationalInsuranceNumberPageSpec extends ItSpec {
     s"bank transfer" in {
       val expectedJourney = tdAll.BankTransfer.journeyEnteredNino
       upsertJourneyToDatabase(expectedJourney)
-      test()
-      pages.whatIsYourNationalInsuranceNumberPage.assertDataPrepopulated(expectedJourney.nationalInsuranceNumber.value)
+      test(JourneyType.BankTransfer)
+      pages.whatIsYourNationalInsuranceNumberBankTransferPage.assertDataPrepopulated(expectedJourney.nationalInsuranceNumber.value)
       getJourneyFromDatabase(tdAll.journeyId) shouldBeLike expectedJourney
     }
     s"cheque" in {
       val expectedJourney = tdAll.Cheque.journeyEnteredNino
       upsertJourneyToDatabase(expectedJourney)
-      test()
-      pages.whatIsYourNationalInsuranceNumberPage.assertDataPrepopulated(expectedJourney.nationalInsuranceNumber.value)
+      test(JourneyType.Cheque)
+      pages.whatIsYourNationalInsuranceNumberChequePage.assertDataPrepopulated(expectedJourney.nationalInsuranceNumber.value)
       getJourneyFromDatabase(tdAll.journeyId) shouldBeLike expectedJourney
     }
 
-      def test(): Unit = {
-        pages.whatIsYourNationalInsuranceNumberPage.open()
-        pages.whatIsYourNationalInsuranceNumberPage.assertPageIsDisplayed()
-
+      def test(journeyType: JourneyType): Unit = {
+        val page = journeyType match {
+          case JourneyType.BankTransfer => pages.whatIsYourNationalInsuranceNumberBankTransferPage
+          case JourneyType.Cheque       => pages.whatIsYourNationalInsuranceNumberChequePage
+        }
+        page.open()
+        page.assertPageIsDisplayed()
       }
 
   }

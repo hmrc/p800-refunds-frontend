@@ -16,6 +16,7 @@
 
 package pagespecs
 
+import models.journeymodels.JourneyType
 import testsupport.ItSpec
 
 class WhatIsYourP800ReferencePageSpec extends ItSpec {
@@ -28,41 +29,49 @@ class WhatIsYourP800ReferencePageSpec extends ItSpec {
   "Entering valid p800 reference and clicking Continue redirects to WhatIsYourNationalInsuranceNumberPage" - {
     "bank transfer" in {
       upsertJourneyToDatabase(tdAll.BankTransfer.journeySelectedType)
-      test()
+      test(JourneyType.BankTransfer)
       getJourneyFromDatabase(tdAll.journeyId) shouldBeLike tdAll.BankTransfer.journeyEnteredP800Reference
     }
     "cheque" in {
       upsertJourneyToDatabase(tdAll.Cheque.journeySelectedType)
-      test()
+      test(JourneyType.Cheque)
       getJourneyFromDatabase(tdAll.journeyId) shouldBeLike tdAll.Cheque.journeyEnteredP800Reference
     }
 
-      def test(): Unit = {
-        pages.whatIsYourP800ReferencePage.open()
-        pages.whatIsYourP800ReferencePage.assertPageIsDisplayed()
-        pages.whatIsYourP800ReferencePage.enterP800Reference(tdAll.p800Reference.value)
-        pages.whatIsYourP800ReferencePage.clickSubmit()
-        pages.whatIsYourNationalInsuranceNumberPage.assertPageIsDisplayed()
+      def test(journeyType: JourneyType): Unit = {
+        val (startPage, endPage) = journeyType match {
+          case JourneyType.BankTransfer => pages.whatIsYourP800ReferenceBankTransferPage -> pages.whatIsYourNationalInsuranceNumberBankTransferPage
+          case JourneyType.Cheque       => pages.whatIsYourP800ReferenceChequePage -> pages.whatIsYourNationalInsuranceNumberChequePage
+        }
+        startPage.open()
+        startPage.assertPageIsDisplayed()
+        startPage.enterP800Reference(tdAll.p800Reference.value)
+        startPage.clickSubmit()
+        endPage.assertPageIsDisplayed()
       }
   }
 
   "Clicking Continue with empty text input shows error" - {
     "bank transfer" in {
       upsertJourneyToDatabase(tdAll.BankTransfer.journeySelectedType)
-      test()
+      test(JourneyType.BankTransfer)
       getJourneyFromDatabase(tdAll.journeyId) shouldBeLike tdAll.BankTransfer.journeySelectedType
     }
     "cheque" in {
       upsertJourneyToDatabase(tdAll.Cheque.journeySelectedType)
-      test()
+      test(JourneyType.Cheque)
       getJourneyFromDatabase(tdAll.journeyId) shouldBeLike tdAll.Cheque.journeySelectedType
     }
 
-      def test(): Unit = {
-        pages.whatIsYourP800ReferencePage.open()
-        pages.whatIsYourP800ReferencePage.assertPageIsDisplayed()
-        pages.whatIsYourP800ReferencePage.clickSubmit()
-        pages.whatIsYourP800ReferencePage.assertPageShowsErrorRequired()
+      def test(journeyType: JourneyType): Unit = {
+        val page = journeyType match {
+          case JourneyType.BankTransfer => pages.whatIsYourP800ReferenceBankTransferPage
+          case JourneyType.Cheque       => pages.whatIsYourP800ReferenceChequePage
+        }
+        page.open()
+        page.assertPageIsDisplayed()
+        page.clickSubmit()
+        page.assertPageShowsErrorRequired()
       }
   }
 
@@ -70,38 +79,46 @@ class WhatIsYourP800ReferencePageSpec extends ItSpec {
 
     "bank transfer" in {
       upsertJourneyToDatabase(tdAll.BankTransfer.journeySelectedType)
-      test()
+      test(JourneyType.BankTransfer)
       getJourneyFromDatabase(tdAll.journeyId) shouldBeLike tdAll.BankTransfer.journeySelectedType
     }
     "cheque" in {
       upsertJourneyToDatabase(tdAll.Cheque.journeySelectedType)
-      test()
+      test(JourneyType.Cheque)
       getJourneyFromDatabase(tdAll.journeyId) shouldBeLike tdAll.Cheque.journeySelectedType
     }
-      def test(): Unit = {
-        pages.whatIsYourP800ReferencePage.open()
-        pages.whatIsYourP800ReferencePage.assertPageIsDisplayed()
-        pages.whatIsYourP800ReferencePage.enterP800Reference("this is a really long and invalid reference")
-        pages.whatIsYourP800ReferencePage.clickSubmit()
-        pages.whatIsYourP800ReferencePage.assertPageShowsErrorReferenceFormat()
+      def test(journeyType: JourneyType): Unit = {
+        val page = journeyType match {
+          case JourneyType.BankTransfer => pages.whatIsYourP800ReferenceBankTransferPage
+          case JourneyType.Cheque       => pages.whatIsYourP800ReferenceChequePage
+        }
+        page.open()
+        page.assertPageIsDisplayed()
+        page.enterP800Reference("this is a really long and invalid reference")
+        page.clickSubmit()
+        page.assertPageShowsErrorReferenceFormat()
       }
   }
 
   "Clicking 'Sign in or create a personal tax account' link opens correctly" - {
     "bank transfer" in {
       upsertJourneyToDatabase(tdAll.BankTransfer.journeySelectedType)
-      test()
+      test(JourneyType.BankTransfer)
       getJourneyFromDatabase(tdAll.journeyId) shouldBeLike tdAll.BankTransfer.journeySelectedType
     }
     "cheque" in {
       upsertJourneyToDatabase(tdAll.Cheque.journeySelectedType)
-      test()
+      test(JourneyType.Cheque)
       getJourneyFromDatabase(tdAll.journeyId) shouldBeLike tdAll.Cheque.journeySelectedType
     }
-      def test(): Unit = {
-        pages.whatIsYourP800ReferencePage.open()
-        pages.whatIsYourP800ReferencePage.assertPageIsDisplayed()
-        pages.whatIsYourP800ReferencePage.clickPtaSignInLink()
+      def test(journeyType: JourneyType): Unit = {
+        val page = journeyType match {
+          case JourneyType.BankTransfer => pages.whatIsYourP800ReferenceBankTransferPage
+          case JourneyType.Cheque       => pages.whatIsYourP800ReferenceChequePage
+        }
+        page.open()
+        page.assertPageIsDisplayed()
+        page.clickPtaSignInLink()
         pages.ptaSignInPage.assertPageIsDisplayed()
       }
   }
@@ -109,19 +126,23 @@ class WhatIsYourP800ReferencePageSpec extends ItSpec {
   "Clicking on back button redirects back to 'We need you to confirm your identity' page" - {
     "bank transfer" in {
       upsertJourneyToDatabase(tdAll.BankTransfer.journeySelectedType)
-      test()
+      test(JourneyType.BankTransfer)
       getJourneyFromDatabase(tdAll.journeyId) shouldBeLike tdAll.BankTransfer.journeySelectedType
     }
     "cheque" in {
       upsertJourneyToDatabase(tdAll.Cheque.journeySelectedType)
-      test()
+      test(JourneyType.Cheque)
       getJourneyFromDatabase(tdAll.journeyId) shouldBeLike tdAll.Cheque.journeySelectedType
     }
-      def test() = {
-        pages.whatIsYourP800ReferencePage.open()
-        pages.whatIsYourP800ReferencePage.assertPageIsDisplayed()
-        pages.whatIsYourP800ReferencePage.clickBackButton()
-        pages.weNeedYouToConfirmYourIdentityPage.assertPageIsDisplayed()
+      def test(journeyType: JourneyType) = {
+        val (startPage, endPage) = journeyType match {
+          case JourneyType.BankTransfer => pages.whatIsYourP800ReferenceBankTransferPage -> pages.weNeedYouToConfirmYourIdentityBankTransferPage
+          case JourneyType.Cheque       => pages.whatIsYourP800ReferenceChequePage -> pages.weNeedYouToConfirmYourIdentityChequePage
+        }
+        startPage.open()
+        startPage.assertPageIsDisplayed()
+        startPage.clickBackButton()
+        endPage.assertPageIsDisplayed()
       }
   }
 }

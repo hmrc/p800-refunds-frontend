@@ -38,7 +38,7 @@ class CompleteYourRefundRequestPageSpec extends ItSpec {
     pages.completeYourRefundRequestPage.assertPageIsDisplayed()
     pages.completeYourRefundRequestPage.clickSubmitRefundRequest()
     // will there be an api call made at this point? todo add wiremock check for that call, if not remove this comment.
-    pages.requestReceivedPage.assertPageIsDisplayedForCheque()
+    pages.requestReceivedChequePage.assertPageIsDisplayedForCheque()
     getJourneyFromDatabase(tdAll.journeyId) shouldBeLike tdAll.Cheque.journeyClaimedOverpayment
   }
 
@@ -46,7 +46,7 @@ class CompleteYourRefundRequestPageSpec extends ItSpec {
     pages.completeYourRefundRequestPage.open()
     pages.completeYourRefundRequestPage.assertPageIsDisplayed()
     pages.completeYourRefundRequestPage.clickBackButton()
-    pages.weHaveConfirmedYourIdentityPage.assertPageIsDisplayed()
+    pages.weHaveConfirmedYourIdentityChequePage.assertPageIsDisplayed()
     getJourneyFromDatabase(tdAll.journeyId) shouldBeLike tdAll.Cheque.journeyIdentityVerified
   }
 

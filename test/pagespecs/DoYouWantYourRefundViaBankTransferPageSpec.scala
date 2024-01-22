@@ -31,7 +31,7 @@ class DoYouWantYourRefundViaBankTransferPageSpec extends ItSpec {
     pages.doYouWantYourRefundViaBankTransferPage.assertPageIsDisplayed()
     pages.doYouWantYourRefundViaBankTransferPage.selectYes()
     pages.doYouWantYourRefundViaBankTransferPage.clickSubmit()
-    pages.weNeedYouToConfirmYourIdentityPage.assertPageIsDisplayedForBankTransferJourney()
+    pages.weNeedYouToConfirmYourIdentityBankTransferPage.assertPageIsDisplayedForBankTransferJourney()
     getJourneyFromDatabase(tdAll.journeyId) shouldBeLike tdAll.BankTransfer.journeySelectedType withClue "JourneyType becomes BankTransfer"
   }
 
@@ -40,11 +40,11 @@ class DoYouWantYourRefundViaBankTransferPageSpec extends ItSpec {
     pages.doYouWantYourRefundViaBankTransferPage.assertPageIsDisplayed()
     pages.doYouWantYourRefundViaBankTransferPage.selectNo()
     pages.doYouWantYourRefundViaBankTransferPage.clickSubmit()
-    pages.weNeedYouToConfirmYourIdentityPage.assertPageIsDisplayedForChequeJourney()
+    pages.weNeedYouToConfirmYourIdentityChequePage.assertPageIsDisplayedForChequeJourney()
     getJourneyFromDatabase(tdAll.journeyId) shouldBeLike tdAll.Cheque.journeySelectedType withClue "however the journey type becomes Cheque"
   }
 
-  "Clicking 'Back' redirects user to 'Check your reference' page" in {
+  "Clicking 'Back' redirects user to 'Do you want to sign in' page" in {
     pages.doYouWantYourRefundViaBankTransferPage.open()
     pages.doYouWantYourRefundViaBankTransferPage.assertPageIsDisplayed()
     pages.doYouWantYourRefundViaBankTransferPage.clickBackButton()

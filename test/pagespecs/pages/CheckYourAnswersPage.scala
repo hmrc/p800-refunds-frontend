@@ -22,9 +22,9 @@ import org.openqa.selenium.WebDriver
 import pagespecs.pagesupport.{ContentExpectation, Page, PageUtil}
 import testsupport.RichMatchers.convertToAnyShouldWrapper
 
-class CheckYourAnswersPage(baseUrl: String)(implicit webDriver: WebDriver) extends Page(
+class CheckYourAnswersPage(baseUrl: String, pathForJourneyType: String)(implicit webDriver: WebDriver) extends Page(
   baseUrl,
-  path = "/get-an-income-tax-refund/check-your-answers"
+  path = s"/get-an-income-tax-refund/$pathForJourneyType/check-your-answers"
 ) {
 
   override def expectedH1: String = "Check your answers"

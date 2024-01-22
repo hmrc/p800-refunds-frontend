@@ -61,25 +61,22 @@ class ChooseAnotherWayToGetYourRefundController @Inject() (
         BadRequest(views.chooseAnotherWayPtaOrChequePage(form = formWithErrors))
       ),
       {
-        ptaOrChequeFormValue: PtaOrChequeFormValue =>
-          ptaOrChequeFormValue match {
-            case PtaOrChequeFormValue.BankTransferViaPta =>
-              Future.successful(
-                Redirect(appConfig.PersonalTaxAccountUrls.personalTaxAccountSignInUrl)
-              )
-            case PtaOrChequeFormValue.Cheque =>
-              journeyService
-                .upsert(
-                  journey.copy(journeyType = Some(JourneyType.Cheque))
-                )
-                .map(_ =>
-                  if (journey.isIdentityVerified) {
-                    Redirect(controllers.routes.CompleteYourRefundRequestController.get)
-                  } else {
-                    Redirect(controllers.routes.WeNeedYouToConfirmYourIdentityController.get)
-                  })
-          }
-
+        case PtaOrChequeFormValue.BankTransferViaPta =>
+          Future.successful(
+            Redirect(appConfig.PersonalTaxAccountUrls.personalTaxAccountSignInUrl)
+          )
+        case PtaOrChequeFormValue.Cheque =>
+          journeyService
+            .upsert(
+              journey.copy(journeyType = Some(JourneyType.Cheque))
+            )
+            .map { updatedJourney =>
+              if (journey.isIdentityVerified) {
+                Redirect(controllers.routes.CompleteYourRefundRequestController.get)
+              } else {
+                Redirect(WeNeedYouToConfirmYourIdentityController.redirectLocation(updatedJourney))
+              }
+            }
       }
     )
   }
@@ -102,8 +99,7 @@ class ChooseAnotherWayToGetYourRefundController @Inject() (
             .upsert(
               journey.copy(journeyType = Some(JourneyType.BankTransfer))
             )
-            .map(_ =>
-              Redirect(controllers.routes.WeNeedYouToConfirmYourIdentityController.get))
+            .map(_ => Redirect(WeNeedYouToConfirmYourIdentityController.redirectLocation(journey)))
       }
     )
   }

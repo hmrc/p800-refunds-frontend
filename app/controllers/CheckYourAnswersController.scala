@@ -47,7 +47,15 @@ class CheckYourAnswersController @Inject() (
 
   import requestSupport._
 
-  def get: Action[AnyContent] = actions.journeyInProgress { implicit request =>
+  def getBankTransfer: Action[AnyContent] = actions.journeyInProgress { implicit request: JourneyRequest[_] =>
+    getResult
+  }
+
+  def getCheque: Action[AnyContent] = actions.journeyInProgress { implicit request: JourneyRequest[_] =>
+    getResult
+  }
+
+  private def getResult(implicit request: JourneyRequest[_]) = {
     val journey: Journey = request.journey
 
     val summaryList = journey.getJourneyType match {
@@ -72,7 +80,7 @@ class CheckYourAnswersController @Inject() (
     journeyService
       .upsert(journey.copy(isChanging = true))
       .map(_ =>
-        Redirect(controllers.routes.WhatIsYourNationalInsuranceNumberController.get))
+        Redirect(WhatIsYourNationalInsuranceNumberController.redirectLocation(journey)))
   }
 
   def changeDateOfBirth: Action[AnyContent] = actions.journeyInProgress { _ =>
@@ -83,8 +91,7 @@ class CheckYourAnswersController @Inject() (
     val journey = request.journey
     journeyService
       .upsert(journey.copy(isChanging = true))
-      .map(_ =>
-        Redirect(controllers.routes.WhatIsYourP800ReferenceController.get))
+      .map(_ => Redirect(WhatIsYourP800ReferenceController.redirectLocation(journey)))
   }
 
   def post: Action[AnyContent] = actions.journeyInProgress.async { implicit request =>
@@ -104,8 +111,8 @@ class CheckYourAnswersController @Inject() (
     } yield Redirect(nextCall(identityVerificationResponse))
   }
 
-  private def nextCall(identityVerificationResponse: IdentityVerificationResponse): Call = {
-    if (identityVerificationResponse.identityVerified.value) controllers.routes.WeHaveConfirmedYourIdentityController.get
+  private def nextCall(identityVerificationResponse: IdentityVerificationResponse)(implicit journeyRequest: JourneyRequest[_]): Call = {
+    if (identityVerificationResponse.identityVerified.value) controllers.WeHaveConfirmedYourIdentityController.redirectLocation(journeyRequest.journey)
     else controllers.routes.WeCannotConfirmYourIdentityController.get
   }
 
@@ -202,5 +209,11 @@ object CheckYourAnswersController {
         r
     }
   }
+
+  def redirectLocation(journey: Journey)(implicit request: Request[_]): Call = Journey.deriveRedirectByJourneyType(
+    journeyType           = journey.getJourneyType,
+    chequeJourneyRedirect = controllers.routes.CheckYourAnswersController.getCheque,
+    bankJourneyRedirect   = controllers.routes.CheckYourAnswersController.getBankTransfer
+  )
 
 }

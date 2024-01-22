@@ -29,28 +29,26 @@ class WeHaveConfirmedYourIdentityPageSpec extends ItSpec {
   "page renders correctly" - {
     "bank transfer" in {
       upsertJourneyToDatabase(tdAll.BankTransfer.journeyIdentityVerified)
-      test()
+      pages.weHaveConfirmedYourIdentityBankTransferPage.open()
+      pages.weHaveConfirmedYourIdentityBankTransferPage.assertPageIsDisplayed()
       getJourneyFromDatabase(tdAll.journeyId) shouldBeLike tdAll.BankTransfer.journeyIdentityVerified
     }
     "cheque" in {
       upsertJourneyToDatabase(tdAll.Cheque.journeyIdentityVerified)
-      test()
+      pages.weHaveConfirmedYourIdentityChequePage.open()
+      pages.weHaveConfirmedYourIdentityChequePage.assertPageIsDisplayed()
       getJourneyFromDatabase(tdAll.journeyId) shouldBeLike tdAll.Cheque.journeyIdentityVerified
     }
-
-      def test() = {
-        pages.weHaveConfirmedYourIdentityPage.open()
-        pages.weHaveConfirmedYourIdentityPage.assertPageIsDisplayed()
-      }
   }
 
   "clicking submit navigates to What Is The Name Of Your Bank Account page" - {
-
     "bank transfer" in {
       upsertJourneyToDatabase(tdAll.BankTransfer.journeyIdentityVerified)
       EcospendStub.stubEcospendAuth2xxSucceeded
       EcospendStub.stubEcospendGetBanks2xx
-      test()
+      pages.weHaveConfirmedYourIdentityBankTransferPage.open()
+      pages.weHaveConfirmedYourIdentityBankTransferPage.assertPageIsDisplayed()
+      pages.weHaveConfirmedYourIdentityBankTransferPage.clickSubmit()
       pages.whatIsTheNameOfYourBankAccountPage.assertPageIsDisplayed()
       EcospendStub.verifyEcospendAccessToken()
       EcospendStub.verifyEcospendGetBanks()
@@ -58,24 +56,21 @@ class WeHaveConfirmedYourIdentityPageSpec extends ItSpec {
     }
     "cheque" in {
       upsertJourneyToDatabase(tdAll.Cheque.journeyIdentityVerified)
-      test()
+      pages.weHaveConfirmedYourIdentityChequePage.open()
+      pages.weHaveConfirmedYourIdentityChequePage.assertPageIsDisplayed()
+      pages.weHaveConfirmedYourIdentityChequePage.clickSubmit()
       pages.completeYourRefundRequestPage.assertPageIsDisplayed()
       getJourneyFromDatabase(tdAll.journeyId) shouldBeLike tdAll.Cheque.journeyIdentityVerified
     }
-
-      def test() = {
-        pages.weHaveConfirmedYourIdentityPage.open()
-        pages.weHaveConfirmedYourIdentityPage.assertPageIsDisplayed()
-        pages.weHaveConfirmedYourIdentityPage.clickSubmit()
-      }
-
   }
 
   "clicking back button navigates to Check Your Answers page" - {
     "bank transfer" in {
       upsertJourneyToDatabase(tdAll.BankTransfer.journeyIdentityVerified)
-      test()
-      pages.checkYourAnswersPage.assertPageIsDisplayedForBankTransfer(
+      pages.weHaveConfirmedYourIdentityBankTransferPage.open()
+      pages.weHaveConfirmedYourIdentityBankTransferPage.assertPageIsDisplayed()
+      pages.weHaveConfirmedYourIdentityBankTransferPage.clickBackButton()
+      pages.checkYourAnswersBankTransferPage.assertPageIsDisplayedForBankTransfer(
         tdAll.p800Reference,
         tdAll.dateOfBirthFormatted,
         tdAll.nationalInsuranceNumber
@@ -85,19 +80,15 @@ class WeHaveConfirmedYourIdentityPageSpec extends ItSpec {
 
     "cheque" in {
       upsertJourneyToDatabase(tdAll.Cheque.journeyIdentityVerified)
-      test()
-      pages.checkYourAnswersPage.assertPageIsDisplayedForCheque(
+      pages.weHaveConfirmedYourIdentityChequePage.open()
+      pages.weHaveConfirmedYourIdentityChequePage.assertPageIsDisplayed()
+      pages.weHaveConfirmedYourIdentityChequePage.clickBackButton()
+      pages.checkYourAnswersChequePage.assertPageIsDisplayedForCheque(
         tdAll.p800Reference,
         tdAll.nationalInsuranceNumber
       )
       getJourneyFromDatabase(tdAll.journeyId) shouldBeLike tdAll.Cheque.journeyIdentityVerified
     }
-
-      def test() = {
-        pages.weHaveConfirmedYourIdentityPage.open()
-        pages.weHaveConfirmedYourIdentityPage.assertPageIsDisplayed()
-        pages.weHaveConfirmedYourIdentityPage.clickBackButton()
-      }
   }
 
 }

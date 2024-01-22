@@ -19,6 +19,7 @@
 @import views.ViewsHelpers
 @import views.html.templates.Layout
 @import models.journeymodels.JourneyType
+@import action.JourneyRequest
 
 @this(
     layout: Layout,
@@ -28,7 +29,7 @@
 @(
     summaryList: SummaryList,
     journeyType: JourneyType
-)(implicit request: Request[_])
+)(implicit request: JourneyRequest[_])
 
 @import viewsHelpers.requestSupport._
 
@@ -40,7 +41,7 @@
     pageTitle = Some(heading),
     backLinkUrlOverride = Some(journeyType match {
         case JourneyType.BankTransfer => controllers.routes.WhatIsYourDateOfBirthController.get.url
-        case JourneyType.Cheque => controllers.routes.WhatIsYourNationalInsuranceNumberController.get.url
+        case JourneyType.Cheque => controllers.routes.WhatIsYourNationalInsuranceNumberController.getCheque.url
     })
 ) {
 

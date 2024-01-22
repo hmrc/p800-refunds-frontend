@@ -35,8 +35,8 @@ class WeCannotConfirmYourIdentityController @Inject() (
     Ok(views.weCannotConfirmYourIdentityPage())
   }
 
-  def tryAgain: Action[AnyContent] = actions.journeyInProgress { _ =>
-    Redirect(routes.CheckYourAnswersController.get)
+  def tryAgain: Action[AnyContent] = actions.journeyInProgress { implicit journeyRequest =>
+    Redirect(CheckYourAnswersController.redirectLocation(journeyRequest.journey))
   }
 
   def choseAnotherMethod: Action[AnyContent] = actions.journeyInProgress { _ =>

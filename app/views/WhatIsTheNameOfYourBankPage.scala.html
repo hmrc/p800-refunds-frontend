@@ -44,7 +44,7 @@
 
 @layout(
     pageTitle = Some(title),
-    backLinkUrlOverride = Some(controllers.routes.WeHaveConfirmedYourIdentityController.get.url)
+    backLinkUrlOverride = Some(controllers.routes.WeHaveConfirmedYourIdentityController.getBankTransfer.url)
 ) {
 
     @if(form.errors.nonEmpty) {

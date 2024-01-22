@@ -39,7 +39,15 @@ class WhatIsYourNationalInsuranceNumberController @Inject() (
 
   import requestSupport._
 
-  def get: Action[AnyContent] = actions.journeyInProgress { implicit request =>
+  def getBankTransfer: Action[AnyContent] = actions.journeyInProgress { implicit request: JourneyRequest[_] =>
+    getResult
+  }
+
+  def getCheque: Action[AnyContent] = actions.journeyInProgress { implicit request: JourneyRequest[_] =>
+    getResult
+  }
+
+  private def getResult(implicit request: JourneyRequest[_]): Result = {
     val journey: Journey = request.journey
 
     Ok(views.whatIsYourNationalInsuranceNumberPage(
@@ -51,7 +59,12 @@ class WhatIsYourNationalInsuranceNumberController @Inject() (
     ))
   }
 
-  def post: Action[AnyContent] = actions.journeyInProgress.async { implicit request: JourneyRequest[_] =>
+  def postBankTransfer: Action[AnyContent] = actions.journeyInProgress.async { implicit request: JourneyRequest[_] =>
+    val journey: Journey = request.journey
+    processForm(journey)
+  }
+
+  def postCheque: Action[AnyContent] = actions.journeyInProgress.async { implicit request: JourneyRequest[_] =>
     val journey: Journey = request.journey
     processForm(journey)
   }
@@ -59,9 +72,9 @@ class WhatIsYourNationalInsuranceNumberController @Inject() (
   private def processForm(journey: Journey)(implicit request: JourneyRequest[_]): Future[Result] = {
     val defaultNextCall = journey.getJourneyType match {
       case JourneyType.BankTransfer => controllers.routes.WhatIsYourDateOfBirthController.get
-      case JourneyType.Cheque       => controllers.routes.CheckYourAnswersController.get
+      case JourneyType.Cheque       => controllers.routes.CheckYourAnswersController.getCheque
     }
-    val nextCall = if (request.journey.isChanging) controllers.routes.CheckYourAnswersController.get else defaultNextCall
+    val nextCall = if (request.journey.isChanging) controllers.CheckYourAnswersController.redirectLocation(request.journey) else defaultNextCall
 
     WhatIsYourNationalInsuranceNumberForm
       .form
@@ -77,9 +90,21 @@ class WhatIsYourNationalInsuranceNumberController @Inject() (
               isChanging              = false
             ))
             .map(_ => Redirect(nextCall))
-
       )
   }
 
 }
 
+object WhatIsYourNationalInsuranceNumberController {
+  def redirectLocation(journey: Journey)(implicit request: Request[_]): Call = Journey.deriveRedirectByJourneyType(
+    journeyType           = journey.getJourneyType,
+    chequeJourneyRedirect = controllers.routes.WhatIsYourNationalInsuranceNumberController.getCheque,
+    bankJourneyRedirect   = controllers.routes.WhatIsYourNationalInsuranceNumberController.getBankTransfer
+  )
+
+  def derivePostEndpoint(journey: Journey)(implicit request: Request[_]): Call = Journey.deriveRedirectByJourneyType(
+    journeyType           = journey.getJourneyType,
+    chequeJourneyRedirect = controllers.routes.WhatIsYourNationalInsuranceNumberController.postCheque,
+    bankJourneyRedirect   = controllers.routes.WhatIsYourNationalInsuranceNumberController.postBankTransfer
+  )
+}

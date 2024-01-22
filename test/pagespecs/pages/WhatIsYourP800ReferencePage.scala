@@ -21,9 +21,9 @@ import pagespecs.pagesupport.{ContentExpectation, Page, PageUtil}
 
 import scala.jdk.CollectionConverters._
 
-class WhatIsYourP800ReferencePage(baseUrl: String)(implicit webDriver: WebDriver) extends Page(
+class WhatIsYourP800ReferencePage(baseUrl: String, pathForJourneyType: String)(implicit webDriver: WebDriver) extends Page(
   baseUrl,
-  path = "/get-an-income-tax-refund/what-is-your-p800-reference"
+  path = s"/get-an-income-tax-refund/$pathForJourneyType/what-is-your-p800-reference"
 ) {
 
   override def expectedH1: String = "What is your P800 reference?"
