@@ -21,7 +21,7 @@ import pagespecs.pagesupport.{ContentExpectation, Page, PageUtil}
 
 class GiveYourPermissionPage(baseUrl: String)(implicit webDriver: WebDriver) extends Page(
   baseUrl,
-  path = "/get-an-income-tax-refund/give-your-permission"
+  path = "/get-an-income-tax-refund/bank-transfer/give-your-permission"
 ) {
 
   override def expectedH1: String = "Give your permission"

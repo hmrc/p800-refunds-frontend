@@ -17,12 +17,13 @@
 package pagespecs.pages
 
 import models.ecospend.BankId
+import models.journeymodels.JourneyType
 import org.openqa.selenium.WebDriver
 import pagespecs.pagesupport.{ContentExpectation, Page, PageUtil}
 
 class WhatIsTheNameOfYourBankAccountPage(baseUrl: String)(implicit webDriver: WebDriver) extends Page(
   baseUrl,
-  path = "/get-an-income-tax-refund/what-is-the-name-of-your-bank-account"
+  path = "/get-an-income-tax-refund/bank-transfer/what-is-the-name-of-your-bank-account"
 ) {
 
   override def expectedH1: String = "What is the name of your bank?"
@@ -59,7 +60,18 @@ class WhatIsTheNameOfYourBankAccountPage(baseUrl: String)(implicit webDriver: We
   }
 
   def assertPageShowsError(): Unit = withPageClue {
-    assertPageIsDisplayed(
+
+    val contentExpectations: Seq[ContentExpectation] = Seq(
+      ContentExpectation(
+        atXpath       = PageUtil.Xpath.mainContent,
+        expectedLines =
+          """
+            |What is the name of your bank?
+            |Start typing the name of a UK bank that you want your refund to be sent to.
+            |Continue
+            |My bank is not listed
+            |""".stripMargin
+      ),
       ContentExpectation(
         atXpath       = PageUtil.Xpath.mainContent,
         expectedLines =
@@ -68,6 +80,14 @@ class WhatIsTheNameOfYourBankAccountPage(baseUrl: String)(implicit webDriver: We
             |Select a bank from the list
             |""".stripMargin
       )
+    )
+
+    PageUtil.assertPage(
+      baseUrl             = baseUrl,
+      path                = path,
+      h1                  = expectedH1,
+      title               = PageUtil.standardErrorTitle(expectedH1, JourneyType.BankTransfer),
+      contentExpectations = contentExpectations: _*
     )
   }
 

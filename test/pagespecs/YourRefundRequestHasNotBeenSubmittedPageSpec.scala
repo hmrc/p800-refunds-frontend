@@ -55,7 +55,7 @@ class YourRefundRequestHasNotBeenSubmittedPageSpec extends ItSpec {
       pages.yourRequestHasNotBeenSubmittedPage.open()
       pages.yourRequestHasNotBeenSubmittedPage.assertPageIsDisplayed()
       //any page before final page is not displayed, the redirect to the final page is sent
-      pages.checkYourAnswersPage.open()
+      pages.checkYourAnswersBankTransferPage.open()
       pages.yourRequestHasNotBeenSubmittedPage.assertPageIsDisplayed()
       getJourneyFromDatabase(tdAll.journeyId) shouldBeLike tdAll.BankTransfer.journeyClaimOverpaymentFailed
     }

@@ -22,18 +22,32 @@ import pagespecs.pages.testonly.{GeneralIncomeTaxEnquiriesPage, GovUkRouteInPage
 
 class Pages(baseUrl: String)(implicit webDriver: WebDriver) {
 
+  private val bankTransferRelativeUrl: String = "bank-transfer"
+  private val chequeRelativeUrl: String = "cheque"
+
   val startEndpoint: Endpoint = new Endpoint(baseUrl = baseUrl, path = "/get-an-income-tax-refund/start")
 
   val doYouWantToSignInPage = new DoYouWantToSignInPage(baseUrl = baseUrl)
   val doYouWantYourRefundViaBankTransferPage = new DoYouWantYourRefundViaBankTransferPage(baseUrl = baseUrl)
 
-  val weNeedYouToConfirmYourIdentityPage = new WeNeedYouToConfirmYourIdentityPage(baseUrl = baseUrl)
+  val weNeedYouToConfirmYourIdentityBankTransferPage = new WeNeedYouToConfirmYourIdentityPage(baseUrl            = baseUrl, pathForJourneyType = bankTransferRelativeUrl)
+  val weNeedYouToConfirmYourIdentityChequePage = new WeNeedYouToConfirmYourIdentityPage(baseUrl            = baseUrl, pathForJourneyType = chequeRelativeUrl)
 
-  val whatIsYourP800ReferencePage = new WhatIsYourP800ReferencePage(baseUrl = baseUrl)
-  val whatIsYourNationalInsuranceNumberPage = new WhatIsYourNationalInsuranceNumberPage(baseUrl = baseUrl)
+  val whatIsYourP800ReferenceBankTransferPage = new WhatIsYourP800ReferencePage(baseUrl            = baseUrl, pathForJourneyType = bankTransferRelativeUrl)
+  val whatIsYourP800ReferenceChequePage = new WhatIsYourP800ReferencePage(baseUrl            = baseUrl, pathForJourneyType = chequeRelativeUrl)
+
+  val whatIsYourNationalInsuranceNumberBankTransferPage = new WhatIsYourNationalInsuranceNumberPage(baseUrl            = baseUrl, pathForJourneyType = bankTransferRelativeUrl)
+  val whatIsYourNationalInsuranceNumberChequePage = new WhatIsYourNationalInsuranceNumberPage(baseUrl            = baseUrl, pathForJourneyType = chequeRelativeUrl)
+
+  // bank transfer only
   val whatIsYourDateOfBirthPage = new WhatIsYourDateOfBirthPage(baseUrl = baseUrl)
-  val checkYourAnswersPage = new CheckYourAnswersPage(baseUrl = baseUrl)
-  val weHaveConfirmedYourIdentityPage = new WeHaveConfirmedYourIdentityPage(baseUrl = baseUrl)
+
+  val checkYourAnswersBankTransferPage = new CheckYourAnswersPage(baseUrl            = baseUrl, pathForJourneyType = bankTransferRelativeUrl)
+  val checkYourAnswersChequePage = new CheckYourAnswersPage(baseUrl            = baseUrl, pathForJourneyType = chequeRelativeUrl)
+
+  val weHaveConfirmedYourIdentityBankTransferPage = new WeHaveConfirmedYourIdentityPage(baseUrl            = baseUrl, pathForJourneyType = bankTransferRelativeUrl)
+  val weHaveConfirmedYourIdentityChequePage = new WeHaveConfirmedYourIdentityPage(baseUrl            = baseUrl, pathForJourneyType = chequeRelativeUrl)
+
   val weCannotConfirmYourIdentityPage = new WeCannotConfirmYourIdentityPage(baseUrl = baseUrl)
   val noMoreAttemptsLeftToConfirmYourIdentityPage = new NoMoreAttemptsLeftToConfirmYourIdentityPage(baseUrl = baseUrl)
 
@@ -48,7 +62,8 @@ class Pages(baseUrl: String)(implicit webDriver: WebDriver) {
 
   val whatIsTheNameOfYourBankAccountPage = new WhatIsTheNameOfYourBankAccountPage(baseUrl = baseUrl)
 
-  val requestReceivedPage = new RequestReceivedPage(baseUrl = baseUrl)
+  val requestReceivedBankTransferPage = new RequestReceivedPage(baseUrl            = baseUrl, pathForJourneyType = bankTransferRelativeUrl)
+  val requestReceivedChequePage = new RequestReceivedPage(baseUrl            = baseUrl, pathForJourneyType = chequeRelativeUrl)
 
   // Page Stubs
   val govUkRouteInPage = new GovUkRouteInPage(baseUrl = baseUrl)

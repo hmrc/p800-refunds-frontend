@@ -11,26 +11,32 @@ POST        /do-you-want-to-sign-in                                       contro
 GET         /do-you-want-your-refund-via-bank-transfer                    controllers.DoYouWantYourRefundViaBankTransferController.get
 POST        /do-you-want-your-refund-via-bank-transfer                    controllers.DoYouWantYourRefundViaBankTransferController.post
 
-GET         /we-need-you-to-confirm-your-identity                         controllers.WeNeedYouToConfirmYourIdentityController.get
+GET         /bank-transfer/we-need-you-to-confirm-your-identity           controllers.WeNeedYouToConfirmYourIdentityController.getBankTransfer
+GET         /cheque/we-need-you-to-confirm-your-identity                  controllers.WeNeedYouToConfirmYourIdentityController.getCheque
 POST        /we-need-you-to-confirm-your-identity                         controllers.WeNeedYouToConfirmYourIdentityController.post
 
-GET         /what-is-your-p800-reference                                  controllers.WhatIsYourP800ReferenceController.get
-POST        /what-is-your-p800-reference                                  controllers.WhatIsYourP800ReferenceController.post
+GET         /bank-transfer/what-is-your-p800-reference                    controllers.WhatIsYourP800ReferenceController.getBankTransfer
+POST        /bank-transfer/what-is-your-p800-reference                    controllers.WhatIsYourP800ReferenceController.postBankTransfer
+GET         /cheque/what-is-your-p800-reference                           controllers.WhatIsYourP800ReferenceController.getCheque
+POST        /cheque/what-is-your-p800-reference                           controllers.WhatIsYourP800ReferenceController.postCheque
 
-GET         /what-is-your-national-insurance-number                       controllers.WhatIsYourNationalInsuranceNumberController.get
-POST        /what-is-your-national-insurance-number                       controllers.WhatIsYourNationalInsuranceNumberController.post
+GET         /bank-transfer/what-is-your-national-insurance-number         controllers.WhatIsYourNationalInsuranceNumberController.getBankTransfer
+POST        /bank-transfer/what-is-your-national-insurance-number         controllers.WhatIsYourNationalInsuranceNumberController.postBankTransfer
+GET         /cheque/what-is-your-national-insurance-number                controllers.WhatIsYourNationalInsuranceNumberController.getCheque
+POST        /cheque/what-is-your-national-insurance-number                controllers.WhatIsYourNationalInsuranceNumberController.postCheque
 
-#bank transfer only
-GET         /what-is-your-date-of-birth                                   controllers.WhatIsYourDateOfBirthController.get
-POST        /what-is-your-date-of-birth                                   controllers.WhatIsYourDateOfBirthController.post
+GET         /bank-transfer/what-is-your-date-of-birth                     controllers.WhatIsYourDateOfBirthController.get
+POST        /bank-transfer/what-is-your-date-of-birth                     controllers.WhatIsYourDateOfBirthController.post
 
-GET         /check-your-answers                                           controllers.CheckYourAnswersController.get
+GET         /bank-transfer/check-your-answers                             controllers.CheckYourAnswersController.getBankTransfer
+GET         /cheque/check-your-answers                                    controllers.CheckYourAnswersController.getCheque
 POST        /check-your-answers                                           controllers.CheckYourAnswersController.post
 GET         /check-your-answers/change-p800-reference                     controllers.CheckYourAnswersController.changeP800Reference
 GET         /check-your-answers/change-national-insurance-number          controllers.CheckYourAnswersController.changeNationalInsuranceNumber
 GET         /check-your-answers/change-date-of-birth                      controllers.CheckYourAnswersController.changeDateOfBirth
 
-GET         /we-have-confirmed-your-identity                              controllers.WeHaveConfirmedYourIdentityController.get
+GET         /bank-transfer/we-have-confirmed-your-identity                controllers.WeHaveConfirmedYourIdentityController.getBankTransfer
+GET         /cheque/we-have-confirmed-your-identity                       controllers.WeHaveConfirmedYourIdentityController.getCheque
 POST        /we-have-confirmed-your-identity                              controllers.WeHaveConfirmedYourIdentityController.post
 
 GET         /we-cannot-confirm-your-identity                              controllers.WeCannotConfirmYourIdentityController.get
@@ -43,22 +49,19 @@ GET         /choose-another-way-to-receive-your-refund                    contro
 POST        /choose-another-way-to-receive-your-refund/bank-transfer-via-pta-or-cheque                          controllers.ChooseAnotherWayToGetYourRefundController.postBankTransferViaPtaOrCheque
 POST        /choose-another-way-to-receive-your-refund/bank-transfer-via-pta-or-bank-transfer-logged-out        controllers.ChooseAnotherWayToGetYourRefundController.postBankTransferViaPtaOrBankTransferLoggedOut
 
-#cheque only
-GET         /complete-your-refunds-request-to-get-your-cheque             controllers.CompleteYourRefundRequestController.get
-POST        /complete-your-refunds-request-to-get-your-cheque             controllers.CompleteYourRefundRequestController.post
+GET         /cheque/complete-your-refunds-request-to-get-your-cheque      controllers.CompleteYourRefundRequestController.get
+POST        /cheque/complete-your-refunds-request-to-get-your-cheque      controllers.CompleteYourRefundRequestController.post
 
-#bank transfer only
-GET         /what-is-the-name-of-your-bank-account                        controllers.WhatIsTheNameOfYourBankController.get
-POST        /what-is-the-name-of-your-bank-account                        controllers.WhatIsTheNameOfYourBankController.post
+GET         /bank-transfer/what-is-the-name-of-your-bank-account          controllers.WhatIsTheNameOfYourBankController.get
+POST        /bank-transfer/what-is-the-name-of-your-bank-account          controllers.WhatIsTheNameOfYourBankController.post
 
-#bank transfer only
-GET         /give-your-permission                                         controllers.GiveYourPermissionController.get
-POST        /give-your-permission                                         controllers.GiveYourPermissionController.post
+GET         /bank-transfer/give-your-permission                           controllers.GiveYourPermissionController.get
+POST        /bank-transfer/give-your-permission                           controllers.GiveYourPermissionController.post
 
-#bank transfer only
-GET         /we-are-verifying-your-bank-account                           controllers.WeAreVerifyingYourBankAccountController.get
+GET         /bank-transfer/we-are-verifying-your-bank-account             controllers.WeAreVerifyingYourBankAccountController.get
 
-GET         /request-received                                             controllers.RequestReceivedController.get
+GET         /bank-transfer/request-received                               controllers.RequestReceivedController.get
+GET         /cheque/request-received                                      controllers.RequestReceivedController.get
 
 GET         /your-refund-request-has-not-been-submitted                   controllers.YourRefundRequestHasNotBeenSubmittedController.get
 POST        /your-refund-request-has-not-been-submitted                   controllers.YourRefundRequestHasNotBeenSubmittedController.post

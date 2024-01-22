@@ -86,4 +86,9 @@ final case class Journey(
 
 object Journey {
   implicit val format: OFormat[Journey] = JourneyFormat.format
+
+  def deriveRedirectByJourneyType[A](journeyType: JourneyType, chequeJourneyRedirect: A, bankJourneyRedirect: A): A = journeyType match {
+    case JourneyType.Cheque       => chequeJourneyRedirect
+    case JourneyType.BankTransfer => bankJourneyRedirect
+  }
 }

@@ -44,7 +44,7 @@ class WhatIsYourDateOfBirthPageSpec extends ItSpec {
     pages.whatIsYourDateOfBirthPage.enterMonth("1")
     pages.whatIsYourDateOfBirthPage.enterYear("2000")
     pages.whatIsYourDateOfBirthPage.clickSubmit()
-    pages.checkYourAnswersPage.assertPageIsDisplayedForBankTransfer(
+    pages.checkYourAnswersBankTransferPage.assertPageIsDisplayedForBankTransfer(
       p800Reference           = tdAll.p800Reference,
       dateOfBirth             = tdAll.dateOfBirthFormatted,
       nationalInsuranceNumber = tdAll.nationalInsuranceNumber
@@ -91,7 +91,7 @@ class WhatIsYourDateOfBirthPageSpec extends ItSpec {
           pages.whatIsYourDateOfBirthPage.enterMonth(whatUserEntered)
           pages.whatIsYourDateOfBirthPage.enterYear("2000")
           pages.whatIsYourDateOfBirthPage.clickSubmit()
-          pages.checkYourAnswersPage.assertPageIsDisplayedForBankTransfer(
+          pages.checkYourAnswersBankTransferPage.assertPageIsDisplayedForBankTransfer(
             p800Reference           = tdAll.p800Reference,
             dateOfBirth             = s"01 $monthFormatted 2000",
             nationalInsuranceNumber = tdAll.nationalInsuranceNumber
@@ -114,7 +114,7 @@ class WhatIsYourDateOfBirthPageSpec extends ItSpec {
     pages.whatIsYourDateOfBirthPage.open()
     pages.whatIsYourDateOfBirthPage.assertPageIsDisplayed()
     pages.whatIsYourDateOfBirthPage.clickBackButton()
-    pages.whatIsYourNationalInsuranceNumberPage.assertPageIsDisplayed()
+    pages.whatIsYourNationalInsuranceNumberBankTransferPage.assertPageIsDisplayed()
     getJourneyFromDatabase(tdAll.journeyId) shouldBeLike tdAll.BankTransfer.journeyEnteredDateOfBirth
   }
 

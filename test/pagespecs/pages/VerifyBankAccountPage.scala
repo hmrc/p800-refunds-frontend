@@ -21,7 +21,7 @@ import pagespecs.pagesupport.{ContentExpectation, Page, PageUtil}
 
 class VerifyBankAccountPage(baseUrl: String)(implicit webDriver: WebDriver) extends Page(
   baseUrl,
-  path = "/get-an-income-tax-refund/we-are-verifying-your-bank-account"
+  path = "/get-an-income-tax-refund/bank-transfer/we-are-verifying-your-bank-account"
 ) {
 
   override def expectedH1: String = "We are verifying your bank account"

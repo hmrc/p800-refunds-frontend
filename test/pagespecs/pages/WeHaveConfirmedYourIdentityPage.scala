@@ -19,9 +19,9 @@ package pagespecs.pages
 import org.openqa.selenium.WebDriver
 import pagespecs.pagesupport.{ContentExpectation, Page, PageUtil}
 
-class WeHaveConfirmedYourIdentityPage(baseUrl: String)(implicit webDriver: WebDriver) extends Page(
+class WeHaveConfirmedYourIdentityPage(baseUrl: String, pathForJourneyType: String)(implicit webDriver: WebDriver) extends Page(
   baseUrl,
-  path = "/get-an-income-tax-refund/we-have-confirmed-your-identity"
+  path = s"/get-an-income-tax-refund/$pathForJourneyType/we-have-confirmed-your-identity"
 ) {
 
   override def expectedH1: String = "We have confirmed your identity"

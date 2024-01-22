@@ -58,7 +58,7 @@ class WhatIsYourDateOfBirthController @Inject() (
     processForm(journey)
   }
 
-  private def processForm(journey: Journey)(implicit request: Request[_]): Future[Result] = {
+  private def processForm(journey: Journey)(implicit request: JourneyRequest[_]): Future[Result] = {
     WhatIsYourDateOfBirthForm
       .form
       .bindFromRequest()
@@ -71,7 +71,7 @@ class WhatIsYourDateOfBirthController @Inject() (
             .upsert(journey.copy(
               dateOfBirth = Some(validForm.date)
             ))
-            .map(_ => Redirect(controllers.routes.CheckYourAnswersController.get))
+            .map(_ => Redirect(controllers.CheckYourAnswersController.redirectLocation(request.journey)))
         }
       )
   }

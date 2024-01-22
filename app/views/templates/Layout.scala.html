@@ -22,6 +22,7 @@
 @import uk.gov.hmrc.hmrcfrontend.views.html.helpers._
 @import language.Messages
 @import util.SafeEquals._
+@import models.journeymodels.JourneyType
 
 @import play.api.mvc.Request
 @import play.twirl.api.Html
@@ -48,7 +49,9 @@
     customBeforeContentBlock: Option[Html] = None,
     backLinkUrlOverride: Option[String] = None,
     hasErrors: Boolean = false,
-    customServiceName: Option[String] = None)(
+    customServiceName: Option[String] = None,
+    maybeJourneyType: Option[JourneyType] = None
+)(
     contentBlock: Html)(
     implicit request: Request[_]
 )
@@ -109,7 +112,15 @@
 
 @govTitle = @{serviceNameAndTitle + " - GOV.UK"}
 
-@documentTitle = @{if(hasErrors) { s"${Messages.CommonMessages.error.show} $govTitle" } else { govTitle }}
+@potentialErrorTitle = @{
+    maybeJourneyType match {
+        case Some(JourneyType.BankTransfer) => s"${Messages.CommonMessages.`Error: `.show} ${Messages.CommonMessages.`Bank transfer`.show} -"
+        case Some(JourneyType.Cheque)       => s"${Messages.CommonMessages.`Error: `.show} ${Messages.CommonMessages.`Cheque`.show} -"
+        case None                           => s"${Messages.CommonMessages.`Error: `.show}"
+    }
+}
+
+@documentTitle = @{if(hasErrors) { s"$potentialErrorTitle $govTitle" } else { govTitle }}
 
 @header = @{
  hmrcStandardHeader(

@@ -22,7 +22,7 @@ import testsupport.RichMatchers.convertToAnyShouldWrapper
 
 class CompleteYourRefundRequestPage(baseUrl: String)(implicit webDriver: WebDriver) extends Page(
   baseUrl,
-  path = "/get-an-income-tax-refund/complete-your-refunds-request-to-get-your-cheque"
+  path = "/get-an-income-tax-refund/cheque/complete-your-refunds-request-to-get-your-cheque"
 ) {
 
   override def expectedH1: String = "Complete your refund request to get your cheque"

@@ -49,7 +49,7 @@ class WeCannotConfirmYourIdentityPageSpec extends ItSpec {
     "bank transfer" in {
       upsertJourneyToDatabase(tdAll.BankTransfer.journeyIdentityNotVerified)
       test()
-      pages.checkYourAnswersPage.assertPageIsDisplayedForBankTransfer(
+      pages.checkYourAnswersBankTransferPage.assertPageIsDisplayedForBankTransfer(
         tdAll.p800Reference,
         tdAll.dateOfBirthFormatted,
         tdAll.nationalInsuranceNumber
@@ -59,7 +59,7 @@ class WeCannotConfirmYourIdentityPageSpec extends ItSpec {
     "cheque" in {
       upsertJourneyToDatabase(tdAll.Cheque.journeyIdentityNotVerified)
       test()
-      pages.checkYourAnswersPage.assertPageIsDisplayedForCheque(
+      pages.checkYourAnswersChequePage.assertPageIsDisplayedForCheque(
         tdAll.p800Reference,
         tdAll.nationalInsuranceNumber
       )
@@ -92,12 +92,12 @@ class WeCannotConfirmYourIdentityPageSpec extends ItSpec {
         pages.weCannotConfirmYourIdentityPage.clickTryAgain()
         journeyType match {
           case JourneyType.Cheque =>
-            pages.checkYourAnswersPage.assertPageIsDisplayedForCheque(
+            pages.checkYourAnswersChequePage.assertPageIsDisplayedForCheque(
               p800Reference           = tdAll.p800Reference,
               nationalInsuranceNumber = tdAll.nationalInsuranceNumber
             )
           case JourneyType.BankTransfer =>
-            pages.checkYourAnswersPage.assertPageIsDisplayedForBankTransfer(
+            pages.checkYourAnswersBankTransferPage.assertPageIsDisplayedForBankTransfer(
               p800Reference           = tdAll.p800Reference,
               dateOfBirth             = tdAll.dateOfBirthFormatted,
               nationalInsuranceNumber = tdAll.nationalInsuranceNumber

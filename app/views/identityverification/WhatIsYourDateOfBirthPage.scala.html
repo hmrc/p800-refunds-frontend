@@ -22,13 +22,14 @@
 @import uk.gov.hmrc.hmrcfrontend.views.Implicits.RichDateInput
 @import views.ViewsHelpers
 @import uk.gov.hmrc.hmrcfrontend.views.Implicits.RichErrorSummary
+@import action.JourneyRequest
 
 @this(
     layout: Layout,
     viewsHelpers: views.ViewsHelpers
 )
 
-@(form: Form[WhatIsYourDateOfBirthForm])(implicit request: Request[_])
+@(form: Form[WhatIsYourDateOfBirthForm])(implicit request: JourneyRequest[_])
 
 @import viewsHelpers.requestSupport._
 
@@ -41,7 +42,9 @@
 
 @layout(
     pageTitle = Some(title),
-    backLinkUrlOverride = Some(routes.WhatIsYourNationalInsuranceNumberController.get.url)
+    backLinkUrlOverride = Some(controllers.WhatIsYourNationalInsuranceNumberController.redirectLocation(request.journey).url),
+    hasErrors = form.errors.nonEmpty,
+    maybeJourneyType = Some(request.journey.getJourneyType)
 ) {
 
     @if(form.errors.nonEmpty) {

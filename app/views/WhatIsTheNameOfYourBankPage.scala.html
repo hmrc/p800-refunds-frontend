@@ -21,6 +21,7 @@
 @import uk.gov.hmrc.govukfrontend.views.html.components.implicits._
 @import views.html.helper.CSPNonce
 @import views.html.templates.Layout
+@import action.JourneyRequest
 
 @this(
     layout: Layout,
@@ -30,7 +31,7 @@
 @(
     banks:  Seq[BanksSelectOptions],
     form: Form[BankId]
-)(implicit request: Request[_])
+)(implicit request: JourneyRequest[_])
 
 @import viewsHelpers.requestSupport._
 
@@ -44,7 +45,9 @@
 
 @layout(
     pageTitle = Some(title),
-    backLinkUrlOverride = Some(controllers.routes.WeHaveConfirmedYourIdentityController.get.url)
+    backLinkUrlOverride = Some(controllers.routes.WeHaveConfirmedYourIdentityController.getBankTransfer.url),
+    hasErrors = form.errors.nonEmpty,
+    maybeJourneyType = Some(request.journey.getJourneyType)
 ) {
 
     @if(form.errors.nonEmpty) {
