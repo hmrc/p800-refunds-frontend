@@ -31,7 +31,7 @@ object Messages {
       welsh   = "Yn ôl"
     )
 
-    val error: Message = Message(
+    val `Error: `: Message = Message(
       english = "Error: ",
       welsh   = "Gwall: "
     )
@@ -48,6 +48,14 @@ object Messages {
 
     val `Try again`: Message = Message(
       english = "Try again"
+    )
+
+    val `Bank transfer`: Message = Message(
+      english = "Bank transfer"
+    )
+
+    val `Cheque`: Message = Message(
+      english = "Cheque"
     )
   }
 

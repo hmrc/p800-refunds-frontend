@@ -16,6 +16,7 @@
 
 package pagespecs.pages
 
+import models.journeymodels.JourneyType
 import org.openqa.selenium.WebDriver
 import pagespecs.pagesupport.{ContentExpectation, Page, PageUtil}
 
@@ -65,29 +66,41 @@ class WhatIsYourP800ReferencePage(baseUrl: String, pathForJourneyType: String)(i
     )
   }
 
-  def assertPageShowsErrorRequired(): Unit = withPageClue {
-    assertPageIsDisplayed(
-      ContentExpectation(
-        atXpath       = PageUtil.Xpath.mainContent,
-        expectedLines =
-          """
+  def assertPageShowsErrorRequired(journeyType: JourneyType): Unit = withPageClue {
+    val contentExpectations = Seq(ContentExpectation(
+      atXpath       = PageUtil.Xpath.mainContent,
+      expectedLines =
+        """
             |There is a problem
             |Enter your P800 reference
             |""".stripMargin
-      )
+    ))
+
+    PageUtil.assertPage(
+      baseUrl             = baseUrl,
+      path                = path,
+      h1                  = expectedH1,
+      title               = PageUtil.standardErrorTitle(expectedH1, journeyType),
+      contentExpectations = contentExpectations: _*
     )
   }
 
-  def assertPageShowsErrorReferenceFormat(): Unit = withPageClue {
-    assertPageIsDisplayed(
-      ContentExpectation(
-        atXpath       = PageUtil.Xpath.mainContent,
-        expectedLines =
-          """
+  def assertPageShowsErrorReferenceFormat(journeyType: JourneyType): Unit = withPageClue {
+    val contentExpectations = Seq(ContentExpectation(
+      atXpath       = PageUtil.Xpath.mainContent,
+      expectedLines =
+        """
             |There is a problem
             |Enter your P800 reference in the correct format
             |""".stripMargin
-      )
+    ))
+
+    PageUtil.assertPage(
+      baseUrl             = baseUrl,
+      path                = path,
+      h1                  = expectedH1,
+      title               = PageUtil.standardErrorTitle(expectedH1, journeyType),
+      contentExpectations = contentExpectations: _*
     )
   }
 }

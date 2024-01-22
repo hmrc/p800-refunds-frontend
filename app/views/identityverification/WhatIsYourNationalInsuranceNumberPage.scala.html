@@ -44,7 +44,9 @@
 
 @layout(
     pageTitle = Some(title),
-    backLinkUrlOverride = Some(controllers.WhatIsYourP800ReferenceController.redirectLocation(request.journey).url)
+    backLinkUrlOverride = Some(controllers.WhatIsYourP800ReferenceController.redirectLocation(request.journey).url),
+    hasErrors = form.errors.nonEmpty,
+    maybeJourneyType = Some(request.journey.getJourneyType)
 ) {
     @if(form.errors.nonEmpty) {
         @viewsHelpers.govukErrorSummary(ErrorSummary(errorList = form.errors.asTextErrorLinks, title = Text(Messages.CommonMessages.`There is a problem`.show)))

@@ -16,6 +16,7 @@
 
 package pagespecs.pages
 
+import models.journeymodels.JourneyType
 import org.openqa.selenium.WebDriver
 import org.scalatest.Assertion
 import pagespecs.pagesupport.{ContentExpectation, Page, PageUtil}
@@ -51,19 +52,38 @@ class WhatIsYourDateOfBirthPage(baseUrl: String)(implicit webDriver: WebDriver) 
   }
 
   def assertErrorMessages(expectedErrorMessage: String): Unit = withPageClue {
-    assertPageIsDisplayed(
+
+    val contentExpectations: Seq[ContentExpectation] = Seq(
+      ContentExpectation(
+        atXpath       = PageUtil.Xpath.mainContent,
+        expectedLines =
+          """
+            |What is your date of birth?
+            |For example, 27 3 2007
+            |Day Month Year
+            |Continue
+            |""".stripMargin
+      ),
       ContentExpectation(
         atXpath       = PageUtil.Xpath.errorSummary,
         expectedLines =
           s"""
-            |There is a problem
-            |$expectedErrorMessage
-            |""".stripMargin
+             |There is a problem
+             |$expectedErrorMessage
+             |""".stripMargin
       ),
       ContentExpectation(
         atXpath       = PageUtil.Xpath.errorMessage,
         expectedLines = s"""$expectedErrorMessage"""
       )
+    )
+
+    PageUtil.assertPage(
+      baseUrl             = baseUrl,
+      path                = path,
+      h1                  = expectedH1,
+      title               = PageUtil.standardErrorTitle(expectedH1, JourneyType.BankTransfer),
+      contentExpectations = contentExpectations: _*
     )
   }
 

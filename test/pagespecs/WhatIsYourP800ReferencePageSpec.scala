@@ -71,7 +71,7 @@ class WhatIsYourP800ReferencePageSpec extends ItSpec {
         page.open()
         page.assertPageIsDisplayed()
         page.clickSubmit()
-        page.assertPageShowsErrorRequired()
+        page.assertPageShowsErrorRequired(journeyType)
       }
   }
 
@@ -96,7 +96,7 @@ class WhatIsYourP800ReferencePageSpec extends ItSpec {
         page.assertPageIsDisplayed()
         page.enterP800Reference("this is a really long and invalid reference")
         page.clickSubmit()
-        page.assertPageShowsErrorReferenceFormat()
+        page.assertPageShowsErrorReferenceFormat(journeyType)
       }
   }
 

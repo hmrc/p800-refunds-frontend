@@ -106,7 +106,7 @@ class WhatIsYourNationalInsuranceNumberPageSpec extends ItSpec {
         page.open()
         page.assertPageIsDisplayed()
         page.clickSubmit()
-        page.assertPageShowsErrorEmptyInput()
+        page.assertPageShowsErrorEmptyInput(journeyType)
       }
   }
 
@@ -134,7 +134,7 @@ class WhatIsYourNationalInsuranceNumberPageSpec extends ItSpec {
           page.assertPageIsDisplayed()
           page.enterNationalInsuranceNumber(NationalInsuranceNumber(nino))
           page.clickSubmit()
-          page.assertPageShowsErrorInvalid()
+          page.assertPageShowsErrorInvalid(journeyType)
         }
     }
   }

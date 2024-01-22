@@ -17,6 +17,7 @@
 package pagespecs.pages
 
 import models.NationalInsuranceNumber
+import models.journeymodels.JourneyType
 import org.openqa.selenium.WebDriver
 import org.scalatest.Assertion
 import pagespecs.pagesupport.{ContentExpectation, Page, PageUtil}
@@ -32,34 +33,36 @@ class WhatIsYourNationalInsuranceNumberPage(baseUrl: String, pathForJourneyType:
   def enterNationalInsuranceNumber(nationalInsuranceNumber: NationalInsuranceNumber): Unit =
     PageUtil.setTextFieldById("nationalInsuranceNumber", nationalInsuranceNumber.value)
 
+  val commonPageExpectations: Seq[ContentExpectation] = Seq(
+    ContentExpectation(
+      atXpath       = PageUtil.Xpath.mainContent,
+      expectedLines =
+        """
+          |What is your National Insurance number?
+          |It’s on your National Insurance card or letter, benefit letter, payslip or P60.
+          |For example, ‘QQ 12 34 56 C’.
+          |Continue
+          |""".stripMargin
+    ),
+    ContentExpectation(
+      atXpath       = """//*[@class="govuk-details__summary-text"]""",
+      expectedLines =
+        """
+          |I do not know my National Insurance number
+          |""".stripMargin
+    ),
+    ContentExpectation(
+      atXpath       = """//*[@class="govuk-details__text"]""",
+      expectedLines =
+        """
+          |You can get help to find a lost National Insurance number (opens in new tab)
+          |""".stripMargin
+    )
+  )
+
   def assertPageIsDisplayed(extraExpectations: ContentExpectation*): Unit = withPageClue {
 
-    val contentExpectations: Seq[ContentExpectation] = Seq(
-      ContentExpectation(
-        atXpath       = PageUtil.Xpath.mainContent,
-        expectedLines =
-          """
-            |What is your National Insurance number?
-            |It’s on your National Insurance card or letter, benefit letter, payslip or P60.
-            |For example, ‘QQ 12 34 56 C’.
-            |Continue
-            |""".stripMargin
-      ),
-      ContentExpectation(
-        atXpath       = """//*[@class="govuk-details__summary-text"]""",
-        expectedLines =
-          """
-            |I do not know my National Insurance number
-            |""".stripMargin
-      ),
-      ContentExpectation(
-        atXpath       = """//*[@class="govuk-details__text"]""",
-        expectedLines =
-          """
-            |You can get help to find a lost National Insurance number (opens in new tab)
-            |""".stripMargin
-      )
-    ) ++ extraExpectations
+    val contentExpectations: Seq[ContentExpectation] = commonPageExpectations ++ extraExpectations
 
     PageUtil.assertPage(
       baseUrl             = baseUrl,
@@ -74,8 +77,8 @@ class WhatIsYourNationalInsuranceNumberPage(baseUrl: String, pathForJourneyType:
 
   private def lostNationalInsuranceNumberHref(): String = PageUtil.getHrefById("lost-national-insurance-number-link")
 
-  def assertPageShowsErrorEmptyInput(): Unit = withPageClue {
-    assertPageIsDisplayed(
+  def assertPageShowsErrorEmptyInput(journeyType: JourneyType): Unit = withPageClue {
+    val contentExpectations = Seq(
       ContentExpectation(
         atXpath       = PageUtil.Xpath.mainContent,
         expectedLines =
@@ -84,11 +87,19 @@ class WhatIsYourNationalInsuranceNumberPage(baseUrl: String, pathForJourneyType:
             |Enter your National Insurance number
             |""".stripMargin
       )
+    ) ++ commonPageExpectations
+
+    PageUtil.assertPage(
+      baseUrl             = baseUrl,
+      path                = path,
+      h1                  = expectedH1,
+      title               = PageUtil.standardErrorTitle(expectedH1, journeyType),
+      contentExpectations = contentExpectations: _*
     )
   }
 
-  def assertPageShowsErrorInvalid(): Unit = withPageClue {
-    assertPageIsDisplayed(
+  def assertPageShowsErrorInvalid(journeyType: JourneyType): Unit = withPageClue {
+    val contentExpectations = Seq(
       ContentExpectation(
         atXpath       = PageUtil.Xpath.mainContent,
         expectedLines =
@@ -97,6 +108,14 @@ class WhatIsYourNationalInsuranceNumberPage(baseUrl: String, pathForJourneyType:
             |Enter your National Insurance number in the correct format
             |""".stripMargin
       )
+    ) ++ commonPageExpectations
+
+    PageUtil.assertPage(
+      baseUrl             = baseUrl,
+      path                = path,
+      h1                  = expectedH1,
+      title               = PageUtil.standardErrorTitle(expectedH1, journeyType),
+      contentExpectations = contentExpectations: _*
     )
   }
 

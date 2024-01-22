@@ -44,7 +44,9 @@
 
 @layout(
     pageTitle = Some(title),
-    backLinkUrlOverride = Some(controllers.WeNeedYouToConfirmYourIdentityController.redirectLocation(request.journey).url)
+    backLinkUrlOverride = Some(controllers.WeNeedYouToConfirmYourIdentityController.redirectLocation(request.journey).url),
+    hasErrors = form.errors.nonEmpty,
+    maybeJourneyType = Some(request.journey.getJourneyType)
 ) {
 
     @if(form.errors.nonEmpty) {

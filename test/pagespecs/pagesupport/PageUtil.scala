@@ -16,6 +16,7 @@
 
 package pagespecs.pagesupport
 
+import models.journeymodels.JourneyType
 import org.openqa.selenium.{By, WebDriver, WebElement}
 import org.scalatestplus.selenium.WebBrowser
 import org.scalatestplus.selenium.WebBrowser._
@@ -206,6 +207,13 @@ object PageUtil {
   def standardTitle(h1: String): String = s"$h1 - Get an Income Tax refund - GOV.UK"
   val standardTitleForTestOnlyPages: String = s"Test Only - Get an Income Tax refund - GOV.UK"
   def standardTitleInWelsh(h1: String): String = s"$h1 - Get an Income Tax refund - GOV.UK"
+  def standardErrorTitle(h1: String, journeyType: JourneyType): String = {
+    val journeySpecificContent = journeyType match {
+      case JourneyType.Cheque       => "Cheque"
+      case JourneyType.BankTransfer => "Bank transfer"
+    }
+    s"Error: $journeySpecificContent - $h1 - Get an Income Tax refund - GOV.UK"
+  }
 
   val standardHeader: String =
     """
