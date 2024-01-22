@@ -24,22 +24,14 @@ import views.Views
 import javax.inject.{Inject, Singleton}
 
 @Singleton
-class WeCannotConfirmYourIdentityController @Inject() (
+class NoMoreAttemptsLeftToConfirmYourIdentityController @Inject() (
     mcc:     MessagesControllerComponents,
     views:   Views,
     actions: Actions
 ) extends FrontendController(mcc) {
 
   def get: Action[AnyContent] = actions.journeyInProgress { implicit request =>
-    Ok(views.weCannotConfirmYourIdentityPage())
-  }
-
-  def tryAgain: Action[AnyContent] = actions.journeyInProgress { _ =>
-    Redirect(routes.CheckYourAnswersController.get)
-  }
-
-  def choseAnotherMethod: Action[AnyContent] = actions.journeyInProgress { _ =>
-    Redirect(routes.ChooseAnotherWayToGetYourRefundController.get)
+    Ok(views.noMoreAttemptsLeftToConfirmYourIdentityPage())
   }
 
 }
