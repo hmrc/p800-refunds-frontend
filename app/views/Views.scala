@@ -31,6 +31,7 @@ class Views @Inject() (
     val whatIsYourNationalInsuranceNumberPage:          views.html.identityverification.WhatIsYourNationalInsuranceNumberPage,
     val weHaveConfirmedYourIdentityPage:                views.html.identityverification.WeHaveConfirmedYourIdentityPage,
     val weCannotConfirmYourIdentityPage:                views.html.identityverification.WeCannotConfirmYourIdentityPage,
+    val noMoreAttemptsLeftToConfirmYourIdentityPage:    views.html.identityverification.NoMoreAttemptsLeftToConfirmYourIdentityPage,
     val requestNotSubmittedPage:                        views.html.RequestNotSubmittedPage,
     val giveYourPermissionPage:                         views.html.GiveYourPermissionPage,
     val weAreVerifyingYourBankAccountPage:              views.html.WeAreVerifyingYourBankAccountPage,

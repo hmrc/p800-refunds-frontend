@@ -418,6 +418,15 @@ object Messages {
     )
   }
 
+  object NoMoreAttemptsLeftToConfirmYourIdentityMessages {
+    val `You have entered information that does not match ...`: Message = Message(
+      english = "You have entered information that does not match our records too many times. For security reasons, you must wait 24 hours and then try again."
+    )
+    def `Alternatively you can sign in to you HMRC online account`(link: String): Message = Message(
+      english = s"""Alternatively you can <a id="sign-in-to-you-hmrc-online-account" href="$link" class="govuk-link">sign in to you HMRC online account</a> to request your refund."""
+    )
+  }
+
   object WhatIsTheNameOfYourBankAccount {
     val `What is the name of your bank?`: Message = Message(
       english = "What is the name of your bank?"

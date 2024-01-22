@@ -37,6 +37,8 @@ GET         /we-cannot-confirm-your-identity                              contro
 POST        /we-cannot-confirm-your-identity                              controllers.WeCannotConfirmYourIdentityController.tryAgain
 GET         /we-cannot-confirm-your-identity/choose-another-method        controllers.WeCannotConfirmYourIdentityController.choseAnotherMethod
 
+GET         /no-more-attempts-left-to-confirm-your-identity               controllers.NoMoreAttemptsLeftToConfirmYourIdentityController.get
+
 GET         /choose-another-way-to-receive-your-refund                    controllers.ChooseAnotherWayToGetYourRefundController.get
 POST        /choose-another-way-to-receive-your-refund/bank-transfer-via-pta-or-cheque                          controllers.ChooseAnotherWayToGetYourRefundController.postBankTransferViaPtaOrCheque
 POST        /choose-another-way-to-receive-your-refund/bank-transfer-via-pta-or-bank-transfer-logged-out        controllers.ChooseAnotherWayToGetYourRefundController.postBankTransferViaPtaOrBankTransferLoggedOut

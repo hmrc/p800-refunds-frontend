@@ -93,7 +93,7 @@ class CheckYourAnswersController @Inject() (
   }
 
   private def processForm(journey: Journey)(implicit request: JourneyRequest[AnyContent]): Future[Result] = {
-    //TODO: call attempts service in case of failures
+    //TODO: call attempts service and record failure
     //TODO: distinguish between cheque and bank transfer journey. They have different verification steps
     for {
       identityVerificationResponse <- identityVerificationService.verifyIdentity(journey.getNationalInsuranceNumber)
