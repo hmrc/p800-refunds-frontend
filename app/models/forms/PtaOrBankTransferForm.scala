@@ -30,8 +30,8 @@ object PtaOrBankTransferForm {
   def form(implicit language: Language): Form[PtaOrBankTransferFormValue] = {
     val chooseAnotherWayToGetYourRefundMapping = Forms.of(EnumFormatter.format(
       `enum`                  = PtaOrBankTransferFormValue,
-      errorMessageIfMissing   = Messages.ChooseAnotherWayToReceiveYourRefund.`Select if you want to receive a bank transfer via your personal tax account, or a bank transfer logged out`.show,
-      errorMessageIfEnumError = Messages.ChooseAnotherWayToReceiveYourRefund.`Select if you want to receive a bank transfer via your personal tax account, or a bank transfer logged out`.show
+      errorMessageIfMissing   = Messages.ChooseAnotherWayToReceiveYourRefund.`Select the way you want to receive your refund`.show,
+      errorMessageIfEnumError = Messages.ChooseAnotherWayToReceiveYourRefund.`Select the way you want to receive your refund`.show
     ))
 
     Form(
