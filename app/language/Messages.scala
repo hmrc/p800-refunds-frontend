@@ -226,11 +226,6 @@ object Messages {
       english = "Select the way you want to receive your refund"
     )
 
-    //TODO: confirm with Content designer this text
-    val `Select if you want to receive a bank transfer via your personal tax account, or a bank transfer logged out`: Message = Message(
-      english = "Select if you want to receive a bank transfer via your personal tax account, or a bank transfer logged out"
-    )
-
     val `Bank transfer logged out`: Message = Message(
       english = "Bank transfer logged out"
     )

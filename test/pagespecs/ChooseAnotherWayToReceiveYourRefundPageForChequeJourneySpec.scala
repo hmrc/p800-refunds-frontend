@@ -67,7 +67,7 @@ class ChooseAnotherWayToReceiveYourRefundPageForChequeJourneySpec extends ItSpec
         ContentExpectation(
           PageUtil.Xpath.errorSummary,
           """There is a problem
-            |Select if you want to receive a bank transfer via your personal tax account, or a bank transfer logged out
+            |Select the way you want to receive your refund
             |""".stripMargin
         )
       )
