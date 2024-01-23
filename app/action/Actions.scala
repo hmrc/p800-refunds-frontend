@@ -16,7 +16,7 @@
 
 package action
 
-import models.journeymodels.{HasFinished, Journey}
+import models.journeymodels.{HasFinished, Journey, JourneyType}
 import play.api.mvc.{ActionBuilder, AnyContent, Call, DefaultActionBuilder, Request}
 
 import javax.inject.{Inject, Singleton}
@@ -58,9 +58,14 @@ class Actions @Inject() (
       )
 
   private def redirectWhenJourneyIsFinished(journey: Journey): Call = journey.hasFinished match {
-    case HasFinished.YesSucceeded => controllers.routes.RequestReceivedController.get
-    case HasFinished.YesFailed    => controllers.routes.YourRefundRequestHasNotBeenSubmittedController.get
-    case HasFinished.No           => throw new RuntimeException(s"This case is not supported, journey should be already in one of finished states [${journey.id.toString}] [${journey.hasFinished.toString}]")
+    case HasFinished.YesSucceeded =>
+      journey.journeyType match {
+        case Some(JourneyType.Cheque)       => controllers.routes.RequestReceivedController.getCheque
+        case Some(JourneyType.BankTransfer) => controllers.routes.RequestReceivedController.getBankTransfer
+        case None                           => throw new RuntimeException(s"This case is not supported, journey should have a journeyType [${journey.id.toString}] [${journey.hasFinished.toString}]")
+      }
+    case HasFinished.YesFailed => controllers.routes.YourRefundRequestHasNotBeenSubmittedController.get
+    case HasFinished.No        => throw new RuntimeException(s"This case is not supported, journey should be already in one of finished states [${journey.id.toString}] [${journey.hasFinished.toString}]")
   }
 
   //TODO: this might need some extra refinement

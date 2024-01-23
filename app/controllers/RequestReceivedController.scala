@@ -33,7 +33,20 @@ class RequestReceivedController @Inject() (
     actions: Actions
 ) extends FrontendController(mcc) {
 
-  def get: Action[AnyContent] = actions.journeyFinished { implicit request =>
+  def getBankTransfer: Action[AnyContent] = actions.journeyFinished { implicit request =>
+    val journey: Journey = request.journey
+
+    if (journey.hasFinished === HasFinished.YesFailed) {
+      Redirect(controllers.routes.YourRefundRequestHasNotBeenSubmittedController.get)
+    } else {
+
+      journey.getJourneyType match {
+        case JourneyType.Cheque       => getResultCheque(journey)
+        case JourneyType.BankTransfer => getResultBankTransfer(journey)
+      }
+    }
+  }
+  def getCheque: Action[AnyContent] = actions.journeyFinished { implicit request =>
     val journey: Journey = request.journey
 
     if (journey.hasFinished === HasFinished.YesFailed) {
@@ -55,7 +68,7 @@ class RequestReceivedController @Inject() (
     ))
   }
 
-  private def getResultCheque(journey: Journey)(implicit request: Request[_]) = {
+  private def getResultCheque(journey: Journey)(implicit request: Request[_]): Result = {
     val dummyDate = LocalDate.of(2024, 1, 16)
 
     Ok(views.chequeRequestReceivedPage(
