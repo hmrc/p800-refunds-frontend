@@ -17,7 +17,7 @@
 package controllers.testonly
 
 import action.{Actions, JourneyIdKey}
-import models.journeymodels.{HasFinished, Journey, JourneyId}
+import models.journeymodels.{HasFinished, Journey, JourneyId, JourneyType}
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import services.JourneyService
@@ -65,8 +65,13 @@ class TestOnlyController @Inject() (
 
   //TODO: remove it once we integrate with APIs
   val finishSucceedBankTransfer: Action[AnyContent] = as.journeyActionForTestOnly.async { implicit r =>
-    journeyService.upsert(r.journey.copy(hasFinished = HasFinished.YesSucceeded)).map(_ =>
-      Redirect(controllers.routes.RequestReceivedController.get))
+    journeyService.upsert(r.journey.copy(hasFinished = HasFinished.YesSucceeded)).map { _ =>
+      Redirect(r.journey.getJourneyType match {
+        case JourneyType.Cheque       => controllers.routes.RequestReceivedController.getCheque
+        case JourneyType.BankTransfer => controllers.routes.RequestReceivedController.getBankTransfer
+      })
+    }
+
   }
 
   //TODO: remove it once we integrate with APIs

@@ -41,7 +41,10 @@ class YourRefundRequestHasNotBeenSubmittedController @Inject() (
     Errors.require(journey.getJourneyType === JourneyType.BankTransfer, "This page is only for BankTransfer journey")
 
     if (journey.hasFinished === HasFinished.YesSucceeded) {
-      Redirect(controllers.routes.RequestReceivedController.get)
+      Redirect(request.journey.getJourneyType match {
+        case JourneyType.Cheque       => controllers.routes.RequestReceivedController.getCheque
+        case JourneyType.BankTransfer => controllers.routes.RequestReceivedController.getBankTransfer
+      })
     } else {
       Ok(views.requestNotSubmittedPage())
     }

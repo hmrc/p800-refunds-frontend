@@ -53,7 +53,7 @@ class CompleteYourRefundRequestController @Inject() (
         //TODO: hasFinished=true is for happy an unhappy path
         journey.copy(hasFinished = HasFinished.YesSucceeded)
       )
-      .map(_ => Redirect(controllers.routes.RequestReceivedController.get))
+      .map(_ => Redirect(controllers.routes.RequestReceivedController.getCheque))
   }
 
 }

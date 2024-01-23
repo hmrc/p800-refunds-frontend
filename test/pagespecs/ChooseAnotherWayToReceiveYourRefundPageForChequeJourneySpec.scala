@@ -51,7 +51,7 @@ class ChooseAnotherWayToReceiveYourRefundPageForChequeJourneySpec extends ItSpec
       pages.chooseAnotherWayToReceiveYourRefundPage.assertPageIsDisplayedPtaOrBankTransfer()
       pages.chooseAnotherWayToReceiveYourRefundPage.PtaOrBankTransfer.selectBankTransferLoggedOut()
       pages.chooseAnotherWayToReceiveYourRefundPage.clickSubmit()
-      pages.weNeedYouToConfirmYourIdentityChequePage.assertPageIsDisplayed()
+      pages.weNeedYouToConfirmYourIdentityBankTransferPage.assertPageIsDisplayed()
       val expectedJourney = tdAll.Cheque.journeyIdentityNotVerified.copy(
         journeyType = Some(JourneyType.BankTransfer)
       )

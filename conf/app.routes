@@ -60,8 +60,8 @@ POST        /bank-transfer/give-your-permission                           contro
 
 GET         /bank-transfer/we-are-verifying-your-bank-account             controllers.WeAreVerifyingYourBankAccountController.get
 
-GET         /bank-transfer/request-received                               controllers.RequestReceivedController.get
-GET         /cheque/request-received                                      controllers.RequestReceivedController.get
+GET         /bank-transfer/request-received                               controllers.RequestReceivedController.getBankTransfer
+GET         /cheque/request-received                                      controllers.RequestReceivedController.getCheque
 
 GET         /your-refund-request-has-not-been-submitted                   controllers.YourRefundRequestHasNotBeenSubmittedController.get
 POST        /your-refund-request-has-not-been-submitted                   controllers.YourRefundRequestHasNotBeenSubmittedController.post
