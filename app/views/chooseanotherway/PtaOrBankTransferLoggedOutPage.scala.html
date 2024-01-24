@@ -19,13 +19,14 @@
 @import uk.gov.hmrc.govukfrontend.views.html.components.implicits._
 @import views.html.templates.Layout
 @import models.forms.enumsforforms.PtaOrBankTransferFormValue
+@import action.JourneyRequest
 
 @this(
     layout: Layout,
     viewsHelpers: views.ViewsHelpers
 )
 
-@(form: Form[PtaOrBankTransferFormValue])(implicit request: Request[_])
+@(form: Form[PtaOrBankTransferFormValue])(implicit request: JourneyRequest[_])
 
 @import viewsHelpers.requestSupport._
 
@@ -41,7 +42,9 @@
 @bankTransferKey = @{PtaOrBankTransferFormValue.BankTransferLoggedOut.toString}
 
 @layout(
-    pageTitle = Some(title)
+    pageTitle = Some(title),
+    hasErrors = form.errors.nonEmpty,
+    maybeJourneyType = Some(request.journey.getJourneyType)
 ) {
 
     @if(form.errors.nonEmpty) {

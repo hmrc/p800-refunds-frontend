@@ -16,6 +16,7 @@
 
 package pagespecs
 
+import models.journeymodels.JourneyType
 import testsupport.ItSpec
 
 class NoMoreAttemptsLeftToConfirmYourIdentityPageSpec extends ItSpec {
@@ -28,40 +29,40 @@ class NoMoreAttemptsLeftToConfirmYourIdentityPageSpec extends ItSpec {
   "/no-more-attempts-left-to-confirm-your-identity renders correct content" - {
     "bank transfer" in {
       upsertJourneyToDatabase(tdAll.BankTransfer.journeyIdentityNotVerified)
-      test()
+      test(JourneyType.BankTransfer)
       getJourneyFromDatabase(tdAll.journeyId) shouldBeLike tdAll.BankTransfer.journeyIdentityNotVerified
     }
     "cheque" in {
       upsertJourneyToDatabase(tdAll.Cheque.journeyIdentityNotVerified)
-      test()
+      test(JourneyType.Cheque)
       getJourneyFromDatabase(tdAll.journeyId) shouldBeLike tdAll.Cheque.journeyIdentityNotVerified
     }
 
-      def test(): Unit = {
+      def test(journeyType: JourneyType): Unit = {
         pages.noMoreAttemptsLeftToConfirmYourIdentityPage.open()
-        pages.noMoreAttemptsLeftToConfirmYourIdentityPage.assertPageIsDisplayed()
+        pages.noMoreAttemptsLeftToConfirmYourIdentityPage.assertPageIsDisplayed(journeyType)
       }
   }
 
   "clicking ' sign in to you HMRC online account ' sends user to Pta Sign In page" - {
     "bank transfer" in {
       upsertJourneyToDatabase(tdAll.BankTransfer.journeyIdentityNotVerified)
-      test()
+      test(JourneyType.BankTransfer)
       pages.noMoreAttemptsLeftToConfirmYourIdentityPage.clickSignInToYourHmrcAccount()
       pages.ptaSignInPage.assertPageIsDisplayed()
       getJourneyFromDatabase(tdAll.journeyId) shouldBeLike tdAll.BankTransfer.journeyIdentityNotVerified
     }
     "cheque" in {
       upsertJourneyToDatabase(tdAll.Cheque.journeyIdentityNotVerified)
-      test()
+      test(JourneyType.Cheque)
       pages.noMoreAttemptsLeftToConfirmYourIdentityPage.clickSignInToYourHmrcAccount()
       pages.ptaSignInPage.assertPageIsDisplayed()
       getJourneyFromDatabase(tdAll.journeyId) shouldBeLike tdAll.Cheque.journeyIdentityNotVerified
     }
 
-      def test(): Unit = {
+      def test(journeyType: JourneyType): Unit = {
         pages.noMoreAttemptsLeftToConfirmYourIdentityPage.open()
-        pages.noMoreAttemptsLeftToConfirmYourIdentityPage.assertPageIsDisplayed()
+        pages.noMoreAttemptsLeftToConfirmYourIdentityPage.assertPageIsDisplayed(journeyType)
       }
   }
 }

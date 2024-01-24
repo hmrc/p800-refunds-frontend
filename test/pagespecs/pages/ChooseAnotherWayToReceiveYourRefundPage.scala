@@ -16,6 +16,7 @@
 
 package pagespecs.pages
 
+import models.journeymodels.JourneyType
 import org.openqa.selenium.WebDriver
 import pagespecs.pagesupport.{ContentExpectation, Page, PageUtil}
 
@@ -41,11 +42,15 @@ class ChooseAnotherWayToReceiveYourRefundPage(
           |""".stripMargin
     )) ++ errors
 
+    val expectedTitle =
+      if (errors.isEmpty) PageUtil.standardTitleWithJourneyType(expectedH1, JourneyType.BankTransfer)
+      else PageUtil.standardErrorTitle(expectedH1, JourneyType.BankTransfer)
+
     PageUtil.assertPage(
       baseUrl             = baseUrl,
       path                = path,
       h1                  = expectedH1,
-      title               = PageUtil.standardTitle(expectedH1),
+      title               = expectedTitle,
       contentExpectations = contentExpectations: _*
     )
   }
@@ -62,11 +67,15 @@ class ChooseAnotherWayToReceiveYourRefundPage(
           |""".stripMargin
     )) ++ errors
 
+    val expectedTitle =
+      if (errors.isEmpty) PageUtil.standardTitleWithJourneyType(expectedH1, JourneyType.Cheque)
+      else PageUtil.standardErrorTitle(expectedH1, JourneyType.Cheque)
+
     PageUtil.assertPage(
       baseUrl             = baseUrl,
       path                = path,
       h1                  = expectedH1,
-      title               = PageUtil.standardTitle(expectedH1),
+      title               = expectedTitle,
       contentExpectations = contentExpectations: _*
     )
   }
@@ -85,7 +94,7 @@ class ChooseAnotherWayToReceiveYourRefundPage(
       baseUrl             = baseUrl,
       path                = path + "/bank-transfer-via-pta-or-cheque",
       h1                  = expectedH1,
-      title               = PageUtil.standardTitle(expectedH1),
+      title               = PageUtil.standardTitleWithJourneyType(expectedH1, JourneyType.BankTransfer),
       contentExpectations = errorContent
     )
   }

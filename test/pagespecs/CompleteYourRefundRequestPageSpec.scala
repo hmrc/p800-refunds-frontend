@@ -16,6 +16,7 @@
 
 package pagespecs
 
+import models.journeymodels.JourneyType
 import testsupport.ItSpec
 
 class CompleteYourRefundRequestPageSpec extends ItSpec {
@@ -46,7 +47,7 @@ class CompleteYourRefundRequestPageSpec extends ItSpec {
     pages.completeYourRefundRequestPage.open()
     pages.completeYourRefundRequestPage.assertPageIsDisplayed()
     pages.completeYourRefundRequestPage.clickBackButton()
-    pages.weHaveConfirmedYourIdentityChequePage.assertPageIsDisplayed()
+    pages.weHaveConfirmedYourIdentityChequePage.assertPageIsDisplayed(JourneyType.Cheque)
     getJourneyFromDatabase(tdAll.journeyId) shouldBeLike tdAll.Cheque.journeyIdentityVerified
   }
 

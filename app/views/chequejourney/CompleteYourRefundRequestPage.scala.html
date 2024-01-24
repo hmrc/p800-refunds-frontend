@@ -18,6 +18,7 @@
 @import uk.gov.hmrc.govukfrontend.views.html.components._
 @import views.html.templates.Layout
 @import config.AppConfig
+@import action.JourneyRequest
 
 @this(
         layout: Layout,
@@ -25,7 +26,7 @@
         appConfig: AppConfig
 )
 
-@()(implicit request: Request[_])
+@()(implicit request: JourneyRequest[_])
 
 @import viewsHelpers.requestSupport._
 
@@ -44,7 +45,8 @@
 
 @layout(
     pageTitle = Some(title),
-    backLinkUrlOverride = Some(controllers.routes.WeHaveConfirmedYourIdentityController.getCheque.url)
+    backLinkUrlOverride = Some(controllers.routes.WeHaveConfirmedYourIdentityController.getCheque.url),
+    maybeJourneyType = Some(request.journey.getJourneyType)
 ) {
 
     <h1 class="govuk-heading-xl">@{title}</h1>

@@ -17,7 +17,7 @@
 package pagespecs
 
 import models.dateofbirth.Month
-import models.journeymodels.Journey
+import models.journeymodels.{Journey, JourneyType}
 import testsupport.ItSpec
 
 import java.time.{LocalDate, LocalDateTime}
@@ -114,7 +114,7 @@ class WhatIsYourDateOfBirthPageSpec extends ItSpec {
     pages.whatIsYourDateOfBirthPage.open()
     pages.whatIsYourDateOfBirthPage.assertPageIsDisplayed()
     pages.whatIsYourDateOfBirthPage.clickBackButton()
-    pages.whatIsYourNationalInsuranceNumberBankTransferPage.assertPageIsDisplayed()
+    pages.whatIsYourNationalInsuranceNumberBankTransferPage.assertPageIsDisplayed(JourneyType.BankTransfer)
     getJourneyFromDatabase(tdAll.journeyId) shouldBeLike tdAll.BankTransfer.journeyEnteredDateOfBirth
   }
 

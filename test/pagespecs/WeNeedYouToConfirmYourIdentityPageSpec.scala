@@ -47,7 +47,7 @@ class WeNeedYouToConfirmYourIdentityPageSpec extends ItSpec {
           case JourneyType.Cheque       => pages.weNeedYouToConfirmYourIdentityBankTransferPage
         }
         page.open()
-        page.assertPageIsDisplayed()
+        page.assertPageIsDisplayed(journeyType)
       }
   }
 
@@ -69,9 +69,9 @@ class WeNeedYouToConfirmYourIdentityPageSpec extends ItSpec {
           case JourneyType.Cheque       => pages.weNeedYouToConfirmYourIdentityChequePage -> pages.whatIsYourP800ReferenceChequePage
         }
         startPage.open()
-        startPage.assertPageIsDisplayed()
+        startPage.assertPageIsDisplayed(journeyType)
         startPage.clickSubmit()
-        endPage.assertPageIsDisplayed()
+        endPage.assertPageIsDisplayed(journeyType)
       }
   }
 
@@ -93,7 +93,7 @@ class WeNeedYouToConfirmYourIdentityPageSpec extends ItSpec {
           case JourneyType.Cheque       => pages.weNeedYouToConfirmYourIdentityChequePage
         }
         page.open()
-        page.assertPageIsDisplayed()
+        page.assertPageIsDisplayed(journeyType)
         page.clickBackButton()
         pages.doYouWantYourRefundViaBankTransferPage.assertPageIsDisplayed()
       }

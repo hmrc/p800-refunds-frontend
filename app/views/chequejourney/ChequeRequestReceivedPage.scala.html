@@ -20,6 +20,7 @@
 @import uk.gov.hmrc.govukfrontend.views.html.components._
 @import views.html.helper.CSPNonce
 @import views.html.templates.Layout
+@import action.JourneyRequest
 
 @this(
     layout: Layout,
@@ -31,7 +32,7 @@
     p800Reference: P800Reference,
     refundAmountInPence: AmountInPence,
     chequeArriveBy: LocalDate
-)(implicit request: Request[_])
+)(implicit request: JourneyRequest[_])
 
 @import viewsHelpers.requestSupport._
 
@@ -44,7 +45,8 @@
 @layout(
     pageTitle         = Some(title),
     showBackLink      = false,
-    additionalScripts = Some(additionalScript)
+    additionalScripts = Some(additionalScript),
+    maybeJourneyType = Some(request.journey.getJourneyType)
 ) {
 
     @viewsHelpers.govukPanel(Panel(

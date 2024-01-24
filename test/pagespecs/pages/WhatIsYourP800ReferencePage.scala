@@ -44,7 +44,9 @@ class WhatIsYourP800ReferencePage(baseUrl: String, pathForJourneyType: String)(i
       .getOrElse(throw new Exception("Expecting at least one window handle"))
   }
 
-  override def assertPageIsDisplayed(extraExpectations: ContentExpectation*): Unit = withPageClue {
+  override def assertPageIsDisplayed(extraExpectations: ContentExpectation*): Unit = sys.error("Use another variant for asserting page")
+
+  def assertPageIsDisplayed(journeyType: JourneyType, extraExpectations: ContentExpectation*): Unit = withPageClue {
     val contentExpectations: Seq[ContentExpectation] = Seq(
       ContentExpectation(
         atXpath       = PageUtil.Xpath.mainContent,
@@ -61,7 +63,7 @@ class WhatIsYourP800ReferencePage(baseUrl: String, pathForJourneyType: String)(i
       baseUrl             = baseUrl,
       path                = path,
       h1                  = expectedH1,
-      title               = PageUtil.standardTitle(expectedH1),
+      title               = PageUtil.standardTitleWithJourneyType(expectedH1, journeyType),
       contentExpectations = contentExpectations: _*
     )
   }

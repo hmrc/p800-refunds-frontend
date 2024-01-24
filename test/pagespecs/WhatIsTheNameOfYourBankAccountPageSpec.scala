@@ -16,6 +16,7 @@
 
 package pagespecs
 
+import models.journeymodels.JourneyType
 import testsupport.ItSpec
 import testsupport.stubs.EcospendStub
 
@@ -76,7 +77,7 @@ class WhatIsTheNameOfYourBankAccountPageSpec extends ItSpec {
     pages.whatIsTheNameOfYourBankAccountPage.open()
     pages.whatIsTheNameOfYourBankAccountPage.assertPageIsDisplayed()
     pages.whatIsTheNameOfYourBankAccountPage.clickBackButton()
-    pages.weHaveConfirmedYourIdentityBankTransferPage.assertPageIsDisplayed()
+    pages.weHaveConfirmedYourIdentityBankTransferPage.assertPageIsDisplayed(JourneyType.BankTransfer)
 
     EcospendStub.verifyEcospendAccessToken()
     EcospendStub.verifyEcospendGetBanks()

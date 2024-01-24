@@ -16,6 +16,7 @@
 
 package pagespecs.pages
 
+import models.journeymodels.JourneyType
 import org.openqa.selenium.WebDriver
 import pagespecs.pagesupport.{ContentExpectation, Page, PageUtil}
 
@@ -26,18 +27,21 @@ class WeNeedYouToConfirmYourIdentityPage(baseUrl: String, pathForJourneyType: St
 
   override def expectedH1: String = "We need you to confirm your identity"
 
-  def assertPageIsDisplayedForChequeJourney(): Unit = {
-    assertPageIsDisplayed()
-  }
+  def assertPageIsDisplayedForChequeJourney(): Unit =
+    assertPageIsDisplayed(JourneyType.Cheque)
 
-  def assertPageIsDisplayedForBankTransferJourney(): Unit = assertPageIsDisplayed(
-    ContentExpectation(
-      atXpath       = PageUtil.Xpath.mainContent,
-      expectedLines = "date of birth"
+  def assertPageIsDisplayedForBankTransferJourney(): Unit =
+    assertPageIsDisplayed(
+      JourneyType.BankTransfer,
+      ContentExpectation(
+        atXpath       = PageUtil.Xpath.mainContent,
+        expectedLines = "date of birth"
+      )
     )
-  )
 
-  override def assertPageIsDisplayed(extraExpectations: ContentExpectation*): Unit = withPageClue {
+  override def assertPageIsDisplayed(extraExpectations: ContentExpectation*): Unit = sys.error("Use another variant for asserting page")
+
+  def assertPageIsDisplayed(journeyType: JourneyType, extraExpectations: ContentExpectation*): Unit = withPageClue {
 
     val contentExpectations: Seq[ContentExpectation] = Seq(ContentExpectation(
       atXpath       = PageUtil.Xpath.mainContent,
@@ -56,7 +60,7 @@ class WeNeedYouToConfirmYourIdentityPage(baseUrl: String, pathForJourneyType: St
       baseUrl             = baseUrl,
       path                = path,
       h1                  = expectedH1,
-      title               = PageUtil.standardTitle(expectedH1),
+      title               = PageUtil.standardTitleWithJourneyType(expectedH1, journeyType),
       contentExpectations = contentExpectations: _*
     )
   }

@@ -16,6 +16,7 @@
 
 package pagespecs.pages
 
+import models.journeymodels.JourneyType
 import org.openqa.selenium.WebDriver
 import pagespecs.pagesupport.{ContentExpectation, Page, PageUtil}
 import testsupport.RichMatchers.convertToAnyShouldWrapper
@@ -55,7 +56,7 @@ class RequestReceivedPage(baseUrl: String, pathForJourneyType: String)(implicit 
       baseUrl             = baseUrl,
       path                = path,
       h1                  = expectedBankTransferH1,
-      title               = PageUtil.standardTitle(expectedBankTransferH1),
+      title               = PageUtil.standardTitleWithJourneyType(expectedBankTransferH1, JourneyType.BankTransfer),
       contentExpectations = contentExpectation
     )
 
@@ -87,7 +88,7 @@ class RequestReceivedPage(baseUrl: String, pathForJourneyType: String)(implicit 
       baseUrl             = baseUrl,
       path                = path,
       h1                  = expectedChequeH1,
-      title               = PageUtil.standardTitle(expectedChequeH1),
+      title               = PageUtil.standardTitleWithJourneyType(expectedChequeH1, JourneyType.Cheque),
       contentExpectations = contentExpectation
     )
 

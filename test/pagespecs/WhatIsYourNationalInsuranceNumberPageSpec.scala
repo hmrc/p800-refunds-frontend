@@ -44,7 +44,7 @@ class WhatIsYourNationalInsuranceNumberPageSpec extends ItSpec {
           case JourneyType.Cheque       => pages.whatIsYourNationalInsuranceNumberChequePage
         }
         page.open()
-        page.assertPageIsDisplayed()
+        page.assertPageIsDisplayed(journeyType)
       }
   }
 
@@ -76,7 +76,7 @@ class WhatIsYourNationalInsuranceNumberPageSpec extends ItSpec {
             case JourneyType.Cheque       => pages.whatIsYourNationalInsuranceNumberChequePage
           }
           page.open()
-          page.assertPageIsDisplayed()
+          page.assertPageIsDisplayed(journeyType)
           page.enterNationalInsuranceNumber(NationalInsuranceNumber(nino))
           page.clickSubmit()
         }
@@ -104,7 +104,7 @@ class WhatIsYourNationalInsuranceNumberPageSpec extends ItSpec {
           case JourneyType.Cheque       => pages.whatIsYourNationalInsuranceNumberChequePage
         }
         page.open()
-        page.assertPageIsDisplayed()
+        page.assertPageIsDisplayed(journeyType)
         page.clickSubmit()
         page.assertPageShowsErrorEmptyInput(journeyType)
       }
@@ -131,7 +131,7 @@ class WhatIsYourNationalInsuranceNumberPageSpec extends ItSpec {
             case JourneyType.Cheque       => pages.whatIsYourNationalInsuranceNumberChequePage
           }
           page.open()
-          page.assertPageIsDisplayed()
+          page.assertPageIsDisplayed(journeyType)
           page.enterNationalInsuranceNumber(NationalInsuranceNumber(nino))
           page.clickSubmit()
           page.assertPageShowsErrorInvalid(journeyType)
@@ -159,9 +159,9 @@ class WhatIsYourNationalInsuranceNumberPageSpec extends ItSpec {
           case JourneyType.Cheque       => pages.whatIsYourNationalInsuranceNumberBankTransferPage -> pages.whatIsYourP800ReferenceChequePage
         }
         startPage.open()
-        startPage.assertPageIsDisplayed()
+        startPage.assertPageIsDisplayed(journeyType)
         startPage.clickBackButton()
-        endPage.assertPageIsDisplayed()
+        endPage.assertPageIsDisplayed(journeyType)
       }
 
   }
@@ -189,7 +189,7 @@ class WhatIsYourNationalInsuranceNumberPageSpec extends ItSpec {
           case JourneyType.Cheque       => pages.whatIsYourNationalInsuranceNumberChequePage
         }
         page.open()
-        page.assertPageIsDisplayed()
+        page.assertPageIsDisplayed(journeyType)
       }
 
   }

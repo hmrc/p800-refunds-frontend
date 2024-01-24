@@ -16,7 +16,7 @@
 
 package controllers
 
-import action.Actions
+import action.{Actions, JourneyRequest}
 import models.journeymodels._
 import play.api.mvc._
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
@@ -60,7 +60,7 @@ class RequestReceivedController @Inject() (
     }
   }
 
-  private def getResultBankTransfer(journey: Journey)(implicit request: Request[_]): Result = {
+  private def getResultBankTransfer(journey: Journey)(implicit request: JourneyRequest[_]): Result = {
     Ok(views.bankTransferRequestReceivedPage(
       journey.getP800Reference,
       journey.getIdentityVerificationResponse.amount,
@@ -68,7 +68,7 @@ class RequestReceivedController @Inject() (
     ))
   }
 
-  private def getResultCheque(journey: Journey)(implicit request: Request[_]): Result = {
+  private def getResultCheque(journey: Journey)(implicit request: JourneyRequest[_]): Result = {
     val dummyDate = LocalDate.of(2024, 1, 16)
 
     Ok(views.chequeRequestReceivedPage(

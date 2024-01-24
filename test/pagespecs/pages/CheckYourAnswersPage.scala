@@ -121,7 +121,7 @@ class CheckYourAnswersPage(baseUrl: String, pathForJourneyType: String)(implicit
       baseUrl             = baseUrl,
       path                = path,
       h1                  = expectedH1,
-      title               = PageUtil.standardTitle(expectedH1),
+      title               = PageUtil.standardTitleWithJourneyType(expectedH1, journeyType),
       contentExpectations = contentExpectations: _*
     )
 

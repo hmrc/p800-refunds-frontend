@@ -16,6 +16,7 @@
 
 package pagespecs.pages
 
+import models.journeymodels.JourneyType
 import org.openqa.selenium.WebDriver
 import pagespecs.pagesupport.{ContentExpectation, Page, PageUtil}
 
@@ -26,7 +27,9 @@ class WeCannotConfirmYourIdentityPage(baseUrl: String)(implicit webDriver: WebDr
 
   override def expectedH1: String = "We cannot confirm your identity"
 
-  override def assertPageIsDisplayed(extraExpectations: ContentExpectation*): Unit = withPageClue {
+  override def assertPageIsDisplayed(extraExpectations: ContentExpectation*): Unit = sys.error("Use another variant for asserting page")
+
+  def assertPageIsDisplayed(journeyType: JourneyType, extraExpectations: ContentExpectation*): Unit = withPageClue {
 
     val contentExpectations: Seq[ContentExpectation] = Seq(ContentExpectation(
       atXpath       = PageUtil.Xpath.mainContent,
@@ -42,7 +45,7 @@ class WeCannotConfirmYourIdentityPage(baseUrl: String)(implicit webDriver: WebDr
     PageUtil.assertPage(
       path                = path,
       h1                  = expectedH1,
-      title               = PageUtil.standardTitle(expectedH1),
+      title               = PageUtil.standardTitleWithJourneyType(expectedH1, journeyType),
       contentExpectations = contentExpectations: _*,
       baseUrl             = baseUrl
     )

@@ -19,6 +19,7 @@
 @import views.html.templates.Layout
 @import config.AppConfig
 @import views.html.helper.CSPNonce
+@import action.JourneyRequest
 
 @this(
     layout: Layout,
@@ -30,7 +31,7 @@
     p800Reference: P800Reference,
     refundAmountInPence: AmountInPence,
     date: String
-)(implicit request: Request[_])
+)(implicit request: JourneyRequest[_])
 
 @import viewsHelpers.requestSupport._
 
@@ -43,7 +44,8 @@
 @layout(
     pageTitle         = Some(title),
     showBackLink      = false,
-    additionalScripts = Some(additionalScript)
+    additionalScripts = Some(additionalScript),
+    maybeJourneyType  = Some(request.journey.getJourneyType)
 ) {
 
     @viewsHelpers.govukPanel(Panel(

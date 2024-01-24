@@ -30,6 +30,8 @@ class WhatIsYourNationalInsuranceNumberPage(baseUrl: String, pathForJourneyType:
 
   override def expectedH1: String = "What is your National Insurance number?"
 
+  override def assertPageIsDisplayed(extraExpectations: ContentExpectation*): Unit = sys.error("Use another variant for asserting page")
+
   def enterNationalInsuranceNumber(nationalInsuranceNumber: NationalInsuranceNumber): Unit =
     PageUtil.setTextFieldById("nationalInsuranceNumber", nationalInsuranceNumber.value)
 
@@ -60,7 +62,7 @@ class WhatIsYourNationalInsuranceNumberPage(baseUrl: String, pathForJourneyType:
     )
   )
 
-  def assertPageIsDisplayed(extraExpectations: ContentExpectation*): Unit = withPageClue {
+  def assertPageIsDisplayed(journeyType: JourneyType, extraExpectations: ContentExpectation*): Unit = withPageClue {
 
     val contentExpectations: Seq[ContentExpectation] = commonPageExpectations ++ extraExpectations
 
@@ -68,7 +70,7 @@ class WhatIsYourNationalInsuranceNumberPage(baseUrl: String, pathForJourneyType:
       baseUrl             = baseUrl,
       path                = path,
       h1                  = expectedH1,
-      title               = PageUtil.standardTitle(expectedH1),
+      title               = PageUtil.standardTitleWithJourneyType(expectedH1, journeyType),
       contentExpectations = contentExpectations: _*
     )
     lostNationalInsuranceNumberHref() shouldBe "https://www.gov.uk/lost-national-insurance-number"

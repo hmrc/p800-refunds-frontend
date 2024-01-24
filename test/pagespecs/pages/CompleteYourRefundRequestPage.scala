@@ -16,6 +16,7 @@
 
 package pagespecs.pages
 
+import models.journeymodels.JourneyType
 import org.openqa.selenium.WebDriver
 import pagespecs.pagesupport.{ContentExpectation, Page, PageUtil}
 import testsupport.RichMatchers.convertToAnyShouldWrapper
@@ -62,7 +63,7 @@ class CompleteYourRefundRequestPage(baseUrl: String)(implicit webDriver: WebDriv
       baseUrl             = baseUrl,
       path                = path,
       h1                  = expectedH1,
-      title               = PageUtil.standardTitle(expectedH1),
+      title               = PageUtil.standardTitleWithJourneyType(expectedH1, JourneyType.Cheque),
       contentExpectations = contentExpectations: _*
     )
     contactHmrcHref() shouldBe "https://www.gov.uk/government/organisations/hm-revenue-customs/contact/change-your-personal-details"

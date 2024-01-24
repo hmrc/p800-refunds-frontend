@@ -29,18 +29,18 @@ class WeCannotConfirmYourIdentityPageSpec extends ItSpec {
   "/we-cannot-confirm-your-identity renders your 'We cannot confirm your identity' page" - {
     "bank transfer" in {
       upsertJourneyToDatabase(tdAll.BankTransfer.journeyIdentityNotVerified)
-      test()
+      test(JourneyType.BankTransfer)
       getJourneyFromDatabase(tdAll.journeyId) shouldBeLike tdAll.BankTransfer.journeyIdentityNotVerified
     }
     "cheque" in {
       upsertJourneyToDatabase(tdAll.Cheque.journeyIdentityNotVerified)
-      test()
+      test(JourneyType.Cheque)
       getJourneyFromDatabase(tdAll.journeyId) shouldBeLike tdAll.Cheque.journeyIdentityNotVerified
     }
 
-      def test(): Unit = {
+      def test(journeyType: JourneyType): Unit = {
         pages.weCannotConfirmYourIdentityPage.open()
-        pages.weCannotConfirmYourIdentityPage.assertPageIsDisplayed()
+        pages.weCannotConfirmYourIdentityPage.assertPageIsDisplayed(journeyType)
       }
   }
 
@@ -48,7 +48,7 @@ class WeCannotConfirmYourIdentityPageSpec extends ItSpec {
 
     "bank transfer" in {
       upsertJourneyToDatabase(tdAll.BankTransfer.journeyIdentityNotVerified)
-      test()
+      test(JourneyType.BankTransfer)
       pages.checkYourAnswersBankTransferPage.assertPageIsDisplayedForBankTransfer(
         tdAll.p800Reference,
         tdAll.dateOfBirthFormatted,
@@ -58,7 +58,7 @@ class WeCannotConfirmYourIdentityPageSpec extends ItSpec {
     }
     "cheque" in {
       upsertJourneyToDatabase(tdAll.Cheque.journeyIdentityNotVerified)
-      test()
+      test(JourneyType.Cheque)
       pages.checkYourAnswersChequePage.assertPageIsDisplayedForCheque(
         tdAll.p800Reference,
         tdAll.nationalInsuranceNumber
@@ -66,9 +66,9 @@ class WeCannotConfirmYourIdentityPageSpec extends ItSpec {
       getJourneyFromDatabase(tdAll.journeyId) shouldBeLike tdAll.Cheque.journeyIdentityNotVerified
     }
 
-      def test(): Unit = {
+      def test(journeyType: JourneyType): Unit = {
         pages.weCannotConfirmYourIdentityPage.open()
-        pages.weCannotConfirmYourIdentityPage.assertPageIsDisplayed()
+        pages.weCannotConfirmYourIdentityPage.assertPageIsDisplayed(journeyType)
         pages.weCannotConfirmYourIdentityPage.clickBackButton()
       }
 
@@ -88,7 +88,7 @@ class WeCannotConfirmYourIdentityPageSpec extends ItSpec {
 
       def test(journeyType: JourneyType): Unit = {
         pages.weCannotConfirmYourIdentityPage.open()
-        pages.weCannotConfirmYourIdentityPage.assertPageIsDisplayed()
+        pages.weCannotConfirmYourIdentityPage.assertPageIsDisplayed(journeyType)
         pages.weCannotConfirmYourIdentityPage.clickTryAgain()
         journeyType match {
           case JourneyType.Cheque =>
@@ -109,20 +109,20 @@ class WeCannotConfirmYourIdentityPageSpec extends ItSpec {
   "clicking 'Choose another method' sends user to 'Choose another way to receive your refund page'" - {
     "bank transfer" in {
       upsertJourneyToDatabase(tdAll.BankTransfer.journeyIdentityNotVerified)
-      test()
+      test(JourneyType.BankTransfer)
       pages.chooseAnotherWayToReceiveYourRefundPage.assertPageIsDisplayedPtaOrCheque()
       getJourneyFromDatabase(tdAll.journeyId) shouldBeLike tdAll.BankTransfer.journeyIdentityNotVerified
     }
     "cheque" in {
       upsertJourneyToDatabase(tdAll.Cheque.journeyIdentityNotVerified)
-      test()
+      test(JourneyType.Cheque)
       pages.chooseAnotherWayToReceiveYourRefundPage.assertPageIsDisplayedPtaOrBankTransfer()
       getJourneyFromDatabase(tdAll.journeyId) shouldBeLike tdAll.Cheque.journeyIdentityNotVerified
     }
 
-      def test(): Unit = {
+      def test(journeyType: JourneyType): Unit = {
         pages.weCannotConfirmYourIdentityPage.open()
-        pages.weCannotConfirmYourIdentityPage.assertPageIsDisplayed()
+        pages.weCannotConfirmYourIdentityPage.assertPageIsDisplayed(journeyType)
         pages.weCannotConfirmYourIdentityPage.clickChooseAnotherWay()
       }
   }

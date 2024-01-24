@@ -16,12 +16,13 @@
 
 package pagespecs.pages
 
+import models.journeymodels.JourneyType
 import org.openqa.selenium.WebDriver
 import pagespecs.pagesupport.{ContentExpectation, Page, PageUtil}
 
 class YourRequestHasNotBeenSubmittedPage(baseUrl: String)(implicit webDriver: WebDriver) extends Page(
   baseUrl,
-  path = "/get-an-income-tax-refund/your-refund-request-has-not-been-submitted"
+  path = "/get-an-income-tax-refund/bank-transfer/your-refund-request-has-not-been-submitted"
 ) {
 
   def clickTryAgain(): Unit = PageUtil.clickByIdOrName("try-again")
@@ -43,7 +44,7 @@ class YourRequestHasNotBeenSubmittedPage(baseUrl: String)(implicit webDriver: We
       baseUrl             = baseUrl,
       path                = path,
       h1                  = expectedH1,
-      title               = PageUtil.standardTitle(expectedH1),
+      title               = PageUtil.standardTitleWithJourneyType(expectedH1, JourneyType.BankTransfer),
       contentExpectations = contentExpectations: _*
     )
   }

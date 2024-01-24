@@ -46,7 +46,7 @@ class WhatIsYourDateOfBirthPage(baseUrl: String)(implicit webDriver: WebDriver) 
       baseUrl             = baseUrl,
       path                = path,
       h1                  = expectedH1,
-      title               = PageUtil.standardTitle(expectedH1),
+      title               = PageUtil.standardTitleWithJourneyType(expectedH1, JourneyType.BankTransfer),
       contentExpectations = contentExpectations: _*
     )
   }

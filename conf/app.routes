@@ -63,5 +63,5 @@ GET         /bank-transfer/we-are-verifying-your-bank-account             contro
 GET         /bank-transfer/request-received                               controllers.RequestReceivedController.getBankTransfer
 GET         /cheque/request-received                                      controllers.RequestReceivedController.getCheque
 
-GET         /your-refund-request-has-not-been-submitted                   controllers.YourRefundRequestHasNotBeenSubmittedController.get
-POST        /your-refund-request-has-not-been-submitted                   controllers.YourRefundRequestHasNotBeenSubmittedController.post
+GET         /bank-transfer/your-refund-request-has-not-been-submitted     controllers.YourRefundRequestHasNotBeenSubmittedController.get
+POST        /bank-transfer/your-refund-request-has-not-been-submitted     controllers.YourRefundRequestHasNotBeenSubmittedController.post

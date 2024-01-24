@@ -17,6 +17,7 @@
 package pagespecs
 
 import models.dateofbirth.{DateOfBirth, DayOfMonth, Month, Year}
+import models.journeymodels.JourneyType
 import models.{NationalInsuranceNumber, P800Reference}
 import testsupport.ItSpec
 import testsupport.stubs.IdentityVerificationStub
@@ -55,7 +56,7 @@ class CheckYourAnswersSpec extends ItSpec {
         tdAll.nationalInsuranceNumber
       )
       pages.checkYourAnswersBankTransferPage.clickChangeReference()
-      pages.whatIsYourP800ReferenceBankTransferPage.assertPageIsDisplayed()
+      pages.whatIsYourP800ReferenceBankTransferPage.assertPageIsDisplayed(journeyType = JourneyType.BankTransfer)
       val newReference = P800Reference("newreference")
       pages.whatIsYourP800ReferenceBankTransferPage.enterP800Reference(newReference.value)
       pages.whatIsYourP800ReferenceBankTransferPage.clickSubmit()
@@ -73,7 +74,7 @@ class CheckYourAnswersSpec extends ItSpec {
       upsertJourneyToDatabase(tdAll.Cheque.journeyEnteredNino)
       pages.checkYourAnswersChequePage.open()
       pages.checkYourAnswersChequePage.clickChangeReference()
-      pages.whatIsYourP800ReferenceChequePage.assertPageIsDisplayed()
+      pages.whatIsYourP800ReferenceChequePage.assertPageIsDisplayed(journeyType = JourneyType.Cheque)
       val newReference = P800Reference("newreference")
       pages.whatIsYourP800ReferenceChequePage.enterP800Reference(newReference.value)
       pages.whatIsYourP800ReferenceChequePage.clickSubmit()
@@ -117,7 +118,7 @@ class CheckYourAnswersSpec extends ItSpec {
       upsertJourneyToDatabase(tdAll.BankTransfer.journeyEnteredDateOfBirth)
       pages.checkYourAnswersBankTransferPage.open()
       pages.checkYourAnswersBankTransferPage.clickChangeNationalInsuranceNumber()
-      pages.whatIsYourNationalInsuranceNumberBankTransferPage.assertPageIsDisplayed()
+      pages.whatIsYourNationalInsuranceNumberBankTransferPage.assertPageIsDisplayed(journeyType = JourneyType.BankTransfer)
       val newNino = NationalInsuranceNumber("AB123123C")
       pages.whatIsYourNationalInsuranceNumberBankTransferPage.enterNationalInsuranceNumber(newNino)
       pages.whatIsYourNationalInsuranceNumberBankTransferPage.clickSubmit()
@@ -156,7 +157,7 @@ class CheckYourAnswersSpec extends ItSpec {
       pages.checkYourAnswersBankTransferPage.open()
       IdentityVerificationStub.stubIdentityVerification2xx(tdAll.BankTransfer.journeyIdentityVerified.identityVerificationResponse.value)
       pages.checkYourAnswersBankTransferPage.clickSubmit()
-      pages.weHaveConfirmedYourIdentityBankTransferPage.assertPageIsDisplayed()
+      pages.weHaveConfirmedYourIdentityBankTransferPage.assertPageIsDisplayed(JourneyType.BankTransfer)
       IdentityVerificationStub.verifyIdentityVerification()
       getJourneyFromDatabase(tdAll.journeyId) shouldBeLike tdAll.BankTransfer.journeyIdentityVerified
     }
@@ -165,7 +166,7 @@ class CheckYourAnswersSpec extends ItSpec {
       pages.checkYourAnswersChequePage.open()
       IdentityVerificationStub.stubIdentityVerification2xx(tdAll.Cheque.journeyIdentityVerified.identityVerificationResponse.value)
       pages.checkYourAnswersChequePage.clickSubmit()
-      pages.weHaveConfirmedYourIdentityChequePage.assertPageIsDisplayed()
+      pages.weHaveConfirmedYourIdentityChequePage.assertPageIsDisplayed(JourneyType.Cheque)
       IdentityVerificationStub.verifyIdentityVerification()
       getJourneyFromDatabase(tdAll.journeyId) shouldBeLike tdAll.Cheque.journeyIdentityVerified
     }
@@ -178,7 +179,7 @@ class CheckYourAnswersSpec extends ItSpec {
       pages.checkYourAnswersBankTransferPage.open()
       IdentityVerificationStub.stubIdentityVerification2xx(tdAll.BankTransfer.journeyIdentityNotVerified.identityVerificationResponse.value)
       pages.checkYourAnswersBankTransferPage.clickSubmit()
-      pages.weCannotConfirmYourIdentityPage.assertPageIsDisplayed()
+      pages.weCannotConfirmYourIdentityPage.assertPageIsDisplayed(JourneyType.BankTransfer)
       IdentityVerificationStub.verifyIdentityVerification()
       getJourneyFromDatabase(tdAll.journeyId) shouldBeLike tdAll.BankTransfer.journeyIdentityNotVerified
     }
@@ -187,7 +188,7 @@ class CheckYourAnswersSpec extends ItSpec {
       pages.checkYourAnswersChequePage.open()
       IdentityVerificationStub.stubIdentityVerification2xx(tdAll.Cheque.journeyIdentityNotVerified.identityVerificationResponse.value)
       pages.checkYourAnswersChequePage.clickSubmit()
-      pages.weCannotConfirmYourIdentityPage.assertPageIsDisplayed()
+      pages.weCannotConfirmYourIdentityPage.assertPageIsDisplayed(JourneyType.Cheque)
       IdentityVerificationStub.verifyIdentityVerification()
       getJourneyFromDatabase(tdAll.journeyId) shouldBeLike tdAll.Cheque.journeyIdentityNotVerified
     }
@@ -205,7 +206,7 @@ class CheckYourAnswersSpec extends ItSpec {
       upsertJourneyToDatabase(tdAll.Cheque.journeyEnteredNino)
       pages.checkYourAnswersChequePage.open()
       pages.checkYourAnswersChequePage.clickBackButton()
-      pages.whatIsYourNationalInsuranceNumberChequePage.assertPageIsDisplayed()
+      pages.whatIsYourNationalInsuranceNumberChequePage.assertPageIsDisplayed(JourneyType.Cheque)
       getJourneyFromDatabase(tdAll.journeyId) shouldBeLike tdAll.Cheque.journeyEnteredNino
     }
   }
