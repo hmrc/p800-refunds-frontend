@@ -77,7 +77,7 @@ class TestOnlyController @Inject() (
   //TODO: remove it once we integrate with APIs
   val finishFailBankTransfer: Action[AnyContent] = as.journeyActionForTestOnly.async { implicit r =>
     journeyService.upsert(r.journey.copy(hasFinished = HasFinished.YesFailed)).map(_ =>
-      Redirect(controllers.routes.YourRefundRequestHasNotBeenSubmittedController.get))
+      Redirect(controllers.routes.RefundRequestNotSubmittedController.get))
   }
 
   def addJourneyIdToSession(journeyId: JourneyId): Action[AnyContent] = as.default { implicit request =>

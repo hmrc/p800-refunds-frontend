@@ -20,15 +20,15 @@ import models.journeymodels.JourneyType
 import org.openqa.selenium.WebDriver
 import pagespecs.pagesupport.{ContentExpectation, Page, PageUtil}
 
-class YourRequestHasNotBeenSubmittedPage(baseUrl: String)(implicit webDriver: WebDriver) extends Page(
+class RefundRequestNotSubmittedPage(baseUrl: String)(implicit webDriver: WebDriver) extends Page(
   baseUrl,
-  path = "/get-an-income-tax-refund/bank-transfer/your-refund-request-has-not-been-submitted"
+  path = "/get-an-income-tax-refund/bank-transfer/refund-request-not-submitted"
 ) {
 
   def clickTryAgain(): Unit = PageUtil.clickByIdOrName("try-again")
 
   override def expectedH1: String = "Your refund request has not been submitted"
-  override def expectedTitleContent: String = "add_me"
+  override def expectedTitleContent: String = "refund request not submitted"
 
   override def assertPageIsDisplayed(errors: ContentExpectation*): Unit = withPageClue {
     val contentExpectations: Seq[ContentExpectation] = Seq(ContentExpectation(
@@ -45,7 +45,7 @@ class YourRequestHasNotBeenSubmittedPage(baseUrl: String)(implicit webDriver: We
       baseUrl             = baseUrl,
       path                = path,
       h1                  = expectedH1,
-      title               = PageUtil.standardTitleWithJourneyType(expectedH1, JourneyType.BankTransfer),
+      title               = PageUtil.standardTitleWithJourneyType(expectedTitleContent, JourneyType.BankTransfer),
       contentExpectations = contentExpectations: _*
     )
   }

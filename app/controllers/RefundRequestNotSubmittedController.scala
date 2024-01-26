@@ -29,7 +29,7 @@ import javax.inject.{Inject, Singleton}
 import scala.concurrent.ExecutionContext
 
 @Singleton
-class YourRefundRequestHasNotBeenSubmittedController @Inject() (
+class RefundRequestNotSubmittedController @Inject() (
     mcc:            MessagesControllerComponents,
     views:          Views,
     actions:        Actions,
@@ -46,7 +46,7 @@ class YourRefundRequestHasNotBeenSubmittedController @Inject() (
         case JourneyType.BankTransfer => controllers.routes.RequestReceivedController.getBankTransfer
       })
     } else {
-      Ok(views.requestNotSubmittedPage())
+      Ok(views.refundRequestNotSubmittedPage())
     }
   }
 
