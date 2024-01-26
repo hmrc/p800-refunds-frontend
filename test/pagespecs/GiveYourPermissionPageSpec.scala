@@ -40,7 +40,7 @@ class GiveYourPermissionPageSpec extends ItSpec {
     pages.giveYourPermissionPage.open()
     pages.giveYourPermissionPage.assertPageIsDisplayed()
     pages.giveYourPermissionPage.clickChangeBank()
-    pages.whatIsTheNameOfYourBankAccountPage.assertPageIsDisplayed()
+    pages.enterTheNameOfYourBankAccountPage.assertPageIsDisplayed()
     getJourneyFromDatabase(tdAll.journeyId) shouldBeLike tdAll.BankTransfer.journeyPermissionGiven
   }
 
@@ -58,7 +58,7 @@ class GiveYourPermissionPageSpec extends ItSpec {
     pages.giveYourPermissionPage.open()
     pages.giveYourPermissionPage.assertPageIsDisplayed()
     pages.giveYourPermissionPage.clickChooseAnotherWayToGetMyMoney()
-    pages.chooseAnotherWayToReceiveYourRefundPage.assertPageIsDisplayedPtaOrCheque()
+    pages.chooseAnotherWayToReceiveYourRefundBankTransferPage.assertPageIsDisplayedPtaOrCheque()
     getJourneyFromDatabase(tdAll.journeyId) shouldBeLike tdAll.BankTransfer.journeyPermissionGiven
   }
 
@@ -68,7 +68,7 @@ class GiveYourPermissionPageSpec extends ItSpec {
     pages.giveYourPermissionPage.open()
     pages.giveYourPermissionPage.assertPageIsDisplayed()
     pages.giveYourPermissionPage.clickBackButton()
-    pages.whatIsTheNameOfYourBankAccountPage.assertPageIsDisplayed()
+    pages.enterTheNameOfYourBankAccountPage.assertPageIsDisplayed()
     getJourneyFromDatabase(tdAll.journeyId) shouldBeLike tdAll.BankTransfer.journeyPermissionGiven
   }
 }

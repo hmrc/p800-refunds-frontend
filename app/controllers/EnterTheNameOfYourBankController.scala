@@ -33,7 +33,7 @@ import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class WhatIsTheNameOfYourBankController @Inject() (
+class EnterTheNameOfYourBankController @Inject() (
     mcc:             MessagesControllerComponents,
     requestSupport:  RequestSupport,
     journeyService:  JourneyService,
@@ -54,7 +54,7 @@ class WhatIsTheNameOfYourBankController @Inject() (
       .fold(WhatIsTheNameOfYourBankAccountForm.form)(WhatIsTheNameOfYourBankAccountForm.form.fill)
 
     getBankSelectOptions.map { banks =>
-      Ok(views.whatIsTheNameOfYourBankPage(banks, form))
+      Ok(views.enterTheNameOfYourBankPage(banks, form))
     }
   }
 
@@ -68,7 +68,7 @@ class WhatIsTheNameOfYourBankController @Inject() (
       .fold(
         formWithErrors => {
           getBankSelectOptions.map { banks =>
-            BadRequest(views.whatIsTheNameOfYourBankPage(banks, formWithErrors))
+            BadRequest(views.enterTheNameOfYourBankPage(banks, formWithErrors))
           }
         },
         bankId => {

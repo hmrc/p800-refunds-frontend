@@ -19,19 +19,16 @@
 @import uk.gov.hmrc.govukfrontend.views.html.components.implicits._
 @import views.html.templates.Layout
 @import models.forms.enumsforforms.PtaOrChequeFormValue
+@import action.JourneyRequest
 
 @this(
     layout: Layout,
     viewsHelpers: views.ViewsHelpers
 )
 
-@(form: Form[PtaOrChequeFormValue])(implicit request: Request[_])
+@(form: Form[PtaOrChequeFormValue])(implicit request: JourneyRequest[_])
 
 @import viewsHelpers.requestSupport._
-
-@title = @{
-    Messages.ChooseAnotherWayToReceiveYourRefund.`Choose another way to receive your refund`.show
-}
 
 @key = @{
     "way-to-get-refund"
@@ -41,7 +38,9 @@
 @chequeKey = @{PtaOrChequeFormValue.Cheque.toString}
 
 @layout(
-    pageTitle = Some(title)
+    pageTitle = Some(Messages.ChooseAnotherWayToReceiveYourRefund.`choose another way to receive your refund`.show),
+    hasErrors = form.errors.nonEmpty,
+    maybeJourneyType = Some(request.journey.getJourneyType)
 ) {
 
     @if(form.errors.nonEmpty) {
@@ -52,7 +51,7 @@
         @viewsHelpers.govukRadios(Radios(
             fieldset = Some(Fieldset(
                 legend = Some(Legend(
-                    content = Text(title),
+                    content = Text(Messages.ChooseAnotherWayToReceiveYourRefund.`Choose another way to receive your refund`.show),
                     classes = "govuk-fieldset__legend--xl",
                     isPageHeading = true
                 ))

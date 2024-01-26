@@ -16,15 +16,17 @@
 
 package pagespecs.pages
 
+import models.journeymodels.JourneyType
 import org.openqa.selenium.WebDriver
 import pagespecs.pagesupport.{ContentExpectation, Page, PageUtil}
 
-class ChooseAnotherWayToReceiveYourRefundPage(
-    baseUrl:           String,
-    override val path: String = "/get-an-income-tax-refund/choose-another-way-to-receive-your-refund"
-)(implicit webDriver: WebDriver) extends Page(baseUrl, path) {
+class ChooseAnotherWayToReceiveYourRefundPage(baseUrl: String, pathForJourneyType: String)(implicit webDriver: WebDriver) extends Page(
+  baseUrl = baseUrl,
+  path    = s"/get-an-income-tax-refund/$pathForJourneyType/choose-another-way-to-receive-your-refund"
+) {
 
   override def expectedH1: String = "Choose another way to receive your refund"
+  override def expectedTitleContent: String = "choose another way to receive your refund"
 
   override def assertPageIsDisplayed(errors: ContentExpectation*): Unit = sys.error("Use another variant for asserting page")
 
@@ -41,11 +43,15 @@ class ChooseAnotherWayToReceiveYourRefundPage(
           |""".stripMargin
     )) ++ errors
 
+    val expectedTitle =
+      if (errors.isEmpty) PageUtil.standardTitleWithJourneyType(expectedTitleContent, JourneyType.BankTransfer)
+      else PageUtil.standardErrorTitle(expectedTitleContent, JourneyType.BankTransfer)
+
     PageUtil.assertPage(
       baseUrl             = baseUrl,
       path                = path,
       h1                  = expectedH1,
-      title               = PageUtil.standardTitle(expectedH1),
+      title               = expectedTitle,
       contentExpectations = contentExpectations: _*
     )
   }
@@ -62,11 +68,15 @@ class ChooseAnotherWayToReceiveYourRefundPage(
           |""".stripMargin
     )) ++ errors
 
+    val expectedTitle =
+      if (errors.isEmpty) PageUtil.standardTitleWithJourneyType(expectedTitleContent, JourneyType.Cheque)
+      else PageUtil.standardErrorTitle(expectedTitleContent, JourneyType.Cheque)
+
     PageUtil.assertPage(
       baseUrl             = baseUrl,
       path                = path,
       h1                  = expectedH1,
-      title               = PageUtil.standardTitle(expectedH1),
+      title               = expectedTitle,
       contentExpectations = contentExpectations: _*
     )
   }
@@ -83,9 +93,9 @@ class ChooseAnotherWayToReceiveYourRefundPage(
 
     PageUtil.assertPage(
       baseUrl             = baseUrl,
-      path                = path + "/bank-transfer-via-pta-or-cheque",
+      path                = path,
       h1                  = expectedH1,
-      title               = PageUtil.standardTitle(expectedH1),
+      title               = PageUtil.standardTitleWithJourneyType(expectedTitleContent, JourneyType.BankTransfer),
       contentExpectations = errorContent
     )
   }

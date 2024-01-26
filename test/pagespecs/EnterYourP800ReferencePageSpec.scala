@@ -19,7 +19,7 @@ package pagespecs
 import models.journeymodels.JourneyType
 import testsupport.ItSpec
 
-class WhatIsYourP800ReferencePageSpec extends ItSpec {
+class EnterYourP800ReferencePageSpec extends ItSpec {
 
   override def beforeEach(): Unit = {
     super.beforeEach()
@@ -40,14 +40,14 @@ class WhatIsYourP800ReferencePageSpec extends ItSpec {
 
       def test(journeyType: JourneyType): Unit = {
         val (startPage, endPage) = journeyType match {
-          case JourneyType.BankTransfer => pages.whatIsYourP800ReferenceBankTransferPage -> pages.whatIsYourNationalInsuranceNumberBankTransferPage
-          case JourneyType.Cheque       => pages.whatIsYourP800ReferenceChequePage -> pages.whatIsYourNationalInsuranceNumberChequePage
+          case JourneyType.BankTransfer => pages.whatIsYourP800ReferenceBankTransferPage -> pages.enterYourNationalInsuranceNumberBankTransferPage
+          case JourneyType.Cheque       => pages.whatIsYourP800ReferenceChequePage -> pages.enterYourNationalInsuranceNumberChequePage
         }
         startPage.open()
-        startPage.assertPageIsDisplayed()
+        startPage.assertPageIsDisplayed(journeyType)
         startPage.enterP800Reference(tdAll.p800Reference.value)
         startPage.clickSubmit()
-        endPage.assertPageIsDisplayed()
+        endPage.assertPageIsDisplayed(journeyType)
       }
   }
 
@@ -69,7 +69,7 @@ class WhatIsYourP800ReferencePageSpec extends ItSpec {
           case JourneyType.Cheque       => pages.whatIsYourP800ReferenceChequePage
         }
         page.open()
-        page.assertPageIsDisplayed()
+        page.assertPageIsDisplayed(journeyType)
         page.clickSubmit()
         page.assertPageShowsErrorRequired(journeyType)
       }
@@ -93,7 +93,7 @@ class WhatIsYourP800ReferencePageSpec extends ItSpec {
           case JourneyType.Cheque       => pages.whatIsYourP800ReferenceChequePage
         }
         page.open()
-        page.assertPageIsDisplayed()
+        page.assertPageIsDisplayed(journeyType)
         page.enterP800Reference("this is a really long and invalid reference")
         page.clickSubmit()
         page.assertPageShowsErrorReferenceFormat(journeyType)
@@ -117,7 +117,7 @@ class WhatIsYourP800ReferencePageSpec extends ItSpec {
           case JourneyType.Cheque       => pages.whatIsYourP800ReferenceChequePage
         }
         page.open()
-        page.assertPageIsDisplayed()
+        page.assertPageIsDisplayed(journeyType)
         page.clickPtaSignInLink()
         pages.ptaSignInPage.assertPageIsDisplayed()
       }
@@ -127,22 +127,23 @@ class WhatIsYourP800ReferencePageSpec extends ItSpec {
     "bank transfer" in {
       upsertJourneyToDatabase(tdAll.BankTransfer.journeySelectedType)
       test(JourneyType.BankTransfer)
+      pages.weNeedYouToConfirmYourIdentityBankTransferPage.assertPageIsDisplayedForBankTransferJourney()
       getJourneyFromDatabase(tdAll.journeyId) shouldBeLike tdAll.BankTransfer.journeySelectedType
     }
     "cheque" in {
       upsertJourneyToDatabase(tdAll.Cheque.journeySelectedType)
       test(JourneyType.Cheque)
+      pages.weNeedYouToConfirmYourIdentityChequePage.assertPageIsDisplayedForChequeJourney()
       getJourneyFromDatabase(tdAll.journeyId) shouldBeLike tdAll.Cheque.journeySelectedType
     }
       def test(journeyType: JourneyType) = {
-        val (startPage, endPage) = journeyType match {
-          case JourneyType.BankTransfer => pages.whatIsYourP800ReferenceBankTransferPage -> pages.weNeedYouToConfirmYourIdentityBankTransferPage
-          case JourneyType.Cheque       => pages.whatIsYourP800ReferenceChequePage -> pages.weNeedYouToConfirmYourIdentityChequePage
+        val startPage = journeyType match {
+          case JourneyType.BankTransfer => pages.whatIsYourP800ReferenceBankTransferPage
+          case JourneyType.Cheque       => pages.whatIsYourP800ReferenceChequePage
         }
         startPage.open()
-        startPage.assertPageIsDisplayed()
+        startPage.assertPageIsDisplayed(journeyType)
         startPage.clickBackButton()
-        endPage.assertPageIsDisplayed()
       }
   }
 }

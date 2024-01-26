@@ -112,15 +112,15 @@
 
 @govTitle = @{serviceNameAndTitle + " - GOV.UK"}
 
-@potentialErrorTitle = @{
+@titleWithJourneyType = @{
     maybeJourneyType match {
-        case Some(JourneyType.BankTransfer) => s"${Messages.CommonMessages.`Error: `.show} ${Messages.CommonMessages.`Bank transfer`.show} -"
-        case Some(JourneyType.Cheque)       => s"${Messages.CommonMessages.`Error: `.show} ${Messages.CommonMessages.`Cheque`.show} -"
-        case None                           => s"${Messages.CommonMessages.`Error: `.show}"
+        case Some(JourneyType.BankTransfer) => s"${Messages.CommonMessages.`Bank transfer`.show} - $govTitle"
+        case Some(JourneyType.Cheque)       => s"${Messages.CommonMessages.`Cheque`.show} - $govTitle"
+        case None                           => s"$govTitle"
     }
 }
 
-@documentTitle = @{if(hasErrors) { s"$potentialErrorTitle $govTitle" } else { govTitle }}
+@documentTitle = @{if(hasErrors) { s"${Messages.CommonMessages.`Error: `.show} $titleWithJourneyType" } else { titleWithJourneyType }}
 
 @header = @{
  hmrcStandardHeader(

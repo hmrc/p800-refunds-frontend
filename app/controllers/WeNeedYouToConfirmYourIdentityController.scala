@@ -46,8 +46,8 @@ class WeNeedYouToConfirmYourIdentityController @Inject() (
 
   def post: Action[AnyContent] = actions.journeyInProgress { implicit request =>
     request.journey.journeyType match {
-      case Some(BankTransfer) => Redirect(routes.WhatIsYourP800ReferenceController.getBankTransfer.url)
-      case Some(Cheque)       => Redirect(routes.WhatIsYourP800ReferenceController.getCheque.url)
+      case Some(BankTransfer) => Redirect(routes.EnterYourP800ReferenceController.getBankTransfer.url)
+      case Some(Cheque)       => Redirect(routes.EnterYourP800ReferenceController.getCheque.url)
       case None               => Errors.throwServerErrorException("No journey type found in journey, this should never happen")
     }
 

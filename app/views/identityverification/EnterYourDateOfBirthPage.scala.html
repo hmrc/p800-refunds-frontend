@@ -33,16 +33,13 @@
 
 @import viewsHelpers.requestSupport._
 
-@title = @{
-    Messages.WhatIsYourDateOfBirth.`What is your date of birth`.show
-}
 @key = @{
     "date-of-birth"
 }
 
 @layout(
-    pageTitle = Some(title),
-    backLinkUrlOverride = Some(controllers.WhatIsYourNationalInsuranceNumberController.redirectLocation(request.journey).url),
+    pageTitle = Some(Messages.WhatIsYourDateOfBirth.`enter your date of birth`.show),
+    backLinkUrlOverride = Some(controllers.EnterYourNationalInsuranceNumberController.redirectLocation(request.journey).url),
     hasErrors = form.errors.nonEmpty,
     maybeJourneyType = Some(request.journey.getJourneyType)
 ) {
@@ -51,13 +48,13 @@
         @viewsHelpers.govukErrorSummary(ErrorSummary().withFormErrorsAsText(form.copy(errors = form.errors.distinctBy(_.message))))
     }
 
-    @viewsHelpers.formWithCsrf(action = controllers.routes.WhatIsYourDateOfBirthController.post) {
+    @viewsHelpers.formWithCsrf(action = controllers.routes.EnterYourDateOfBirthController.post) {
        @viewsHelpers.govukDateInput(DateInput(
             id = key,
             hint = Some(Hint(content = Text(Messages.WhatIsYourDateOfBirth.`For example`.show))),
             fieldset = Some(Fieldset(
                 legend = Some(Legend(
-                    content = Text(title),
+                    content = Text(Messages.WhatIsYourDateOfBirth.`What is your date of birth`.show),
                     classes = "govuk-fieldset__legend--xl",
                     isPageHeading = true)))
             )

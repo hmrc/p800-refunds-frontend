@@ -34,17 +34,13 @@
 
 @import viewsHelpers.requestSupport._
 
-@title = @{
-    Messages.WhatIsYourNationalInsuranceNumber.`What is your National Insurance number`.show
-}
-
 @key = @{
     "nationalInsuranceNumber"
 }
 
 @layout(
-    pageTitle = Some(title),
-    backLinkUrlOverride = Some(controllers.WhatIsYourP800ReferenceController.redirectLocation(request.journey).url),
+    pageTitle = Some(Messages.WhatIsYourNationalInsuranceNumber.`enter your National Insurance number`.show),
+    backLinkUrlOverride = Some(controllers.EnterYourP800ReferenceController.redirectLocation(request.journey).url),
     hasErrors = form.errors.nonEmpty,
     maybeJourneyType = Some(request.journey.getJourneyType)
 ) {
@@ -52,13 +48,13 @@
         @viewsHelpers.govukErrorSummary(ErrorSummary(errorList = form.errors.asTextErrorLinks, title = Text(Messages.CommonMessages.`There is a problem`.show)))
     }
 
-    @viewsHelpers.formWithCsrf(action = controllers.WhatIsYourNationalInsuranceNumberController.derivePostEndpoint(request.journey)) {
+    @viewsHelpers.formWithCsrf(action = controllers.EnterYourNationalInsuranceNumberController.derivePostEndpoint(request.journey)) {
         @viewsHelpers.govukInput(Input(
             id = key,
             name = key,
             classes = "govuk-!-width-two-thirds",
             label = Label(
-                content = Text(title),
+                content = Text(Messages.WhatIsYourNationalInsuranceNumber.`What is your National Insurance number`.show),
                 isPageHeading = true,
                 classes = "govuk-label--xl"
             ),

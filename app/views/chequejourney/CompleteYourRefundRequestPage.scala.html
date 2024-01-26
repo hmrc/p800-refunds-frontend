@@ -18,6 +18,7 @@
 @import uk.gov.hmrc.govukfrontend.views.html.components._
 @import views.html.templates.Layout
 @import config.AppConfig
+@import action.JourneyRequest
 
 @this(
         layout: Layout,
@@ -25,13 +26,9 @@
         appConfig: AppConfig
 )
 
-@()(implicit request: Request[_])
+@()(implicit request: JourneyRequest[_])
 
 @import viewsHelpers.requestSupport._
-
-@title = @{
-    Messages.YourChequeWillBePostedToYou.`Complete your refund request to get your cheque`.show
-}
 
 @progressiveRevealHtmlContent = {
     <p class="govuk-body">@{Messages.YourChequeWillBePostedToYou.`To update your address you need to:`.show}</p>
@@ -43,11 +40,12 @@
 }
 
 @layout(
-    pageTitle = Some(title),
-    backLinkUrlOverride = Some(controllers.routes.WeHaveConfirmedYourIdentityController.getCheque.url)
+    pageTitle = Some(Messages.YourChequeWillBePostedToYou.`complete refund request`.show),
+    backLinkUrlOverride = Some(controllers.routes.WeHaveConfirmedYourIdentityController.getCheque.url),
+    maybeJourneyType = Some(request.journey.getJourneyType)
 ) {
 
-    <h1 class="govuk-heading-xl">@{title}</h1>
+    <h1 class="govuk-heading-xl">@{Messages.YourChequeWillBePostedToYou.`Complete your refund request to get your cheque`.show}</h1>
 
     <p class="govuk-body">
         @{Messages.YourChequeWillBePostedToYou.`Your cheque will be sent to the same address as your tax calculation letter.`.show}

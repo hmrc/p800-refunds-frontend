@@ -16,6 +16,7 @@
 
 package pagespecs.pages
 
+import models.journeymodels.JourneyType
 import org.openqa.selenium.WebDriver
 import pagespecs.pagesupport.{ContentExpectation, Page, PageUtil}
 
@@ -25,6 +26,7 @@ class VerifyBankAccountPage(baseUrl: String)(implicit webDriver: WebDriver) exte
 ) {
 
   override def expectedH1: String = "We are verifying your bank account"
+  override def expectedTitleContent: String = "add_me"
 
   override def assertPageIsDisplayed(extraExpectations: ContentExpectation*): Unit = withPageClue {
 
@@ -41,7 +43,7 @@ class VerifyBankAccountPage(baseUrl: String)(implicit webDriver: WebDriver) exte
       baseUrl             = baseUrl,
       path                = path,
       h1                  = expectedH1,
-      title               = PageUtil.standardTitle(expectedH1),
+      title               = PageUtil.standardTitleWithJourneyType(expectedH1, JourneyType.BankTransfer),
       contentExpectations = contentExpectations: _*
     )
   }

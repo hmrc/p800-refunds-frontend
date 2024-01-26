@@ -18,6 +18,7 @@
 @import uk.gov.hmrc.govukfrontend.views.html.components._
 @import views.ViewsHelpers
 @import views.html.templates.Layout
+@import action.JourneyRequest
 
 @this(
         layout: Layout,
@@ -25,7 +26,7 @@
         appConfig: config.AppConfig
 )
 
-@()(implicit request: Request[_])
+@()(implicit request: JourneyRequest[_])
 
 @import viewsHelpers.requestSupport._
 
@@ -35,7 +36,8 @@
 
 @layout(
     pageTitle = Some(heading),
-    showBackLink = false
+    showBackLink = false,
+    maybeJourneyType = Some(request.journey.getJourneyType)
 ) {
 
     <h1 class="govuk-heading-xl">@heading</h1>

@@ -29,7 +29,7 @@ import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class WhatIsYourNationalInsuranceNumberController @Inject() (
+class EnterYourNationalInsuranceNumberController @Inject() (
     mcc:            MessagesControllerComponents,
     views:          Views,
     actions:        Actions,
@@ -50,7 +50,7 @@ class WhatIsYourNationalInsuranceNumberController @Inject() (
   private def getResult(implicit request: JourneyRequest[_]): Result = {
     val journey: Journey = request.journey
 
-    Ok(views.whatIsYourNationalInsuranceNumberPage(
+    Ok(views.enterYourNationalInsuranceNumberPage(
       form = journey.nationalInsuranceNumber.fold(
         WhatIsYourNationalInsuranceNumberForm.form
       )(
@@ -71,7 +71,7 @@ class WhatIsYourNationalInsuranceNumberController @Inject() (
 
   private def processForm(journey: Journey)(implicit request: JourneyRequest[_]): Future[Result] = {
     val defaultNextCall = journey.getJourneyType match {
-      case JourneyType.BankTransfer => controllers.routes.WhatIsYourDateOfBirthController.get
+      case JourneyType.BankTransfer => controllers.routes.EnterYourDateOfBirthController.get
       case JourneyType.Cheque       => controllers.routes.CheckYourAnswersController.getCheque
     }
     val nextCall = if (request.journey.isChanging) controllers.CheckYourAnswersController.redirectLocation(request.journey) else defaultNextCall
@@ -81,7 +81,7 @@ class WhatIsYourNationalInsuranceNumberController @Inject() (
       .bindFromRequest()
       .fold(
         formWithErrors => {
-          Future.successful(BadRequest(views.whatIsYourNationalInsuranceNumberPage(form = formWithErrors)))
+          Future.successful(BadRequest(views.enterYourNationalInsuranceNumberPage(form = formWithErrors)))
         },
         nationalInsuranceNumber =>
           journeyService
@@ -95,16 +95,16 @@ class WhatIsYourNationalInsuranceNumberController @Inject() (
 
 }
 
-object WhatIsYourNationalInsuranceNumberController {
+object EnterYourNationalInsuranceNumberController {
   def redirectLocation(journey: Journey)(implicit request: Request[_]): Call = Journey.deriveRedirectByJourneyType(
     journeyType           = journey.getJourneyType,
-    chequeJourneyRedirect = controllers.routes.WhatIsYourNationalInsuranceNumberController.getCheque,
-    bankJourneyRedirect   = controllers.routes.WhatIsYourNationalInsuranceNumberController.getBankTransfer
+    chequeJourneyRedirect = controllers.routes.EnterYourNationalInsuranceNumberController.getCheque,
+    bankJourneyRedirect   = controllers.routes.EnterYourNationalInsuranceNumberController.getBankTransfer
   )
 
   def derivePostEndpoint(journey: Journey)(implicit request: Request[_]): Call = Journey.deriveRedirectByJourneyType(
     journeyType           = journey.getJourneyType,
-    chequeJourneyRedirect = controllers.routes.WhatIsYourNationalInsuranceNumberController.postCheque,
-    bankJourneyRedirect   = controllers.routes.WhatIsYourNationalInsuranceNumberController.postBankTransfer
+    chequeJourneyRedirect = controllers.routes.EnterYourNationalInsuranceNumberController.postCheque,
+    bankJourneyRedirect   = controllers.routes.EnterYourNationalInsuranceNumberController.postBankTransfer
   )
 }

@@ -25,6 +25,7 @@ class DoYouWantToSignInPage(baseUrl: String)(implicit webDriver: WebDriver) exte
 ) {
 
   override def expectedH1: String = "Do you want to sign in?"
+  override def expectedTitleContent: String = "add_me"
 
   override def assertPageIsDisplayed(extraExpectations: ContentExpectation*): Unit = withPageClue {
     val contentExpectations: ContentExpectation = ContentExpectation(

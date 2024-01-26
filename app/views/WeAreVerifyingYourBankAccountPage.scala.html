@@ -17,13 +17,14 @@
 @import language.Messages
 @import uk.gov.hmrc.govukfrontend.views.html.components._
 @import views.html.templates.Layout
+@import action.JourneyRequest
 
 @this(
     layout: Layout,
     viewsHelpers: views.ViewsHelpers
 )
 
-@()(implicit request: Request[_])
+@()(implicit request: JourneyRequest[_])
 
 @import viewsHelpers.requestSupport._
 
@@ -33,7 +34,8 @@
 
 @layout(
     pageTitle = Some(title),
-    backLinkUrlOverride = Some(routes.WhatIsTheNameOfYourBankController.get.url)
+    backLinkUrlOverride = Some(routes.EnterTheNameOfYourBankController.get.url),
+    maybeJourneyType = Some(request.journey.getJourneyType)
 ) {
 
     <h1 class="govuk-heading-xl">@title</h1>

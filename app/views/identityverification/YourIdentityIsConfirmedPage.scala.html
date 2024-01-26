@@ -29,17 +29,13 @@
 
 @import viewsHelpers.requestSupport._
 
-@title = @{
-    Messages.WeHaveConfirmedYourIdentity.`We have confirmed your identity`.show
-}
-
-
 @layout(
-    pageTitle = Some(title),
-    backLinkUrlOverride = Some(controllers.CheckYourAnswersController.redirectLocation(request.journey).url)
+    pageTitle = Some(Messages.WeHaveConfirmedYourIdentity.`your identity is confirmed`.show),
+    backLinkUrlOverride = Some(controllers.CheckYourAnswersController.redirectLocation(request.journey).url),
+    maybeJourneyType = Some(request.journey.getJourneyType)
 ) {
 
-    <h1 class="govuk-heading-xl">@title</h1>
+    <h1 class="govuk-heading-xl">@{Messages.WeHaveConfirmedYourIdentity.`We have confirmed your identity`.show}</h1>
 
     @viewsHelpers.formWithCsrf(action = controllers.routes.WeHaveConfirmedYourIdentityController.post) {
         @viewsHelpers.govukButton(Button(

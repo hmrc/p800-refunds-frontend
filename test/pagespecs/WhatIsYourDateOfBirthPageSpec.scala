@@ -17,7 +17,7 @@
 package pagespecs
 
 import models.dateofbirth.Month
-import models.journeymodels.Journey
+import models.journeymodels.{Journey, JourneyType}
 import testsupport.ItSpec
 
 import java.time.{LocalDate, LocalDateTime}
@@ -29,21 +29,21 @@ class WhatIsYourDateOfBirthPageSpec extends ItSpec {
     addJourneyIdToSession(tdAll.journeyId)
   }
 
-  "/what-is-your-date-of-birth renders the what is your date of birth page" in {
+  "/enter-your-date-of-birth renders the what is your date of birth page" in {
     upsertJourneyToDatabase(tdAll.BankTransfer.journeyEnteredNino)
-    pages.whatIsYourDateOfBirthPage.open()
-    pages.whatIsYourDateOfBirthPage.assertPageIsDisplayed()
+    pages.enterYourDateOfBirthPage.open()
+    pages.enterYourDateOfBirthPage.assertPageIsDisplayed()
     getJourneyFromDatabase(tdAll.journeyId) shouldBeLike tdAll.BankTransfer.journeyEnteredNino
   }
 
   "Submitting form with valid data redirects user to checkYourAnswersPage" in {
     upsertJourneyToDatabase(tdAll.BankTransfer.journeyEnteredNino)
-    pages.whatIsYourDateOfBirthPage.open()
-    pages.whatIsYourDateOfBirthPage.assertPageIsDisplayed()
-    pages.whatIsYourDateOfBirthPage.enterDayOfMonth("1")
-    pages.whatIsYourDateOfBirthPage.enterMonth("1")
-    pages.whatIsYourDateOfBirthPage.enterYear("2000")
-    pages.whatIsYourDateOfBirthPage.clickSubmit()
+    pages.enterYourDateOfBirthPage.open()
+    pages.enterYourDateOfBirthPage.assertPageIsDisplayed()
+    pages.enterYourDateOfBirthPage.enterDayOfMonth("1")
+    pages.enterYourDateOfBirthPage.enterMonth("1")
+    pages.enterYourDateOfBirthPage.enterYear("2000")
+    pages.enterYourDateOfBirthPage.clickSubmit()
     pages.checkYourAnswersBankTransferPage.assertPageIsDisplayedForBankTransfer(
       p800Reference           = tdAll.p800Reference,
       dateOfBirth             = tdAll.dateOfBirthFormatted,
@@ -85,12 +85,12 @@ class WhatIsYourDateOfBirthPageSpec extends ItSpec {
       case (monthFormatted, whatUserEntered) =>
         s" '$whatUserEntered'" in {
           upsertJourneyToDatabase(tdAll.BankTransfer.journeyEnteredNino)
-          pages.whatIsYourDateOfBirthPage.open()
-          pages.whatIsYourDateOfBirthPage.assertPageIsDisplayed()
-          pages.whatIsYourDateOfBirthPage.enterDayOfMonth("1")
-          pages.whatIsYourDateOfBirthPage.enterMonth(whatUserEntered)
-          pages.whatIsYourDateOfBirthPage.enterYear("2000")
-          pages.whatIsYourDateOfBirthPage.clickSubmit()
+          pages.enterYourDateOfBirthPage.open()
+          pages.enterYourDateOfBirthPage.assertPageIsDisplayed()
+          pages.enterYourDateOfBirthPage.enterDayOfMonth("1")
+          pages.enterYourDateOfBirthPage.enterMonth(whatUserEntered)
+          pages.enterYourDateOfBirthPage.enterYear("2000")
+          pages.enterYourDateOfBirthPage.clickSubmit()
           pages.checkYourAnswersBankTransferPage.assertPageIsDisplayedForBankTransfer(
             p800Reference           = tdAll.p800Reference,
             dateOfBirth             = s"01 $monthFormatted 2000",
@@ -111,96 +111,96 @@ class WhatIsYourDateOfBirthPageSpec extends ItSpec {
 
   "Clicking 'Back' sends user to whatIsYourNationalInsuranceNumberPage" in {
     upsertJourneyToDatabase(tdAll.BankTransfer.journeyEnteredDateOfBirth)
-    pages.whatIsYourDateOfBirthPage.open()
-    pages.whatIsYourDateOfBirthPage.assertPageIsDisplayed()
-    pages.whatIsYourDateOfBirthPage.clickBackButton()
-    pages.whatIsYourNationalInsuranceNumberBankTransferPage.assertPageIsDisplayed()
+    pages.enterYourDateOfBirthPage.open()
+    pages.enterYourDateOfBirthPage.assertPageIsDisplayed()
+    pages.enterYourDateOfBirthPage.clickBackButton()
+    pages.enterYourNationalInsuranceNumberBankTransferPage.assertPageIsDisplayed(JourneyType.BankTransfer)
     getJourneyFromDatabase(tdAll.journeyId) shouldBeLike tdAll.BankTransfer.journeyEnteredDateOfBirth
   }
 
   "Prepopulate the form if the user has already entered it" in {
     upsertJourneyToDatabase(tdAll.BankTransfer.journeyEnteredDateOfBirth)
-    pages.whatIsYourDateOfBirthPage.open()
-    pages.whatIsYourDateOfBirthPage.assertDataPrepopulated("1", "1", "2000")
+    pages.enterYourDateOfBirthPage.open()
+    pages.enterYourDateOfBirthPage.assertDataPrepopulated("1", "1", "2000")
     getJourneyFromDatabase(tdAll.journeyId) shouldBeLike tdAll.BankTransfer.journeyEnteredDateOfBirth
   }
 
   "Submitting form without entering anything shows error message" in {
     upsertJourneyToDatabase(tdAll.BankTransfer.journeyEnteredNino)
-    pages.whatIsYourDateOfBirthPage.open()
-    pages.whatIsYourDateOfBirthPage.assertPageIsDisplayed()
-    pages.whatIsYourDateOfBirthPage.clickSubmit()
-    pages.whatIsYourDateOfBirthPage.assertPageShowsErrorAllEmpty()
+    pages.enterYourDateOfBirthPage.open()
+    pages.enterYourDateOfBirthPage.assertPageIsDisplayed()
+    pages.enterYourDateOfBirthPage.clickSubmit()
+    pages.enterYourDateOfBirthPage.assertPageShowsErrorAllEmpty()
     getJourneyFromDatabase(tdAll.journeyId) shouldBeLike tdAll.BankTransfer.journeyEnteredNino
   }
 
   "Submitting form without day of month shows error message" in {
     upsertJourneyToDatabase(tdAll.BankTransfer.journeyEnteredNino)
-    pages.whatIsYourDateOfBirthPage.open()
-    pages.whatIsYourDateOfBirthPage.assertPageIsDisplayed()
-    pages.whatIsYourDateOfBirthPage.enterMonth("1")
-    pages.whatIsYourDateOfBirthPage.enterYear("2000")
-    pages.whatIsYourDateOfBirthPage.clickSubmit()
-    pages.whatIsYourDateOfBirthPage.assertPageShowsErrorDayMissing()
+    pages.enterYourDateOfBirthPage.open()
+    pages.enterYourDateOfBirthPage.assertPageIsDisplayed()
+    pages.enterYourDateOfBirthPage.enterMonth("1")
+    pages.enterYourDateOfBirthPage.enterYear("2000")
+    pages.enterYourDateOfBirthPage.clickSubmit()
+    pages.enterYourDateOfBirthPage.assertPageShowsErrorDayMissing()
     getJourneyFromDatabase(tdAll.journeyId) shouldBeLike tdAll.BankTransfer.journeyEnteredNino
   }
 
   "Submitting form without month shows error message" in {
     upsertJourneyToDatabase(tdAll.BankTransfer.journeyEnteredNino)
-    pages.whatIsYourDateOfBirthPage.open()
-    pages.whatIsYourDateOfBirthPage.assertPageIsDisplayed()
-    pages.whatIsYourDateOfBirthPage.enterDayOfMonth("1")
-    pages.whatIsYourDateOfBirthPage.enterYear("2000")
-    pages.whatIsYourDateOfBirthPage.clickSubmit()
-    pages.whatIsYourDateOfBirthPage.assertPageShowsErrorMonthMissing()
+    pages.enterYourDateOfBirthPage.open()
+    pages.enterYourDateOfBirthPage.assertPageIsDisplayed()
+    pages.enterYourDateOfBirthPage.enterDayOfMonth("1")
+    pages.enterYourDateOfBirthPage.enterYear("2000")
+    pages.enterYourDateOfBirthPage.clickSubmit()
+    pages.enterYourDateOfBirthPage.assertPageShowsErrorMonthMissing()
     getJourneyFromDatabase(tdAll.journeyId) shouldBeLike tdAll.BankTransfer.journeyEnteredNino
   }
 
   "Submitting form without year shows error message" in {
     upsertJourneyToDatabase(tdAll.BankTransfer.journeyEnteredNino)
-    pages.whatIsYourDateOfBirthPage.open()
-    pages.whatIsYourDateOfBirthPage.assertPageIsDisplayed()
-    pages.whatIsYourDateOfBirthPage.enterDayOfMonth("1")
-    pages.whatIsYourDateOfBirthPage.enterMonth("1")
-    pages.whatIsYourDateOfBirthPage.clickSubmit()
-    pages.whatIsYourDateOfBirthPage.assertPageShowsErrorYearMissing()
+    pages.enterYourDateOfBirthPage.open()
+    pages.enterYourDateOfBirthPage.assertPageIsDisplayed()
+    pages.enterYourDateOfBirthPage.enterDayOfMonth("1")
+    pages.enterYourDateOfBirthPage.enterMonth("1")
+    pages.enterYourDateOfBirthPage.clickSubmit()
+    pages.enterYourDateOfBirthPage.assertPageShowsErrorYearMissing()
     getJourneyFromDatabase(tdAll.journeyId) shouldBeLike tdAll.BankTransfer.journeyEnteredNino
   }
 
   "Submitting form where month is greater than 12" in {
     upsertJourneyToDatabase(tdAll.BankTransfer.journeyEnteredNino)
-    pages.whatIsYourDateOfBirthPage.open()
-    pages.whatIsYourDateOfBirthPage.assertPageIsDisplayed()
-    pages.whatIsYourDateOfBirthPage.enterDayOfMonth("1")
-    pages.whatIsYourDateOfBirthPage.enterMonth("13")
-    pages.whatIsYourDateOfBirthPage.enterYear("2000")
-    pages.whatIsYourDateOfBirthPage.clickSubmit()
-    pages.whatIsYourDateOfBirthPage.assertPageShowsErrorMonthTooLarge()
+    pages.enterYourDateOfBirthPage.open()
+    pages.enterYourDateOfBirthPage.assertPageIsDisplayed()
+    pages.enterYourDateOfBirthPage.enterDayOfMonth("1")
+    pages.enterYourDateOfBirthPage.enterMonth("13")
+    pages.enterYourDateOfBirthPage.enterYear("2000")
+    pages.enterYourDateOfBirthPage.clickSubmit()
+    pages.enterYourDateOfBirthPage.assertPageShowsErrorMonthTooLarge()
     getJourneyFromDatabase(tdAll.journeyId) shouldBeLike tdAll.BankTransfer.journeyEnteredNino
   }
 
   "Submitting form where month is greater than day is greater than 31" in {
     upsertJourneyToDatabase(tdAll.BankTransfer.journeyEnteredNino)
-    pages.whatIsYourDateOfBirthPage.open()
-    pages.whatIsYourDateOfBirthPage.assertPageIsDisplayed()
-    pages.whatIsYourDateOfBirthPage.enterDayOfMonth("32")
-    pages.whatIsYourDateOfBirthPage.enterMonth("1")
-    pages.whatIsYourDateOfBirthPage.enterYear("2000")
-    pages.whatIsYourDateOfBirthPage.clickSubmit()
-    pages.whatIsYourDateOfBirthPage.assertPageShowsErrorMonthTooLarge()
+    pages.enterYourDateOfBirthPage.open()
+    pages.enterYourDateOfBirthPage.assertPageIsDisplayed()
+    pages.enterYourDateOfBirthPage.enterDayOfMonth("32")
+    pages.enterYourDateOfBirthPage.enterMonth("1")
+    pages.enterYourDateOfBirthPage.enterYear("2000")
+    pages.enterYourDateOfBirthPage.clickSubmit()
+    pages.enterYourDateOfBirthPage.assertPageShowsErrorMonthTooLarge()
     getJourneyFromDatabase(tdAll.journeyId) shouldBeLike tdAll.BankTransfer.journeyEnteredNino
   }
 
   Seq("20oo", "94", "20001").foreach { yearInput: String =>
     s"Submitting form incorrect year format: [ $yearInput ]" in {
       upsertJourneyToDatabase(tdAll.BankTransfer.journeyEnteredNino)
-      pages.whatIsYourDateOfBirthPage.open()
-      pages.whatIsYourDateOfBirthPage.assertPageIsDisplayed()
-      pages.whatIsYourDateOfBirthPage.enterDayOfMonth("1")
-      pages.whatIsYourDateOfBirthPage.enterMonth("1")
-      pages.whatIsYourDateOfBirthPage.enterYear(yearInput)
-      pages.whatIsYourDateOfBirthPage.clickSubmit()
-      pages.whatIsYourDateOfBirthPage.assertPageShowsErrorYearLength()
+      pages.enterYourDateOfBirthPage.open()
+      pages.enterYourDateOfBirthPage.assertPageIsDisplayed()
+      pages.enterYourDateOfBirthPage.enterDayOfMonth("1")
+      pages.enterYourDateOfBirthPage.enterMonth("1")
+      pages.enterYourDateOfBirthPage.enterYear(yearInput)
+      pages.enterYourDateOfBirthPage.clickSubmit()
+      pages.enterYourDateOfBirthPage.assertPageShowsErrorYearLength()
       getJourneyFromDatabase(tdAll.journeyId) shouldBeLike tdAll.BankTransfer.journeyEnteredNino
     }
   }
@@ -208,13 +208,13 @@ class WhatIsYourDateOfBirthPageSpec extends ItSpec {
   "Submitting form date in the future" in {
     upsertJourneyToDatabase(tdAll.BankTransfer.journeyEnteredNino)
     val dateInFuture: LocalDateTime = LocalDateTime.now(clock).plusDays(1L)
-    pages.whatIsYourDateOfBirthPage.open()
-    pages.whatIsYourDateOfBirthPage.assertPageIsDisplayed()
-    pages.whatIsYourDateOfBirthPage.enterDayOfMonth(dateInFuture.getDayOfMonth.toString)
-    pages.whatIsYourDateOfBirthPage.enterMonth(dateInFuture.getMonthValue.toString)
-    pages.whatIsYourDateOfBirthPage.enterYear(dateInFuture.getYear.toString)
-    pages.whatIsYourDateOfBirthPage.clickSubmit()
-    pages.whatIsYourDateOfBirthPage.assertPageShowsErrorDateInTheFuture()
+    pages.enterYourDateOfBirthPage.open()
+    pages.enterYourDateOfBirthPage.assertPageIsDisplayed()
+    pages.enterYourDateOfBirthPage.enterDayOfMonth(dateInFuture.getDayOfMonth.toString)
+    pages.enterYourDateOfBirthPage.enterMonth(dateInFuture.getMonthValue.toString)
+    pages.enterYourDateOfBirthPage.enterYear(dateInFuture.getYear.toString)
+    pages.enterYourDateOfBirthPage.clickSubmit()
+    pages.enterYourDateOfBirthPage.assertPageShowsErrorDateInTheFuture()
     getJourneyFromDatabase(tdAll.journeyId) shouldBeLike tdAll.BankTransfer.journeyEnteredNino
   }
 
@@ -223,13 +223,13 @@ class WhatIsYourDateOfBirthPageSpec extends ItSpec {
     val `not quite 16 years ago` = LocalDate.now().minusYears(16L).plusDays(1L)
     // i.e. format
     val `16 years ago expected date message` = LocalDate.now().minusYears(16L).format(tdAll.gdsDateTimeFormatter)
-    pages.whatIsYourDateOfBirthPage.open()
-    pages.whatIsYourDateOfBirthPage.assertPageIsDisplayed()
-    pages.whatIsYourDateOfBirthPage.enterDayOfMonth(`not quite 16 years ago`.getDayOfMonth.toString)
-    pages.whatIsYourDateOfBirthPage.enterMonth(`not quite 16 years ago`.getMonthValue.toString)
-    pages.whatIsYourDateOfBirthPage.enterYear(`not quite 16 years ago`.getYear.toString)
-    pages.whatIsYourDateOfBirthPage.clickSubmit()
-    pages.whatIsYourDateOfBirthPage.assertPageShowsErrorDateTooYoung(`16 years ago expected date message`)
+    pages.enterYourDateOfBirthPage.open()
+    pages.enterYourDateOfBirthPage.assertPageIsDisplayed()
+    pages.enterYourDateOfBirthPage.enterDayOfMonth(`not quite 16 years ago`.getDayOfMonth.toString)
+    pages.enterYourDateOfBirthPage.enterMonth(`not quite 16 years ago`.getMonthValue.toString)
+    pages.enterYourDateOfBirthPage.enterYear(`not quite 16 years ago`.getYear.toString)
+    pages.enterYourDateOfBirthPage.clickSubmit()
+    pages.enterYourDateOfBirthPage.assertPageShowsErrorDateTooYoung(`16 years ago expected date message`)
     getJourneyFromDatabase(tdAll.journeyId) shouldBeLike tdAll.BankTransfer.journeyEnteredNino
   }
 
@@ -237,13 +237,13 @@ class WhatIsYourDateOfBirthPageSpec extends ItSpec {
     upsertJourneyToDatabase(tdAll.BankTransfer.journeyEnteredNino)
     val `110 Years and one day ago` = LocalDate.now().minusYears(110L).minusDays(1L)
     val `110 years ago expected date message` = LocalDate.now().minusYears(110L).format(tdAll.gdsDateTimeFormatter)
-    pages.whatIsYourDateOfBirthPage.open()
-    pages.whatIsYourDateOfBirthPage.assertPageIsDisplayed()
-    pages.whatIsYourDateOfBirthPage.enterDayOfMonth(`110 Years and one day ago`.getDayOfMonth.toString)
-    pages.whatIsYourDateOfBirthPage.enterMonth(`110 Years and one day ago`.getMonthValue.toString)
-    pages.whatIsYourDateOfBirthPage.enterYear(`110 Years and one day ago`.getYear.toString)
-    pages.whatIsYourDateOfBirthPage.clickSubmit()
-    pages.whatIsYourDateOfBirthPage.assertPageShowsErrorDateTooOld(`110 years ago expected date message`)
+    pages.enterYourDateOfBirthPage.open()
+    pages.enterYourDateOfBirthPage.assertPageIsDisplayed()
+    pages.enterYourDateOfBirthPage.enterDayOfMonth(`110 Years and one day ago`.getDayOfMonth.toString)
+    pages.enterYourDateOfBirthPage.enterMonth(`110 Years and one day ago`.getMonthValue.toString)
+    pages.enterYourDateOfBirthPage.enterYear(`110 Years and one day ago`.getYear.toString)
+    pages.enterYourDateOfBirthPage.clickSubmit()
+    pages.enterYourDateOfBirthPage.assertPageShowsErrorDateTooOld(`110 years ago expected date message`)
     getJourneyFromDatabase(tdAll.journeyId) shouldBeLike tdAll.BankTransfer.journeyEnteredNino
   }
 

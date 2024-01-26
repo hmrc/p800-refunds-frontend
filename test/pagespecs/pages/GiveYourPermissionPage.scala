@@ -16,6 +16,7 @@
 
 package pagespecs.pages
 
+import models.journeymodels.JourneyType
 import org.openqa.selenium.WebDriver
 import pagespecs.pagesupport.{ContentExpectation, Page, PageUtil}
 
@@ -25,6 +26,7 @@ class GiveYourPermissionPage(baseUrl: String)(implicit webDriver: WebDriver) ext
 ) {
 
   override def expectedH1: String = "Give your permission"
+  override def expectedTitleContent: String = "give your permission"
 
   override def assertPageIsDisplayed(errors: ContentExpectation*): Unit = withPageClue {
     val contentExpectations: Seq[ContentExpectation] = Seq(ContentExpectation(
@@ -48,7 +50,7 @@ class GiveYourPermissionPage(baseUrl: String)(implicit webDriver: WebDriver) ext
       baseUrl             = baseUrl,
       path                = path,
       h1                  = expectedH1,
-      title               = PageUtil.standardTitle(expectedH1),
+      title               = PageUtil.standardTitleWithJourneyType(expectedTitleContent, JourneyType.BankTransfer),
       contentExpectations = contentExpectations: _*
     )
   }

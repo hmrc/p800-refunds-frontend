@@ -40,13 +40,13 @@ class WeHaveConfirmedYourIdentityController @Inject() (
   }
 
   private def getResult(implicit request: JourneyRequest[_]) = {
-    Ok(views.weHaveConfirmedYourIdentityPage())
+    Ok(views.yourIdentityIsConfirmedPage())
   }
 
   def post: Action[AnyContent] = actions.journeyInProgress { implicit request =>
     val journey = request.journey
     val nextCall: Call = journey.getJourneyType match {
-      case JourneyType.BankTransfer => controllers.routes.WhatIsTheNameOfYourBankController.get
+      case JourneyType.BankTransfer => controllers.routes.EnterTheNameOfYourBankController.get
       case JourneyType.Cheque       => controllers.routes.CompleteYourRefundRequestController.get
     }
     Redirect(nextCall.url)

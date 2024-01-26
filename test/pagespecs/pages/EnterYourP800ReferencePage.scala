@@ -22,12 +22,14 @@ import pagespecs.pagesupport.{ContentExpectation, Page, PageUtil}
 
 import scala.jdk.CollectionConverters._
 
-class WhatIsYourP800ReferencePage(baseUrl: String, pathForJourneyType: String)(implicit webDriver: WebDriver) extends Page(
+class EnterYourP800ReferencePage(baseUrl: String, pathForJourneyType: String)(implicit webDriver: WebDriver) extends Page(
   baseUrl,
-  path = s"/get-an-income-tax-refund/$pathForJourneyType/what-is-your-p800-reference"
+  path = s"/get-an-income-tax-refund/$pathForJourneyType/enter-your-p800-reference"
 ) {
 
   override def expectedH1: String = "What is your P800 reference?"
+
+  override def expectedTitleContent: String = "enter your p800 reference"
 
   private val p800ReferenceFieldId: String = "reference"
 
@@ -44,7 +46,9 @@ class WhatIsYourP800ReferencePage(baseUrl: String, pathForJourneyType: String)(i
       .getOrElse(throw new Exception("Expecting at least one window handle"))
   }
 
-  override def assertPageIsDisplayed(extraExpectations: ContentExpectation*): Unit = withPageClue {
+  override def assertPageIsDisplayed(extraExpectations: ContentExpectation*): Unit = sys.error("Use another variant for asserting page")
+
+  def assertPageIsDisplayed(journeyType: JourneyType, extraExpectations: ContentExpectation*): Unit = withPageClue {
     val contentExpectations: Seq[ContentExpectation] = Seq(
       ContentExpectation(
         atXpath       = PageUtil.Xpath.mainContent,
@@ -61,7 +65,7 @@ class WhatIsYourP800ReferencePage(baseUrl: String, pathForJourneyType: String)(i
       baseUrl             = baseUrl,
       path                = path,
       h1                  = expectedH1,
-      title               = PageUtil.standardTitle(expectedH1),
+      title               = PageUtil.standardTitleWithJourneyType(expectedTitleContent, journeyType),
       contentExpectations = contentExpectations: _*
     )
   }
@@ -80,7 +84,7 @@ class WhatIsYourP800ReferencePage(baseUrl: String, pathForJourneyType: String)(i
       baseUrl             = baseUrl,
       path                = path,
       h1                  = expectedH1,
-      title               = PageUtil.standardErrorTitle(expectedH1, journeyType),
+      title               = PageUtil.standardErrorTitle(expectedTitleContent, journeyType),
       contentExpectations = contentExpectations: _*
     )
   }
@@ -99,7 +103,7 @@ class WhatIsYourP800ReferencePage(baseUrl: String, pathForJourneyType: String)(i
       baseUrl             = baseUrl,
       path                = path,
       h1                  = expectedH1,
-      title               = PageUtil.standardErrorTitle(expectedH1, journeyType),
+      title               = PageUtil.standardErrorTitle(expectedTitleContent, journeyType),
       contentExpectations = contentExpectations: _*
     )
   }

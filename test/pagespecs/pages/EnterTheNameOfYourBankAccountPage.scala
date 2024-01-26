@@ -21,12 +21,13 @@ import models.journeymodels.JourneyType
 import org.openqa.selenium.WebDriver
 import pagespecs.pagesupport.{ContentExpectation, Page, PageUtil}
 
-class WhatIsTheNameOfYourBankAccountPage(baseUrl: String)(implicit webDriver: WebDriver) extends Page(
+class EnterTheNameOfYourBankAccountPage(baseUrl: String)(implicit webDriver: WebDriver) extends Page(
   baseUrl,
-  path = "/get-an-income-tax-refund/bank-transfer/what-is-the-name-of-your-bank-account"
+  path = "/get-an-income-tax-refund/bank-transfer/enter-name-of-your-bank"
 ) {
 
   override def expectedH1: String = "What is the name of your bank?"
+  override def expectedTitleContent: String = "enter name of your bank"
 
   override def clickSubmit()(implicit webDriver: WebDriver): Unit =
     PageUtil.clickByIdOrName("continue")
@@ -54,7 +55,7 @@ class WhatIsTheNameOfYourBankAccountPage(baseUrl: String)(implicit webDriver: We
       baseUrl             = baseUrl,
       path                = path,
       h1                  = expectedH1,
-      title               = PageUtil.standardTitle(expectedH1),
+      title               = PageUtil.standardTitleWithJourneyType(expectedTitleContent, JourneyType.BankTransfer),
       contentExpectations = contentExpectations: _*
     )
   }
@@ -86,7 +87,7 @@ class WhatIsTheNameOfYourBankAccountPage(baseUrl: String)(implicit webDriver: We
       baseUrl             = baseUrl,
       path                = path,
       h1                  = expectedH1,
-      title               = PageUtil.standardErrorTitle(expectedH1, JourneyType.BankTransfer),
+      title               = PageUtil.standardErrorTitle(expectedTitleContent, JourneyType.BankTransfer),
       contentExpectations = contentExpectations: _*
     )
   }

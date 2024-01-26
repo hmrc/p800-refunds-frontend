@@ -26,21 +26,25 @@ class WeCannotConfirmYourIdentityPageSpec extends ItSpec {
     addJourneyIdToSession(tdAll.journeyId)
   }
 
-  "/we-cannot-confirm-your-identity renders your 'We cannot confirm your identity' page" - {
-    "bank transfer" in {
+  "render 'We cannot confirm your identity' page" - {
+    "for /bank-transfer/cannot-confirm-your-identity-try-again" in {
       upsertJourneyToDatabase(tdAll.BankTransfer.journeyIdentityNotVerified)
-      test()
+      test(JourneyType.BankTransfer)
       getJourneyFromDatabase(tdAll.journeyId) shouldBeLike tdAll.BankTransfer.journeyIdentityNotVerified
     }
-    "cheque" in {
+    "for /cheque/cannot-confirm-your-identity-try-again" in {
       upsertJourneyToDatabase(tdAll.Cheque.journeyIdentityNotVerified)
-      test()
+      test(JourneyType.Cheque)
       getJourneyFromDatabase(tdAll.journeyId) shouldBeLike tdAll.Cheque.journeyIdentityNotVerified
     }
 
-      def test(): Unit = {
-        pages.weCannotConfirmYourIdentityPage.open()
-        pages.weCannotConfirmYourIdentityPage.assertPageIsDisplayed()
+      def test(journeyType: JourneyType): Unit = {
+        val page = journeyType match {
+          case JourneyType.Cheque       => pages.weCannotConfirmYourIdentityChequePage
+          case JourneyType.BankTransfer => pages.weCannotConfirmYourIdentityBankTransferPage
+        }
+        page.open()
+        page.assertPageIsDisplayed(journeyType)
       }
   }
 
@@ -48,7 +52,7 @@ class WeCannotConfirmYourIdentityPageSpec extends ItSpec {
 
     "bank transfer" in {
       upsertJourneyToDatabase(tdAll.BankTransfer.journeyIdentityNotVerified)
-      test()
+      test(JourneyType.BankTransfer)
       pages.checkYourAnswersBankTransferPage.assertPageIsDisplayedForBankTransfer(
         tdAll.p800Reference,
         tdAll.dateOfBirthFormatted,
@@ -58,7 +62,7 @@ class WeCannotConfirmYourIdentityPageSpec extends ItSpec {
     }
     "cheque" in {
       upsertJourneyToDatabase(tdAll.Cheque.journeyIdentityNotVerified)
-      test()
+      test(JourneyType.Cheque)
       pages.checkYourAnswersChequePage.assertPageIsDisplayedForCheque(
         tdAll.p800Reference,
         tdAll.nationalInsuranceNumber
@@ -66,10 +70,14 @@ class WeCannotConfirmYourIdentityPageSpec extends ItSpec {
       getJourneyFromDatabase(tdAll.journeyId) shouldBeLike tdAll.Cheque.journeyIdentityNotVerified
     }
 
-      def test(): Unit = {
-        pages.weCannotConfirmYourIdentityPage.open()
-        pages.weCannotConfirmYourIdentityPage.assertPageIsDisplayed()
-        pages.weCannotConfirmYourIdentityPage.clickBackButton()
+      def test(journeyType: JourneyType): Unit = {
+        val page = journeyType match {
+          case JourneyType.Cheque       => pages.weCannotConfirmYourIdentityChequePage
+          case JourneyType.BankTransfer => pages.weCannotConfirmYourIdentityBankTransferPage
+        }
+        page.open()
+        page.assertPageIsDisplayed(journeyType)
+        page.clickBackButton()
       }
 
   }
@@ -87,9 +95,13 @@ class WeCannotConfirmYourIdentityPageSpec extends ItSpec {
     }
 
       def test(journeyType: JourneyType): Unit = {
-        pages.weCannotConfirmYourIdentityPage.open()
-        pages.weCannotConfirmYourIdentityPage.assertPageIsDisplayed()
-        pages.weCannotConfirmYourIdentityPage.clickTryAgain()
+        val weCannotConfirmYourIdentityPage = journeyType match {
+          case JourneyType.Cheque       => pages.weCannotConfirmYourIdentityChequePage
+          case JourneyType.BankTransfer => pages.weCannotConfirmYourIdentityBankTransferPage
+        }
+        weCannotConfirmYourIdentityPage.open()
+        weCannotConfirmYourIdentityPage.assertPageIsDisplayed(journeyType)
+        weCannotConfirmYourIdentityPage.clickTryAgain()
         journeyType match {
           case JourneyType.Cheque =>
             pages.checkYourAnswersChequePage.assertPageIsDisplayedForCheque(
@@ -109,21 +121,25 @@ class WeCannotConfirmYourIdentityPageSpec extends ItSpec {
   "clicking 'Choose another method' sends user to 'Choose another way to receive your refund page'" - {
     "bank transfer" in {
       upsertJourneyToDatabase(tdAll.BankTransfer.journeyIdentityNotVerified)
-      test()
-      pages.chooseAnotherWayToReceiveYourRefundPage.assertPageIsDisplayedPtaOrCheque()
+      test(JourneyType.BankTransfer)
+      pages.chooseAnotherWayToReceiveYourRefundBankTransferPage.assertPageIsDisplayedPtaOrCheque()
       getJourneyFromDatabase(tdAll.journeyId) shouldBeLike tdAll.BankTransfer.journeyIdentityNotVerified
     }
     "cheque" in {
       upsertJourneyToDatabase(tdAll.Cheque.journeyIdentityNotVerified)
-      test()
-      pages.chooseAnotherWayToReceiveYourRefundPage.assertPageIsDisplayedPtaOrBankTransfer()
+      test(JourneyType.Cheque)
+      pages.chooseAnotherWayToReceiveYourRefundChequePage.assertPageIsDisplayedPtaOrBankTransfer()
       getJourneyFromDatabase(tdAll.journeyId) shouldBeLike tdAll.Cheque.journeyIdentityNotVerified
     }
 
-      def test(): Unit = {
-        pages.weCannotConfirmYourIdentityPage.open()
-        pages.weCannotConfirmYourIdentityPage.assertPageIsDisplayed()
-        pages.weCannotConfirmYourIdentityPage.clickChooseAnotherWay()
+      def test(journeyType: JourneyType): Unit = {
+        val page = journeyType match {
+          case JourneyType.Cheque       => pages.weCannotConfirmYourIdentityChequePage
+          case JourneyType.BankTransfer => pages.weCannotConfirmYourIdentityBankTransferPage
+        }
+        page.open()
+        page.assertPageIsDisplayed(journeyType)
+        page.clickChooseAnotherWay()
       }
   }
 }

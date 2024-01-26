@@ -43,7 +43,7 @@ class YourRefundRequestHasNotBeenSubmittedPageSpec extends ItSpec {
       pages.yourRequestHasNotBeenSubmittedPage.open()
       pages.yourRequestHasNotBeenSubmittedPage.assertPageIsDisplayed()
       pages.yourRequestHasNotBeenSubmittedPage.clickTryAgain()
-      pages.chooseAnotherWayToReceiveYourRefundPage.assertPageIsDisplayedPtaOrCheque()
+      pages.chooseAnotherWayToReceiveYourRefundBankTransferPage.assertPageIsDisplayedPtaOrCheque()
       getJourneyFromDatabase(tdAll.journeyId) shouldBeLike tdAll.BankTransfer.journeyClaimOverpaymentFailedButIsChoosingAnotherWay
     }
   }

@@ -30,28 +30,28 @@ class ChooseAnotherWayToReceiveYourRefundPageForChequeJourneySpec extends ItSpec
   "Cheque journey from we-cannot-confirm-your-identity page" - {
     "render page" in {
       upsertJourneyToDatabase(tdAll.Cheque.journeyIdentityNotVerified)
-      pages.chooseAnotherWayToReceiveYourRefundPage.open()
-      pages.chooseAnotherWayToReceiveYourRefundPage.assertPageIsDisplayedPtaOrBankTransfer()
+      pages.chooseAnotherWayToReceiveYourRefundChequePage.open()
+      pages.chooseAnotherWayToReceiveYourRefundChequePage.assertPageIsDisplayedPtaOrBankTransfer()
       getJourneyFromDatabase(tdAll.journeyId) shouldBeLike tdAll.Cheque.journeyIdentityNotVerified
     }
 
     "select bank transfer via PTA" in {
       upsertJourneyToDatabase(tdAll.Cheque.journeyIdentityNotVerified)
-      pages.chooseAnotherWayToReceiveYourRefundPage.open()
-      pages.chooseAnotherWayToReceiveYourRefundPage.assertPageIsDisplayedPtaOrBankTransfer()
-      pages.chooseAnotherWayToReceiveYourRefundPage.PtaOrBankTransfer.selectBankTransferViaPta()
-      pages.chooseAnotherWayToReceiveYourRefundPage.clickSubmit()
+      pages.chooseAnotherWayToReceiveYourRefundChequePage.open()
+      pages.chooseAnotherWayToReceiveYourRefundChequePage.assertPageIsDisplayedPtaOrBankTransfer()
+      pages.chooseAnotherWayToReceiveYourRefundChequePage.PtaOrBankTransfer.selectBankTransferViaPta()
+      pages.chooseAnotherWayToReceiveYourRefundChequePage.clickSubmit()
       pages.ptaSignInPage.assertPageIsDisplayed()
       getJourneyFromDatabase(tdAll.journeyId) shouldBeLike tdAll.Cheque.journeyIdentityNotVerified
     }
 
     "select Bank Transfer Logged Out" in {
       upsertJourneyToDatabase(tdAll.Cheque.journeyIdentityNotVerified)
-      pages.chooseAnotherWayToReceiveYourRefundPage.open()
-      pages.chooseAnotherWayToReceiveYourRefundPage.assertPageIsDisplayedPtaOrBankTransfer()
-      pages.chooseAnotherWayToReceiveYourRefundPage.PtaOrBankTransfer.selectBankTransferLoggedOut()
-      pages.chooseAnotherWayToReceiveYourRefundPage.clickSubmit()
-      pages.weNeedYouToConfirmYourIdentityBankTransferPage.assertPageIsDisplayed()
+      pages.chooseAnotherWayToReceiveYourRefundChequePage.open()
+      pages.chooseAnotherWayToReceiveYourRefundChequePage.assertPageIsDisplayedPtaOrBankTransfer()
+      pages.chooseAnotherWayToReceiveYourRefundChequePage.PtaOrBankTransfer.selectBankTransferLoggedOut()
+      pages.chooseAnotherWayToReceiveYourRefundChequePage.clickSubmit()
+      pages.weNeedYouToConfirmYourIdentityBankTransferPage.assertPageIsDisplayed(JourneyType.BankTransfer)
       val expectedJourney = tdAll.Cheque.journeyIdentityNotVerified.copy(
         journeyType = Some(JourneyType.BankTransfer)
       )
@@ -60,10 +60,10 @@ class ChooseAnotherWayToReceiveYourRefundPageForChequeJourneySpec extends ItSpec
 
     "empty selection" in {
       upsertJourneyToDatabase(tdAll.Cheque.journeyIdentityNotVerified)
-      pages.chooseAnotherWayToReceiveYourRefundPage.open()
-      pages.chooseAnotherWayToReceiveYourRefundPage.assertPageIsDisplayedPtaOrBankTransfer()
-      pages.chooseAnotherWayToReceiveYourRefundPage.clickSubmit()
-      pages.chooseAnotherWayToReceiveYourRefundPtaOrBankTransferPage.assertPageIsDisplayedPtaOrBankTransfer(
+      pages.chooseAnotherWayToReceiveYourRefundChequePage.open()
+      pages.chooseAnotherWayToReceiveYourRefundChequePage.assertPageIsDisplayedPtaOrBankTransfer()
+      pages.chooseAnotherWayToReceiveYourRefundChequePage.clickSubmit()
+      pages.chooseAnotherWayToReceiveYourRefundChequePage.assertPageIsDisplayedPtaOrBankTransfer(
         ContentExpectation(
           PageUtil.Xpath.errorSummary,
           """There is a problem
