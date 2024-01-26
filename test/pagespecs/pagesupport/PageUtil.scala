@@ -213,6 +213,8 @@ object PageUtil {
 
   def standardTitleInWelsh(h1: String): String = s"$h1 - Get an Income Tax refund - GOV.UK"
 
+  def standardErrorTitle(titleContent: String): String = s"Error: $titleContent - Get an Income Tax refund - GOV.UK"
+
   def standardErrorTitle(titleContent: String, journeyType: JourneyType): String =
     s"Error: ${journeyTypeAsStringContent(journeyType)} - $titleContent - Get an Income Tax refund - GOV.UK"
 

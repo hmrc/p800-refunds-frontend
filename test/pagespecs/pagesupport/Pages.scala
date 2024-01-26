@@ -58,7 +58,6 @@ class Pages(baseUrl: String)(implicit webDriver: WebDriver) {
   val chooseAnotherWayToReceiveYourRefundBankTransferPage = new ChooseAnotherWayToReceiveYourRefundPage(baseUrl            = baseUrl, pathForJourneyType = bankTransferRelativeUrl)
   val chooseAnotherWayToReceiveYourRefundChequePage = new ChooseAnotherWayToReceiveYourRefundPage(baseUrl            = baseUrl, pathForJourneyType = chequeRelativeUrl)
 
-  //  val chooseAnotherWayToReceiveYourRefundPtaOrBankTransferPage = new ChooseAnotherWayToReceiveYourRefundPtaOrBankTransferPage(baseUrl = baseUrl)
   val giveYourPermissionPage = new GiveYourPermissionPage(baseUrl = baseUrl)
 
   val completeYourRefundRequestPage = new CompleteYourRefundRequestPage(baseUrl = baseUrl)

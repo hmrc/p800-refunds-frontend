@@ -214,6 +214,10 @@ object Messages {
       english = "We are verifying your bank account"
     )
 
+    val `verifying your bank account`: Message = Message(
+      english = "verifying your bank account"
+    )
+
     def `This usually takes a few seconds`(refreshLink: String): Message = Message(
       english = s"""This usually takes a few seconds. You can <a href="$refreshLink" id="refresh-this-page" class="govuk-link">refresh this page</a> if it doesn't update automatically."""
     )
@@ -578,6 +582,10 @@ object Messages {
 
     val `Do you want your refund by bank transfer?`: Message = Message(
       english = "Do you want your refund by bank transfer?"
+    )
+
+    val `Do you want to refund by bank transfer?`: Message = Message(
+      english = "Do you want to refund by bank transfer?"
     )
 
     val `Bank transfers are faster and safer. ...`: Message = Message(
