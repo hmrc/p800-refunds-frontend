@@ -42,8 +42,6 @@ POST        /your-identity-is-confirmed                                    contr
 GET         /bank-transfer/cannot-confirm-your-identity-try-again          controllers.CannotConfirmYourIdentityTryAgainController.getBankTransfer
 GET         /cheque/cannot-confirm-your-identity-try-again                 controllers.CannotConfirmYourIdentityTryAgainController.getCheque
 POST        /cannot-confirm-your-identity-try-again                        controllers.CannotConfirmYourIdentityTryAgainController.tryAgain
-#POST        /bank-transfer/we-cannot-confirm-your-identity                 controllers.CannotConfirmYourIdentityTryAgainController.tryAgain
-#POST        /cheque/we-cannot-confirm-your-identity                        controllers.CannotConfirmYourIdentityTryAgainController.tryAgain
 GET         /cannot-confirm-your-identity-try-again/choose-another-method  controllers.CannotConfirmYourIdentityTryAgainController.choseAnotherMethod
 
 GET         /no-more-attempts-left-to-confirm-your-identity                controllers.NoMoreAttemptsLeftToConfirmYourIdentityController.get
