@@ -27,6 +27,7 @@ abstract class Page(
   extends Endpoint(baseUrl, path) {
 
   def expectedH1: String
+  def expectedTitleContent: String
   def clickEnglishLink()(implicit webDriver: WebDriver): Unit = click on xpath("""//a[@hreflang="en"]""")
   def clickWelshLink()(implicit webDriver: WebDriver): Unit = click on xpath("""//a[@hreflang="cy"]""")
   def clickBackButton()(implicit webDriver: WebDriver): Unit = click on xpath("""/html/body//a[@class="govuk-back-link"]""")

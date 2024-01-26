@@ -17,6 +17,7 @@
 package controllers
 
 import action.Actions
+import models.journeymodels.JourneyType
 import play.api.mvc._
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import views.Views
@@ -24,22 +25,30 @@ import views.Views
 import javax.inject.{Inject, Singleton}
 
 @Singleton
-class WeCannotConfirmYourIdentityController @Inject() (
+class CannotConfirmYourIdentityTryAgainController @Inject() (
     mcc:     MessagesControllerComponents,
     views:   Views,
     actions: Actions
 ) extends FrontendController(mcc) {
 
-  def get: Action[AnyContent] = actions.journeyInProgress { implicit request =>
-    Ok(views.weCannotConfirmYourIdentityPage())
+  def getBankTransfer: Action[AnyContent] = actions.journeyInProgress { implicit request =>
+    Ok(views.cannotConfirmYourIdentityTryAgainPage())
+  }
+
+  def getCheque: Action[AnyContent] = actions.journeyInProgress { implicit request =>
+    Ok(views.cannotConfirmYourIdentityTryAgainPage())
   }
 
   def tryAgain: Action[AnyContent] = actions.journeyInProgress { implicit journeyRequest =>
     Redirect(CheckYourAnswersController.redirectLocation(journeyRequest.journey))
   }
 
-  def choseAnotherMethod: Action[AnyContent] = actions.journeyInProgress { _ =>
-    Redirect(routes.ChooseAnotherWayToGetYourRefundController.get)
+  def choseAnotherMethod: Action[AnyContent] = actions.journeyInProgress { implicit journeyRequest =>
+    val journey = journeyRequest.journey
+    Redirect(journey.getJourneyType match {
+      case JourneyType.Cheque       => routes.ChooseAnotherWayToGetYourRefundController.getCheque
+      case JourneyType.BankTransfer => routes.ChooseAnotherWayToGetYourRefundController.getBankTransfer
+    })
   }
 
 }

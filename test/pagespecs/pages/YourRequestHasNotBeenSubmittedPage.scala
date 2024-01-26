@@ -28,6 +28,7 @@ class YourRequestHasNotBeenSubmittedPage(baseUrl: String)(implicit webDriver: We
   def clickTryAgain(): Unit = PageUtil.clickByIdOrName("try-again")
 
   override def expectedH1: String = "Your refund request has not been submitted"
+  override def expectedTitleContent: String = "add_me"
 
   override def assertPageIsDisplayed(errors: ContentExpectation*): Unit = withPageClue {
     val contentExpectations: Seq[ContentExpectation] = Seq(ContentExpectation(

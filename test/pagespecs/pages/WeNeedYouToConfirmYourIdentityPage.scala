@@ -22,10 +22,12 @@ import pagespecs.pagesupport.{ContentExpectation, Page, PageUtil}
 
 class WeNeedYouToConfirmYourIdentityPage(baseUrl: String, pathForJourneyType: String)(implicit webDriver: WebDriver) extends Page(
   baseUrl,
-  path = s"/get-an-income-tax-refund/$pathForJourneyType/we-need-you-to-confirm-your-identity"
+  path = s"/get-an-income-tax-refund/$pathForJourneyType/confirm-your-identity"
 ) {
 
   override def expectedH1: String = "We need you to confirm your identity"
+
+  override def expectedTitleContent: String = "add_me"
 
   def assertPageIsDisplayedForChequeJourney(): Unit =
     assertPageIsDisplayed(JourneyType.Cheque)
@@ -60,7 +62,7 @@ class WeNeedYouToConfirmYourIdentityPage(baseUrl: String, pathForJourneyType: St
       baseUrl             = baseUrl,
       path                = path,
       h1                  = expectedH1,
-      title               = PageUtil.standardTitleWithJourneyType(expectedH1, journeyType),
+      title               = PageUtil.standardTitleWithJourneyType("confirm your identity", journeyType),
       contentExpectations = contentExpectations: _*
     )
   }

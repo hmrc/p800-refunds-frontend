@@ -80,18 +80,18 @@ class CheckYourAnswersController @Inject() (
     journeyService
       .upsert(journey.copy(isChanging = true))
       .map(_ =>
-        Redirect(WhatIsYourNationalInsuranceNumberController.redirectLocation(journey)))
+        Redirect(EnterYourNationalInsuranceNumberController.redirectLocation(journey)))
   }
 
   def changeDateOfBirth: Action[AnyContent] = actions.journeyInProgress { _ =>
-    Redirect(controllers.routes.WhatIsYourDateOfBirthController.get)
+    Redirect(controllers.routes.EnterYourDateOfBirthController.get)
   }
 
   def changeP800Reference: Action[AnyContent] = actions.journeyInProgress.async { implicit request =>
     val journey = request.journey
     journeyService
       .upsert(journey.copy(isChanging = true))
-      .map(_ => Redirect(WhatIsYourP800ReferenceController.redirectLocation(journey)))
+      .map(_ => Redirect(EnterYourP800ReferenceController.redirectLocation(journey)))
   }
 
   def post: Action[AnyContent] = actions.journeyInProgress.async { implicit request =>
@@ -113,7 +113,12 @@ class CheckYourAnswersController @Inject() (
 
   private def nextCall(identityVerificationResponse: IdentityVerificationResponse)(implicit journeyRequest: JourneyRequest[_]): Call = {
     if (identityVerificationResponse.identityVerified.value) controllers.WeHaveConfirmedYourIdentityController.redirectLocation(journeyRequest.journey)
-    else controllers.routes.WeCannotConfirmYourIdentityController.get
+    else {
+      journeyRequest.journey.getJourneyType match {
+        case JourneyType.Cheque       => controllers.routes.CannotConfirmYourIdentityTryAgainController.getCheque
+        case JourneyType.BankTransfer => controllers.routes.CannotConfirmYourIdentityTryAgainController.getBankTransfer
+      }
+    }
   }
 
   private def buildSummaryList(

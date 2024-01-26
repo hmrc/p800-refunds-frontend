@@ -22,12 +22,13 @@ import org.scalatest.Assertion
 import pagespecs.pagesupport.{ContentExpectation, Page, PageUtil}
 import testsupport.RichMatchers.convertToAnyShouldWrapper
 
-class WhatIsYourDateOfBirthPage(baseUrl: String)(implicit webDriver: WebDriver) extends Page(
+class EnterYourDateOfBirthPage(baseUrl: String)(implicit webDriver: WebDriver) extends Page(
   baseUrl,
-  path = "/get-an-income-tax-refund/bank-transfer/what-is-your-date-of-birth"
+  path = "/get-an-income-tax-refund/bank-transfer/enter-your-date-of-birth"
 ) {
 
   override def expectedH1: String = "What is your date of birth?"
+  override def expectedTitleContent: String = "enter your date of birth"
 
   override def assertPageIsDisplayed(extraExpectations: ContentExpectation*): Unit = withPageClue {
 
@@ -46,7 +47,7 @@ class WhatIsYourDateOfBirthPage(baseUrl: String)(implicit webDriver: WebDriver) 
       baseUrl             = baseUrl,
       path                = path,
       h1                  = expectedH1,
-      title               = PageUtil.standardTitleWithJourneyType(expectedH1, JourneyType.BankTransfer),
+      title               = PageUtil.standardTitleWithJourneyType(expectedTitleContent, JourneyType.BankTransfer),
       contentExpectations = contentExpectations: _*
     )
   }
@@ -82,7 +83,7 @@ class WhatIsYourDateOfBirthPage(baseUrl: String)(implicit webDriver: WebDriver) 
       baseUrl             = baseUrl,
       path                = path,
       h1                  = expectedH1,
-      title               = PageUtil.standardErrorTitle(expectedH1, JourneyType.BankTransfer),
+      title               = PageUtil.standardErrorTitle(expectedTitleContent, JourneyType.BankTransfer),
       contentExpectations = contentExpectations: _*
     )
   }

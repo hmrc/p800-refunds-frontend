@@ -20,12 +20,13 @@ import models.journeymodels.JourneyType
 import org.openqa.selenium.WebDriver
 import pagespecs.pagesupport.{ContentExpectation, Page, PageUtil}
 
-class WeCannotConfirmYourIdentityPage(baseUrl: String)(implicit webDriver: WebDriver) extends Page(
+class WeCannotConfirmYourIdentityPage(baseUrl: String, pathForJourneyType: String)(implicit webDriver: WebDriver) extends Page(
   baseUrl,
-  path = "/get-an-income-tax-refund/we-cannot-confirm-your-identity"
+  path = s"/get-an-income-tax-refund/$pathForJourneyType/cannot-confirm-your-identity-try-again"
 ) {
 
   override def expectedH1: String = "We cannot confirm your identity"
+  override def expectedTitleContent: String = "cannot confirm your identity try again"
 
   override def assertPageIsDisplayed(extraExpectations: ContentExpectation*): Unit = sys.error("Use another variant for asserting page")
 
@@ -45,7 +46,7 @@ class WeCannotConfirmYourIdentityPage(baseUrl: String)(implicit webDriver: WebDr
     PageUtil.assertPage(
       path                = path,
       h1                  = expectedH1,
-      title               = PageUtil.standardTitleWithJourneyType(expectedH1, journeyType),
+      title               = PageUtil.standardTitleWithJourneyType(expectedTitleContent, journeyType),
       contentExpectations = contentExpectations: _*,
       baseUrl             = baseUrl
     )

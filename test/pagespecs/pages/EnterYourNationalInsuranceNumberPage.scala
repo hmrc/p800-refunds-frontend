@@ -23,12 +23,14 @@ import org.scalatest.Assertion
 import pagespecs.pagesupport.{ContentExpectation, Page, PageUtil}
 import testsupport.RichMatchers.convertToAnyShouldWrapper
 
-class WhatIsYourNationalInsuranceNumberPage(baseUrl: String, pathForJourneyType: String)(implicit webDriver: WebDriver) extends Page(
+class EnterYourNationalInsuranceNumberPage(baseUrl: String, pathForJourneyType: String)(implicit webDriver: WebDriver) extends Page(
   baseUrl,
-  path = s"/get-an-income-tax-refund/$pathForJourneyType/what-is-your-national-insurance-number"
+  path = s"/get-an-income-tax-refund/$pathForJourneyType/enter-your-national-insurance-number"
 ) {
 
   override def expectedH1: String = "What is your National Insurance number?"
+
+  override def expectedTitleContent: String = "enter your National Insurance number"
 
   override def assertPageIsDisplayed(extraExpectations: ContentExpectation*): Unit = sys.error("Use another variant for asserting page")
 
@@ -70,7 +72,7 @@ class WhatIsYourNationalInsuranceNumberPage(baseUrl: String, pathForJourneyType:
       baseUrl             = baseUrl,
       path                = path,
       h1                  = expectedH1,
-      title               = PageUtil.standardTitleWithJourneyType(expectedH1, journeyType),
+      title               = PageUtil.standardTitleWithJourneyType(expectedTitleContent, journeyType),
       contentExpectations = contentExpectations: _*
     )
     lostNationalInsuranceNumberHref() shouldBe "https://www.gov.uk/lost-national-insurance-number"
@@ -95,7 +97,7 @@ class WhatIsYourNationalInsuranceNumberPage(baseUrl: String, pathForJourneyType:
       baseUrl             = baseUrl,
       path                = path,
       h1                  = expectedH1,
-      title               = PageUtil.standardErrorTitle(expectedH1, journeyType),
+      title               = PageUtil.standardErrorTitle(expectedTitleContent, journeyType),
       contentExpectations = contentExpectations: _*
     )
   }
@@ -116,7 +118,7 @@ class WhatIsYourNationalInsuranceNumberPage(baseUrl: String, pathForJourneyType:
       baseUrl             = baseUrl,
       path                = path,
       h1                  = expectedH1,
-      title               = PageUtil.standardErrorTitle(expectedH1, journeyType),
+      title               = PageUtil.standardErrorTitle(expectedTitleContent, journeyType),
       contentExpectations = contentExpectations: _*
     )
   }

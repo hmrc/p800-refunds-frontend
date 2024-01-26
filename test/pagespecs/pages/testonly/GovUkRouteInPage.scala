@@ -25,6 +25,7 @@ class GovUkRouteInPage(baseUrl: String)(implicit webDriver: WebDriver) extends P
 ) {
 
   override def expectedH1: String = "Tax overpayments and underpayments"
+  override def expectedTitleContent: String = "dont care"
 
   override def assertPageIsDisplayed(extraExpectations: ContentExpectation*): Unit = withPageClue {
     PageUtil.assertPage(

@@ -38,12 +38,8 @@
     "reference"
 }
 
-@title = @{
-    Messages.EnterP800ReferenceMessages.`What is your P800 reference?`.show
-}
-
 @layout(
-    pageTitle = Some(title),
+    pageTitle = Some(Messages.EnterP800ReferenceMessages.`enter your P800 reference`.show),
     backLinkUrlOverride = Some(controllers.WeNeedYouToConfirmYourIdentityController.redirectLocation(request.journey).url),
     hasErrors = form.errors.nonEmpty,
     maybeJourneyType = Some(request.journey.getJourneyType)
@@ -53,13 +49,13 @@
         @viewsHelpers.govukErrorSummary(ErrorSummary(errorList = form.errors.asTextErrorLinks, title = Text(Messages.CommonMessages.`There is a problem`.show)))
     }
 
-    @viewsHelpers.formWithCsrf(action = controllers.WhatIsYourP800ReferenceController.derivePostEndpoint(request.journey)) {
+    @viewsHelpers.formWithCsrf(action = controllers.EnterYourP800ReferenceController.derivePostEndpoint(request.journey)) {
         @viewsHelpers.govukInput(Input(
             id = key,
             name = key,
             classes = "govuk-input--width-10",
             label = Label(
-              content = Text(title),
+              content = Text(Messages.EnterP800ReferenceMessages.`What is your P800 reference?`.show),
               isPageHeading = true,
               classes = "govuk-label--xl"
             ),

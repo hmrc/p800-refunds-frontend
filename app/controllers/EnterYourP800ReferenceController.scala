@@ -31,7 +31,7 @@ import scala.concurrent.{ExecutionContext, Future}
 import CheckYourAnswersController._
 
 @Singleton
-class WhatIsYourP800ReferenceController @Inject() (
+class EnterYourP800ReferenceController @Inject() (
     mcc:            MessagesControllerComponents,
     requestSupport: RequestSupport,
     journeyService: JourneyService,
@@ -76,7 +76,7 @@ class WhatIsYourP800ReferenceController @Inject() (
      */
     val nextCall =
       if (journey.isChanging) controllers.CheckYourAnswersController.redirectLocation(request.journey)
-      else WhatIsYourNationalInsuranceNumberController.redirectLocation(request.journey)
+      else EnterYourNationalInsuranceNumberController.redirectLocation(request.journey)
 
     EnterP800ReferenceForm
       .form
@@ -98,16 +98,16 @@ class WhatIsYourP800ReferenceController @Inject() (
 
 }
 
-object WhatIsYourP800ReferenceController {
+object EnterYourP800ReferenceController {
   def redirectLocation(journey: Journey)(implicit request: Request[_]): Call = Journey.deriveRedirectByJourneyType(
     journeyType           = journey.getJourneyType,
-    chequeJourneyRedirect = controllers.routes.WhatIsYourP800ReferenceController.getCheque,
-    bankJourneyRedirect   = controllers.routes.WhatIsYourP800ReferenceController.getBankTransfer
+    chequeJourneyRedirect = controllers.routes.EnterYourP800ReferenceController.getCheque,
+    bankJourneyRedirect   = controllers.routes.EnterYourP800ReferenceController.getBankTransfer
   )
 
   def derivePostEndpoint(journey: Journey)(implicit request: Request[_]): Call = Journey.deriveRedirectByJourneyType(
     journeyType           = journey.getJourneyType,
-    chequeJourneyRedirect = controllers.routes.WhatIsYourP800ReferenceController.postCheque,
-    bankJourneyRedirect   = controllers.routes.WhatIsYourP800ReferenceController.postBankTransfer
+    chequeJourneyRedirect = controllers.routes.EnterYourP800ReferenceController.postCheque,
+    bankJourneyRedirect   = controllers.routes.EnterYourP800ReferenceController.postBankTransfer
   )
 }

@@ -35,16 +35,12 @@
 
 @import viewsHelpers.requestSupport._
 
-@title = @{
-    Messages.WhatIsTheNameOfYourBankAccount.`What is the name of your bank?`.show
-}
-
 @key = @{
     "selectedBankId"
 }
 
 @layout(
-    pageTitle = Some(title),
+    pageTitle = Some(Messages.WhatIsTheNameOfYourBankAccount.`enter name of your bank`.show),
     backLinkUrlOverride = Some(controllers.routes.WeHaveConfirmedYourIdentityController.getBankTransfer.url),
     hasErrors = form.errors.nonEmpty,
     maybeJourneyType = Some(request.journey.getJourneyType)
@@ -54,10 +50,10 @@
         @viewsHelpers.govukErrorSummary(ErrorSummary(errorList = form.errors.asTextErrorLinks, title = Text(Messages.CommonMessages.`There is a problem`.show)))
     }
 
-    @viewsHelpers.formWithCsrf(action = controllers.routes.WhatIsTheNameOfYourBankController.post) {
+    @viewsHelpers.formWithCsrf(action = controllers.routes.EnterTheNameOfYourBankController.post) {
         <h1 class="govuk-label-wrapper">
             <label class="govuk-label govuk-label--xl" for="selectedBankId">
-                @title
+                @{Messages.WhatIsTheNameOfYourBankAccount.`What is the name of your bank?`.show}
             </label>
         </h1>
 
@@ -86,7 +82,7 @@
             classes = "select-bank-button"
         ))
 
-        <a id="myAccountIsNotListed" role="button" class="govuk-button govuk-button--secondary select-bank-button" data-module="govuk-button" href="@controllers.routes.ChooseAnotherWayToGetYourRefundController.get.url">
+        <a id="myAccountIsNotListed" role="button" class="govuk-button govuk-button--secondary select-bank-button" data-module="govuk-button" href="@controllers.routes.ChooseAnotherWayToGetYourRefundController.getBankTransfer.url">
             @{Messages.WhatIsTheNameOfYourBankAccount.`My bank is not listed`.show}
         </a>
     }

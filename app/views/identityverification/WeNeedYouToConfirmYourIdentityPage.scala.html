@@ -32,17 +32,13 @@
 
 @import viewsHelpers.requestSupport._
 
-@title = @{
-    Messages.WeNeedToConfirmYourIdentity.`We need you to confirm your identity`.show
-}
-
 @layout(
-    pageTitle = Some(title),
+    pageTitle = Some(Messages.WeNeedToConfirmYourIdentity.`confirm your identity`.show),
     backLinkUrlOverride = Some(controllers.routes.DoYouWantYourRefundViaBankTransferController.get.url),
     maybeJourneyType = Some(request.journey.getJourneyType)
 ) {
 
-    <h1 class="govuk-heading-xl">@title</h1>
+    <h1 class="govuk-heading-xl">@{Messages.WeNeedToConfirmYourIdentity.`We need you to confirm your identity`.show}</h1>
 
     <p class="govuk-body">
         @{Messages.WeNeedToConfirmYourIdentity.`Before we pay your refund`.show}

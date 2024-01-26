@@ -57,6 +57,10 @@ object Messages {
     val `Cheque`: Message = Message(
       english = "Cheque"
     )
+
+    val `request received`: Message = Message(
+      english = "request received"
+    )
   }
 
   object DoYouWantToSignInMessages {
@@ -84,6 +88,11 @@ object Messages {
   object EnterP800ReferenceMessages {
     val `What is your P800 reference?`: Message = Message(
       english = "What is your P800 reference?"
+    )
+
+    //title
+    val `enter your P800 reference`: Message = Message(
+      english = "enter your p800 reference"
     )
 
     val `It’s on the letter HMRC sent you about your tax calculation, also known as a ‘P800’, and is up to 10 digits long.`: Message = Message(
@@ -152,6 +161,11 @@ object Messages {
       english = "Give your permission"
     )
 
+    // title
+    val `give your permission`: Message = Message(
+      english = "give your permission"
+    )
+
     def `By choosing approve`(bankName: BankFriendlyName, amount: AmountInPence, changeBankLink: String): Message = Message(
       // language=HTML
       english = s"""By choosing approve, you will be redirected to <strong>${bankName.value}</strong> to securely log in and approve your refund of <strong>${amount.gdsFormatInPounds}</strong>. <a href="$changeBankLink" id="change-bank" class="govuk-link">Change my bank</a>."""
@@ -210,6 +224,10 @@ object Messages {
       english = "Choose another way to receive your refund"
     )
 
+    val `choose another way to receive your refund`: Message = Message(
+      english = "choose another way to receive your refund"
+    )
+
     val `Bank transfer using your Government Gateway user ID to sign in`: Message = Message(
       english = "Bank transfer using your Government Gateway user ID to sign in"
     )
@@ -239,6 +257,11 @@ object Messages {
 
     val `Check your answers`: Message = Message(
       english = "Check your answers"
+    )
+
+    //title
+    val `check your answers`: Message = Message(
+      english = "check your answers"
     )
 
     val `Date of birth`: Message = Message(
@@ -279,6 +302,11 @@ object Messages {
       english = "We need you to confirm your identity"
     )
 
+    //title
+    val `confirm your identity`: Message = Message(
+      english = "confirm your identity"
+    )
+
     val `Before we pay your refund`: Message = Message(
       english = "Before we pay your refund, we need to ask you some security questions to confirm your identity."
     )
@@ -309,6 +337,11 @@ object Messages {
       english = "What is your National Insurance number?"
     )
 
+    //title
+    val `enter your National Insurance number`: Message = Message(
+      english = "enter your National Insurance number"
+    )
+
     val `It’s on your National Insurance`: Message = Message(
       english = "It’s on your National Insurance card or letter, benefit letter, payslip or P60. For example, ‘QQ 12 34 56 C’."
     )
@@ -333,6 +366,11 @@ object Messages {
   object WhatIsYourDateOfBirth {
     val `What is your date of birth`: Message = Message(
       english = "What is your date of birth?"
+    )
+
+    // title
+    val `enter your date of birth`: Message = Message(
+      english = "enter your date of birth"
     )
 
     val `For example`: Message = Message(
@@ -401,6 +439,11 @@ object Messages {
       english = "We have confirmed your identity"
     )
 
+    // title
+    val `your identity is confirmed`: Message = Message(
+      english = "your identity is confirmed"
+    )
+
     val `Enter your name as it appears on your tax calculation`: Message = Message(
       english = "Enter your name as it appears on your tax calculation letter or ‘P800’."
     )
@@ -409,6 +452,9 @@ object Messages {
   object WeCannotConfirmYourIdentity {
     val `We cannot confirm your identity`: Message = Message(
       english = "We cannot confirm your identity"
+    )
+    val `cannot confirm your identity try again`: Message = Message(
+      english = "cannot confirm your identity try again"
     )
     val `The information you have provided does not match our records.`: Message = Message(
       english = "The information you have provided does not match our records."
@@ -435,6 +481,11 @@ object Messages {
       english = "What is the name of your bank?"
     )
 
+    // title
+    val `enter name of your bank`: Message = Message(
+      english = "enter name of your bank"
+    )
+
     val `Start typing the name of a UK bank that you want your refund to be sent to.`: Message = Message(
       english = "Start typing the name of a UK bank that you want your refund to be sent to."
     )
@@ -451,6 +502,10 @@ object Messages {
   object YourChequeWillBePostedToYou {
     val `Complete your refund request to get your cheque`: Message = Message(
       english = "Complete your refund request to get your cheque"
+    )
+
+    val `complete refund request`: Message = Message(
+      english = "complete refund request"
     )
 
     val `Your cheque will be sent to the same address as your tax calculation letter.`: Message = Message(

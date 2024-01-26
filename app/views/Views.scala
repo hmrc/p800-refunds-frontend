@@ -27,10 +27,10 @@ class Views @Inject() (
     val completeYourRefundRequestPage:                  views.html.chequejourney.CompleteYourRefundRequestPage,
     val chequeRequestReceivedPage:                      views.html.chequejourney.ChequeRequestReceivedPage,
     val weNeedYouToConfirmYourIdentityPage:             views.html.identityverification.WeNeedYouToConfirmYourIdentityPage,
-    val whatIsYourDateOfBirthPage:                      views.html.identityverification.WhatIsYourDateOfBirthPage,
-    val whatIsYourNationalInsuranceNumberPage:          views.html.identityverification.WhatIsYourNationalInsuranceNumberPage,
-    val weHaveConfirmedYourIdentityPage:                views.html.identityverification.WeHaveConfirmedYourIdentityPage,
-    val weCannotConfirmYourIdentityPage:                views.html.identityverification.WeCannotConfirmYourIdentityPage,
+    val enterYourDateOfBirthPage:                       views.html.identityverification.EnterYourDateOfBirthPage,
+    val enterYourNationalInsuranceNumberPage:           views.html.identityverification.EnterYourNationalInsuranceNumberPage,
+    val yourIdentityIsConfirmedPage:                    views.html.identityverification.YourIdentityIsConfirmedPage,
+    val cannotConfirmYourIdentityTryAgainPage:          views.html.identityverification.CannotConfirmYourIdentityTryAgainPage,
     val noMoreAttemptsLeftToConfirmYourIdentityPage:    views.html.identityverification.NoMoreAttemptsLeftToConfirmYourIdentityPage,
     val requestNotSubmittedPage:                        views.html.RequestNotSubmittedPage,
     val giveYourPermissionPage:                         views.html.GiveYourPermissionPage,
@@ -38,7 +38,7 @@ class Views @Inject() (
     val doYouWantYourRefundViaBankTransferPage:         views.html.DoYouWantYourRefundViaBankTransferPage,
     val chooseAnotherWayPtaOrChequePage:                views.html.chooseanotherway.PtaOrChequePage,
     val chooseAnotherWayPtaOrBankTransferLoggedOutPage: views.html.chooseanotherway.PtaOrBankTransferLoggedOutPage,
-    val whatIsTheNameOfYourBankPage:                    views.html.WhatIsTheNameOfYourBankPage,
+    val enterTheNameOfYourBankPage:                     views.html.EnterTheNameOfYourBankPage,
     val bankTransferRequestReceivedPage:                views.html.BankTransferRequestReceivedPage
 )
 

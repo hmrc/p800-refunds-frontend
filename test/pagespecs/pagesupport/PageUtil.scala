@@ -206,15 +206,15 @@ object PageUtil {
 
   def standardTitle(h1: String): String = s"$h1 - Get an Income Tax refund - GOV.UK"
 
-  def standardTitleWithJourneyType(h1: String, journeyType: JourneyType): String =
-    s"${journeyTypeAsStringContent(journeyType)} - $h1 - Get an Income Tax refund - GOV.UK"
+  def standardTitleWithJourneyType(titleContent: String, journeyType: JourneyType): String =
+    s"${journeyTypeAsStringContent(journeyType)} - $titleContent - Get an Income Tax refund - GOV.UK"
 
   val standardTitleForTestOnlyPages: String = s"Test Only - Get an Income Tax refund - GOV.UK"
 
   def standardTitleInWelsh(h1: String): String = s"$h1 - Get an Income Tax refund - GOV.UK"
 
-  def standardErrorTitle(h1: String, journeyType: JourneyType): String =
-    s"Error: ${journeyTypeAsStringContent(journeyType)} - $h1 - Get an Income Tax refund - GOV.UK"
+  def standardErrorTitle(titleContent: String, journeyType: JourneyType): String =
+    s"Error: ${journeyTypeAsStringContent(journeyType)} - $titleContent - Get an Income Tax refund - GOV.UK"
 
   private val journeyTypeAsStringContent: JourneyType => String = {
     case JourneyType.Cheque       => "Cheque"

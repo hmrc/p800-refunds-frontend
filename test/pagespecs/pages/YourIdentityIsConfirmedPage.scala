@@ -20,12 +20,13 @@ import models.journeymodels.JourneyType
 import org.openqa.selenium.WebDriver
 import pagespecs.pagesupport.{ContentExpectation, Page, PageUtil}
 
-class WeHaveConfirmedYourIdentityPage(baseUrl: String, pathForJourneyType: String)(implicit webDriver: WebDriver) extends Page(
+class YourIdentityIsConfirmedPage(baseUrl: String, pathForJourneyType: String)(implicit webDriver: WebDriver) extends Page(
   baseUrl,
-  path = s"/get-an-income-tax-refund/$pathForJourneyType/we-have-confirmed-your-identity"
+  path = s"/get-an-income-tax-refund/$pathForJourneyType/your-identity-is-confirmed"
 ) {
 
   override def expectedH1: String = "We have confirmed your identity"
+  override def expectedTitleContent: String = "your identity is confirmed"
 
   override def assertPageIsDisplayed(extraExpectations: ContentExpectation*): Unit = sys.error("Use another variant for asserting page")
 
@@ -44,7 +45,7 @@ class WeHaveConfirmedYourIdentityPage(baseUrl: String, pathForJourneyType: Strin
       baseUrl             = baseUrl,
       path                = path,
       h1                  = expectedH1,
-      title               = PageUtil.standardTitleWithJourneyType(expectedH1, journeyType),
+      title               = PageUtil.standardTitleWithJourneyType(expectedTitleContent, journeyType),
       contentExpectations = contentExpectations: _*
     )
   }

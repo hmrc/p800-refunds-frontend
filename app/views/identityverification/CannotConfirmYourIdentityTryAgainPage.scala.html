@@ -29,31 +29,26 @@
 
 @import viewsHelpers.requestSupport._
 
-@heading = @{
-    Messages.WeCannotConfirmYourIdentity.`We cannot confirm your identity`.show
-}
-
 @layout(
-    pageTitle = Some(heading),
+    pageTitle = Some(Messages.WeCannotConfirmYourIdentity.`cannot confirm your identity try again`.show),
     backLinkUrlOverride = Some(controllers.CheckYourAnswersController.redirectLocation(request.journey).url),
     maybeJourneyType = Some(request.journey.getJourneyType)
 ) {
 
-    <h1 class="govuk-heading-xl">@heading</h1>
+    <h1 class="govuk-heading-xl">@{Messages.WeCannotConfirmYourIdentity.`We cannot confirm your identity`.show}</h1>
 
     <p class="govuk-body">@{Messages.WeCannotConfirmYourIdentity.`The information you have provided does not match our records.`.show}</p>
 
     <div class="govuk-button-group">
-    @viewsHelpers.formWithCsrf(action = controllers.routes.WeCannotConfirmYourIdentityController.tryAgain) {
+    @viewsHelpers.formWithCsrf(action = controllers.routes.CannotConfirmYourIdentityTryAgainController.tryAgain) {
         @viewsHelpers.govukButton(Button(
             content = Text(Messages.WeCannotConfirmYourIdentity.`Try gain`.show),
             id = Some("try-again")
         ))
-        <a id="choose-another-method-link" class="govuk-link" href=@{routes.ChooseAnotherWayToGetYourRefundController.get.url}>
+        <a id="choose-another-method-link" class="govuk-link" href=@{controllers.ChooseAnotherWayToGetYourRefundController.redirectLocation(request.journey).url}>
             @{Messages.WeCannotConfirmYourIdentity.`Choose another method`.show}
         </a>
     }
     </div>
-
 
 }

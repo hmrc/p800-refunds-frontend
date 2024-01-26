@@ -26,6 +26,7 @@ class VerifyBankAccountPage(baseUrl: String)(implicit webDriver: WebDriver) exte
 ) {
 
   override def expectedH1: String = "We are verifying your bank account"
+  override def expectedTitleContent: String = "add_me"
 
   override def assertPageIsDisplayed(extraExpectations: ContentExpectation*): Unit = withPageClue {
 

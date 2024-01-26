@@ -26,6 +26,7 @@ class NoMoreAttemptsLeftToConfirmYourIdentityPage(baseUrl: String)(implicit webD
 ) {
 
   override def expectedH1: String = "We cannot confirm your identity"
+  override def expectedTitleContent: String = "add_me"
 
   override def assertPageIsDisplayed(extraExpectations: ContentExpectation*): Unit = sys.error("Use another variant for asserting page")
 

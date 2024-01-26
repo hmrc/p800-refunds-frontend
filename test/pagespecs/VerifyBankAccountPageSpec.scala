@@ -78,7 +78,7 @@ class VerifyBankAccountPageSpec extends ItSpec {
     pages.verifyBankAccountPage.open()
     pages.verifyBankAccountPage.assertPageIsDisplayed()
     pages.verifyBankAccountPage.clickBackButton()
-    pages.whatIsTheNameOfYourBankAccountPage.assertPageIsDisplayed()
+    pages.enterTheNameOfYourBankAccountPage.assertPageIsDisplayed()
   }
 
 }

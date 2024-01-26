@@ -23,10 +23,11 @@ import testsupport.RichMatchers.convertToAnyShouldWrapper
 
 class CompleteYourRefundRequestPage(baseUrl: String)(implicit webDriver: WebDriver) extends Page(
   baseUrl,
-  path = "/get-an-income-tax-refund/cheque/complete-your-refunds-request-to-get-your-cheque"
+  path = "/get-an-income-tax-refund/cheque/complete-refund-request"
 ) {
 
   override def expectedH1: String = "Complete your refund request to get your cheque"
+  override def expectedTitleContent: String = "complete refund request"
 
   override def assertPageIsDisplayed(extraExpectations: ContentExpectation*): Unit = withPageClue {
     val contentExpectations: Seq[ContentExpectation] = Seq(
@@ -63,7 +64,7 @@ class CompleteYourRefundRequestPage(baseUrl: String)(implicit webDriver: WebDriv
       baseUrl             = baseUrl,
       path                = path,
       h1                  = expectedH1,
-      title               = PageUtil.standardTitleWithJourneyType(expectedH1, JourneyType.Cheque),
+      title               = PageUtil.standardTitleWithJourneyType(expectedTitleContent, JourneyType.Cheque),
       contentExpectations = contentExpectations: _*
     )
     contactHmrcHref() shouldBe "https://www.gov.uk/government/organisations/hm-revenue-customs/contact/change-your-personal-details"

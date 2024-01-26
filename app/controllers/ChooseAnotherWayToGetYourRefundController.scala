@@ -44,12 +44,12 @@ class ChooseAnotherWayToGetYourRefundController @Inject() (
 
   import requestSupport._
 
-  def get: Action[AnyContent] = actions.journeyInProgress { implicit request: JourneyRequest[AnyContent] =>
-    val journey = request.journey
-    journey.getJourneyType match {
-      case JourneyType.BankTransfer => Ok(views.chooseAnotherWayPtaOrChequePage(form = PtaOrChequeForm.form))
-      case JourneyType.Cheque       => Ok(views.chooseAnotherWayPtaOrBankTransferLoggedOutPage(form = PtaOrBankTransferForm.form))
-    }
+  def getBankTransfer: Action[AnyContent] = actions.journeyInProgress { implicit request: JourneyRequest[AnyContent] =>
+    Ok(views.chooseAnotherWayPtaOrChequePage(form = PtaOrChequeForm.form))
+  }
+
+  def getCheque: Action[AnyContent] = actions.journeyInProgress { implicit request: JourneyRequest[AnyContent] =>
+    Ok(views.chooseAnotherWayPtaOrBankTransferLoggedOutPage(form = PtaOrBankTransferForm.form))
   }
 
   def postBankTransferViaPtaOrCheque: Action[AnyContent] = actions.journeyInProgress.async { implicit request =>
@@ -102,4 +102,12 @@ class ChooseAnotherWayToGetYourRefundController @Inject() (
     )
   }
 
+}
+
+object ChooseAnotherWayToGetYourRefundController {
+  def redirectLocation(journey: Journey)(implicit request: Request[_]): Call = Journey.deriveRedirectByJourneyType(
+    journeyType           = journey.getJourneyType,
+    chequeJourneyRedirect = controllers.routes.ChooseAnotherWayToGetYourRefundController.getCheque,
+    bankJourneyRedirect   = controllers.routes.ChooseAnotherWayToGetYourRefundController.getBankTransfer
+  )
 }

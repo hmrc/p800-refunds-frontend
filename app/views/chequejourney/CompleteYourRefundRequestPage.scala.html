@@ -30,10 +30,6 @@
 
 @import viewsHelpers.requestSupport._
 
-@title = @{
-    Messages.YourChequeWillBePostedToYou.`Complete your refund request to get your cheque`.show
-}
-
 @progressiveRevealHtmlContent = {
     <p class="govuk-body">@{Messages.YourChequeWillBePostedToYou.`To update your address you need to:`.show}</p>
     <ol>
@@ -44,12 +40,12 @@
 }
 
 @layout(
-    pageTitle = Some(title),
+    pageTitle = Some(Messages.YourChequeWillBePostedToYou.`complete refund request`.show),
     backLinkUrlOverride = Some(controllers.routes.WeHaveConfirmedYourIdentityController.getCheque.url),
     maybeJourneyType = Some(request.journey.getJourneyType)
 ) {
 
-    <h1 class="govuk-heading-xl">@{title}</h1>
+    <h1 class="govuk-heading-xl">@{Messages.YourChequeWillBePostedToYou.`Complete your refund request to get your cheque`.show}</h1>
 
     <p class="govuk-body">
         @{Messages.YourChequeWillBePostedToYou.`Your cheque will be sent to the same address as your tax calculation letter.`.show}

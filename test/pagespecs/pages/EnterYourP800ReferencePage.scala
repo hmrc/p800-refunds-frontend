@@ -22,12 +22,14 @@ import pagespecs.pagesupport.{ContentExpectation, Page, PageUtil}
 
 import scala.jdk.CollectionConverters._
 
-class WhatIsYourP800ReferencePage(baseUrl: String, pathForJourneyType: String)(implicit webDriver: WebDriver) extends Page(
+class EnterYourP800ReferencePage(baseUrl: String, pathForJourneyType: String)(implicit webDriver: WebDriver) extends Page(
   baseUrl,
-  path = s"/get-an-income-tax-refund/$pathForJourneyType/what-is-your-p800-reference"
+  path = s"/get-an-income-tax-refund/$pathForJourneyType/enter-your-p800-reference"
 ) {
 
   override def expectedH1: String = "What is your P800 reference?"
+
+  override def expectedTitleContent: String = "enter your p800 reference"
 
   private val p800ReferenceFieldId: String = "reference"
 
@@ -63,7 +65,7 @@ class WhatIsYourP800ReferencePage(baseUrl: String, pathForJourneyType: String)(i
       baseUrl             = baseUrl,
       path                = path,
       h1                  = expectedH1,
-      title               = PageUtil.standardTitleWithJourneyType(expectedH1, journeyType),
+      title               = PageUtil.standardTitleWithJourneyType(expectedTitleContent, journeyType),
       contentExpectations = contentExpectations: _*
     )
   }
@@ -82,7 +84,7 @@ class WhatIsYourP800ReferencePage(baseUrl: String, pathForJourneyType: String)(i
       baseUrl             = baseUrl,
       path                = path,
       h1                  = expectedH1,
-      title               = PageUtil.standardErrorTitle(expectedH1, journeyType),
+      title               = PageUtil.standardErrorTitle(expectedTitleContent, journeyType),
       contentExpectations = contentExpectations: _*
     )
   }
@@ -101,7 +103,7 @@ class WhatIsYourP800ReferencePage(baseUrl: String, pathForJourneyType: String)(i
       baseUrl             = baseUrl,
       path                = path,
       h1                  = expectedH1,
-      title               = PageUtil.standardErrorTitle(expectedH1, journeyType),
+      title               = PageUtil.standardErrorTitle(expectedTitleContent, journeyType),
       contentExpectations = contentExpectations: _*
     )
   }

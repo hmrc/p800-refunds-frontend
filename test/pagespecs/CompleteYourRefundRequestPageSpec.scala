@@ -47,7 +47,7 @@ class CompleteYourRefundRequestPageSpec extends ItSpec {
     pages.completeYourRefundRequestPage.open()
     pages.completeYourRefundRequestPage.assertPageIsDisplayed()
     pages.completeYourRefundRequestPage.clickBackButton()
-    pages.weHaveConfirmedYourIdentityChequePage.assertPageIsDisplayed(JourneyType.Cheque)
+    pages.yourIdentityIsConfirmedChequePage.assertPageIsDisplayed(JourneyType.Cheque)
     getJourneyFromDatabase(tdAll.journeyId) shouldBeLike tdAll.Cheque.journeyIdentityVerified
   }
 

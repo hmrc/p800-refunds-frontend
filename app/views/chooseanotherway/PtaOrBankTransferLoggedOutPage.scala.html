@@ -30,10 +30,6 @@
 
 @import viewsHelpers.requestSupport._
 
-@title = @{
-    Messages.ChooseAnotherWayToReceiveYourRefund.`Choose another way to receive your refund`.show
-}
-
 @key = @{
     "way-to-get-refund"
 }
@@ -42,7 +38,7 @@
 @bankTransferKey = @{PtaOrBankTransferFormValue.BankTransferLoggedOut.toString}
 
 @layout(
-    pageTitle = Some(title),
+    pageTitle = Some(Messages.ChooseAnotherWayToReceiveYourRefund.`choose another way to receive your refund`.show),
     hasErrors = form.errors.nonEmpty,
     maybeJourneyType = Some(request.journey.getJourneyType)
 ) {
@@ -55,7 +51,7 @@
         @viewsHelpers.govukRadios(Radios(
             fieldset = Some(Fieldset(
                 legend = Some(Legend(
-                    content = Text(title),
+                    content = Text(Messages.ChooseAnotherWayToReceiveYourRefund.`Choose another way to receive your refund`.show),
                     classes = "govuk-fieldset__legend--xl",
                     isPageHeading = true
                 ))

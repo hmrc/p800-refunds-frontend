@@ -29,23 +29,19 @@
 
 @import viewsHelpers.requestSupport._
 
-@title = @{
-    Messages.GiveYourPermission.`Give your permission`.show
-}
-
 @layout(
-    pageTitle = Some(title),
-    backLinkUrlOverride = Some(routes.WhatIsTheNameOfYourBankController.get.url),
+    pageTitle = Some(Messages.GiveYourPermission.`give your permission`.show),
+    backLinkUrlOverride = Some(routes.EnterTheNameOfYourBankController.get.url),
     maybeJourneyType = Some(request.journey.getJourneyType)
 ) {
 
-    <h1 class="govuk-heading-xl">@title</h1>
+    <h1 class="govuk-heading-xl">@{Messages.GiveYourPermission.`Give your permission`.show}</h1>
 
     <p class="govuk-body">
         @{Html(Messages.GiveYourPermission.`By choosing approve`(
             bankName = bankName,
             amount = amountInPence,
-            changeBankLink = controllers.routes.WhatIsTheNameOfYourBankController.get.url
+            changeBankLink = controllers.routes.EnterTheNameOfYourBankController.get.url
         ).show)}
     </p>
 
@@ -80,7 +76,7 @@
             ))
         }
 
-        <a id="choose-another-way" class="govuk-link" href="@routes.ChooseAnotherWayToGetYourRefundController.get.url">
+        <a id="choose-another-way" class="govuk-link" href="@routes.ChooseAnotherWayToGetYourRefundController.getBankTransfer.url">
             @{Messages.GiveYourPermission.`Choose another way to get my money`.show}
         </a>
     </div>

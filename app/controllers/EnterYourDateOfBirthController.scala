@@ -31,7 +31,7 @@ import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class WhatIsYourDateOfBirthController @Inject() (
+class EnterYourDateOfBirthController @Inject() (
     mcc:            MessagesControllerComponents,
     requestSupport: RequestSupport,
     views:          Views,
@@ -45,7 +45,7 @@ class WhatIsYourDateOfBirthController @Inject() (
     val journey: Journey = request.journey
     Errors.require(journey.getJourneyType === JourneyType.BankTransfer, "This page is only for BankTransfer journey")
 
-    Ok(views.whatIsYourDateOfBirthPage(
+    Ok(views.enterYourDateOfBirthPage(
       journey.dateOfBirth.fold(
         WhatIsYourDateOfBirthForm.form
       )(dob =>
@@ -64,7 +64,7 @@ class WhatIsYourDateOfBirthController @Inject() (
       .bindFromRequest()
       .fold(
         formWithErrors => {
-          Future.successful(BadRequest(views.whatIsYourDateOfBirthPage(form = formWithErrors)))
+          Future.successful(BadRequest(views.enterYourDateOfBirthPage(form = formWithErrors)))
         },
         validForm => {
           journeyService

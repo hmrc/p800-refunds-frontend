@@ -35,14 +35,10 @@
 
 @import viewsHelpers.requestSupport._
 
-@title = @{
-    Messages.BankTransferRequestReceived.`Bank transfer request received`.show
-}
-
 @additionalScript = { <script src="@{controllers.routes.Assets.versioned("javascripts/print-dialogue.js")}" @{CSPNonce.attr}></script> }
 
 @layout(
-    pageTitle         = Some(title),
+    pageTitle         = Some(Messages.CommonMessages.`request received`.show),
     showBackLink      = false,
     additionalScripts = Some(additionalScript),
     maybeJourneyType  = Some(request.journey.getJourneyType)
@@ -50,7 +46,7 @@
 
     @viewsHelpers.govukPanel(Panel(
         headingLevel = 1,
-        title        = Text(title),
+        title        = Text(Messages.BankTransferRequestReceived.`Bank transfer request received`.show),
         classes      = "govuk-!-margin-bottom-7",
         content      = HtmlContent(s"""${Messages.BankTransferRequestReceived.`Your P800 reference:`.show}<br><strong>${p800Reference.value}</strong>""")
     ))

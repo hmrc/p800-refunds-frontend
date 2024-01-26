@@ -19,7 +19,7 @@ package pagespecs
 import models.journeymodels.JourneyType
 import testsupport.ItSpec
 
-class WhatIsYourP800ReferencePageSpec extends ItSpec {
+class EnterYourP800ReferencePageSpec extends ItSpec {
 
   override def beforeEach(): Unit = {
     super.beforeEach()
@@ -40,8 +40,8 @@ class WhatIsYourP800ReferencePageSpec extends ItSpec {
 
       def test(journeyType: JourneyType): Unit = {
         val (startPage, endPage) = journeyType match {
-          case JourneyType.BankTransfer => pages.whatIsYourP800ReferenceBankTransferPage -> pages.whatIsYourNationalInsuranceNumberBankTransferPage
-          case JourneyType.Cheque       => pages.whatIsYourP800ReferenceChequePage -> pages.whatIsYourNationalInsuranceNumberChequePage
+          case JourneyType.BankTransfer => pages.whatIsYourP800ReferenceBankTransferPage -> pages.enterYourNationalInsuranceNumberBankTransferPage
+          case JourneyType.Cheque       => pages.whatIsYourP800ReferenceChequePage -> pages.enterYourNationalInsuranceNumberChequePage
         }
         startPage.open()
         startPage.assertPageIsDisplayed(journeyType)
