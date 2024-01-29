@@ -1,0 +1,139 @@
+@*
+ * Copyright 2023 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import views.ViewsHelpers
+@import controllers.testonly.NameComparing
+@import uk.gov.hmrc.govukfrontend.views.html.components._
+@import uk.gov.hmrc.govukfrontend.views.html.components.implicits._
+@import views.html.templates.Layout
+@import language.Messages
+
+@this(layout: Layout, viewsHelpers: ViewsHelpers)
+
+@(
+  form: Form[NameComparing],
+  summaryList: SummaryList
+)(implicit
+  request: Request[_]
+)
+
+@import viewsHelpers.requestSupport._
+
+@layout(
+ showBackLink = false,
+ hasErrors = form.errors.nonEmpty
+) {
+  <h1 class="govuk-heading-xl"> Name Comparing Demo </h1>
+
+ @if(form.errors.nonEmpty) {
+  @viewsHelpers.govukErrorSummary(ErrorSummary(errorList = form.errors.asTextErrorLinks, title = Text(Messages.CommonMessages.`There is a problem`.show)))
+ }
+
+
+ <div>
+
+  @viewsHelpers.formWithCsrf(action = controllers.testonly.routes.NameComparingTestOnlyController.post) {
+
+   <h2 class="govuk-heading-s">From NPS:</h2>
+
+   @viewsHelpers.govukInput(Input(
+    id = "nameAtNps.forename",
+    name = "nameAtNps.forename",
+    classes = "govuk-input--width-10",
+    label = Label(
+//     content = Text("Forename"),
+     isPageHeading = true,
+     classes = "govuk-label--s"
+    ),
+    hint = Some(Hint(
+     content = Text("Forename")
+    )),
+    autocomplete = Some("on"),
+    spellcheck = Some(false)
+   ).withFormField(form("nameAtNps.forename")))
+
+   @viewsHelpers.govukInput(Input(
+    id = "nameAtNps.middlename",
+    name = "nameAtNps.middlename",
+    classes = "govuk-input--width-10",
+    label = Label(
+//     content = Text("Middlename"),
+     isPageHeading = true,
+     classes = "govuk-label--s"
+    ),
+    hint = Some(Hint(
+     content = Text("Middlename")
+    )),
+    autocomplete = Some("on"),
+    spellcheck = Some(false)
+   ).withFormField(form("nameAtNps.middlename")))
+
+   @viewsHelpers.govukInput(Input(
+    id = "nameAtNps.surname",
+    name = "nameAtNps.surname",
+    classes = "govuk-input--width-10",
+    label = Label(
+//     content = Text("Surname"),
+     isPageHeading = true,
+     classes = "govuk-label--s"
+    ),
+    hint = Some(Hint(
+     content = Text("Surname")
+    )),
+    autocomplete = Some("on"),
+    spellcheck = Some(false)
+   ).withFormField(form("nameAtNps.surname")))
+
+   <h2 class="govuk-heading-s">From Ecospend:</h2>
+
+   @viewsHelpers.govukInput(Input(
+    id = "fullLegalNameAtEcospend",
+    name = "fullLegalNameAtEcospend",
+    classes = "govuk-input--width-10",
+    label = Label(
+//     content = Text("fullLegalNameAtEcospend"),
+     isPageHeading = true,
+     classes = "govuk-label--s"
+    ),
+    hint = Some(Hint(
+     content = Text("Full Legal Name")
+    )),
+    autocomplete = Some("on"),
+    spellcheck = Some(false)
+   ).withFormField(form("fullLegalNameAtEcospend")))
+
+   @viewsHelpers.govukButton(Button(
+    content = Text("Update"),
+    id      = Some("update")
+   ))
+  }
+ </div>
+
+
+
+ <p class="govuk-body">
+  <h2 class="govuk-heading-m">Comparing names steps</h2>
+  @viewsHelpers.govukSummaryList(summaryList)
+ </p>
+
+
+
+ <div>
+  Examples:
+  TODO
+ </div>
+
+}

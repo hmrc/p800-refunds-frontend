@@ -15,7 +15,10 @@ object AppDependencies {
     "org.julienrf"      %% "play-json-derived-codecs"   % "7.0.0", //choose carefully
     "io.scalaland"      %% "chimney"                    % "0.8.5",
     "org.webjars"       %  "jquery"                     % "3.7.1",
-    "org.webjars.npm"   %  "accessible-autocomplete"    % "2.0.4"
+    "org.webjars.npm"   %  "accessible-autocomplete"    % "2.0.4",
+    "org.apache.commons" % "commons-text"               % "1.11.0", //fuzzy matching
+    "commons-codec"      % "commons-codec"              % "1.16.0", //fuzzy matching
+    "org.apache.opennlp" % "opennlp-tools" % "2.3.1" //fuzzy matching
   // format: ON
   )
 

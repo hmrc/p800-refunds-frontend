@@ -23,6 +23,20 @@ import testsupport.stubs.IdentityVerificationStub
 
 class CheckYourAnswersSpec extends ItSpec {
 
+  "demo" in {
+    import java.text.Normalizer
+    import java.text.Normalizer.Form
+
+    val stringWithSpecialChars = "Prinsesstårta"
+
+      def removeDiacritics(inputStr: String): String = {
+        val nfdNormalizedString = Normalizer.normalize(inputStr, Form.NFD)
+        nfdNormalizedString.filterNot(ch => Character.getType(ch) == Character.NON_SPACING_MARK)
+      }
+
+    println(removeDiacritics(stringWithSpecialChars))
+  }
+
   "page renders correctly" - {
     "bank transfer" in {
       upsertJourneyToDatabase(tdAll.BankTransfer.journeyEnteredDateOfBirth)

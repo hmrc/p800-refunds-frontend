@@ -17,7 +17,8 @@ object SbtUpdatesSettings {
     dependencyUpdatesFilter -= moduleFilter("org.julienrf", "play-json-derived-codecs"),
     dependencyUpdatesFilter -= moduleFilter("com.vladsch.flexmark", "flexmark-all"),
     dependencyUpdatesFilter -= moduleFilter("org.scalatestplus.play", "scalatestplus-play"),
-    dependencyUpdatesFilter -= moduleFilter("com.beachape", "enumeratum-play")
+    dependencyUpdatesFilter -= moduleFilter("com.beachape", "enumeratum-play"),
+    dependencyUpdatesFilter -= moduleFilter("commons-codec", "commons-codec")
 
   )
 
