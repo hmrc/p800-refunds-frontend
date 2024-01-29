@@ -43,7 +43,8 @@
 
 @layout(
     pageTitle = Some(title),
-    backLinkUrlOverride = Some(appConfig.govUkRouteIn)
+    backLinkUrlOverride = Some(appConfig.govUkRouteIn),
+    hasErrors = form.errors.nonEmpty
 ) {
 
     @if(form.errors.nonEmpty) {
