@@ -39,30 +39,36 @@ class NoMoreAttemptsLeftToConfirmYourIdentityPageSpec extends ItSpec {
     }
 
       def test(journeyType: JourneyType): Unit = {
-        pages.noMoreAttemptsLeftToConfirmYourIdentityPage.open()
-        pages.noMoreAttemptsLeftToConfirmYourIdentityPage.assertPageIsDisplayed(journeyType)
+        val page = journeyType match {
+          case JourneyType.Cheque       => pages.noMoreAttemptsLeftToConfirmYourIdentityChequePage
+          case JourneyType.BankTransfer => pages.noMoreAttemptsLeftToConfirmYourIdentityBankTransferPage
+        }
+        page.open()
+        page.assertPageIsDisplayed(journeyType)
       }
   }
 
-  "clicking ' sign in to you HMRC online account ' sends user to Pta Sign In page" - {
+  "clicking 'sign in to you HMRC online account' sends user to Pta Sign In page" - {
     "bank transfer" in {
       upsertJourneyToDatabase(tdAll.BankTransfer.journeyIdentityNotVerified)
       test(JourneyType.BankTransfer)
-      pages.noMoreAttemptsLeftToConfirmYourIdentityPage.clickSignInToYourHmrcAccount()
-      pages.ptaSignInPage.assertPageIsDisplayed()
       getJourneyFromDatabase(tdAll.journeyId) shouldBeLike tdAll.BankTransfer.journeyIdentityNotVerified
     }
     "cheque" in {
       upsertJourneyToDatabase(tdAll.Cheque.journeyIdentityNotVerified)
       test(JourneyType.Cheque)
-      pages.noMoreAttemptsLeftToConfirmYourIdentityPage.clickSignInToYourHmrcAccount()
-      pages.ptaSignInPage.assertPageIsDisplayed()
       getJourneyFromDatabase(tdAll.journeyId) shouldBeLike tdAll.Cheque.journeyIdentityNotVerified
     }
 
       def test(journeyType: JourneyType): Unit = {
-        pages.noMoreAttemptsLeftToConfirmYourIdentityPage.open()
-        pages.noMoreAttemptsLeftToConfirmYourIdentityPage.assertPageIsDisplayed(journeyType)
+        val page = journeyType match {
+          case JourneyType.Cheque       => pages.noMoreAttemptsLeftToConfirmYourIdentityChequePage
+          case JourneyType.BankTransfer => pages.noMoreAttemptsLeftToConfirmYourIdentityBankTransferPage
+        }
+        page.open()
+        page.assertPageIsDisplayed(journeyType)
+        page.clickSignInToYourHmrcAccount()
+        pages.ptaSignInPage.assertPageIsDisplayed()
       }
   }
 }

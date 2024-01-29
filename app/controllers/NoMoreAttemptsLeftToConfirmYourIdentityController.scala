@@ -17,8 +17,11 @@
 package controllers
 
 import action.Actions
+import models.journeymodels.{Journey, JourneyType}
 import play.api.mvc._
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
+import util.Errors
+import util.SafeEquals.EqualsOps
 import views.Views
 
 import javax.inject.{Inject, Singleton}
@@ -30,7 +33,15 @@ class NoMoreAttemptsLeftToConfirmYourIdentityController @Inject() (
     actions: Actions
 ) extends FrontendController(mcc) {
 
-  def get: Action[AnyContent] = actions.journeyInProgress { implicit request =>
+  def getBankTransfer: Action[AnyContent] = actions.journeyInProgress { implicit request =>
+    val journey: Journey = request.journey
+    Errors.require(journey.getJourneyType === JourneyType.BankTransfer, "This endpoint supports only BankTransfer journey")
+    Ok(views.noMoreAttemptsLeftToConfirmYourIdentityPage())
+  }
+
+  def getCheque: Action[AnyContent] = actions.journeyInProgress { implicit request =>
+    val journey: Journey = request.journey
+    Errors.require(journey.getJourneyType === JourneyType.Cheque, "This endpoint supports only Cheque journey")
     Ok(views.noMoreAttemptsLeftToConfirmYourIdentityPage())
   }
 

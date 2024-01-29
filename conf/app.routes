@@ -44,7 +44,8 @@ GET         /cheque/cannot-confirm-your-identity-try-again                 contr
 POST        /cannot-confirm-your-identity-try-again                        controllers.CannotConfirmYourIdentityTryAgainController.tryAgain
 GET         /cannot-confirm-your-identity-try-again/choose-another-method  controllers.CannotConfirmYourIdentityTryAgainController.choseAnotherMethod
 
-GET         /no-more-attempts-left-to-confirm-your-identity                controllers.NoMoreAttemptsLeftToConfirmYourIdentityController.get
+GET         /bank-transfer/no-more-attempts-left-to-confirm-your-identity  controllers.NoMoreAttemptsLeftToConfirmYourIdentityController.getBankTransfer
+GET         /cheque/no-more-attempts-left-to-confirm-your-identity         controllers.NoMoreAttemptsLeftToConfirmYourIdentityController.getCheque
 
 GET         /bank-transfer/choose-another-way-to-receive-your-refund       controllers.ChooseAnotherWayToGetYourRefundController.getBankTransfer
 GET         /cheque/choose-another-way-to-receive-your-refund              controllers.ChooseAnotherWayToGetYourRefundController.getCheque

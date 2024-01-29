@@ -474,6 +474,9 @@ object Messages {
     def `Alternatively you can sign in to you HMRC online account`(link: String): Message = Message(
       english = s"""Alternatively you can <a id="sign-in-to-you-hmrc-online-account" href="$link" class="govuk-link">sign in to you HMRC online account</a> to request your refund."""
     )
+    val `no more attempts left to confirm your identity`: Message = Message(
+      english = "no more attempts left to confirm your identity"
+    )
   }
 
   object WhatIsTheNameOfYourBankAccount {

@@ -30,17 +30,13 @@
 
 @import viewsHelpers.requestSupport._
 
-@heading = @{
-    Messages.WeCannotConfirmYourIdentity.`We cannot confirm your identity`.show
-}
-
 @layout(
-    pageTitle = Some(heading),
+    pageTitle = Some(Messages.NoMoreAttemptsLeftToConfirmYourIdentityMessages.`no more attempts left to confirm your identity`.show),
     showBackLink = false,
     maybeJourneyType = Some(request.journey.getJourneyType)
 ) {
 
-    <h1 class="govuk-heading-xl">@heading</h1>
+    <h1 class="govuk-heading-xl">@{Messages.WeCannotConfirmYourIdentity.`We cannot confirm your identity`.show}</h1>
 
     <p class="govuk-body">@{Html(Messages.NoMoreAttemptsLeftToConfirmYourIdentityMessages.`You have entered information that does not match ...`.show)}</p>
 
