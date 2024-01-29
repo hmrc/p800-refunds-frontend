@@ -54,7 +54,7 @@ class Pages(baseUrl: String)(implicit webDriver: WebDriver) {
   val noMoreAttemptsLeftToConfirmYourIdentityBankTransferPage = new NoMoreAttemptsLeftToConfirmYourIdentityPage(baseUrl            = baseUrl, pathForJourneyType = bankTransferRelativeUrl)
   val noMoreAttemptsLeftToConfirmYourIdentityChequePage = new NoMoreAttemptsLeftToConfirmYourIdentityPage(baseUrl            = baseUrl, pathForJourneyType = chequeRelativeUrl)
 
-  val yourRequestHasNotBeenSubmittedPage = new YourRequestHasNotBeenSubmittedPage(baseUrl = baseUrl)
+  val refundRequestNotSubmittedPage = new RefundRequestNotSubmittedPage(baseUrl = baseUrl)
   val verifyBankAccountPage = new VerifyBankAccountPage(baseUrl = baseUrl)
 
   val chooseAnotherWayToReceiveYourRefundBankTransferPage = new ChooseAnotherWayToReceiveYourRefundPage(baseUrl            = baseUrl, pathForJourneyType = bankTransferRelativeUrl)

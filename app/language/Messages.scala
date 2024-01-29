@@ -142,9 +142,13 @@ object Messages {
     )
   }
 
-  object RequestNotSubmitted {
+  object RefundRequestNotSubmitted {
     val `Your refund request has not been submitted`: Message = Message(
       english = "Your refund request has not been submitted"
+    )
+
+    val `refund request not submitted`: Message = Message(
+      english = "refund request not submitted"
     )
 
     val `We can not process your refund request.`: Message = Message(

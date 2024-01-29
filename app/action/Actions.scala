@@ -64,7 +64,7 @@ class Actions @Inject() (
         case Some(JourneyType.BankTransfer) => controllers.routes.RequestReceivedController.getBankTransfer
         case None                           => throw new RuntimeException(s"This case is not supported, journey should have a journeyType [${journey.id.toString}] [${journey.hasFinished.toString}]")
       }
-    case HasFinished.YesFailed => controllers.routes.YourRefundRequestHasNotBeenSubmittedController.get
+    case HasFinished.YesFailed => controllers.routes.RefundRequestNotSubmittedController.get
     case HasFinished.No        => throw new RuntimeException(s"This case is not supported, journey should be already in one of finished states [${journey.id.toString}] [${journey.hasFinished.toString}]")
   }
 

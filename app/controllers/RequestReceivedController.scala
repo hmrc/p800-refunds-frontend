@@ -37,7 +37,7 @@ class RequestReceivedController @Inject() (
     val journey: Journey = request.journey
 
     if (journey.hasFinished === HasFinished.YesFailed) {
-      Redirect(controllers.routes.YourRefundRequestHasNotBeenSubmittedController.get)
+      Redirect(controllers.routes.RefundRequestNotSubmittedController.get)
     } else {
 
       journey.getJourneyType match {
@@ -50,7 +50,7 @@ class RequestReceivedController @Inject() (
     val journey: Journey = request.journey
 
     if (journey.hasFinished === HasFinished.YesFailed) {
-      Redirect(controllers.routes.YourRefundRequestHasNotBeenSubmittedController.get)
+      Redirect(controllers.routes.RefundRequestNotSubmittedController.get)
     } else {
 
       journey.getJourneyType match {

@@ -28,25 +28,21 @@
 
 @import viewsHelpers.requestSupport._
 
-@title = @{
-    Messages.RequestNotSubmitted.`Your refund request has not been submitted`.show
-}
-
 @layout(
-    pageTitle = Some(title),
+    pageTitle = Some(Messages.RefundRequestNotSubmitted.`refund request not submitted`.show),
     showBackLink = false,
     maybeJourneyType = Some(request.journey.getJourneyType)
 ) {
 
-    <h1 class="govuk-heading-xl">@title</h1>
+    <h1 class="govuk-heading-xl">@{Messages.RefundRequestNotSubmitted.`Your refund request has not been submitted`.show}</h1>
 
     <p class="govuk-body">
-        @{Messages.RequestNotSubmitted.`We can not process your refund request.`.show}
+        @{Messages.RefundRequestNotSubmitted.`We can not process your refund request.`.show}
     </p>
 
-    @viewsHelpers.formWithCsrf(action = controllers.routes.YourRefundRequestHasNotBeenSubmittedController.post) {
+    @viewsHelpers.formWithCsrf(action = controllers.routes.RefundRequestNotSubmittedController.post) {
         @viewsHelpers.govukButton(Button(
-            content = Text(Messages.RequestNotSubmitted.`Choose another way to get my money`.show),
+            content = Text(Messages.RefundRequestNotSubmitted.`Choose another way to get my money`.show),
             id = Some("try-again")
         ))
     }

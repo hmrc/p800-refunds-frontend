@@ -18,7 +18,7 @@ package pagespecs
 
 import testsupport.ItSpec
 
-class YourRefundRequestHasNotBeenSubmittedPageSpec extends ItSpec {
+class RefundRequestNotSubmittedPageSpec extends ItSpec {
 
   override def beforeEach(): Unit = {
     super.beforeEach()
@@ -28,8 +28,8 @@ class YourRefundRequestHasNotBeenSubmittedPageSpec extends ItSpec {
   "render page" - {
     "bank transfer" in {
       upsertJourneyToDatabase(tdAll.BankTransfer.journeyClaimOverpaymentFailed)
-      pages.yourRequestHasNotBeenSubmittedPage.open()
-      pages.yourRequestHasNotBeenSubmittedPage.assertPageIsDisplayed()
+      pages.refundRequestNotSubmittedPage.open()
+      pages.refundRequestNotSubmittedPage.assertPageIsDisplayed()
       getJourneyFromDatabase(tdAll.journeyId) shouldBeLike tdAll.BankTransfer.journeyClaimOverpaymentFailed
     }
     "cheque" ignore {
@@ -40,9 +40,9 @@ class YourRefundRequestHasNotBeenSubmittedPageSpec extends ItSpec {
   "Clicking 'Choose another way to you my money' redirects to 'Choose another way to receive your refund' page" - {
     "bank transfer" in {
       upsertJourneyToDatabase(tdAll.BankTransfer.journeyClaimOverpaymentFailed)
-      pages.yourRequestHasNotBeenSubmittedPage.open()
-      pages.yourRequestHasNotBeenSubmittedPage.assertPageIsDisplayed()
-      pages.yourRequestHasNotBeenSubmittedPage.clickTryAgain()
+      pages.refundRequestNotSubmittedPage.open()
+      pages.refundRequestNotSubmittedPage.assertPageIsDisplayed()
+      pages.refundRequestNotSubmittedPage.clickTryAgain()
       pages.chooseAnotherWayToReceiveYourRefundBankTransferPage.assertPageIsDisplayedPtaOrCheque()
       getJourneyFromDatabase(tdAll.journeyId) shouldBeLike tdAll.BankTransfer.journeyClaimOverpaymentFailedButIsChoosingAnotherWay
     }
@@ -52,11 +52,11 @@ class YourRefundRequestHasNotBeenSubmittedPageSpec extends ItSpec {
 
     "bank transfer" in {
       upsertJourneyToDatabase(tdAll.BankTransfer.journeyClaimOverpaymentFailed)
-      pages.yourRequestHasNotBeenSubmittedPage.open()
-      pages.yourRequestHasNotBeenSubmittedPage.assertPageIsDisplayed()
+      pages.refundRequestNotSubmittedPage.open()
+      pages.refundRequestNotSubmittedPage.assertPageIsDisplayed()
       //any page before final page is not displayed, the redirect to the final page is sent
       pages.checkYourAnswersBankTransferPage.open()
-      pages.yourRequestHasNotBeenSubmittedPage.assertPageIsDisplayed()
+      pages.refundRequestNotSubmittedPage.assertPageIsDisplayed()
       getJourneyFromDatabase(tdAll.journeyId) shouldBeLike tdAll.BankTransfer.journeyClaimOverpaymentFailed
     }
   }
