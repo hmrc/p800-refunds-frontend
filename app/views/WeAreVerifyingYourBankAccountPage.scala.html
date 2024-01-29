@@ -28,17 +28,13 @@
 
 @import viewsHelpers.requestSupport._
 
-@title = @{
-    Messages.VerifyBankAccount.`We are verifying your bank account`.show
-}
-
 @layout(
-    pageTitle = Some(title),
+    pageTitle = Some(Messages.VerifyBankAccount.`verifying your bank account`.show),
     backLinkUrlOverride = Some(routes.EnterTheNameOfYourBankController.get.url),
     maybeJourneyType = Some(request.journey.getJourneyType)
 ) {
 
-    <h1 class="govuk-heading-xl">@title</h1>
+    <h1 class="govuk-heading-xl">@{Messages.VerifyBankAccount.`We are verifying your bank account`.show}</h1>
 
     <p class="govuk-body">
         @{Html(Messages.VerifyBankAccount.`This usually takes a few seconds`(routes.WeAreVerifyingYourBankAccountController.get.url).show)}

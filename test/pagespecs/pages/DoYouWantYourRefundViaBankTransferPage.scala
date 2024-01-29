@@ -25,7 +25,7 @@ class DoYouWantYourRefundViaBankTransferPage(baseUrl: String)(implicit webDriver
 ) {
 
   override def expectedH1: String = "Do you want your refund by bank transfer?"
-  override def expectedTitleContent: String = "add_me"
+  override def expectedTitleContent: String = "Do you want to refund by bank transfer?"
 
   override def assertPageIsDisplayed(extraExpectations: ContentExpectation*): Unit = withPageClue {
     val contentExpectations: Seq[ContentExpectation] = Seq(
@@ -46,13 +46,25 @@ class DoYouWantYourRefundViaBankTransferPage(baseUrl: String)(implicit webDriver
       baseUrl             = baseUrl,
       path                = path,
       h1                  = expectedH1,
-      title               = PageUtil.standardTitle(expectedH1),
+      title               = PageUtil.standardTitle(expectedTitleContent),
       contentExpectations = contentExpectations: _*
     )
   }
 
   def assertPageShowsWithErrors(): Unit = withPageClue {
-    assertPageIsDisplayed(
+
+    val contentExpectations: Seq[ContentExpectation] = Seq(
+      ContentExpectation(
+        atXpath       = PageUtil.Xpath.mainContent,
+        expectedLines =
+          """
+            |Do you want your refund by bank transfer?
+            |Bank transfers are faster and safer. You’ll need to have your online or mobile banking details ready.
+            |Yes
+            |No, I want a cheque
+            |Continue
+            |""".stripMargin
+      ),
       ContentExpectation(
         atXpath       = PageUtil.Xpath.errorSummary,
         expectedLines =
@@ -65,6 +77,14 @@ class DoYouWantYourRefundViaBankTransferPage(baseUrl: String)(implicit webDriver
         atXpath       = PageUtil.Xpath.errorMessage,
         expectedLines = """Select if you want to receive a bank transfer or a cheque"""
       )
+    )
+
+    PageUtil.assertPage(
+      baseUrl             = baseUrl,
+      path                = path,
+      h1                  = expectedH1,
+      title               = PageUtil.standardErrorTitle(expectedTitleContent),
+      contentExpectations = contentExpectations: _*
     )
   }
 

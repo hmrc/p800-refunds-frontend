@@ -36,13 +36,10 @@
     "do-you-want-your-refund-via-bank-transfer"
 }
 
-@title = @{
-    Messages.DoYouWantYourRefundViaBankTransfer.`Do you want your refund by bank transfer?`.show
-}
-
 @layout(
-    pageTitle = Some(title),
-    backLinkUrlOverride = Some(controllers.routes.DoYouWantToSignInController.get.url)
+    pageTitle = Some(Messages.DoYouWantYourRefundViaBankTransfer.`Do you want to refund by bank transfer?`.show),
+    backLinkUrlOverride = Some(controllers.routes.DoYouWantToSignInController.get.url),
+    hasErrors = form.errors.nonEmpty
 ) {
 
     @if(form.errors.nonEmpty) {
@@ -53,7 +50,7 @@
         @viewsHelpers.govukRadios(Radios(
             fieldset = Some(Fieldset(
                 legend = Some(Legend(
-                    content = Text(title),
+                    content = Text(Messages.DoYouWantYourRefundViaBankTransfer.`Do you want your refund by bank transfer?`.show),
                     classes = "govuk-fieldset__legend--xl",
                     isPageHeading = true
                 ))

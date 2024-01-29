@@ -22,11 +22,11 @@ import pagespecs.pagesupport.{ContentExpectation, Page, PageUtil}
 
 class VerifyBankAccountPage(baseUrl: String)(implicit webDriver: WebDriver) extends Page(
   baseUrl,
-  path = "/get-an-income-tax-refund/bank-transfer/we-are-verifying-your-bank-account"
+  path = "/get-an-income-tax-refund/bank-transfer/verifying-your-bank-account"
 ) {
 
   override def expectedH1: String = "We are verifying your bank account"
-  override def expectedTitleContent: String = "add_me"
+  override def expectedTitleContent: String = "verifying your bank account"
 
   override def assertPageIsDisplayed(extraExpectations: ContentExpectation*): Unit = withPageClue {
 
@@ -43,7 +43,7 @@ class VerifyBankAccountPage(baseUrl: String)(implicit webDriver: WebDriver) exte
       baseUrl             = baseUrl,
       path                = path,
       h1                  = expectedH1,
-      title               = PageUtil.standardTitleWithJourneyType(expectedH1, JourneyType.BankTransfer),
+      title               = PageUtil.standardTitleWithJourneyType(expectedTitleContent, JourneyType.BankTransfer),
       contentExpectations = contentExpectations: _*
     )
   }
