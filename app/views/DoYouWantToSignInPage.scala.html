@@ -37,13 +37,10 @@
     "sign-in"
 }
 
-@title = @{
-    Messages.DoYouWantToSignInMessages.`Do you want to sign in?`.show
-}
-
 @layout(
-    pageTitle = Some(title),
-    backLinkUrlOverride = Some(appConfig.govUkRouteIn)
+    pageTitle = Some(Messages.DoYouWantToSignInMessages.`Do you want to sign in?`.show),
+    backLinkUrlOverride = Some(appConfig.govUkRouteIn),
+    hasErrors = form.errors.nonEmpty
 ) {
 
     @if(form.errors.nonEmpty) {
@@ -54,7 +51,7 @@
         @viewsHelpers.govukRadios(Radios(
             fieldset = Some(Fieldset(
                 legend = Some(Legend(
-                    content = Text(title),
+                    content = Text(Messages.DoYouWantToSignInMessages.`Do you want to sign in?`.show),
                     classes = "govuk-fieldset__legend--xl",
                     isPageHeading = true
                 ))
