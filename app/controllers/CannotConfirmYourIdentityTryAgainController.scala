@@ -17,7 +17,7 @@
 package controllers
 
 import action.Actions
-import models.journeymodels.JourneyType
+import models.journeymodels.{Journey, JourneyType}
 import play.api.mvc._
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import views.Views
@@ -52,4 +52,10 @@ class CannotConfirmYourIdentityTryAgainController @Inject() (
   }
 
 }
-
+object CannotConfirmYourIdentityTryAgainController {
+  def redirectLocation(journey: Journey)(implicit request: Request[_]): Call = Journey.deriveRedirectByJourneyType(
+    journeyType           = journey.getJourneyType,
+    chequeJourneyRedirect = controllers.routes.CannotConfirmYourIdentityTryAgainController.getCheque,
+    bankJourneyRedirect   = controllers.routes.CannotConfirmYourIdentityTryAgainController.getBankTransfer
+  )
+}

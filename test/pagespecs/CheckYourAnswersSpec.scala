@@ -173,25 +173,95 @@ class CheckYourAnswersSpec extends ItSpec {
   }
 
   "clicking submit redirects to 'We cannot confirm your identity' if response from NPS indicates identity verification failed" - {
-    "bank transfer" in {
+
+    "bank transfer - failed attempts repo is empty" in {
       upsertJourneyToDatabase(tdAll.BankTransfer.journeyEnteredDateOfBirth)
-      //TODO TraceIndividual API
-      pages.checkYourAnswersBankTransferPage.open()
       IdentityVerificationStub.stubIdentityVerification2xx(tdAll.BankTransfer.journeyIdentityNotVerified.identityVerificationResponse.value)
+      //TODO TraceIndividual API
+
+      pages.checkYourAnswersBankTransferPage.open()
+      pages.checkYourAnswersBankTransferPage.assertPageIsDisplayedForBankTransfer(
+        tdAll.p800Reference,
+        tdAll.dateOfBirthFormatted,
+        tdAll.nationalInsuranceNumber
+      )
       pages.checkYourAnswersBankTransferPage.clickSubmit()
       pages.weCannotConfirmYourIdentityBankTransferPage.assertPageIsDisplayed(JourneyType.BankTransfer)
+
       IdentityVerificationStub.verifyIdentityVerification()
       getJourneyFromDatabase(tdAll.journeyId) shouldBeLike tdAll.BankTransfer.journeyIdentityNotVerified
     }
-    "cheque" in {
+
+    "cheque - failed attempts repo is empty" in {
       upsertJourneyToDatabase(tdAll.Cheque.journeyEnteredNino)
-      pages.checkYourAnswersChequePage.open()
       IdentityVerificationStub.stubIdentityVerification2xx(tdAll.Cheque.journeyIdentityNotVerified.identityVerificationResponse.value)
+
+      pages.checkYourAnswersChequePage.open()
       pages.checkYourAnswersChequePage.clickSubmit()
       pages.weCannotConfirmYourIdentityChequePage.assertPageIsDisplayed(JourneyType.Cheque)
+
       IdentityVerificationStub.verifyIdentityVerification()
       getJourneyFromDatabase(tdAll.journeyId) shouldBeLike tdAll.Cheque.journeyIdentityNotVerified
     }
+
+    "bank transfer - user already failed 1 time" in {
+      val testJourney = tdAll.BankTransfer.journeyIdentityNotVerified
+      IdentityVerificationStub.stubIdentityVerification2xx(testJourney.identityVerificationResponse.value)
+      upsertJourneyToDatabase(testJourney)
+      upsertFailedAttemptToDatabase(tdAll.attemptInfo(failedAttempts = 1))
+
+      pages.checkYourAnswersBankTransferPage.open()
+      pages.checkYourAnswersBankTransferPage.clickSubmit()
+      pages.weCannotConfirmYourIdentityBankTransferPage.assertPageIsDisplayed(JourneyType.BankTransfer)
+
+      IdentityVerificationStub.verifyIdentityVerification()
+      getJourneyFromDatabase(tdAll.journeyId) shouldBeLike testJourney
+    }
+
+    "cheque - user already failed 1 time" in {
+      val testJourney = tdAll.Cheque.journeyIdentityNotVerified
+      IdentityVerificationStub.stubIdentityVerification2xx(testJourney.identityVerificationResponse.value)
+      upsertJourneyToDatabase(testJourney)
+      upsertFailedAttemptToDatabase(tdAll.attemptInfo(failedAttempts = 1))
+
+      pages.checkYourAnswersChequePage.open()
+      pages.checkYourAnswersChequePage.clickSubmit()
+      pages.weCannotConfirmYourIdentityChequePage.assertPageIsDisplayed(JourneyType.Cheque)
+
+      IdentityVerificationStub.verifyIdentityVerification()
+      getJourneyFromDatabase(tdAll.journeyId) shouldBeLike testJourney
+    }
+  }
+
+  "clicking submit, resulting in failing verification too many times, redirects to 'No more attempts left' page" - {
+    //todo test for when user goes from 2 failed attempts to 3, then journey should be hasFinished.LockedOut
+
+    "bank transfer - when user has 2 existing failed attempts, 3rd attempt also fails" in {
+      IdentityVerificationStub.stubIdentityVerification2xx(tdAll.BankTransfer.journeyIdentityNotVerified.identityVerificationResponse.value)
+      upsertJourneyToDatabase(tdAll.BankTransfer.journeyIdentityNotVerified)
+      upsertFailedAttemptToDatabase(tdAll.attemptInfo(2))
+      test(JourneyType.BankTransfer)
+      pages.noMoreAttemptsLeftToConfirmYourIdentityBankTransferPage.assertPageIsDisplayed(JourneyType.BankTransfer)
+      getJourneyFromDatabase(tdAll.journeyId) shouldBeLike tdAll.BankTransfer.journeyLockedOutFromFailedAttempts
+    }
+
+    "cheque - when user has 2 existing failed attempts, 3rd attempt also fails" in {
+      IdentityVerificationStub.stubIdentityVerification2xx(tdAll.Cheque.journeyIdentityNotVerified.identityVerificationResponse.value)
+      upsertJourneyToDatabase(tdAll.Cheque.journeyIdentityNotVerified)
+      upsertFailedAttemptToDatabase(tdAll.attemptInfo(2))
+      test(JourneyType.Cheque)
+      pages.noMoreAttemptsLeftToConfirmYourIdentityChequePage.assertPageIsDisplayed(JourneyType.Cheque)
+      getJourneyFromDatabase(tdAll.journeyId) shouldBeLike tdAll.Cheque.journeyLockedOutFromFailedAttempts
+    }
+
+      def test(journeyType: JourneyType): Unit = {
+        val startPage = journeyType match {
+          case JourneyType.Cheque       => pages.checkYourAnswersChequePage
+          case JourneyType.BankTransfer => pages.checkYourAnswersBankTransferPage
+        }
+        startPage.open()
+        startPage.clickSubmit()
+      }
   }
 
   "clicking back button navigates to What Is Your National Insurance Number page" - {

@@ -20,9 +20,11 @@ import akka.http.scaladsl.model.Uri
 import models.dateofbirth.{DateOfBirth, DayOfMonth, Month, Year}
 import models.ecospend._
 import models._
+import models.attemptmodels.{AttemptId, AttemptInfo, IpAddress, NumberOfAttempts}
 
 import java.time.format.DateTimeFormatter
 import java.time.{Instant, LocalDateTime, ZoneOffset}
+import java.util.UUID
 
 trait TdBase {
 
@@ -59,6 +61,13 @@ trait TdBase {
     group        = BankGroup("Barclays"),
     iconUrl      = "https://public.ecospend.com/images/banks/Barclays_icon.svg",
     hasFdp       = false
+  )
+
+  def attemptInfo(failedAttempts: Int): AttemptInfo = AttemptInfo(
+    _id                    = AttemptId(UUID.fromString("52e31cd7-23ec-42f9-99d6-e159b6242aa3")),
+    createdAt              = instant,
+    ipAddress              = IpAddress("127.0.0.1"),
+    numberOfFailedAttempts = NumberOfAttempts(failedAttempts)
   )
 
 }

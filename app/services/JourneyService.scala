@@ -25,7 +25,10 @@ import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class JourneyService @Inject() (journeyRepo: JourneyRepo, journeyFactory: JourneyFactory)(implicit ec: ExecutionContext) {
+class JourneyService @Inject() (
+    journeyRepo:    JourneyRepo,
+    journeyFactory: JourneyFactory
+)(implicit ec: ExecutionContext) {
 
   def newJourney()(implicit request: Request[_]): Future[Journey] = {
     val journey: Journey = journeyFactory.makeNewJourney()

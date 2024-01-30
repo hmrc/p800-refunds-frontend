@@ -44,7 +44,10 @@
                 }">start journey via gov-uk</a> |
                 <a href="@{
                     controllers.testonly.routes.TestOnlyController.showJourney
-                }">show journey json</a>
+                }">show journey json</a> |
+                <a href="@{
+                    controllers.testonly.routes.TestOnlyController.clearAttempts.url
+                }" >drop failed attempts collection</a>
             </div>
 
             <div class="temporary result-highlight">

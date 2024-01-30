@@ -33,13 +33,13 @@ class NoMoreAttemptsLeftToConfirmYourIdentityController @Inject() (
     actions: Actions
 ) extends FrontendController(mcc) {
 
-  def getBankTransfer: Action[AnyContent] = actions.journeyInProgress { implicit request =>
+  def getBankTransfer: Action[AnyContent] = actions.journeyFinished { implicit request =>
     val journey: Journey = request.journey
     Errors.require(journey.getJourneyType === JourneyType.BankTransfer, "This endpoint supports only BankTransfer journey")
     Ok(views.noMoreAttemptsLeftToConfirmYourIdentityPage())
   }
 
-  def getCheque: Action[AnyContent] = actions.journeyInProgress { implicit request =>
+  def getCheque: Action[AnyContent] = actions.journeyFinished { implicit request =>
     val journey: Journey = request.journey
     Errors.require(journey.getJourneyType === JourneyType.Cheque, "This endpoint supports only Cheque journey")
     Ok(views.noMoreAttemptsLeftToConfirmYourIdentityPage())
@@ -47,3 +47,10 @@ class NoMoreAttemptsLeftToConfirmYourIdentityController @Inject() (
 
 }
 
+object NoMoreAttemptsLeftToConfirmYourIdentityController {
+  def redirectLocation(journey: Journey)(implicit request: Request[_]): Call = Journey.deriveRedirectByJourneyType(
+    journeyType           = journey.getJourneyType,
+    chequeJourneyRedirect = controllers.routes.NoMoreAttemptsLeftToConfirmYourIdentityController.getCheque,
+    bankJourneyRedirect   = controllers.routes.NoMoreAttemptsLeftToConfirmYourIdentityController.getBankTransfer
+  )
+}

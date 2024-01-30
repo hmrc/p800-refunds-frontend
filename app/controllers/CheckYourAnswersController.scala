@@ -17,13 +17,15 @@
 package controllers
 
 import action.{Actions, JourneyRequest}
+import config.AppConfig
 import language.Messages
+import models.attemptmodels.AttemptInfo
 import models.dateofbirth.DateOfBirth
 import models.journeymodels._
 import models.{IdentityVerificationResponse, NationalInsuranceNumber, P800Reference}
 import play.api.mvc._
 import requests.RequestSupport
-import services.{IdentityVerificationService, JourneyService}
+import services.{FailedVerificationAttemptService, IdentityVerificationService, JourneyService}
 import uk.gov.hmrc.govukfrontend.views.Aliases.{HtmlContent, Key, SummaryListRow, Value}
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryList
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
@@ -37,23 +39,21 @@ import scala.util.{Failure, Success, Try}
 
 @Singleton
 class CheckYourAnswersController @Inject() (
-    mcc:                         MessagesControllerComponents,
-    requestSupport:              RequestSupport,
-    journeyService:              JourneyService,
-    views:                       Views,
-    actions:                     Actions,
-    identityVerificationService: IdentityVerificationService
+    mcc:                              MessagesControllerComponents,
+    requestSupport:                   RequestSupport,
+    journeyService:                   JourneyService,
+    views:                            Views,
+    actions:                          Actions,
+    identityVerificationService:      IdentityVerificationService,
+    failedVerificationAttemptService: FailedVerificationAttemptService,
+    appConfig:                        AppConfig
 )(implicit ec: ExecutionContext) extends FrontendController(mcc) {
 
   import requestSupport._
 
-  def getBankTransfer: Action[AnyContent] = actions.journeyInProgress { implicit request: JourneyRequest[_] =>
-    getResult
-  }
+  def getBankTransfer: Action[AnyContent] = actions.journeyInProgress { implicit request: JourneyRequest[_] => getResult }
 
-  def getCheque: Action[AnyContent] = actions.journeyInProgress { implicit request: JourneyRequest[_] =>
-    getResult
-  }
+  def getCheque: Action[AnyContent] = actions.journeyInProgress { implicit request: JourneyRequest[_] => getResult }
 
   private def getResult(implicit request: JourneyRequest[_]) = {
     val journey: Journey = request.journey
@@ -100,25 +100,47 @@ class CheckYourAnswersController @Inject() (
   }
 
   private def processForm(journey: Journey)(implicit request: JourneyRequest[AnyContent]): Future[Result] = {
-    //TODO: call attempts service and record failure
-    //TODO: distinguish between cheque and bank transfer journey. They have different verification steps
-    for {
-      identityVerificationResponse <- identityVerificationService.verifyIdentity(journey.getNationalInsuranceNumber)
-      newJourney = journey.copy(
-        identityVerificationResponse = Some(identityVerificationResponse)
-      )
-      _ <- journeyService.upsert(newJourney)
-    } yield Redirect(nextCall(identityVerificationResponse))
-  }
+    val updateLogicResultingInRedirect: Future[Call] =
+      failedVerificationAttemptService.find()
+        .flatMap { attemptInfoExists: Option[AttemptInfo] =>
+          // if failed count is already at 3, ensure journey is HasFinished.LockedOut, redirect to no more attempts
+          if (AttemptInfo.shouldBeLockedOut(attemptInfoExists, appConfig.FailedAttemptRepo.failedAttemptRepoMaxAttempts)) {
+            journeyService.upsert(journey.copy(hasFinished = HasFinished.LockedOut))
+              .map(_ => controllers.NoMoreAttemptsLeftToConfirmYourIdentityController.redirectLocation(journey))
+          } else {
+            // otherwise call identity verification
+            identityVerificationService
+              .verifyIdentity(journey.getNationalInsuranceNumber)
+              .flatMap { (identityVerificationResponse: IdentityVerificationResponse) =>
+                // if verification is successful, reflect this in journey, redirect to confirmed identity
+                if (identityVerificationResponse.identityVerified.value) {
+                  journeyService
+                    .upsert(journey.copy(identityVerificationResponse = Some(identityVerificationResponse)))
+                    .map(_ => controllers.WeHaveConfirmedYourIdentityController.redirectLocation(journey))
+                } else {
+                  // otherwise (verification failed) update the number of failed attempts
+                  failedVerificationAttemptService
+                    .upsertRecordIfVerificationFails
+                    .flatMap { (maybeAttemptInfo: Option[AttemptInfo]) =>
+                      // if newly updated failed attempt count is over the threshold, update journey to HasFinished.LockedOut, redirecting to no more attempts
+                      if (AttemptInfo.shouldBeLockedOut(maybeAttemptInfo, appConfig.FailedAttemptRepo.failedAttemptRepoMaxAttempts)) {
+                        journeyService
+                          .upsert(journey.copy(identityVerificationResponse = Some(identityVerificationResponse), hasFinished = HasFinished.LockedOut))
+                          .map(_ => controllers.NoMoreAttemptsLeftToConfirmYourIdentityController.redirectLocation(journey))
+                      } else {
+                        // otherwise attempts is not over threshold, redirect to cannot confirm your identity page
+                        journeyService
+                          .upsert(journey.copy(identityVerificationResponse = Some(identityVerificationResponse)))
+                          .map(_ => controllers.CannotConfirmYourIdentityTryAgainController.redirectLocation(journey))
+                      }
+                    }
+                }
+              }
+          }
+        }
 
-  private def nextCall(identityVerificationResponse: IdentityVerificationResponse)(implicit journeyRequest: JourneyRequest[_]): Call = {
-    if (identityVerificationResponse.identityVerified.value) controllers.WeHaveConfirmedYourIdentityController.redirectLocation(journeyRequest.journey)
-    else {
-      journeyRequest.journey.getJourneyType match {
-        case JourneyType.Cheque       => controllers.routes.CannotConfirmYourIdentityTryAgainController.getCheque
-        case JourneyType.BankTransfer => controllers.routes.CannotConfirmYourIdentityTryAgainController.getBankTransfer
-      }
-    }
+    updateLogicResultingInRedirect
+      .map(redirect => Redirect(redirect))
   }
 
   private def buildSummaryList(

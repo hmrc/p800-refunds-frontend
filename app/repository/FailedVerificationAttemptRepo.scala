@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2024 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,41 +17,52 @@
 package repository
 
 import config.AppConfig
-import models.journeymodels.{Journey, JourneyId}
-import org.mongodb.scala.model.{IndexModel, IndexOptions, Indexes}
-import repository.JourneyRepo._
+import models.attemptmodels.{AttemptId, AttemptInfo, IpAddress}
+import org.mongodb.scala.model._
+import repository.FailedVerificationAttemptRepo.{attemptId, attemptIdExtractor}
 import repository.Repo.{Id, IdExtractor}
 import uk.gov.hmrc.mongo.MongoComponent
 import uk.gov.hmrc.mongo.play.json.Codecs
 
 import java.util.concurrent.TimeUnit
 import javax.inject.{Inject, Singleton}
-import scala.concurrent.ExecutionContext
 import scala.concurrent.duration.FiniteDuration
+import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-final class JourneyRepo @Inject() (
+final class FailedVerificationAttemptRepo @Inject() (
     mongoComponent: MongoComponent,
     config:         AppConfig
 )(implicit ec: ExecutionContext)
-  extends Repo[JourneyId, Journey](
-    collectionName = "journey",
+  extends Repo[AttemptId, AttemptInfo](
+    collectionName = "failed-verification-attempts",
     mongoComponent = mongoComponent,
-    indexes        = JourneyRepo.indexes(config.JourneyRepo.journeyRepoTtl),
-    extraCodecs    = Seq(Codecs.playFormatCodec(Journey.format)),
+    indexes        = FailedVerificationAttemptRepo.indexes(config.FailedAttemptRepo.failedAttemptRepoTtl),
+    extraCodecs    = Seq(Codecs.playFormatCodec(AttemptInfo.format)),
     replaceIndexes = true
   ) {
 
+  def findByIpAddress(ipAddress: IpAddress): Future[Option[AttemptInfo]] =
+    collection
+      .find(filter = Filters.eq("ipAddress", ipAddress.value))
+      .headOption()
+
+  def drop(): Future[Unit] =
+    collection
+      .drop()
+      .toFuture()
+      .map(_ => ())
+
 }
 
-object JourneyRepo {
+object FailedVerificationAttemptRepo {
 
-  implicit val journeyId: Id[JourneyId] = new Id[JourneyId] {
-    override def value(i: JourneyId): String = i.value
+  implicit val attemptId: Id[AttemptId] = new Id[AttemptId] {
+    override def value(i: AttemptId): String = i.value.toString
   }
 
-  implicit val journeyIdExtractor: IdExtractor[Journey, JourneyId] = new IdExtractor[Journey, JourneyId] {
-    override def id(j: Journey): JourneyId = j._id
+  implicit val attemptIdExtractor: IdExtractor[AttemptInfo, AttemptId] = new IdExtractor[AttemptInfo, AttemptId] {
+    override def id(j: AttemptInfo): AttemptId = j._id
   }
 
   def indexes(cacheTtl: FiniteDuration): Seq[IndexModel] = Seq(

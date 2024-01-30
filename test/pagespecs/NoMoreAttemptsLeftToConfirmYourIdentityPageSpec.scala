@@ -28,14 +28,14 @@ class NoMoreAttemptsLeftToConfirmYourIdentityPageSpec extends ItSpec {
 
   "/no-more-attempts-left-to-confirm-your-identity renders correct content" - {
     "bank transfer" in {
-      upsertJourneyToDatabase(tdAll.BankTransfer.journeyIdentityNotVerified)
+      upsertJourneyToDatabase(tdAll.BankTransfer.journeyLockedOutFromFailedAttempts)
       test(JourneyType.BankTransfer)
-      getJourneyFromDatabase(tdAll.journeyId) shouldBeLike tdAll.BankTransfer.journeyIdentityNotVerified
+      getJourneyFromDatabase(tdAll.journeyId) shouldBeLike tdAll.BankTransfer.journeyLockedOutFromFailedAttempts
     }
     "cheque" in {
-      upsertJourneyToDatabase(tdAll.Cheque.journeyIdentityNotVerified)
+      upsertJourneyToDatabase(tdAll.Cheque.journeyLockedOutFromFailedAttempts)
       test(JourneyType.Cheque)
-      getJourneyFromDatabase(tdAll.journeyId) shouldBeLike tdAll.Cheque.journeyIdentityNotVerified
+      getJourneyFromDatabase(tdAll.journeyId) shouldBeLike tdAll.Cheque.journeyLockedOutFromFailedAttempts
     }
 
       def test(journeyType: JourneyType): Unit = {
@@ -50,14 +50,14 @@ class NoMoreAttemptsLeftToConfirmYourIdentityPageSpec extends ItSpec {
 
   "clicking 'sign in to you HMRC online account' sends user to Pta Sign In page" - {
     "bank transfer" in {
-      upsertJourneyToDatabase(tdAll.BankTransfer.journeyIdentityNotVerified)
+      upsertJourneyToDatabase(tdAll.BankTransfer.journeyLockedOutFromFailedAttempts)
       test(JourneyType.BankTransfer)
-      getJourneyFromDatabase(tdAll.journeyId) shouldBeLike tdAll.BankTransfer.journeyIdentityNotVerified
+      getJourneyFromDatabase(tdAll.journeyId) shouldBeLike tdAll.BankTransfer.journeyLockedOutFromFailedAttempts
     }
     "cheque" in {
-      upsertJourneyToDatabase(tdAll.Cheque.journeyIdentityNotVerified)
+      upsertJourneyToDatabase(tdAll.Cheque.journeyLockedOutFromFailedAttempts)
       test(JourneyType.Cheque)
-      getJourneyFromDatabase(tdAll.journeyId) shouldBeLike tdAll.Cheque.journeyIdentityNotVerified
+      getJourneyFromDatabase(tdAll.journeyId) shouldBeLike tdAll.Cheque.journeyLockedOutFromFailedAttempts
     }
 
       def test(journeyType: JourneyType): Unit = {
