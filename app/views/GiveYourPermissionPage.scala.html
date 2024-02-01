@@ -66,19 +66,15 @@
     <p class="govuk-body">
         <strong>@{Messages.GiveYourPermission.`HMRC cannot see your transactions`.show}</strong>
     </p>
-
-    <div class="govuk-button-group">
-
-        @viewsHelpers.formWithCsrf(action = controllers.routes.GiveYourPermissionController.post) {
-            @viewsHelpers.govukButton(Button(
-                content = Text(Messages.GiveYourPermission.`Approve this refund`.show),
-                id      = Some("approve-this-refund")
-            ))
-        }
-
-        <a id="choose-another-way" class="govuk-link" href="@routes.ChooseAnotherWayToGetYourRefundController.getBankTransfer.url">
-            @{Messages.GiveYourPermission.`Choose another way to get my money`.show}
-        </a>
-    </div>
-
+    @viewsHelpers.formWithCsrf(action = controllers.routes.GiveYourPermissionController.post) {
+        <div class="govuk-button-group">
+                @viewsHelpers.govukButton(Button(
+                    content = Text(Messages.GiveYourPermission.`Approve this refund`.show),
+                    id      = Some("approve-this-refund")
+                ))
+            <a id="choose-another-way" class="govuk-link" href="@routes.ChooseAnotherWayToGetYourRefundController.getBankTransfer.url">
+                @{Messages.GiveYourPermission.`Choose another way to get my money`.show}
+            </a>
+        </div>
+    }
 }
