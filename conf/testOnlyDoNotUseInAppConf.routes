@@ -28,4 +28,6 @@ GET        /get-an-income-tax-refund/test-only/income-tax-general-enquiries     
 
 #temporary endpoint to toggle hasFinished=true for BankTransfer journey so it can be tested
 GET        /get-an-income-tax-refund/test-only/finish-succeed-bank-transfer             controllers.testonly.TestOnlyController.finishSucceedBankTransfer
-GET        /get-an-income-tax-refund/test-only/finish-fail-bank-transfer             controllers.testonly.TestOnlyController.finishFailBankTransfer
+GET        /get-an-income-tax-refund/test-only/finish-fail-bank-transfer                controllers.testonly.TestOnlyController.finishFailBankTransfer
+
+GET        /get-an-income-tax-refund/test-only/clear-attempts                           controllers.testonly.TestOnlyController.clearAttempts

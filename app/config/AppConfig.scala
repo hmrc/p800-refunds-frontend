@@ -27,7 +27,14 @@ import scala.util.Try
 @Singleton
 class AppConfig @Inject() (servicesConfig: ServicesConfig, configuration: Configuration) {
 
-  val journeyRepoTtl: FiniteDuration = readFiniteDuration("mongodb.journey-repo-ttl")
+  object JourneyRepo {
+    val journeyRepoTtl: FiniteDuration = readFiniteDuration("mongodb.journey-repo.journey-repo-ttl")
+  }
+
+  object FailedAttemptRepo {
+    val failedAttemptRepoTtl: FiniteDuration = readFiniteDuration("mongodb.failed-attempts.failed-attempt-repo-ttl")
+    val failedAttemptRepoMaxAttempts: Int = configuration.get[Int]("mongodb.failed-attempts.failed-attempt-repo-max-attempts")
+  }
 
   val govUkRouteIn: String = readConfigAsValidUrlString("urls.gov-uk.govuk-route-in")
 

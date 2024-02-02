@@ -20,7 +20,7 @@ import action.{Actions, JourneyIdKey}
 import models.journeymodels.{HasFinished, Journey, JourneyId, JourneyType}
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
-import services.JourneyService
+import services.{FailedVerificationAttemptService, JourneyService}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import views.ViewsTestOnly
 
@@ -29,10 +29,11 @@ import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class TestOnlyController @Inject() (
-    mcc:            MessagesControllerComponents,
-    viewsTestOnly:  ViewsTestOnly,
-    journeyService: JourneyService,
-    as:             Actions
+    mcc:                              MessagesControllerComponents,
+    viewsTestOnly:                    ViewsTestOnly,
+    journeyService:                   JourneyService,
+    failedVerificationAttemptService: FailedVerificationAttemptService,
+    as:                               Actions
 )(implicit ec: ExecutionContext) extends FrontendController(mcc) {
 
   val landing: Action[AnyContent] = as.default { implicit request =>
@@ -76,7 +77,7 @@ class TestOnlyController @Inject() (
 
   //TODO: remove it once we integrate with APIs
   val finishFailBankTransfer: Action[AnyContent] = as.journeyActionForTestOnly.async { implicit r =>
-    journeyService.upsert(r.journey.copy(hasFinished = HasFinished.YesFailed)).map(_ =>
+    journeyService.upsert(r.journey.copy(hasFinished = HasFinished.RefundNotSubmitted)).map(_ =>
       Redirect(controllers.routes.RefundRequestNotSubmittedController.get))
   }
 
@@ -92,5 +93,11 @@ class TestOnlyController @Inject() (
         .map(journey => Json.prettyPrint(Json.toJson(journey)))
         .getOrElse(s"No Journey in mongo with journeyId: [${journeyId.value}]")
     )
+  }
+
+  val clearAttempts: Action[AnyContent] = as.default.async { _ =>
+    failedVerificationAttemptService
+      .drop()
+      .map(_ => Ok("failed-verification-attempts repo dropped."))
   }
 }

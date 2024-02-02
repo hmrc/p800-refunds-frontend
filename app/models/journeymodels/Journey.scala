@@ -30,16 +30,18 @@ sealed trait HasFinished
 object HasFinished {
 
   def hasFinished(hasFinished: HasFinished): Boolean = hasFinished match {
-    case No           => false
-    case YesSucceeded => true
-    case YesFailed    => true
+    case No                 => false
+    case YesSucceeded       => true
+    case RefundNotSubmitted => true
+    case LockedOut          => true
   }
 
   def isInProgress(hasFinished: HasFinished): Boolean = !HasFinished.hasFinished(hasFinished)
 
   case object No extends HasFinished
   case object YesSucceeded extends HasFinished
-  case object YesFailed extends HasFinished
+  case object RefundNotSubmitted extends HasFinished
+  case object LockedOut extends HasFinished
 
   @SuppressWarnings(Array("org.wartremover.warts.Any"))
   implicit val format: OFormat[HasFinished] = derived.oformat()

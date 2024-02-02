@@ -17,20 +17,21 @@
 package testsupport
 
 import com.google.inject.AbstractModule
+import models.attemptmodels.AttemptInfo
 import models.journeymodels.{Journey, JourneyId}
 import org.openqa.selenium.WebDriver
 import org.openqa.selenium.htmlunit.HtmlUnitDriver
-import org.scalatest.{Assertion, BeforeAndAfterEach}
 import org.scalatest.freespec.AnyFreeSpecLike
 import org.scalatest.matchers.should.Matchers
 import org.scalatest.time.{Millis, Seconds, Span}
+import org.scalatest.{Assertion, BeforeAndAfterEach}
 import org.scalatestplus.play.guice.GuiceOneServerPerSuite
 import pagespecs.pagesupport.Pages
 import play.api.inject.guice.{GuiceApplicationBuilder, GuiceableModule}
 import play.api.test.{DefaultTestServerFactory, RunningServer}
 import play.api.{Application, Mode}
 import play.core.server.ServerConfig
-import repository.JourneyRepo
+import repository.{FailedVerificationAttemptRepo, JourneyRepo}
 import testdata.TdAll
 import testsupport.wiremock.WireMockSupport
 
@@ -90,6 +91,7 @@ trait ItSpec extends AnyFreeSpecLike
   override def beforeEach(): Unit = {
     super.beforeEach()
     webDriver.manage().deleteAllCookies()
+    clearDownFailedAttemptDatabase() // we need to clear this as IPAddress stays the same between tests.
   }
 
   def goToViaPath(path: String): Unit = webDriver.get(s"$webdriverUrl$path")
@@ -110,6 +112,16 @@ trait ItSpec extends AnyFreeSpecLike
   def getJourneyFromDatabase(journeyId: JourneyId): Journey = {
     val journeyRepo: JourneyRepo = app.injector.instanceOf[JourneyRepo]
     journeyRepo.findById(journeyId).futureValue.value
+  }
+
+  def upsertFailedAttemptToDatabase(attemptInfo: AttemptInfo): Unit = {
+    val attemptRepo: FailedVerificationAttemptRepo = app.injector.instanceOf[FailedVerificationAttemptRepo]
+    attemptRepo.upsert(attemptInfo).futureValue
+  }
+
+  def clearDownFailedAttemptDatabase(): Unit = {
+    val attemptRepo: FailedVerificationAttemptRepo = app.injector.instanceOf[FailedVerificationAttemptRepo]
+    attemptRepo.drop().futureValue
   }
 
   lazy val pages = new Pages(baseUrl)

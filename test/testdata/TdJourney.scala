@@ -16,6 +16,7 @@
 
 package testdata
 
+import models.journeymodels.HasFinished.hasFinished
 import models.journeymodels._
 
 /**
@@ -69,6 +70,15 @@ trait TdJourney {
       j
     }
 
+    lazy val journeyLockedOutFromFailedAttempts: Journey = {
+      val j = journeyIdentityNotVerified.copy(
+        hasFinished = HasFinished.LockedOut
+      )
+      require(!j.isIdentityVerified, "this journey instance has to have NOT verified identity")
+      require(hasFinished(j.hasFinished), "this journey instance should be in finished state")
+      j
+    }
+
     lazy val journeySelectedBank: Journey = journeyIdentityVerified.copy(
       bankDescription = Some(dependencies.bankDescription)
     )
@@ -91,7 +101,7 @@ trait TdJourney {
     lazy val journeyClaimOverpaymentFailed: Journey =
       //TODO: API responses
       journeyReceivedNotificationFromEcospend.copy(
-        hasFinished = HasFinished.YesFailed
+        hasFinished = HasFinished.RefundNotSubmitted
       )
 
     /**
@@ -129,6 +139,15 @@ trait TdJourney {
         identityVerificationResponse = Some(dependencies.identityNotVerifiedResponse)
       )
       require(!j.isIdentityVerified, "this journey instance has to have NOT verified identity")
+      j
+    }
+
+    lazy val journeyLockedOutFromFailedAttempts: Journey = {
+      val j = journeyIdentityNotVerified.copy(
+        hasFinished = HasFinished.LockedOut
+      )
+      require(!j.isIdentityVerified, "this journey instance has to have NOT verified identity")
+      require(hasFinished(j.hasFinished), "this journey instance should be in finished state")
       j
     }
 
