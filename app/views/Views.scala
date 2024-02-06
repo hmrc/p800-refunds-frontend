@@ -39,7 +39,8 @@ class Views @Inject() (
     val chooseAnotherWayPtaOrChequePage:                views.html.chooseanotherway.PtaOrChequePage,
     val chooseAnotherWayPtaOrBankTransferLoggedOutPage: views.html.chooseanotherway.PtaOrBankTransferLoggedOutPage,
     val enterTheNameOfYourBankPage:                     views.html.EnterTheNameOfYourBankPage,
-    val bankTransferRequestReceivedPage:                views.html.BankTransferRequestReceivedPage
+    val bankTransferRequestReceivedPage:                views.html.BankTransferRequestReceivedPage,
+    val youCannotConfirmSecurityDetailsYet:             views.html.YouCannotConfirmSecurityDetailsYet
 )
 
 class ViewsTestOnly @Inject() (
