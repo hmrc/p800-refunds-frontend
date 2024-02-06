@@ -685,4 +685,15 @@ object Messages {
 
   }
 
+  object ThereIsAProblem {
+    val thereIsAProblem: Message = Message(
+      english = "There is a problem"
+    )
+
+    def cannontProcess(linkContact: String): Message = Message(
+      english = s"""We cannot process your refund request online, so we need you to <a class="govuk-link" href="$linkContact">contact us</a>.""".stripMargin
+    )
+
+  }
+
 }

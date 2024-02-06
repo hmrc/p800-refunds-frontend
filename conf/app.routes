@@ -5,7 +5,7 @@ GET         /assets/*file                                                  contr
 
 GET         /start                                                         controllers.StartController.get
 
-GET         /you-cannot-confirm-your-security-details-yet                  controllers.YouCannotConfirmYourSecurityDetailsYet.get
+GET         /you-cannot-confirm-your-security-details-yet                  controllers.YouCannotConfirmYourSecurityDetailsYetController.get
 
 GET         /do-you-want-to-sign-in                                        controllers.DoYouWantToSignInController.get
 POST        /do-you-want-to-sign-in                                        controllers.DoYouWantToSignInController.post
@@ -70,3 +70,5 @@ GET         /cheque/request-received                                       contr
 
 GET         /bank-transfer/refund-request-not-submitted                    controllers.RefundRequestNotSubmittedController.get
 POST        /bank-transfer/refund-request-not-submitted                    controllers.RefundRequestNotSubmittedController.post
+
+GET         /there-is-a-problem                                            controllers.ThereIsAProblemController.get
