@@ -42,4 +42,6 @@ class FailedVerificationAttemptService @Inject() (failedVerificationAttemptRepo:
 
   def drop(): Future[Unit] = failedVerificationAttemptRepo.drop()
 
+  def findAll(): Future[Seq[AttemptInfo]] = failedVerificationAttemptRepo.collection.find().toFuture()
+
 }

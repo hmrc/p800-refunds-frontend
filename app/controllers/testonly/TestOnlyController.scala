@@ -95,6 +95,12 @@ class TestOnlyController @Inject() (
     )
   }
 
+  val showAttemptsCollection: Action[AnyContent] = as.default.async { _ =>
+    failedVerificationAttemptService
+      .findAll()
+      .map(collection => Ok(Json.toJson(collection)))
+  }
+
   val clearAttempts: Action[AnyContent] = as.default.async { _ =>
     failedVerificationAttemptService
       .drop()
