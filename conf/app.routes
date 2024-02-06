@@ -5,6 +5,8 @@ GET         /assets/*file                                                  contr
 
 GET         /start                                                         controllers.StartController.get
 
+GET         /you-cannot-confirm-your-security-details-yet                  controllers.YouCannotConfirmYourSecurityDetailsYet.get
+
 GET         /do-you-want-to-sign-in                                        controllers.DoYouWantToSignInController.get
 POST        /do-you-want-to-sign-in                                        controllers.DoYouWantToSignInController.post
 
