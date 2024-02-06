@@ -14,25 +14,14 @@
  * limitations under the License.
  */
 
-package controllers
+package pagespecs
 
-import action.Actions
-import play.api.mvc._
-import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
-import views.Views
+import testsupport.ItSpec
 
-import javax.inject.{Inject, Singleton}
+class ThereIsAProblemSpec extends ItSpec {
 
-@Singleton
-class YouCannotConfirmYourSecurityDetailsYet @Inject() (
-    mcc:     MessagesControllerComponents,
-    views:   Views,
-    actions: Actions
-) extends FrontendController(mcc) {
-
-  def get: Action[AnyContent] = actions.default {
-    implicit request: Request[_] => Ok(views.youCannotConfirmSecurityDetailsYet())
+  "navigating to /there-is-a-problem" in {
+    pages.thereIsAProblemPage.open()
+    pages.thereIsAProblemPage.assertPageIsDisplayed()
   }
-
 }
-

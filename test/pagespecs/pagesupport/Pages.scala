@@ -66,6 +66,8 @@ class Pages(baseUrl: String)(implicit webDriver: WebDriver) {
 
   val youCannotConfirmYourSecurityDetailsYetSpec = new YouCannotConfirmYourSecurityDetailsYetPage(baseUrl = baseUrl)
 
+  val thereIsAProblemPage = new ThereIsAProblemPage(baseUrl = baseUrl)
+
   val enterTheNameOfYourBankAccountPage = new EnterTheNameOfYourBankAccountPage(baseUrl = baseUrl)
 
   val requestReceivedBankTransferPage = new RequestReceivedPage(baseUrl            = baseUrl, pathForJourneyType = bankTransferRelativeUrl)
