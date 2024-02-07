@@ -17,10 +17,12 @@
 package testdata
 
 import akka.http.scaladsl.model.Uri
-import models.dateofbirth.{DateOfBirth, DayOfMonth, Month, Year}
-import models.ecospend._
 import models._
 import models.attemptmodels.{AttemptId, AttemptInfo, IpAddress, NumberOfAttempts}
+import models.dateofbirth.{DateOfBirth, DayOfMonth, Month, Year}
+import models.ecospend._
+import models.ecospend.consent._
+import testsupport.ItSpec
 
 import java.time.format.DateTimeFormatter
 import java.time.{Instant, LocalDateTime, ZoneOffset}
@@ -70,4 +72,28 @@ trait TdBase {
     numberOfFailedAttempts = NumberOfAttempts(failedAttempts)
   )
 
+  lazy val consentId: UUID = UUID.fromString("00000000-0000-0000-0000-000000000000")
+  lazy val bankReferenceId: BankReferenceId = BankReferenceId("MyBank-129781876126")
+  lazy val bankConsentUrl: Uri = Uri(s"http://localhost:${ItSpec.testServerPort.toString}/get-an-income-tax-refund/test-only/bank-page")
+  lazy val redirectUrl: Uri = Uri(s"http://localhost:${ItSpec.testServerPort.toString}/get-an-income-tax-refund/bank-transfer/verifying-your-bank-account")
+  lazy val permissions: List[ConsentPermission] = List(
+    ConsentPermission.Account,
+    ConsentPermission.Balance,
+    ConsentPermission.Transactions,
+    ConsentPermission.DirectDebits,
+    ConsentPermission.StandingOrders,
+    ConsentPermission.Parties
+  )
+
+  lazy val bankConsent: BankConsentResponse = BankConsentResponse(
+    id                = consentId,
+    bankReferenceId   = bankReferenceId,
+    bankConsentUrl    = bankConsentUrl,
+    bankId            = bankId,
+    status            = ConsentStatus.AwaitingAuthorization,
+    redirectUrl       = redirectUrl,
+    consentEndDate    = localDateTime,
+    consentExpiryDate = localDateTime,
+    permissions       = permissions
+  )
 }

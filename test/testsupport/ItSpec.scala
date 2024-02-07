@@ -45,7 +45,7 @@ trait ItSpec extends AnyFreeSpecLike
   with Matchers {
 
   override implicit val patienceConfig: PatienceConfig = PatienceConfig(timeout  = scaled(Span(3, Seconds)), interval = scaled(Span(300, Millis)))
-  private val testServerPort = 19001
+  private val testServerPort = ItSpec.testServerPort
   private val baseUrl: String = s"http://localhost:${testServerPort.toString}"
   private val databaseName: String = "p800-refunds-frontend-it"
   lazy val webdriverUrl: String = s"http://localhost:${port.toString}"
@@ -135,4 +135,8 @@ trait ItSpec extends AnyFreeSpecLike
     }
   }
 
+}
+
+object ItSpec {
+  val testServerPort = 19001
 }

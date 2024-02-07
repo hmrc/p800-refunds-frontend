@@ -63,7 +63,7 @@ POST        /bank-transfer/enter-name-of-your-bank                         contr
 GET         /bank-transfer/give-your-permission                            controllers.GiveYourPermissionController.get
 POST        /bank-transfer/give-your-permission                            controllers.GiveYourPermissionController.post
 
-GET         /bank-transfer/verifying-your-bank-account                     controllers.WeAreVerifyingYourBankAccountController.get
+GET         /bank-transfer/verifying-your-bank-account                     controllers.WeAreVerifyingYourBankAccountController.get(status: Option[models.ecospend.consent.ConsentStatus], consent_id: Option[java.util.UUID], bank_reference_id: Option[models.ecospend.consent.BankReferenceId])
 
 GET         /bank-transfer/request-received                                controllers.RequestReceivedController.getBankTransfer
 GET         /cheque/request-received                                       controllers.RequestReceivedController.getCheque

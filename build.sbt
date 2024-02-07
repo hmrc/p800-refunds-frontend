@@ -24,7 +24,10 @@ lazy val microservice = Project("p800-refunds-frontend", file("."))
   .settings(
       routesImport ++= Seq(
           "language.Language",
-          "models.journeymodels.JourneyId"
+          "models.journeymodels.JourneyId",
+          "models.ecospend.consent.ConsentStatus",
+          "models.ecospend.consent.BankReferenceId",
+          "models.Binders"
       ))
   .settings(resolvers += Resolver.jcenterRepo)
   .settings(CodeCoverageSettings.settings: _*)

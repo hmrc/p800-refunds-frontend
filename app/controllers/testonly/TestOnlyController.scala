@@ -16,7 +16,9 @@
 
 package controllers.testonly
 
-import action.{Actions, JourneyIdKey}
+import action.{Actions, JourneyRequest, JourneyIdKey}
+import models.ecospend.consent.{ConsentStatus, BankConsentResponse}
+import models.forms.testonly.{BankStubForm, BankStubFormValue}
 import models.journeymodels.{HasFinished, Journey, JourneyId, JourneyType}
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
@@ -83,6 +85,33 @@ class TestOnlyController @Inject() (
 
   def addJourneyIdToSession(journeyId: JourneyId): Action[AnyContent] = as.default { implicit request =>
     Ok(s"${journeyId.value} added to session").addingToSession(JourneyIdKey.journeyIdKey -> journeyId.value)
+  }
+
+  val getBankPage: Action[AnyContent] = as.journeyActionForTestOnly.async { implicit request: JourneyRequest[_] =>
+    Future.successful(Ok(viewsTestOnly.bankStubPage(
+      form = BankStubForm.form
+    )))
+  }
+
+  val postBankPage: Action[AnyContent] = as.journeyActionForTestOnly.async { implicit request: JourneyRequest[_] =>
+    val journey = request.journey
+    BankStubForm.form.bindFromRequest().fold(
+      formWithErrors => Future.successful(BadRequest(viewsTestOnly.bankStubPage(
+        form = formWithErrors
+      ))), {
+        case BankStubFormValue.Authorised =>
+          Future.successful(Redirect(redirectUrl(journey, ConsentStatus.Authorised)))
+        case BankStubFormValue.Canceled =>
+          Future.successful(Redirect(redirectUrl(journey, ConsentStatus.Canceled)))
+        case BankStubFormValue.Failed =>
+          Future.successful(Redirect(redirectUrl(journey, ConsentStatus.Failed)))
+      }
+    )
+  }
+
+  private def redirectUrl(journey: Journey, status: ConsentStatus)(implicit request: JourneyRequest[_]): String = {
+    val bankConsent: BankConsentResponse = journey.getBankConsent
+    controllers.routes.WeAreVerifyingYourBankAccountController.get(Some(status), Some(bankConsent.id), Some(bankConsent.bankReferenceId)).url
   }
 
   private def showJourney(journeyId: JourneyId): Future[Result] = {

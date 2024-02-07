@@ -37,7 +37,8 @@ class JourneyFactory @Inject() (
     isChanging                   = false,
     dateOfBirth                  = None,
     identityVerificationResponse = None,
-    bankDescription              = None
+    bankDescription              = None,
+    bankConsent                  = None
   )
 
 }

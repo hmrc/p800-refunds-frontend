@@ -18,15 +18,21 @@ package testsupport.stubs
 
 import com.github.tomakehurst.wiremock.client.WireMock._
 import com.github.tomakehurst.wiremock.stubbing.StubMapping
+import models.ecospend.BankId
+import models.ecospend.consent.ConsentStatus
+import models.ecospend.consent.BankConsentRequest
 import models.ecospend.verification.{BankVerificationRequest, VerificationStatus}
 import play.api.http.Status
+import testsupport.ItSpec
 
 object EcospendStub {
   val authUrl: String = "/connect/token"
   val banksUrl: String = "/api/v2.0/banks"
   val validateUrl: String = "/api/v2.0/validate"
+  val consentUrl: String = "/api/v2.0/consents"
 
   val authJsonResponseBody2xx: String =
+    //language=JSON
     """{
       "access_token": "1234567890",
       "expires_in": 300,
@@ -35,6 +41,7 @@ object EcospendStub {
     }""".stripMargin
 
   val authJsonResponseBodyInvalid4xx: String =
+    //language=JSON
     """{
       "error": "INVALID_CLIENT_CREDENTIALS",
       "description": "Client credentials are missing or invalid",
@@ -45,6 +52,7 @@ object EcospendStub {
   def stubEcospendAuth4xxUnauthorized: StubMapping = WireMockHelpers.stubForPostWithResponseBody(authUrl, authJsonResponseBodyInvalid4xx, Status.UNAUTHORIZED)
 
   val banksResponseJson: String =
+    //language=JSON
     s"""{
           "data": [
             {
@@ -141,6 +149,36 @@ object EcospendStub {
 
     def verifyValidate(numberOfRequests: Int = 1): Unit = WireMockHelpers.verifyExactlyWithBodyParse(validateUrl, numberOfRequests)(BankVerificationRequest.format)
 
+  }
+
+  object ConsentStubs {
+    def stubConsent2xxSucceeded(bankId: BankId): StubMapping =
+      WireMockHelpers.stubForPostWithResponseBody(consentUrl, validateBankConsentResponseJson(bankId, ConsentStatus.AwaitingAuthorization))
+
+    def validateBankConsentResponseJson(bankId: BankId, consentStatus: ConsentStatus): String =
+      //language=JSON
+      s"""
+        {
+          "id": "00000000-0000-0000-0000-000000000000",
+          "bank_reference_id": "MyBank-129781876126",
+          "bank_consent_url": "http://localhost:${ItSpec.testServerPort.toString}/get-an-income-tax-refund/test-only/bank-page",
+          "bank_id": "${bankId.value}",
+          "status": "${consentStatus.toString}",
+          "redirect_url": "http://localhost:${ItSpec.testServerPort.toString}/get-an-income-tax-refund/bank-transfer/verifying-your-bank-account",
+          "consent_end_date": "2059-11-25T16:33:51.880",
+          "consent_expiry_date": "2059-11-25T16:33:51.880",
+          "permissions": [
+              "Account",
+              "Balance",
+              "Transactions",
+              "DirectDebits",
+              "StandingOrders",
+              "Parties"
+          ]
+        }""".stripMargin
+
+    def consentValidate(numberOfRequests: Int = 1): Unit =
+      WireMockHelpers.verifyExactlyWithBodyParse(consentUrl, numberOfRequests)(BankConsentRequest.format)
   }
 
 }

@@ -19,6 +19,7 @@ package models.journeymodels
 import julienrf.json.derived
 import models.dateofbirth.DateOfBirth
 import models.ecospend.BankDescription
+import models.ecospend.consent.BankConsentResponse
 import models.{IdentityVerificationResponse, NationalInsuranceNumber, P800Reference}
 import play.api.libs.json.OFormat
 import play.api.mvc.Request
@@ -60,7 +61,8 @@ final case class Journey(
     isChanging:                   Boolean, //flag which is set on change check-your-answers page when user clicks "change" link
     dateOfBirth:                  Option[DateOfBirth],
     identityVerificationResponse: Option[IdentityVerificationResponse], //reset this field upon changes of dependant fields
-    bankDescription:              Option[BankDescription]
+    bankDescription:              Option[BankDescription],
+    bankConsent:                  Option[BankConsentResponse]
 ) {
 
   /* derived stuff: */
@@ -79,6 +81,8 @@ final case class Journey(
   def getIdentityVerificationResponse(implicit request: Request[_]): IdentityVerificationResponse = identityVerificationResponse.getOrElse(Errors.throwServerErrorException(s"Expected 'identityVerificationResponse' to be defined but it was None [${journeyId.toString}] "))
 
   def getBankDescription(implicit request: Request[_]): BankDescription = bankDescription.getOrElse(Errors.throwServerErrorException(s"Expected 'bankDescription' to be defined but it was None [${journeyId.toString}] "))
+
+  def getBankConsent(implicit request: Request[_]): BankConsentResponse = bankConsent.getOrElse(Errors.throwBadRequestException("Expected 'bankConsent' to be defined but it was None [${journeyId.toString}] "))
 
   def isIdentityVerified: Boolean = identityVerificationResponse.map(_.identityVerified.value).getOrElse(false)
 

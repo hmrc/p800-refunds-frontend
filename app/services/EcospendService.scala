@@ -17,12 +17,16 @@
 package services
 
 import action.JourneyRequest
+import akka.http.scaladsl.model.Uri
 import connectors.{EcospendAuthServerConnector, EcospendConnector}
 import models.ecospend.BankDescription
+import models.ecospend.consent.{BankConsentRequest, BankConsentResponse, ConsentPermission, ConsentReferrerChannel, ConsentCreationReason}
 import models.ecospend.verification.{BankVerification, BankVerificationRequest}
 import models.journeymodels.Journey
 
+import java.time.LocalDateTime
 import javax.inject.{Inject, Singleton}
+import scala.concurrent.duration.DurationInt
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton()
@@ -41,7 +45,32 @@ class EcospendService @Inject() (
   //TODO: remove it and call backend to get the validation result from webhook
   def validate(journey: Journey)(implicit request: JourneyRequest[_]): Future[BankVerification] = for {
     accessToken <- ecospendAuthServerConnector.accessToken
-    getBanksResponse <- ecospendConnector.validate(accessToken, BankVerificationRequest(journey.getNationalInsuranceNumber.value))
-  } yield getBanksResponse
+    bankVerificationResponse <- ecospendConnector.validate(accessToken, BankVerificationRequest(journey.getNationalInsuranceNumber.value))
+  } yield bankVerificationResponse
+
+  def createConsent(journey: Journey)(implicit request: JourneyRequest[_]): Future[BankConsentResponse] = for {
+    accessToken <- ecospendAuthServerConnector.accessToken
+    bankConsentResponse <- ecospendConnector.createConsent(accessToken, bankConsentRequestFromJourney(journey))
+  } yield bankConsentResponse
+
+  private def bankConsentRequestFromJourney(journey: Journey)(implicit request: JourneyRequest[_]): BankConsentRequest =
+    BankConsentRequest(
+      bankId           = journey.getBankDescription.bankId,
+      redirectUrl      = Uri(controllers.routes.WeAreVerifyingYourBankAccountController.get(None, None, None).absoluteURL()),
+      merchantId       = None,
+      merchantUserId   = None,
+      consentEndDate   = LocalDateTime.now().plusSeconds(30.minutes.toSeconds),
+      permissions      = List(
+        ConsentPermission.Account,
+        ConsentPermission.Balance,
+        ConsentPermission.Transactions,
+        ConsentPermission.DirectDebits,
+        ConsentPermission.StandingOrders,
+        ConsentPermission.Parties
+      ),
+      referrerChannel  = ConsentReferrerChannel.Web,
+      additionalParams = None,
+      creationReason   = ConsentCreationReason.Algorithm
+    )
 
 }

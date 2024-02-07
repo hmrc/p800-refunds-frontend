@@ -20,6 +20,7 @@ import action.JourneyRequest
 import config.AppConfig
 import models.ecospend.verification.{BankVerification, BankVerificationRequest}
 import models.ecospend.{EcospendAccessToken, EcospendGetBanksResponse}
+import models.ecospend.consent.{BankConsentRequest, BankConsentResponse}
 import requests.RequestSupport
 import uk.gov.hmrc.http.HttpClient
 import uk.gov.hmrc.http.HttpReads.Implicits._
@@ -42,16 +43,9 @@ class EcospendConnector @Inject() (
   def getListOfAvailableBanks(accessToken: EcospendAccessToken)(implicit request: JourneyRequest[_]): Future[EcospendGetBanksResponse] = captureException {
     httpClient.GET[EcospendGetBanksResponse](
       url     = banksUrl,
-      headers = Seq(("Authorization", s"Bearer ${accessToken.token}"))
+      headers = authorizationHeader(accessToken)
     )
   }
-
-  private def captureException[A](future: => Future[A])(implicit request: JourneyRequest[_]): Future[A] =
-    future.recover {
-      case ex =>
-        JourneyLogger.warn(s"Ecospend call failed with exception: ${ex.toString}")
-        throw ex
-    }
 
   private val validateUrl: String = appConfig.ExternalApiCalls.ecospendUrl + "/validate"
 
@@ -62,9 +56,31 @@ class EcospendConnector @Inject() (
     httpClient.POST[BankVerificationRequest, BankVerification](
       url     = validateUrl,
       body    = bankVerificationRequest,
-      headers = Seq(("Authorization", s"Bearer ${accessToken.token}"))
+      headers = authorizationHeader(accessToken)
     )
   }
 
+  private val createConsentUrl: String = appConfig.ExternalApiCalls.ecospendUrl + "/consents"
+
+  def createConsent(
+      accessToken:        EcospendAccessToken,
+      bankConsentRequest: BankConsentRequest
+  )(implicit request: JourneyRequest[_]): Future[BankConsentResponse] = captureException {
+    httpClient.POST[BankConsentRequest, BankConsentResponse](
+      url     = createConsentUrl,
+      body    = bankConsentRequest,
+      headers = authorizationHeader(accessToken)
+    )
+  }
+
+  private def captureException[A](future: => Future[A])(implicit request: JourneyRequest[_]): Future[A] =
+    future.recover {
+      case ex =>
+        JourneyLogger.warn(s"Ecospend call failed with exception: ${ex.toString}")
+        throw ex
+    }
+
+  private def authorizationHeader(accessToken: EcospendAccessToken) =
+    Seq(("Authorization", s"Bearer ${accessToken.token}"))
 }
 

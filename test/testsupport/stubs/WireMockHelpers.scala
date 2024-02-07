@@ -93,6 +93,7 @@ object WireMockHelpers {
     post(urlPathEqualTo(url)).willReturn(
       aResponse()
         .withStatus(responseStatus)
+        .withHeader("Content-Type", "application/json")
         .withBody(jsonBody)
     )
   )

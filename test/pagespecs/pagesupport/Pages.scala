@@ -16,9 +16,11 @@
 
 package pagespecs.pagesupport
 
+import models.ecospend.consent.ConsentStatus
 import org.openqa.selenium.WebDriver
 import pagespecs.pages._
-import pagespecs.pages.testonly.{GeneralIncomeTaxEnquiriesPage, GovUkRouteInPage, PtaSignInPage}
+import pagespecs.pages.testonly._
+import testdata.TdAll
 
 class Pages(baseUrl: String)(implicit webDriver: WebDriver) {
 
@@ -55,7 +57,7 @@ class Pages(baseUrl: String)(implicit webDriver: WebDriver) {
   val noMoreAttemptsLeftToConfirmYourIdentityChequePage = new NoMoreAttemptsLeftToConfirmYourIdentityPage(baseUrl            = baseUrl, pathForJourneyType = chequeRelativeUrl)
 
   val refundRequestNotSubmittedPage = new RefundRequestNotSubmittedPage(baseUrl = baseUrl)
-  val verifyBankAccountPage = new VerifyBankAccountPage(baseUrl = baseUrl)
+  val verifyBankAccountPage = new VerifyBankAccountPage(baseUrl       = baseUrl, consentStatus = ConsentStatus.Authorised, TdAll.tdAll.consentId, TdAll.tdAll.bankReferenceId)
 
   val chooseAnotherWayToReceiveYourRefundBankTransferPage = new ChooseAnotherWayToReceiveYourRefundPage(baseUrl            = baseUrl, pathForJourneyType = bankTransferRelativeUrl)
   val chooseAnotherWayToReceiveYourRefundChequePage = new ChooseAnotherWayToReceiveYourRefundPage(baseUrl            = baseUrl, pathForJourneyType = chequeRelativeUrl)
@@ -77,4 +79,5 @@ class Pages(baseUrl: String)(implicit webDriver: WebDriver) {
   val govUkRouteInPage = new GovUkRouteInPage(baseUrl = baseUrl)
   val ptaSignInPage = new PtaSignInPage(baseUrl = baseUrl)
   val generalIncomeTaxEnquiriesPage = new GeneralIncomeTaxEnquiriesPage(baseUrl = baseUrl)
+  val bankStubPage = new BankStubPage(baseUrl = baseUrl)
 }

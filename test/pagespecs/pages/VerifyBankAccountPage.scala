@@ -16,13 +16,16 @@
 
 package pagespecs.pages
 
+import models.ecospend.consent.{ConsentStatus, BankReferenceId}
 import models.journeymodels.JourneyType
 import org.openqa.selenium.WebDriver
 import pagespecs.pagesupport.{ContentExpectation, Page, PageUtil}
 
-class VerifyBankAccountPage(baseUrl: String)(implicit webDriver: WebDriver) extends Page(
+import java.util.UUID
+
+class VerifyBankAccountPage(baseUrl: String, consentStatus: ConsentStatus, consentId: UUID, bankReferenceId: BankReferenceId)(implicit webDriver: WebDriver) extends Page(
   baseUrl,
-  path = "/get-an-income-tax-refund/bank-transfer/verifying-your-bank-account"
+  path = s"/get-an-income-tax-refund/bank-transfer/verifying-your-bank-account?status=${consentStatus.toString}&consent_id=${consentId.toString}&bank_reference_id=${bankReferenceId.value}"
 ) {
 
   override def expectedH1: String = "We are verifying your bank account"
