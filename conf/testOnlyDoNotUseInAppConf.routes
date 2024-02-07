@@ -3,7 +3,7 @@
 # !!!WARNING!!! This file MUST NOT be referenced in the "application.conf" file to avoid risk of rolling test routes in the production environment.
 # If you need test routes when running tests in CI make sure that the profile for this micro-service (used by service-manager) defines this router as parameter.
 # To do so add the following line to the micro-service profile: "-Dapplication.router=testOnlyDoNotUseInAppConf.Routes"
-# To start the micro-service locally using the test routes run the following command: "sbt run -Dapplication.router=testOnlyDoNotUseInAppConf.Routes" 
+# To start the micro-service locally using the test routes run the following command: "sbt run -Dapplication.router=testOnlyDoNotUseInAppConf.Routes"
 
 # Any test-only end-point should be defined here.
 # !!!WARNING!!! Every route defined in this file MUST be prefixed with "/test-only/". This is because NGINX is blocking every uri containing the string "test-only" in production.
@@ -14,21 +14,25 @@
 
 GET        /get-an-income-tax-refund/test-only                                          controllers.testonly.TestOnlyController.landing
 
-#utilieis for debugging journeys
+# Utilities for debugging journeys
 GET        /get-an-income-tax-refund/test-only/show-journey                             controllers.testonly.TestOnlyController.showJourney
 GET        /get-an-income-tax-refund/test-only/show-journey/:journeyId                  controllers.testonly.TestOnlyController.showJourneyById(journeyId: JourneyId)
 
-#utilised in tests:
+# Utilised in tests:
 GET        /get-an-income-tax-refund/test-only/add-journey-id-to-session/:journeyId     controllers.testonly.TestOnlyController.addJourneyIdToSession(journeyId: JourneyId)
 
-#stubged pages of other services
+# Stubbed pages of other services
 GET        /get-an-income-tax-refund/test-only/gov-uk-route-in                          controllers.testonly.TestOnlyController.govUkRouteIn
 GET        /get-an-income-tax-refund/test-only/pta-sign-in                              controllers.testonly.TestOnlyController.ptaSignIn
 GET        /get-an-income-tax-refund/test-only/income-tax-general-enquiries             controllers.testonly.TestOnlyController.incomeTaxGeneralEnquiries
 
-#temporary endpoint to toggle hasFinished=true for BankTransfer journey so it can be tested
+# Temporary endpoint to toggle hasFinished=true for BankTransfer journey so it can be tested
 GET        /get-an-income-tax-refund/test-only/finish-succeed-bank-transfer             controllers.testonly.TestOnlyController.finishSucceedBankTransfer
 GET        /get-an-income-tax-refund/test-only/finish-fail-bank-transfer                controllers.testonly.TestOnlyController.finishFailBankTransfer
 
 GET        /get-an-income-tax-refund/test-only/show-collection                          controllers.testonly.TestOnlyController.showAttemptsCollection
 GET        /get-an-income-tax-refund/test-only/clear-attempts                           controllers.testonly.TestOnlyController.clearAttempts
+
+# Stubbed bank page. in production this would be determined by the response of the ecospend consent API
+GET        /get-an-income-tax-refund/test-only/bank-page                                controllers.testonly.TestOnlyController.getBankPage
+POST       /get-an-income-tax-refund/test-only/bank-page                                controllers.testonly.TestOnlyController.postBankPage

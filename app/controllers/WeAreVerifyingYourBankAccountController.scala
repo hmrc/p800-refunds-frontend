@@ -16,7 +16,8 @@
 
 package controllers
 
-import action.Actions
+import action.{Actions, JourneyRequest}
+import models.ecospend.consent.{ConsentStatus, BankReferenceId}
 import models.journeymodels._
 import play.api.mvc._
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
@@ -24,6 +25,7 @@ import util.Errors
 import util.SafeEquals.EqualsOps
 import views.Views
 
+import java.util.UUID
 import javax.inject.{Inject, Singleton}
 
 @Singleton
@@ -33,10 +35,11 @@ class WeAreVerifyingYourBankAccountController @Inject() (
     actions: Actions
 ) extends FrontendController(mcc) {
 
-  def get: Action[AnyContent] = actions.journeyInProgress { implicit request =>
+  def get(status: Option[ConsentStatus], consent_id: Option[UUID], bank_reference_id: Option[BankReferenceId]): Action[AnyContent] = actions.journeyInProgress { implicit request: JourneyRequest[_] =>
     val journey: Journey = request.journey
     Errors.require(journey.getJourneyType === JourneyType.BankTransfer, "This endpoint supports only BankTransfer journey")
 
+    //TODO: assert status, consent_id & bank_reference_id match that contained within the journey
     //TODO: call backend and check what is the outcome of the Ecospend Webhook, if its not there, redirect to itself, if it succeeds and validation ok then progress, if validation fails then redirect to RequestNotSubmitted
     //TODO: call Ecospend - Get account details API to get more info about account
     //TODO: call API#1133: Get Bank Details Risk Result (aka EDH Repayment Details Risk)
@@ -45,6 +48,6 @@ class WeAreVerifyingYourBankAccountController @Inject() (
     //TODO: if API#1133 or API#JF72745 fails, call API#1132 (EPID0771) Case Management Notified
     //TODO: if API#1133 or API#JF72745 fails, redirect to RequestNotSubmitted
 
-    Ok(views.weAreVerifyingYourBankAccountPage())
+    Ok(views.weAreVerifyingYourBankAccountPage(status, consent_id, bank_reference_id))
   }
 }

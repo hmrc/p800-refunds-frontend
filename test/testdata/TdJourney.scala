@@ -37,7 +37,8 @@ trait TdJourney {
     isChanging                   = false,
     dateOfBirth                  = None,
     identityVerificationResponse = None,
-    bankDescription              = None
+    bankDescription              = None,
+    bankConsent                  = None
   )
 
   object BankTransfer {
@@ -83,10 +84,9 @@ trait TdJourney {
       bankDescription = Some(dependencies.bankDescription)
     )
 
-    lazy val journeyPermissionGiven: Journey = {
-      //TODO: here responsed from consent API
-      journeySelectedBank
-    }
+    lazy val journeyPermissionGiven: Journey = journeySelectedBank.copy(
+      bankConsent = Some(dependencies.bankConsent)
+    )
 
     lazy val journeyReceivedNotificationFromEcospend: Journey =
       //TODO: API responses

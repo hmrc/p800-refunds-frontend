@@ -18,13 +18,15 @@
 @import uk.gov.hmrc.govukfrontend.views.html.components._
 @import views.html.templates.Layout
 @import action.JourneyRequest
+@import models.ecospend.consent.{ConsentStatus, BankReferenceId}
+@import java.util.UUID
 
 @this(
     layout: Layout,
     viewsHelpers: views.ViewsHelpers
 )
 
-@()(implicit request: JourneyRequest[_])
+@(status: Option[ConsentStatus], consentId: Option[UUID], bankReferenceId: Option[BankReferenceId])(implicit request: JourneyRequest[_])
 
 @import viewsHelpers.requestSupport._
 
@@ -37,7 +39,7 @@
     <h1 class="govuk-heading-xl">@{Messages.VerifyBankAccount.`We are verifying your bank account`.show}</h1>
 
     <p class="govuk-body">
-        @{Html(Messages.VerifyBankAccount.`This usually takes a few seconds`(routes.WeAreVerifyingYourBankAccountController.get.url).show)}
+        @{Html(Messages.VerifyBankAccount.`This usually takes a few seconds`(routes.WeAreVerifyingYourBankAccountController.get(status, consentId, bankReferenceId).url).show)}
     </p>
 
 

@@ -17,12 +17,14 @@
 package controllers
 
 import action.Actions
+import models.ecospend.consent.BankConsentResponse
 import models.journeymodels.{Journey, JourneyType}
 import play.api.mvc._
+import services.EcospendService
 import services.JourneyService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
-import util.Errors
 import util.SafeEquals.EqualsOps
+import util.Errors
 import views.Views
 
 import javax.inject.{Inject, Singleton}
@@ -30,10 +32,11 @@ import scala.concurrent.ExecutionContext
 
 @Singleton
 class GiveYourPermissionController @Inject() (
-    mcc:            MessagesControllerComponents,
-    views:          Views,
-    actions:        Actions,
-    journeyService: JourneyService
+    mcc:             MessagesControllerComponents,
+    views:           Views,
+    actions:         Actions,
+    ecospendService: EcospendService,
+    journeyService:  JourneyService
 )(implicit execution: ExecutionContext) extends FrontendController(mcc) {
 
   def get: Action[AnyContent] = actions.journeyInProgress { implicit request =>
@@ -50,10 +53,13 @@ class GiveYourPermissionController @Inject() (
     val journey: Journey = request.journey
     Errors.require(journey.getJourneyType === JourneyType.BankTransfer, "This endpoint supports only BankTransfer journey")
 
-    //TODO: call CONSENTS ECOSPEND API here https://docs.ecospend.com/new/references.html?render=consents&url_render=ais
-    //TODO: navigate to the bank URL (redirect_url from the response in above API)
-    journeyService
-      .upsert(journey) //TODO: update journey with the result of the API call
-      .map(_ => Redirect(routes.WeAreVerifyingYourBankAccountController.get))
+    for {
+      bankConsentResponse: BankConsentResponse <- ecospendService.createConsent(journey)
+      newJourney = journey.copy(
+        bankConsent = Some(bankConsentResponse)
+      )
+      _ <- journeyService.upsert(newJourney)
+    } yield Redirect(bankConsentResponse.bankConsentUrl.toString)
+
   }
 }
