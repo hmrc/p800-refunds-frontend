@@ -16,61 +16,59 @@
 
 package testsupport.stubs
 
-import com.github.tomakehurst.wiremock.client.WireMock.matching
+import com.github.tomakehurst.wiremock.client.WireMock
+import com.github.tomakehurst.wiremock.client.WireMock.{exactly, matching}
 import com.github.tomakehurst.wiremock.stubbing.StubMapping
 import models.{Nino, P800Reference}
 import nps.models.ReferenceCheckResult
 import play.api.http.Status
 import play.api.libs.json.Json
-import testdata.TdAll
+import WireMock._
+import com.github.tomakehurst.wiremock.matching.StringValuePattern
 
 object NpsReferenceCheckStub {
 
-  def url(nino:  Nino, p800Reference: P800Reference) = s"/nps-json-service/nps/v1/api/reconciliation/p800/${nino.value}/${p800Reference.value}"
-
-  private val npsHeaders = Seq(
-    ("CorrelationId", matching(".*")),
-    ("Authorization", matching("Basic .*"))
-  )
-
-  def stubIdentityVerificationP800ReferenceChecked(nino:  Nino, p800Reference: P800Reference, response: ReferenceCheckResult.P800ReferenceChecked): StubMapping = {
-
+  def checkReference(nino: Nino, p800Reference: P800Reference, response: ReferenceCheckResult.P800ReferenceChecked): StubMapping = {
     WireMockHelpers.stubForGetWithResponseBody(
-      url = url(nino, p800Reference),
-      jsonBody = Json.prettyPrint(Json.toJson(response)),
-      responseStatus = Status.OK,
+      url             = url(nino, p800Reference),
+      responseBody    = Json.prettyPrint(Json.toJson(response)),
+      responseStatus  = Status.OK,
       requiredHeaders = npsHeaders
     )
   }
 
-  def stubIdentityVerificationRefundAlreadyTaken(): StubMapping =
+  def checkReferenceRefundAlreadyTaken(nino: Nino, p800Reference: P800Reference): StubMapping =
     WireMockHelpers.stubForGetWithResponseBody(
-      url = url,
-      jsonBody =
+      url             = url(nino, p800Reference),
+      responseBody    =
         """
           |{
           | "failures" : [
-          |   {"reason" : "Reference ", "code": "TOO}
+          |   {"reason" : "Reference ", "code": "TODO-refund-already-taken"}
           | ]
           |}
           |""".stripMargin,
-      responseStatus = Status.UNPROCESSABLE_ENTITY,
+      responseStatus  = Status.UNPROCESSABLE_ENTITY,
       requiredHeaders = npsHeaders
     )
-    )
 
-  def stubIdentityVerificationReferenceDidntMatchNino(): StubMapping =
+  def checkReferenceReferenceDidntMatchNino(nino: Nino, p800Reference: P800Reference): StubMapping =
     WireMockHelpers.stubForGetWithResponseBody(
-      url,
-      Json.prettyPrint(Json.toJson(response))
+      url             = url(nino, p800Reference),
+      responseBody    = "",
+      responseStatus  = Status.NOT_FOUND,
+      requiredHeaders = npsHeaders
     )
 
-  //todo once we have specs, update these and use in tests.
-  def stubIdentityVerification5xxBadGateway: StubMapping = WireMockHelpers.stubForPostNoResponseBody(url, Status.BAD_GATEWAY)
-  def stubIdentityVerification5xxServiceUnavailable: StubMapping = WireMockHelpers.stubForPostNoResponseBody(url, Status.SERVICE_UNAVAILABLE)
-  def stubIdentityVerification5xxGatewayTimeout: StubMapping = WireMockHelpers.stubForPostNoResponseBody(url, Status.GATEWAY_TIMEOUT)
+  def verifyCheckReference(nino: Nino, p800Reference: P800Reference): Unit =
+    verify(exactly(1), getRequestedFor(urlPathEqualTo(url(nino, p800Reference))))
 
-  def verifyIdentityVerification(): Unit = WireMockHelpers.verifyExactlyWithBodyParse(url, 1)(IdentityVerificationRequest.format)
-  def verifyNoneIdentityVerification(): Unit = WireMockHelpers.verifyNone(url)
+  private def url(nino: Nino, p800Reference: P800Reference) = s"/nps-json-service/nps/v1/api/reconciliation/p800/${nino.value}/${p800Reference.value}"
+
+  private val npsHeaders: Seq[(String, StringValuePattern)] = Seq(
+    ("CorrelationId", matching(".*")),
+    ("gov-uk-originator-id", matching("DA2_MRA_DIGITAL")),
+    ("Authorization", matching("Basic .*"))
+  )
 
 }

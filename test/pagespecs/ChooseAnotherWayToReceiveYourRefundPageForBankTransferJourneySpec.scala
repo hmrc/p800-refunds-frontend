@@ -41,7 +41,7 @@ class ChooseAnotherWayToReceiveYourRefundPageForBankTransferJourneySpec extends 
       pages.chooseAnotherWayToReceiveYourRefundBankTransferPage.PtaOrCheque.selectCheque()
       pages.chooseAnotherWayToReceiveYourRefundBankTransferPage.clickSubmit()
       pages.completeYourRefundRequestPage.assertPageIsDisplayed()
-      val expectedJourney = tdAll.Cheque.journeyIdentityVerified.copy(
+      val expectedJourney = tdAll.Cheque.AfterReferenceCheck.journeyReferenceChecked.copy(
         dateOfBirth     = tdAll.BankTransfer.journeySelectedBank.dateOfBirth, //Date of Birth is also copied
         bankDescription = tdAll.BankTransfer.journeySelectedBank.bankDescription, //also bankDescription is copied
       )
@@ -121,35 +121,35 @@ class ChooseAnotherWayToReceiveYourRefundPageForBankTransferJourneySpec extends 
 
   "bank transfer from we-cannot-confirm-confirm-your-identity page" - {
     "render page" in {
-      upsertJourneyToDatabase(tdAll.BankTransfer.journeyReferenceDidntMatchNino)
+      upsertJourneyToDatabase(tdAll.BankTransfer.AfterReferenceCheck.journeyReferenceDidntMatchNino)
       pages.chooseAnotherWayToReceiveYourRefundBankTransferPage.open()
       pages.chooseAnotherWayToReceiveYourRefundBankTransferPage.assertPageIsDisplayedPtaOrCheque()
-      getJourneyFromDatabase(tdAll.journeyId) shouldBeLike tdAll.BankTransfer.journeyReferenceDidntMatchNino
+      getJourneyFromDatabase(tdAll.journeyId) shouldBeLike tdAll.BankTransfer.AfterReferenceCheck.journeyReferenceDidntMatchNino
     }
     "select cheque" in {
-      upsertJourneyToDatabase(tdAll.BankTransfer.journeyReferenceDidntMatchNino)
+      upsertJourneyToDatabase(tdAll.BankTransfer.AfterReferenceCheck.journeyReferenceDidntMatchNino)
       pages.chooseAnotherWayToReceiveYourRefundBankTransferPage.open()
       pages.chooseAnotherWayToReceiveYourRefundBankTransferPage.assertPageIsDisplayedPtaOrCheque()
       pages.chooseAnotherWayToReceiveYourRefundBankTransferPage.PtaOrCheque.selectCheque()
       pages.chooseAnotherWayToReceiveYourRefundBankTransferPage.clickSubmit()
       pages.weNeedYouToConfirmYourIdentityChequePage.assertPageIsDisplayed(JourneyType.Cheque)
 
-      val expectedJourney = tdAll.BankTransfer.journeyReferenceDidntMatchNino.copy(
+      val expectedJourney = tdAll.BankTransfer.AfterReferenceCheck.journeyReferenceDidntMatchNino.copy(
         journeyType = Some(JourneyType.Cheque)
       )
       getJourneyFromDatabase(tdAll.journeyId) shouldBeLike expectedJourney
     }
     "select bank transfer via PTA" in {
-      upsertJourneyToDatabase(tdAll.BankTransfer.journeyReferenceDidntMatchNino)
+      upsertJourneyToDatabase(tdAll.BankTransfer.AfterReferenceCheck.journeyReferenceDidntMatchNino)
       pages.chooseAnotherWayToReceiveYourRefundBankTransferPage.open()
       pages.chooseAnotherWayToReceiveYourRefundBankTransferPage.assertPageIsDisplayedPtaOrCheque()
       pages.chooseAnotherWayToReceiveYourRefundBankTransferPage.PtaOrCheque.selectBankTransferViaPta()
       pages.chooseAnotherWayToReceiveYourRefundBankTransferPage.clickSubmit()
       pages.ptaSignInPage.assertPageIsDisplayed()
-      getJourneyFromDatabase(tdAll.journeyId) shouldBeLike tdAll.BankTransfer.journeyReferenceDidntMatchNino
+      getJourneyFromDatabase(tdAll.journeyId) shouldBeLike tdAll.BankTransfer.AfterReferenceCheck.journeyReferenceDidntMatchNino
     }
     "empty selection" in {
-      upsertJourneyToDatabase(tdAll.BankTransfer.journeyReferenceDidntMatchNino)
+      upsertJourneyToDatabase(tdAll.BankTransfer.AfterReferenceCheck.journeyReferenceDidntMatchNino)
       pages.chooseAnotherWayToReceiveYourRefundBankTransferPage.open()
       pages.chooseAnotherWayToReceiveYourRefundBankTransferPage.assertPageIsDisplayedPtaOrCheque()
       pages.chooseAnotherWayToReceiveYourRefundBankTransferPage.clickSubmit()
@@ -161,7 +161,7 @@ class ChooseAnotherWayToReceiveYourRefundPageForBankTransferJourneySpec extends 
             |""".stripMargin
         )
       )
-      getJourneyFromDatabase(tdAll.journeyId) shouldBeLike tdAll.BankTransfer.journeyReferenceDidntMatchNino
+      getJourneyFromDatabase(tdAll.journeyId) shouldBeLike tdAll.BankTransfer.AfterReferenceCheck.journeyReferenceDidntMatchNino
     }
   }
 

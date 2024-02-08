@@ -38,14 +38,14 @@ class NoMoreAttemptsLeftToConfirmYourIdentityPageSpec extends ItSpec {
       getJourneyFromDatabase(tdAll.journeyId) shouldBeLike tdAll.Cheque.journeyLockedOutFromFailedAttempts
     }
 
-    def test(journeyType: JourneyType): Unit = {
-      val page = journeyType match {
-        case JourneyType.Cheque       => pages.noMoreAttemptsLeftToConfirmYourIdentityChequePage
-        case JourneyType.BankTransfer => pages.noMoreAttemptsLeftToConfirmYourIdentityBankTransferPage
+      def test(journeyType: JourneyType): Unit = {
+        val page = journeyType match {
+          case JourneyType.Cheque       => pages.noMoreAttemptsLeftToConfirmYourIdentityChequePage
+          case JourneyType.BankTransfer => pages.noMoreAttemptsLeftToConfirmYourIdentityBankTransferPage
+        }
+        page.open()
+        page.assertPageIsDisplayed(journeyType)
       }
-      page.open()
-      page.assertPageIsDisplayed(journeyType)
-    }
   }
 
   "clicking 'sign in to you HMRC online account' sends user to Pta Sign In page" - {
@@ -60,15 +60,15 @@ class NoMoreAttemptsLeftToConfirmYourIdentityPageSpec extends ItSpec {
       getJourneyFromDatabase(tdAll.journeyId) shouldBeLike tdAll.Cheque.journeyLockedOutFromFailedAttempts
     }
 
-    def test(journeyType: JourneyType): Unit = {
-      val page = journeyType match {
-        case JourneyType.Cheque       => pages.noMoreAttemptsLeftToConfirmYourIdentityChequePage
-        case JourneyType.BankTransfer => pages.noMoreAttemptsLeftToConfirmYourIdentityBankTransferPage
+      def test(journeyType: JourneyType): Unit = {
+        val page = journeyType match {
+          case JourneyType.Cheque       => pages.noMoreAttemptsLeftToConfirmYourIdentityChequePage
+          case JourneyType.BankTransfer => pages.noMoreAttemptsLeftToConfirmYourIdentityBankTransferPage
+        }
+        page.open()
+        page.assertPageIsDisplayed(journeyType)
+        page.clickSignInToYourHmrcAccount()
+        pages.ptaSignInPage.assertPageIsDisplayed()
       }
-      page.open()
-      page.assertPageIsDisplayed(journeyType)
-      page.clickSignInToYourHmrcAccount()
-      pages.ptaSignInPage.assertPageIsDisplayed()
-    }
   }
 }

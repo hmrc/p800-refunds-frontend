@@ -19,7 +19,6 @@ package testdata
 import models.journeymodels.HasFinished.hasFinished
 import models.journeymodels._
 import nps.models.ReferenceCheckResult
-import java.net.URL
 
 /**
  * Test Data (Td) Journey. It has journey examples in all possible states.
@@ -30,17 +29,17 @@ trait TdJourney {
   lazy val journeyId: JourneyId = JourneyId("64886ed616fe8b501cbf0088")
 
   lazy val journeyStarted: Journey = Journey(
-    _id                          = journeyId,
-    createdAt                    = dependencies.instant,
-    hasFinished                  = HasFinished.No,
-    journeyType                  = None,
-    p800Reference                = None,
-    nationalInsuranceNumber      = None,
-    isChanging                   = false,
-    dateOfBirth                  = None,
+    _id                  = journeyId,
+    createdAt            = dependencies.instant,
+    hasFinished          = HasFinished.No,
+    journeyType          = None,
+    p800Reference        = None,
+    nino                 = None,
+    isChanging           = false,
+    dateOfBirth          = None,
     referenceCheckResult = None,
-    bankDescription              = None,
-    bankConsent                  = None
+    bankDescription      = None,
+    bankConsent          = None
   )
 
   object BankTransfer {
@@ -54,7 +53,7 @@ trait TdJourney {
     )
 
     lazy val journeyEnteredNino: Journey = journeyEnteredP800Reference.copy(
-      nationalInsuranceNumber = Some(dependencies.nationalInsuranceNumber)
+      nino = Some(dependencies.nationalInsuranceNumber)
     )
 
     lazy val journeyEnteredDateOfBirth: Journey = journeyEnteredNino.copy(
@@ -140,8 +139,9 @@ trait TdJourney {
     )
 
     lazy val journeyEnteredNino: Journey = journeyEnteredP800Reference.copy(
-      nationalInsuranceNumber = Some(dependencies.nationalInsuranceNumber)
+      nino = Some(dependencies.nationalInsuranceNumber)
     )
+
     object AfterReferenceCheck {
 
       lazy val journeyReferenceChecked: Journey = journeyEnteredNino.copy(
@@ -166,7 +166,7 @@ trait TdJourney {
     }
 
     lazy val journeyLockedOutFromFailedAttempts: Journey = {
-      val j = AfterReferenceCheck.journeyIdentityNotVerified.copy(
+      val j = AfterReferenceCheck.journeyReferenceDidntMatchNino.copy(
         hasFinished = HasFinished.LockedOut
       )
       require(!j.isIdentityVerified, "this journey instance has to have NOT verified identity")
@@ -179,5 +179,5 @@ trait TdJourney {
       AfterReferenceCheck.journeyReferenceChecked.copy(
         hasFinished = HasFinished.YesSucceeded
       )
-}
+  }
 }

@@ -31,6 +31,8 @@ object ReferenceCheckResult {
 
   case object RefundAlreadyTaken extends ReferenceCheckResult
 
+  //TODO case object RefundSuspended extends ReferenceCheckResult
+
   final case class P800ReferenceChecked(
       reconciliationIdentifier: ReconciliationIdentifier,
       paymentNumber:            P800Reference,

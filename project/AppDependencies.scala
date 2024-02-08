@@ -26,7 +26,7 @@ object AppDependencies {
     "uk.gov.hmrc.mongo"       %% "hmrc-mongo-test-play-28"    % hmrcMongoVersion,
     "org.jsoup"               %  "jsoup"                      % "1.17.2",
     "com.github.tomakehurst"  %  "wiremock-standalone"        % "3.0.1",
-    "org.scalatest"           %% "scalatest"                  % "3.2.17",
+    "org.scalatest"           %% "scalatest"                  % "3.2.18",
     "com.vladsch.flexmark"    %  "flexmark-all"               % "0.62.2",
     "org.pegdown"             %  "pegdown"                    % "1.6.0",
     "org.seleniumhq.selenium" %  "selenium-java"              % "4.17.0",

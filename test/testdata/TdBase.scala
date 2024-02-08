@@ -22,6 +22,7 @@ import models.attemptmodels.{AttemptId, AttemptInfo, IpAddress, NumberOfAttempts
 import models.dateofbirth.{DateOfBirth, DayOfMonth, Month, Year}
 import models.ecospend._
 import models.ecospend.consent._
+import _root_.nps.models.{AssociatedPayableNumber, CurrentOptimisticLock, CustomerAccountNumber, PayeNumber, ReconciliationIdentifier, ReferenceCheckResult, TaxDistrictNumber}
 import testsupport.ItSpec
 
 import java.time.format.DateTimeFormatter

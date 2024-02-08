@@ -129,7 +129,7 @@ object WireMockHelpers {
 
   def stubForGetWithResponseBody(
       url:             String,
-      jsonBody:        String,
+      responseBody:    String,
       responseStatus:  Int                               = Status.OK,
       requiredHeaders: Seq[(String, StringValuePattern)] = Nil
   ): StubMapping = {
@@ -138,7 +138,7 @@ object WireMockHelpers {
     stubFor(mb.willReturn(
       aResponse()
         .withStatus(responseStatus)
-        .withBody(jsonBody)
+        .withBody(responseBody)
     ))
   }
 

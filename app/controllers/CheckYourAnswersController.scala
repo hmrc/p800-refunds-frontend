@@ -22,10 +22,12 @@ import language.Messages
 import models.attemptmodels.AttemptInfo
 import models.dateofbirth.DateOfBirth
 import models.journeymodels._
-import models.{IdentityVerificationResponse, P800Reference}
+import models.{Nino, P800Reference}
+import nps.NpsConnector
+import nps.models.ReferenceCheckResult
 import play.api.mvc._
 import requests.RequestSupport
-import services.{FailedVerificationAttemptService, IdentityVerificationService, JourneyService}
+import services.{FailedVerificationAttemptService, JourneyService}
 import uk.gov.hmrc.govukfrontend.views.Aliases.{HtmlContent, Key, SummaryListRow, Value}
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryList
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
@@ -39,15 +41,15 @@ import scala.util.{Failure, Success, Try}
 
 @Singleton
 class CheckYourAnswersController @Inject() (
-                                             mcc:                              MessagesControllerComponents,
-                                             requestSupport:                   RequestSupport,
-                                             journeyService:                   JourneyService,
-                                             views:                            Views,
-                                             actions:                          Actions,
-                                             identityVerificationService:      IdentityVerificationService,
-                                             failedVerificationAttemptService: FailedVerificationAttemptService,
-                                             appConfig:                        AppConfig
-                                           )(implicit ec: ExecutionContext) extends FrontendController(mcc) {
+    mcc:                              MessagesControllerComponents,
+    requestSupport:                   RequestSupport,
+    journeyService:                   JourneyService,
+    views:                            Views,
+    actions:                          Actions,
+    failedVerificationAttemptService: FailedVerificationAttemptService,
+    appConfig:                        AppConfig,
+    npsConnector:                     NpsConnector
+)(implicit ec: ExecutionContext) extends FrontendController(mcc) {
 
   import requestSupport._
 
@@ -61,12 +63,12 @@ class CheckYourAnswersController @Inject() (
     val summaryList = journey.getJourneyType match {
       case JourneyType.BankTransfer => buildSummaryList(
         p800Reference           = journey.getP800Reference,
-        nationalInsuranceNumber = journey.getNationalInsuranceNumber,
+        nationalInsuranceNumber = journey.getNino,
         dateOfBirth             = journey.getDateOfBirth
       )
       case JourneyType.Cheque => buildSummaryList(
-        p800Reference           = journey.getP800Reference,
-        nationalInsuranceNumber = journey.getNationalInsuranceNumber
+        p800Reference = journey.getP800Reference,
+        nino          = journey.getNino
       )
     }
     Ok(views.checkYourAnswersPage(
@@ -100,8 +102,10 @@ class CheckYourAnswersController @Inject() (
   }
 
   private def processForm(journey: Journey)(implicit request: JourneyRequest[AnyContent]): Future[Result] = {
+    //TODO: discuss refactoring options, this becomes a monster function...
     val updateLogicResultingInRedirect: Future[Call] =
-      failedVerificationAttemptService.find()
+      failedVerificationAttemptService
+        .find()
         .flatMap { attemptInfoExists: Option[AttemptInfo] =>
           // if failed count is already at 3, ensure journey is HasFinished.LockedOut, redirect to no more attempts
           if (AttemptInfo.shouldBeLockedOut(attemptInfoExists, appConfig.FailedAttemptRepo.failedAttemptRepoMaxAttempts)) {
@@ -109,31 +113,37 @@ class CheckYourAnswersController @Inject() (
               .map(_ => controllers.NoMoreAttemptsLeftToConfirmYourIdentityController.redirectLocation(journey))
           } else {
             // otherwise call identity verification
-            identityVerificationService
-              .verifyIdentity(journey.getNationalInsuranceNumber)
-              .flatMap { (identityVerificationResponse: IdentityVerificationResponse) =>
+            npsConnector
+              .p800ReferenceCheck(journey.getNino, journey.getP800Reference)
+              .flatMap { referenceCheckResult: ReferenceCheckResult =>
                 // if verification is successful, reflect this in journey, redirect to confirmed identity
-                if (identityVerificationResponse.identityVerified.value) {
-                  journeyService
-                    .upsert(journey.copy(identityVerificationResponse = Some(identityVerificationResponse)))
+                referenceCheckResult match {
+                  case _: ReferenceCheckResult.P800ReferenceChecked => journeyService
+                    .upsert(journey.copy(referenceCheckResult = Some(referenceCheckResult)))
                     .map(_ => controllers.WeHaveConfirmedYourIdentityController.redirectLocation(journey))
-                } else {
-                  // otherwise (verification failed) update the number of failed attempts
-                  failedVerificationAttemptService
-                    .upsertRecordIfVerificationFails
-                    .flatMap { (maybeAttemptInfo: Option[AttemptInfo]) =>
-                      // if newly updated failed attempt count is over the threshold, update journey to HasFinished.LockedOut, redirecting to no more attempts
-                      if (AttemptInfo.shouldBeLockedOut(maybeAttemptInfo, appConfig.FailedAttemptRepo.failedAttemptRepoMaxAttempts)) {
-                        journeyService
-                          .upsert(journey.copy(identityVerificationResponse = Some(identityVerificationResponse), hasFinished = HasFinished.LockedOut))
-                          .map(_ => controllers.NoMoreAttemptsLeftToConfirmYourIdentityController.redirectLocation(journey))
-                      } else {
-                        // otherwise attempts is not over threshold, redirect to cannot confirm your identity page
-                        journeyService
-                          .upsert(journey.copy(identityVerificationResponse = Some(identityVerificationResponse)))
-                          .map(_ => controllers.CannotConfirmYourIdentityTryAgainController.redirectLocation(journey))
-                      }
+                  case ReferenceCheckResult.RefundAlreadyTaken => journeyService
+                    .upsert(journey.copy(referenceCheckResult = Some(referenceCheckResult)))
+                    .map(_ => controllers.CannotConfirmYourIdentityTryAgainController.redirectLocation(journey))
+                  case ReferenceCheckResult.ReferenceDidntMatchNino =>
+                    {
+                      // otherwise (verification failed) update the number of failed attempts
+                      failedVerificationAttemptService
+                        .upsertRecordIfVerificationFails
+                        .flatMap { (maybeAttemptInfo: Option[AttemptInfo]) =>
+                          // if newly updated failed attempt count is over the threshold, update journey to HasFinished.LockedOut, redirecting to no more attempts
+                          if (AttemptInfo.shouldBeLockedOut(maybeAttemptInfo, appConfig.FailedAttemptRepo.failedAttemptRepoMaxAttempts)) {
+                            journeyService
+                              .upsert(journey.copy(referenceCheckResult = Some(referenceCheckResult), hasFinished = HasFinished.LockedOut))
+                              .map(_ => controllers.NoMoreAttemptsLeftToConfirmYourIdentityController.redirectLocation(journey))
+                          } else {
+                            // otherwise attempts is not over threshold, redirect to cannot confirm your identity page
+                            journeyService
+                              .upsert(journey.copy(referenceCheckResult = Some(referenceCheckResult)))
+                              .map(_ => controllers.CannotConfirmYourIdentityTryAgainController.redirectLocation(journey))
+                          }
+                        }
                     }
+
                 }
               }
           }
@@ -141,33 +151,31 @@ class CheckYourAnswersController @Inject() (
 
     updateLogicResultingInRedirect
       .map(redirect => Redirect(redirect))
-import models.{Nino, P800Reference}
-import nps.NpsConnector
   }
 
   private def buildSummaryList(
-                                p800Reference:           P800Reference,
-                                nationalInsuranceNumber: Nino,
-                                dateOfBirth:             DateOfBirth
-                              )(implicit request: Request[_]): SummaryList = SummaryList(rows = Seq(
+      p800Reference:           P800Reference,
+      nationalInsuranceNumber: Nino,
+      dateOfBirth:             DateOfBirth
+  )(implicit request: Request[_]): SummaryList = SummaryList(rows = Seq(
     p800ReferenceSummaryRow(p800Reference),
-    nationalInsuranceNumberSummaryRow(nationalInsuranceNumber),
+    ninoSummaryRow(nationalInsuranceNumber),
     dateOfBirthSummaryRow(dateOfBirth)
   ))
 
   private def buildSummaryList(
-                                p800Reference:           P800Reference,
-      nationalInsuranceNumber: Nino
-                              )(implicit request: Request[_]): SummaryList = SummaryList(rows = Seq(
+      p800Reference: P800Reference,
+      nino:          Nino
+  )(implicit request: Request[_]): SummaryList = SummaryList(rows = Seq(
     p800ReferenceSummaryRow(p800Reference),
-    nationalInsuranceNumberSummaryRow(nationalInsuranceNumber)
+    ninoSummaryRow(nino)
   ))
 
-  private def nationalInsuranceNumberSummaryRow(nationalInsuranceNumber: Nino)(implicit request: Request[_]): SummaryListRow = {
+  private def ninoSummaryRow(nino: Nino)(implicit request: Request[_]): SummaryListRow = {
     buildSummaryListRow(
       Messages.CheckYourAnswersMessages.`National insurance number`.show,
       id    = "national-insurance-number",
-      value = s"""${nationalInsuranceNumber.value}""",
+      value = s"""${nino.value}""",
       call  = controllers.routes.CheckYourAnswersController.changeNationalInsuranceNumber
     )
   }

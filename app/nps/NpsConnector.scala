@@ -92,7 +92,11 @@ class NpsConnector @Inject() (
     httpClient
       .GET[ReferenceCheckResult](
         url     = p800ReferenceUrl(nino, p800Reference),
-        headers = Seq(authorisationHeader, makeCorrelationIdHeader())
+        headers = Seq(
+          authorisationHeader,
+          makeCorrelationIdHeader(),
+          makeOriginatorIdHeader()
+        )
       )
   }
 
@@ -109,5 +113,9 @@ class NpsConnector @Inject() (
 
   private def makeCorrelationIdHeader(): (String, String) = {
     "CorrelationId" -> UUID.randomUUID().toString
+  }
+
+  private def makeOriginatorIdHeader(): (String, String) = {
+    "gov-uk-originator-id" -> "DA2_MRA_DIGITAL"
   }
 }
