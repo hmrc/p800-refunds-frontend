@@ -31,7 +31,7 @@ class CheckYourAnswersSpec extends ItSpec {
       pages.checkYourAnswersBankTransferPage.assertPageIsDisplayedForBankTransfer(
         tdAll.p800Reference,
         tdAll.dateOfBirthFormatted,
-        tdAll.nationalInsuranceNumber
+        tdAll.nino
       )
       getJourneyFromDatabase(tdAll.journeyId) shouldBeLike tdAll.BankTransfer.journeyEnteredDateOfBirth
     }
@@ -40,7 +40,7 @@ class CheckYourAnswersSpec extends ItSpec {
       pages.checkYourAnswersChequePage.open()
       pages.checkYourAnswersChequePage.assertPageIsDisplayedForCheque(
         tdAll.p800Reference,
-        tdAll.nationalInsuranceNumber
+        tdAll.nino
       )
       getJourneyFromDatabase(tdAll.journeyId) shouldBeLike tdAll.Cheque.journeyEnteredNino
     }
@@ -53,7 +53,7 @@ class CheckYourAnswersSpec extends ItSpec {
       pages.checkYourAnswersBankTransferPage.assertPageIsDisplayedForBankTransfer(
         tdAll.p800Reference,
         tdAll.dateOfBirthFormatted,
-        tdAll.nationalInsuranceNumber
+        tdAll.nino
       )
       pages.checkYourAnswersBankTransferPage.clickChangeReference()
       pages.whatIsYourP800ReferenceBankTransferPage.assertPageIsDisplayed(journeyType = JourneyType.BankTransfer)
@@ -63,7 +63,7 @@ class CheckYourAnswersSpec extends ItSpec {
       pages.checkYourAnswersBankTransferPage.assertPageIsDisplayedForBankTransfer(
         newReference,
         tdAll.dateOfBirthFormatted,
-        tdAll.nationalInsuranceNumber
+        tdAll.nino
       )
       val expectedJourney = tdAll.BankTransfer.journeyEnteredDateOfBirth.copy(
         p800Reference = Some(newReference)
@@ -80,7 +80,7 @@ class CheckYourAnswersSpec extends ItSpec {
       pages.whatIsYourP800ReferenceChequePage.clickSubmit()
       pages.checkYourAnswersChequePage.assertPageIsDisplayedForCheque(
         newReference,
-        tdAll.nationalInsuranceNumber
+        tdAll.nino
       )
       val expectedJourney = tdAll.Cheque.journeyEnteredNino.copy(
         p800Reference = Some(newReference)
@@ -104,7 +104,7 @@ class CheckYourAnswersSpec extends ItSpec {
       pages.checkYourAnswersBankTransferPage.assertPageIsDisplayedForBankTransfer(
         tdAll.p800Reference,
         "19 February 2001",
-        tdAll.nationalInsuranceNumber
+        tdAll.nino
       )
       val expectedJourney = tdAll.BankTransfer.journeyEnteredDateOfBirth.copy(
         dateOfBirth = Some(newDob)
@@ -188,7 +188,7 @@ class CheckYourAnswersSpec extends ItSpec {
       pages.checkYourAnswersBankTransferPage.assertPageIsDisplayedForBankTransfer(
         tdAll.p800Reference,
         tdAll.dateOfBirthFormatted,
-        tdAll.nationalInsuranceNumber
+        tdAll.nino
       )
       pages.checkYourAnswersBankTransferPage.clickSubmit()
       pages.weCannotConfirmYourIdentityBankTransferPage.assertPageIsDisplayed(JourneyType.BankTransfer)

@@ -50,14 +50,14 @@ trait TdBase {
   lazy val dateOfBirth: DateOfBirth = DateOfBirth(dayOfMonth, month, year)
   lazy val dateOfBirthFormatted: String = "01 January 2000"
 
-  lazy val nationalInsuranceNumber: Nino = Nino("LM001014C")
+  lazy val nino: Nino = Nino("LM001014C")
 
   lazy val p800ReferenceChecked: ReferenceCheckResult = ReferenceCheckResult.P800ReferenceChecked(
     reconciliationIdentifier = ReconciliationIdentifier("reconid-123"),
     paymentNumber            = p800Reference,
     payeNumber               = PayeNumber("PayeNumber-123"),
     taxDistrictNumber        = TaxDistrictNumber("EAST LONDON AREA (SERVICE) (717)"),
-    paymentAmount            = BigDecimal("1234.00"),
+    paymentAmount            = BigDecimal("12.34"),
     associatedPayableNumber  = AssociatedPayableNumber("associatedPayableNumber-1234"),
     customerAccountNumber    = CustomerAccountNumber("customerAccountNumber-1234"),
     currentOptimisticLock    = CurrentOptimisticLock(15)

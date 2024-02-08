@@ -64,7 +64,7 @@ class RequestReceivedController @Inject() (
     Ok(views.bankTransferRequestReceivedPage(
       journey.getP800Reference,
       journey.getAmount,
-      "1 December 2023" //TODO: get this from identity verification response
+      "1 December 2524" //TODO: get this from identity verification response
     ))
   }
 

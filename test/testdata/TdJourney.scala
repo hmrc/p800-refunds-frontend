@@ -53,7 +53,7 @@ trait TdJourney {
     )
 
     lazy val journeyEnteredNino: Journey = journeyEnteredP800Reference.copy(
-      nino = Some(dependencies.nationalInsuranceNumber)
+      nino = Some(dependencies.nino)
     )
 
     lazy val journeyEnteredDateOfBirth: Journey = journeyEnteredNino.copy(
@@ -139,7 +139,7 @@ trait TdJourney {
     )
 
     lazy val journeyEnteredNino: Journey = journeyEnteredP800Reference.copy(
-      nino = Some(dependencies.nationalInsuranceNumber)
+      nino = Some(dependencies.nino)
     )
 
     object AfterReferenceCheck {

@@ -74,7 +74,7 @@ class WeHaveConfirmedYourIdentityPageSpec extends ItSpec {
       pages.checkYourAnswersBankTransferPage.assertPageIsDisplayedForBankTransfer(
         tdAll.p800Reference,
         tdAll.dateOfBirthFormatted,
-        tdAll.nationalInsuranceNumber
+        tdAll.nino
       )
       getJourneyFromDatabase(tdAll.journeyId) shouldBeLike tdAll.BankTransfer.AfterReferenceCheck.journeyReferenceChecked
     }
@@ -86,7 +86,7 @@ class WeHaveConfirmedYourIdentityPageSpec extends ItSpec {
       pages.yourIdentityIsConfirmedChequePage.clickBackButton()
       pages.checkYourAnswersChequePage.assertPageIsDisplayedForCheque(
         tdAll.p800Reference,
-        tdAll.nationalInsuranceNumber
+        tdAll.nino
       )
       getJourneyFromDatabase(tdAll.journeyId) shouldBeLike tdAll.Cheque.AfterReferenceCheck.journeyReferenceChecked
     }

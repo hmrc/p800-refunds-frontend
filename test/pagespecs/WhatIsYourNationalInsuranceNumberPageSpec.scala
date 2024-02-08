@@ -51,7 +51,7 @@ class WhatIsYourNationalInsuranceNumberPageSpec extends ItSpec {
   private def cleanNino(nino: String): String = nino.replaceAll("[^0-9a-zA-Z]", "").toUpperCase
 
   s"Entering a valid NINO and clicking 'Continue'" - {
-    Seq(tdAll.nationalInsuranceNumber.value, "aa000000a", " AA000000A.", "MA 00 00 03 A").foreach { nino =>
+    Seq(tdAll.nino.value, "aa000000a", " AA000000A.", "MA 00 00 03 A").foreach { nino =>
       s"($nino) bank transfer - redirects user to whatIsYourDateOfBirthPage" in {
         upsertJourneyToDatabase(tdAll.BankTransfer.journeyEnteredP800Reference)
         test(JourneyType.BankTransfer)

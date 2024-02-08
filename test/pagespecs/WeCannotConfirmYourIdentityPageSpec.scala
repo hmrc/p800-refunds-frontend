@@ -56,7 +56,7 @@ class WeCannotConfirmYourIdentityPageSpec extends ItSpec {
       pages.checkYourAnswersBankTransferPage.assertPageIsDisplayedForBankTransfer(
         tdAll.p800Reference,
         tdAll.dateOfBirthFormatted,
-        tdAll.nationalInsuranceNumber
+        tdAll.nino
       )
       getJourneyFromDatabase(tdAll.journeyId) shouldBeLike tdAll.BankTransfer.AfterReferenceCheck.journeyReferenceDidntMatchNino
     }
@@ -65,7 +65,7 @@ class WeCannotConfirmYourIdentityPageSpec extends ItSpec {
       test(JourneyType.Cheque)
       pages.checkYourAnswersChequePage.assertPageIsDisplayedForCheque(
         tdAll.p800Reference,
-        tdAll.nationalInsuranceNumber
+        tdAll.nino
       )
       getJourneyFromDatabase(tdAll.journeyId) shouldBeLike tdAll.Cheque.AfterReferenceCheck.journeyReferenceDidntMatchNino
     }
@@ -106,13 +106,13 @@ class WeCannotConfirmYourIdentityPageSpec extends ItSpec {
           case JourneyType.Cheque =>
             pages.checkYourAnswersChequePage.assertPageIsDisplayedForCheque(
               p800Reference           = tdAll.p800Reference,
-              nationalInsuranceNumber = tdAll.nationalInsuranceNumber
+              nationalInsuranceNumber = tdAll.nino
             )
           case JourneyType.BankTransfer =>
             pages.checkYourAnswersBankTransferPage.assertPageIsDisplayedForBankTransfer(
               p800Reference           = tdAll.p800Reference,
               dateOfBirth             = tdAll.dateOfBirthFormatted,
-              nationalInsuranceNumber = tdAll.nationalInsuranceNumber
+              nationalInsuranceNumber = tdAll.nino
             )
         }
       }
