@@ -45,7 +45,7 @@ class GiveYourPermissionController @Inject() (
 
     Ok(views.giveYourPermissionPage(
       bankName      = journey.getBankDescription.friendlyName,
-      amountInPence = journey.getIdentityVerificationResponse.amount
+      amountInPence = journey.getAmount
     ))
   }
 

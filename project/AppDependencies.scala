@@ -8,6 +8,7 @@ object AppDependencies {
   val compile: Seq[ModuleID] = Seq(
     // format: OFF
     "uk.gov.hmrc"       %% "bootstrap-frontend-play-28" % bootstrapVersion,
+    "uk.gov.hmrc"       %% "http-verbs-play-28"         % "14.12.0",
     "uk.gov.hmrc.mongo" %% "hmrc-mongo-play-28"         % hmrcMongoVersion,
     "uk.gov.hmrc"       %% "play-frontend-hmrc"         % "7.29.0-play-28",
     "com.beachape"      %% "enumeratum-play"            % "1.7.0", //later version results in JsBoolean error for case classes when being used with BsonDocs

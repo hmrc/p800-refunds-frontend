@@ -16,17 +16,51 @@
 
 package testsupport.stubs
 
+import com.github.tomakehurst.wiremock.client.WireMock.matching
 import com.github.tomakehurst.wiremock.stubbing.StubMapping
-import models.{IdentityVerificationRequest, IdentityVerificationResponse}
+import models.{Nino, P800Reference}
+import nps.models.ReferenceCheckResult
 import play.api.http.Status
 import play.api.libs.json.Json
+import testdata.TdAll
 
-object IdentityVerificationStub {
+object NpsReferenceCheckStub {
 
-  val url = "/verify-identity"
+  def url(nino:  Nino, p800Reference: P800Reference) = s"/nps-json-service/nps/v1/api/reconciliation/p800/${nino.value}/${p800Reference.value}"
 
-  def stubIdentityVerification2xx(response: IdentityVerificationResponse): StubMapping =
-    WireMockHelpers.stubForPostWithResponseBody(
+  private val npsHeaders = Seq(
+    ("CorrelationId", matching(".*")),
+    ("Authorization", matching("Basic .*"))
+  )
+
+  def stubIdentityVerificationP800ReferenceChecked(nino:  Nino, p800Reference: P800Reference, response: ReferenceCheckResult.P800ReferenceChecked): StubMapping = {
+
+    WireMockHelpers.stubForGetWithResponseBody(
+      url = url(nino, p800Reference),
+      jsonBody = Json.prettyPrint(Json.toJson(response)),
+      responseStatus = Status.OK,
+      requiredHeaders = npsHeaders
+    )
+  }
+
+  def stubIdentityVerificationRefundAlreadyTaken(): StubMapping =
+    WireMockHelpers.stubForGetWithResponseBody(
+      url = url,
+      jsonBody =
+        """
+          |{
+          | "failures" : [
+          |   {"reason" : "Reference ", "code": "TOO}
+          | ]
+          |}
+          |""".stripMargin,
+      responseStatus = Status.UNPROCESSABLE_ENTITY,
+      requiredHeaders = npsHeaders
+    )
+    )
+
+  def stubIdentityVerificationReferenceDidntMatchNino(): StubMapping =
+    WireMockHelpers.stubForGetWithResponseBody(
       url,
       Json.prettyPrint(Json.toJson(response))
     )

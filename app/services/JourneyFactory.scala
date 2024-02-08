@@ -36,7 +36,7 @@ class JourneyFactory @Inject() (
     nationalInsuranceNumber      = None,
     isChanging                   = false,
     dateOfBirth                  = None,
-    identityVerificationResponse = None,
+    referenceCheckResult        = None,
     bankDescription              = None,
     bankConsent                  = None
   )

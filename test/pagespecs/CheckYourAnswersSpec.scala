@@ -254,14 +254,14 @@ class CheckYourAnswersSpec extends ItSpec {
       getJourneyFromDatabase(tdAll.journeyId) shouldBeLike tdAll.Cheque.journeyLockedOutFromFailedAttempts
     }
 
-      def test(journeyType: JourneyType): Unit = {
-        val startPage = journeyType match {
-          case JourneyType.Cheque       => pages.checkYourAnswersChequePage
-          case JourneyType.BankTransfer => pages.checkYourAnswersBankTransferPage
-        }
-        startPage.open()
-        startPage.clickSubmit()
+    def test(journeyType: JourneyType): Unit = {
+      val startPage = journeyType match {
+        case JourneyType.Cheque       => pages.checkYourAnswersChequePage
+        case JourneyType.BankTransfer => pages.checkYourAnswersBankTransferPage
       }
+      startPage.open()
+      startPage.clickSubmit()
+    }
   }
 
   "clicking back button navigates to What Is Your National Insurance Number page" - {

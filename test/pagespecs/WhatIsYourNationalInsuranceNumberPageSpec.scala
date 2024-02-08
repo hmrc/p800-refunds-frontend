@@ -16,7 +16,7 @@
 
 package pagespecs
 
-import models.NationalInsuranceNumber
+import models.Nino
 import models.journeymodels.JourneyType
 import testsupport.ItSpec
 
@@ -56,13 +56,13 @@ class WhatIsYourNationalInsuranceNumberPageSpec extends ItSpec {
         upsertJourneyToDatabase(tdAll.BankTransfer.journeyEnteredP800Reference)
         test(JourneyType.BankTransfer)
         pages.enterYourDateOfBirthPage.assertPageIsDisplayed()
-        val expectedJourney = tdAll.BankTransfer.journeyEnteredNino.copy(nationalInsuranceNumber = Some(NationalInsuranceNumber(cleanNino(nino))))
+        val expectedJourney = tdAll.BankTransfer.journeyEnteredNino.copy(nationalInsuranceNumber = Some(Nino(cleanNino(nino))))
         getJourneyFromDatabase(tdAll.journeyId) shouldBeLike expectedJourney
       }
       s"($nino) cheque - redirects user to checkYourAnswersPage" in {
         upsertJourneyToDatabase(tdAll.Cheque.journeyEnteredP800Reference)
         test(JourneyType.Cheque)
-        val expectedJourney = tdAll.Cheque.journeyEnteredNino.copy(nationalInsuranceNumber = Some(NationalInsuranceNumber(cleanNino(nino))))
+        val expectedJourney = tdAll.Cheque.journeyEnteredNino.copy(nationalInsuranceNumber = Some(Nino(cleanNino(nino))))
         pages.checkYourAnswersChequePage.assertPageIsDisplayedForCheque(
           expectedJourney.p800Reference.value,
           expectedJourney.nationalInsuranceNumber.value
@@ -77,7 +77,7 @@ class WhatIsYourNationalInsuranceNumberPageSpec extends ItSpec {
           }
           page.open()
           page.assertPageIsDisplayed(journeyType)
-          page.enterNationalInsuranceNumber(NationalInsuranceNumber(nino))
+          page.enterNationalInsuranceNumber(Nino(nino))
           page.clickSubmit()
         }
 
@@ -132,7 +132,7 @@ class WhatIsYourNationalInsuranceNumberPageSpec extends ItSpec {
           }
           page.open()
           page.assertPageIsDisplayed(journeyType)
-          page.enterNationalInsuranceNumber(NationalInsuranceNumber(nino))
+          page.enterNationalInsuranceNumber(Nino(nino))
           page.clickSubmit()
           page.assertPageShowsErrorInvalid(journeyType)
         }

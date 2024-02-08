@@ -20,7 +20,8 @@ import julienrf.json.derived
 import models.dateofbirth.DateOfBirth
 import models.ecospend.BankDescription
 import models.ecospend.consent.BankConsentResponse
-import models.{IdentityVerificationResponse, NationalInsuranceNumber, P800Reference}
+import models.{AmountInPence, Nino, P800Reference}
+import nps.models.ReferenceCheckResult
 import play.api.libs.json.OFormat
 import play.api.mvc.Request
 import util.Errors
@@ -52,18 +53,18 @@ object HasFinished {
  * This is internal representation of the journey. Don't use it.
  */
 final case class Journey(
-    _id:                          JourneyId,
-    createdAt:                    Instant,
-    hasFinished:                  HasFinished,
-    journeyType:                  Option[JourneyType],
-    p800Reference:                Option[P800Reference],
-    nationalInsuranceNumber:      Option[NationalInsuranceNumber],
-    isChanging:                   Boolean, //flag which is set on change check-your-answers page when user clicks "change" link
-    dateOfBirth:                  Option[DateOfBirth],
-    identityVerificationResponse: Option[IdentityVerificationResponse], //reset this field upon changes of dependant fields
-    bankDescription:              Option[BankDescription],
-    bankConsent:                  Option[BankConsentResponse]
-) {
+                          _id:                          JourneyId,
+                          createdAt:                    Instant,
+                          hasFinished:                  HasFinished,
+                          journeyType:                  Option[JourneyType],
+                          p800Reference:                Option[P800Reference],
+                          nationalInsuranceNumber:      Option[NationalInsuranceNumber],
+                          isChanging:                   Boolean, //flag which is set on change check-your-answers page when user clicks "change" link
+                          dateOfBirth:                  Option[DateOfBirth],
+                          identityVerificationResponse: Option[IdentityVerificationResponse], //reset this field upon changes of dependant fields
+                          bankDescription:              Option[BankDescription],
+                          bankConsent:                  Option[BankConsentResponse]
+                        ) {
 
   /* derived stuff: */
   def id: JourneyId = _id
@@ -76,15 +77,23 @@ final case class Journey(
 
   def getDateOfBirth(implicit request: Request[_]): DateOfBirth = dateOfBirth.getOrElse(Errors.throwServerErrorException(s"Expected 'dateOfBirth' to be defined but it was None [${journeyId.toString}] "))
 
-  def getNationalInsuranceNumber(implicit request: Request[_]): NationalInsuranceNumber = nationalInsuranceNumber.getOrElse(Errors.throwServerErrorException(s"Expected 'nationalInsuranceNumber' to be defined but it was None [${journeyId.toString}] "))
-
-  def getIdentityVerificationResponse(implicit request: Request[_]): IdentityVerificationResponse = identityVerificationResponse.getOrElse(Errors.throwServerErrorException(s"Expected 'identityVerificationResponse' to be defined but it was None [${journeyId.toString}] "))
+  def getNationalInsuranceNumber(implicit request: Request[_]): Nino = nationalInsuranceNumber.getOrElse(Errors.throwServerErrorException(s"Expected 'nationalInsuranceNumber' to be defined but it was None [${journeyId.toString}] "))
 
   def getBankDescription(implicit request: Request[_]): BankDescription = bankDescription.getOrElse(Errors.throwServerErrorException(s"Expected 'bankDescription' to be defined but it was None [${journeyId.toString}] "))
 
   def getBankConsent(implicit request: Request[_]): BankConsentResponse = bankConsent.getOrElse(Errors.throwBadRequestException("Expected 'bankConsent' to be defined but it was None [${journeyId.toString}] "))
+  def getReferenceCheckResult(implicit request: Request[_]): ReferenceCheckResult = referenceCheckResult.getOrElse(Errors.throwServerErrorException(s"Expected 'referenceCheckResult' to be defined but it was None [${journeyId.toString}] "))
 
-  def isIdentityVerified: Boolean = identityVerificationResponse.map(_.identityVerified.value).getOrElse(false)
+  def getP800ReferenceChecked(implicit request: Request[_]): ReferenceCheckResult.P800ReferenceChecked = getReferenceCheckResult match {
+    case r: ReferenceCheckResult.P800ReferenceChecked => r
+    case r => Errors.throwServerErrorException(s"Expected 'referenceCheckResult' to be 'P800ReferenceChecked' to be defined but it was '${r.toString}' [${journeyId.toString}] ")
+  }
+  def isIdentityVerified: Boolean = referenceCheckResult.exists {
+    case _: ReferenceCheckResult.P800ReferenceChecked => true
+    case ReferenceCheckResult.RefundAlreadyTaken      => false
+    case ReferenceCheckResult.ReferenceDidntMatchNino => false
+  }
+
 
   val lastUpdated: Instant = Instant.now(Clock.systemUTC())
 

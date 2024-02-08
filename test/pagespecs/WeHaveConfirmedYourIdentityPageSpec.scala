@@ -29,10 +29,10 @@ class WeHaveConfirmedYourIdentityPageSpec extends ItSpec {
 
   "page renders correctly" - {
     "bank transfer" in {
-      upsertJourneyToDatabase(tdAll.BankTransfer.journeyIdentityVerified)
+      upsertJourneyToDatabase(tdAll.BankTransfer.journeyReferenceChecked)
       pages.yourIdentityIsConfirmedBankTransferPage.open()
       pages.yourIdentityIsConfirmedBankTransferPage.assertPageIsDisplayed(JourneyType.BankTransfer)
-      getJourneyFromDatabase(tdAll.journeyId) shouldBeLike tdAll.BankTransfer.journeyIdentityVerified
+      getJourneyFromDatabase(tdAll.journeyId) shouldBeLike tdAll.BankTransfer.journeyReferenceChecked
     }
     "cheque" in {
       upsertJourneyToDatabase(tdAll.Cheque.journeyIdentityVerified)
@@ -44,7 +44,7 @@ class WeHaveConfirmedYourIdentityPageSpec extends ItSpec {
 
   "clicking submit navigates to What Is The Name Of Your Bank Account page" - {
     "bank transfer" in {
-      upsertJourneyToDatabase(tdAll.BankTransfer.journeyIdentityVerified)
+      upsertJourneyToDatabase(tdAll.BankTransfer.journeyReferenceChecked)
       EcospendStub.stubEcospendAuth2xxSucceeded
       EcospendStub.stubEcospendGetBanks2xx
       pages.yourIdentityIsConfirmedBankTransferPage.open()
@@ -53,7 +53,7 @@ class WeHaveConfirmedYourIdentityPageSpec extends ItSpec {
       pages.enterTheNameOfYourBankAccountPage.assertPageIsDisplayed()
       EcospendStub.verifyEcospendAccessToken()
       EcospendStub.verifyEcospendGetBanks()
-      getJourneyFromDatabase(tdAll.journeyId) shouldBeLike tdAll.BankTransfer.journeyIdentityVerified
+      getJourneyFromDatabase(tdAll.journeyId) shouldBeLike tdAll.BankTransfer.journeyReferenceChecked
     }
     "cheque" in {
       upsertJourneyToDatabase(tdAll.Cheque.journeyIdentityVerified)
@@ -67,7 +67,7 @@ class WeHaveConfirmedYourIdentityPageSpec extends ItSpec {
 
   "clicking back button navigates to Check Your Answers page" - {
     "bank transfer" in {
-      upsertJourneyToDatabase(tdAll.BankTransfer.journeyIdentityVerified)
+      upsertJourneyToDatabase(tdAll.BankTransfer.journeyReferenceChecked)
       pages.yourIdentityIsConfirmedBankTransferPage.open()
       pages.yourIdentityIsConfirmedBankTransferPage.assertPageIsDisplayed(JourneyType.BankTransfer)
       pages.yourIdentityIsConfirmedBankTransferPage.clickBackButton()
@@ -76,7 +76,7 @@ class WeHaveConfirmedYourIdentityPageSpec extends ItSpec {
         tdAll.dateOfBirthFormatted,
         tdAll.nationalInsuranceNumber
       )
-      getJourneyFromDatabase(tdAll.journeyId) shouldBeLike tdAll.BankTransfer.journeyIdentityVerified
+      getJourneyFromDatabase(tdAll.journeyId) shouldBeLike tdAll.BankTransfer.journeyReferenceChecked
     }
 
     "cheque" in {

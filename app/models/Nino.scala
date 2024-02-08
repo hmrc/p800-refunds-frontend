@@ -16,17 +16,13 @@
 
 package models
 
-import play.api.libs.json.{Format, Json, OFormat}
+import play.api.libs.json.{Json, Format}
 
-final case class IdentityVerificationRequest(nino: NationalInsuranceNumber)
+/**
+ * National Insurance Number (Nino)
+ */
+final case class Nino(value: String) extends AnyVal
 
-object IdentityVerificationRequest {
-  implicit val format: Format[IdentityVerificationRequest] = Json.format[IdentityVerificationRequest]
-}
-
-final case class IdentityVerificationResponse(identityVerified: IdentityVerified, amount: AmountInPence)
-
-object IdentityVerificationResponse {
-  @SuppressWarnings(Array("org.wartremover.warts.Any"))
-  implicit val format: OFormat[IdentityVerificationResponse] = Json.format[IdentityVerificationResponse]
+object Nino {
+  implicit val formats: Format[Nino] = Json.valueFormat[Nino]
 }

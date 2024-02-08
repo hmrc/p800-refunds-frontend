@@ -28,9 +28,9 @@ class WeCannotConfirmYourIdentityPageSpec extends ItSpec {
 
   "render 'We cannot confirm your identity' page" - {
     "for /bank-transfer/cannot-confirm-your-identity-try-again" in {
-      upsertJourneyToDatabase(tdAll.BankTransfer.journeyIdentityNotVerified)
+      upsertJourneyToDatabase(tdAll.BankTransfer.journeyReferenceDidntMatchNino)
       test(JourneyType.BankTransfer)
-      getJourneyFromDatabase(tdAll.journeyId) shouldBeLike tdAll.BankTransfer.journeyIdentityNotVerified
+      getJourneyFromDatabase(tdAll.journeyId) shouldBeLike tdAll.BankTransfer.journeyReferenceDidntMatchNino
     }
     "for /cheque/cannot-confirm-your-identity-try-again" in {
       upsertJourneyToDatabase(tdAll.Cheque.journeyIdentityNotVerified)
@@ -51,14 +51,14 @@ class WeCannotConfirmYourIdentityPageSpec extends ItSpec {
   "clicking 'Back' sends user to check your answers" - {
 
     "bank transfer" in {
-      upsertJourneyToDatabase(tdAll.BankTransfer.journeyIdentityNotVerified)
+      upsertJourneyToDatabase(tdAll.BankTransfer.journeyReferenceDidntMatchNino)
       test(JourneyType.BankTransfer)
       pages.checkYourAnswersBankTransferPage.assertPageIsDisplayedForBankTransfer(
         tdAll.p800Reference,
         tdAll.dateOfBirthFormatted,
         tdAll.nationalInsuranceNumber
       )
-      getJourneyFromDatabase(tdAll.journeyId) shouldBeLike tdAll.BankTransfer.journeyIdentityNotVerified
+      getJourneyFromDatabase(tdAll.journeyId) shouldBeLike tdAll.BankTransfer.journeyReferenceDidntMatchNino
     }
     "cheque" in {
       upsertJourneyToDatabase(tdAll.Cheque.journeyIdentityNotVerified)
@@ -84,9 +84,9 @@ class WeCannotConfirmYourIdentityPageSpec extends ItSpec {
 
   "clicking 'Try again' sends user to 'Check your answers page'" - {
     "bank transfer transfer" in {
-      upsertJourneyToDatabase(tdAll.BankTransfer.journeyIdentityNotVerified)
+      upsertJourneyToDatabase(tdAll.BankTransfer.journeyReferenceDidntMatchNino)
       test(JourneyType.BankTransfer)
-      getJourneyFromDatabase(tdAll.journeyId) shouldBeLike tdAll.BankTransfer.journeyIdentityNotVerified
+      getJourneyFromDatabase(tdAll.journeyId) shouldBeLike tdAll.BankTransfer.journeyReferenceDidntMatchNino
     }
     "cheque" in {
       upsertJourneyToDatabase(tdAll.Cheque.journeyIdentityNotVerified)
@@ -120,10 +120,10 @@ class WeCannotConfirmYourIdentityPageSpec extends ItSpec {
 
   "clicking 'Choose another method' sends user to 'Choose another way to receive your refund page'" - {
     "bank transfer" in {
-      upsertJourneyToDatabase(tdAll.BankTransfer.journeyIdentityNotVerified)
+      upsertJourneyToDatabase(tdAll.BankTransfer.journeyReferenceDidntMatchNino)
       test(JourneyType.BankTransfer)
       pages.chooseAnotherWayToReceiveYourRefundBankTransferPage.assertPageIsDisplayedPtaOrCheque()
-      getJourneyFromDatabase(tdAll.journeyId) shouldBeLike tdAll.BankTransfer.journeyIdentityNotVerified
+      getJourneyFromDatabase(tdAll.journeyId) shouldBeLike tdAll.BankTransfer.journeyReferenceDidntMatchNino
     }
     "cheque" in {
       upsertJourneyToDatabase(tdAll.Cheque.journeyIdentityNotVerified)

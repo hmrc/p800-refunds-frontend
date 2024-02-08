@@ -22,7 +22,7 @@ import language.Messages
 import models.attemptmodels.AttemptInfo
 import models.dateofbirth.DateOfBirth
 import models.journeymodels._
-import models.{IdentityVerificationResponse, NationalInsuranceNumber, P800Reference}
+import models.{IdentityVerificationResponse, P800Reference}
 import play.api.mvc._
 import requests.RequestSupport
 import services.{FailedVerificationAttemptService, IdentityVerificationService, JourneyService}
@@ -39,15 +39,15 @@ import scala.util.{Failure, Success, Try}
 
 @Singleton
 class CheckYourAnswersController @Inject() (
-    mcc:                              MessagesControllerComponents,
-    requestSupport:                   RequestSupport,
-    journeyService:                   JourneyService,
-    views:                            Views,
-    actions:                          Actions,
-    identityVerificationService:      IdentityVerificationService,
-    failedVerificationAttemptService: FailedVerificationAttemptService,
-    appConfig:                        AppConfig
-)(implicit ec: ExecutionContext) extends FrontendController(mcc) {
+                                             mcc:                              MessagesControllerComponents,
+                                             requestSupport:                   RequestSupport,
+                                             journeyService:                   JourneyService,
+                                             views:                            Views,
+                                             actions:                          Actions,
+                                             identityVerificationService:      IdentityVerificationService,
+                                             failedVerificationAttemptService: FailedVerificationAttemptService,
+                                             appConfig:                        AppConfig
+                                           )(implicit ec: ExecutionContext) extends FrontendController(mcc) {
 
   import requestSupport._
 
@@ -141,27 +141,29 @@ class CheckYourAnswersController @Inject() (
 
     updateLogicResultingInRedirect
       .map(redirect => Redirect(redirect))
+import models.{Nino, P800Reference}
+import nps.NpsConnector
   }
 
   private def buildSummaryList(
-      p800Reference:           P800Reference,
-      nationalInsuranceNumber: NationalInsuranceNumber,
-      dateOfBirth:             DateOfBirth
-  )(implicit request: Request[_]): SummaryList = SummaryList(rows = Seq(
+                                p800Reference:           P800Reference,
+                                nationalInsuranceNumber: Nino,
+                                dateOfBirth:             DateOfBirth
+                              )(implicit request: Request[_]): SummaryList = SummaryList(rows = Seq(
     p800ReferenceSummaryRow(p800Reference),
     nationalInsuranceNumberSummaryRow(nationalInsuranceNumber),
     dateOfBirthSummaryRow(dateOfBirth)
   ))
 
   private def buildSummaryList(
-      p800Reference:           P800Reference,
-      nationalInsuranceNumber: NationalInsuranceNumber
-  )(implicit request: Request[_]): SummaryList = SummaryList(rows = Seq(
+                                p800Reference:           P800Reference,
+      nationalInsuranceNumber: Nino
+                              )(implicit request: Request[_]): SummaryList = SummaryList(rows = Seq(
     p800ReferenceSummaryRow(p800Reference),
     nationalInsuranceNumberSummaryRow(nationalInsuranceNumber)
   ))
 
-  private def nationalInsuranceNumberSummaryRow(nationalInsuranceNumber: NationalInsuranceNumber)(implicit request: Request[_]): SummaryListRow = {
+  private def nationalInsuranceNumberSummaryRow(nationalInsuranceNumber: Nino)(implicit request: Request[_]): SummaryListRow = {
     buildSummaryListRow(
       Messages.CheckYourAnswersMessages.`National insurance number`.show,
       id    = "national-insurance-number",

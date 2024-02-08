@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2024 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-package models
+package nps.models
 
-import play.api.libs.json.{Json, Format}
+import play.api.libs.json.{Format, Json}
 
-final case class NationalInsuranceNumber(value: String) extends AnyVal
+final case class ReconciliationIdentifier(value: String)
 
-object NationalInsuranceNumber {
-  implicit val formats: Format[NationalInsuranceNumber] = Json.valueFormat[NationalInsuranceNumber]
+object ReconciliationIdentifier {
+  implicit val format: Format[ReconciliationIdentifier] = Json.valueFormat[ReconciliationIdentifier]
 }

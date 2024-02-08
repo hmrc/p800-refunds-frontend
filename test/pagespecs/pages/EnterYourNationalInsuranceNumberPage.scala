@@ -16,7 +16,7 @@
 
 package pagespecs.pages
 
-import models.NationalInsuranceNumber
+import models.Nino
 import models.journeymodels.JourneyType
 import org.openqa.selenium.WebDriver
 import org.scalatest.Assertion
@@ -34,7 +34,7 @@ class EnterYourNationalInsuranceNumberPage(baseUrl: String, pathForJourneyType: 
 
   override def assertPageIsDisplayed(extraExpectations: ContentExpectation*): Unit = sys.error("Use another variant for asserting page")
 
-  def enterNationalInsuranceNumber(nationalInsuranceNumber: NationalInsuranceNumber): Unit =
+  def enterNationalInsuranceNumber(nationalInsuranceNumber: Nino): Unit =
     PageUtil.setTextFieldById("nationalInsuranceNumber", nationalInsuranceNumber.value)
 
   val commonPageExpectations: Seq[ContentExpectation] = Seq(
@@ -123,7 +123,7 @@ class EnterYourNationalInsuranceNumberPage(baseUrl: String, pathForJourneyType: 
     )
   }
 
-  def assertDataPrepopulated(nationalInsuranceNumber: NationalInsuranceNumber): Assertion = withPageClue {
+  def assertDataPrepopulated(nationalInsuranceNumber: Nino): Assertion = withPageClue {
     PageUtil.getValueById("nationalInsuranceNumber") shouldBe nationalInsuranceNumber.value
   }
 }

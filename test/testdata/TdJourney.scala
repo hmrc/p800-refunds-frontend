@@ -18,6 +18,8 @@ package testdata
 
 import models.journeymodels.HasFinished.hasFinished
 import models.journeymodels._
+import nps.models.ReferenceCheckResult
+import java.net.URL
 
 /**
  * Test Data (Td) Journey. It has journey examples in all possible states.
@@ -36,7 +38,7 @@ trait TdJourney {
     nationalInsuranceNumber      = None,
     isChanging                   = false,
     dateOfBirth                  = None,
-    identityVerificationResponse = None,
+    referenceCheckResult = None,
     bankDescription              = None,
     bankConsent                  = None
   )
@@ -59,20 +61,31 @@ trait TdJourney {
       dateOfBirth = Some(dependencies.dateOfBirth)
     )
 
-    lazy val journeyIdentityVerified: Journey = journeyEnteredDateOfBirth.copy(
-      identityVerificationResponse = Some(dependencies.identityVerifiedResponse)
-    )
+    object AfterReferenceCheck {
 
-    lazy val journeyIdentityNotVerified: Journey = {
-      val j = journeyEnteredDateOfBirth.copy(
-        identityVerificationResponse = Some(dependencies.identityNotVerifiedResponse)
+      lazy val journeyReferenceChecked: Journey = journeyEnteredDateOfBirth.copy(
+        referenceCheckResult = Some(dependencies.p800ReferenceChecked)
       )
-      require(!j.isIdentityVerified, "this journey instance has to have NOT verified identity")
-      j
+
+      lazy val journeyReferenceDidntMatchNino: Journey = {
+        val j = journeyEnteredDateOfBirth.copy(
+          referenceCheckResult = Some(ReferenceCheckResult.ReferenceDidntMatchNino)
+        )
+        require(!j.isIdentityVerified, "this journey instance has to have NOT verified identity")
+        j
+      }
+
+      lazy val journeyRefundAlreadyTaken: Journey = {
+        val j = journeyEnteredDateOfBirth.copy(
+          referenceCheckResult = Some(ReferenceCheckResult.RefundAlreadyTaken)
+        )
+        require(!j.isIdentityVerified, "this journey instance has to have NOT verified identity")
+        j
+      }
     }
 
     lazy val journeyLockedOutFromFailedAttempts: Journey = {
-      val j = journeyIdentityNotVerified.copy(
+      val j = AfterReferenceCheck.journeyReferenceDidntMatchNino.copy(
         hasFinished = HasFinished.LockedOut
       )
       require(!j.isIdentityVerified, "this journey instance has to have NOT verified identity")
@@ -80,7 +93,7 @@ trait TdJourney {
       j
     }
 
-    lazy val journeySelectedBank: Journey = journeyIdentityVerified.copy(
+    lazy val journeySelectedBank: Journey = AfterReferenceCheck.journeyReferenceChecked.copy(
       bankDescription = Some(dependencies.bankDescription)
     )
 
@@ -129,21 +142,31 @@ trait TdJourney {
     lazy val journeyEnteredNino: Journey = journeyEnteredP800Reference.copy(
       nationalInsuranceNumber = Some(dependencies.nationalInsuranceNumber)
     )
+    object AfterReferenceCheck {
 
-    lazy val journeyIdentityVerified: Journey = journeyEnteredNino.copy(
-      identityVerificationResponse = Some(dependencies.identityVerifiedResponse)
-    )
-
-    lazy val journeyIdentityNotVerified: Journey = {
-      val j = journeyEnteredNino.copy(
-        identityVerificationResponse = Some(dependencies.identityNotVerifiedResponse)
+      lazy val journeyReferenceChecked: Journey = journeyEnteredNino.copy(
+        referenceCheckResult = Some(dependencies.p800ReferenceChecked)
       )
-      require(!j.isIdentityVerified, "this journey instance has to have NOT verified identity")
-      j
+
+      lazy val journeyReferenceDidntMatchNino: Journey = {
+        val j = journeyEnteredNino.copy(
+          referenceCheckResult = Some(ReferenceCheckResult.ReferenceDidntMatchNino)
+        )
+        require(!j.isIdentityVerified, "this journey instance has to have NOT verified identity")
+        j
+      }
+
+      lazy val journeyRefundAlreadyTaken: Journey = {
+        val j = journeyEnteredNino.copy(
+          referenceCheckResult = Some(ReferenceCheckResult.RefundAlreadyTaken)
+        )
+        require(!j.isIdentityVerified, "this journey instance has to have NOT verified identity")
+        j
+      }
     }
 
     lazy val journeyLockedOutFromFailedAttempts: Journey = {
-      val j = journeyIdentityNotVerified.copy(
+      val j = AfterReferenceCheck.journeyIdentityNotVerified.copy(
         hasFinished = HasFinished.LockedOut
       )
       require(!j.isIdentityVerified, "this journey instance has to have NOT verified identity")
@@ -153,9 +176,8 @@ trait TdJourney {
 
     lazy val journeyClaimedOverpayment: Journey =
       //TODO: API responses
-      journeyIdentityVerified.copy(
+      AfterReferenceCheck.journeyReferenceChecked.copy(
         hasFinished = HasFinished.YesSucceeded
       )
-  }
-
+}
 }
