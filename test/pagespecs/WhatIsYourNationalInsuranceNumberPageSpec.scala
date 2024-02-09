@@ -16,7 +16,7 @@
 
 package pagespecs
 
-import models.NationalInsuranceNumber
+import models.Nino
 import models.journeymodels.JourneyType
 import testsupport.ItSpec
 
@@ -51,21 +51,21 @@ class WhatIsYourNationalInsuranceNumberPageSpec extends ItSpec {
   private def cleanNino(nino: String): String = nino.replaceAll("[^0-9a-zA-Z]", "").toUpperCase
 
   s"Entering a valid NINO and clicking 'Continue'" - {
-    Seq(tdAll.nationalInsuranceNumber.value, "aa000000a", " AA000000A.", "MA 00 00 03 A").foreach { nino =>
+    Seq(tdAll.nino.value, "aa000000a", " AA000000A.", "MA 00 00 03 A").foreach { nino =>
       s"($nino) bank transfer - redirects user to whatIsYourDateOfBirthPage" in {
         upsertJourneyToDatabase(tdAll.BankTransfer.journeyEnteredP800Reference)
         test(JourneyType.BankTransfer)
         pages.enterYourDateOfBirthPage.assertPageIsDisplayed()
-        val expectedJourney = tdAll.BankTransfer.journeyEnteredNino.copy(nationalInsuranceNumber = Some(NationalInsuranceNumber(cleanNino(nino))))
+        val expectedJourney = tdAll.BankTransfer.journeyEnteredNino.copy(nino = Some(Nino(cleanNino(nino))))
         getJourneyFromDatabase(tdAll.journeyId) shouldBeLike expectedJourney
       }
       s"($nino) cheque - redirects user to checkYourAnswersPage" in {
         upsertJourneyToDatabase(tdAll.Cheque.journeyEnteredP800Reference)
         test(JourneyType.Cheque)
-        val expectedJourney = tdAll.Cheque.journeyEnteredNino.copy(nationalInsuranceNumber = Some(NationalInsuranceNumber(cleanNino(nino))))
+        val expectedJourney = tdAll.Cheque.journeyEnteredNino.copy(nino = Some(Nino(cleanNino(nino))))
         pages.checkYourAnswersChequePage.assertPageIsDisplayedForCheque(
           expectedJourney.p800Reference.value,
-          expectedJourney.nationalInsuranceNumber.value
+          expectedJourney.nino.value
         )
         getJourneyFromDatabase(tdAll.journeyId) shouldBeLike expectedJourney
       }
@@ -77,7 +77,7 @@ class WhatIsYourNationalInsuranceNumberPageSpec extends ItSpec {
           }
           page.open()
           page.assertPageIsDisplayed(journeyType)
-          page.enterNationalInsuranceNumber(NationalInsuranceNumber(nino))
+          page.enterNationalInsuranceNumber(Nino(nino))
           page.clickSubmit()
         }
 
@@ -132,7 +132,7 @@ class WhatIsYourNationalInsuranceNumberPageSpec extends ItSpec {
           }
           page.open()
           page.assertPageIsDisplayed(journeyType)
-          page.enterNationalInsuranceNumber(NationalInsuranceNumber(nino))
+          page.enterNationalInsuranceNumber(Nino(nino))
           page.clickSubmit()
           page.assertPageShowsErrorInvalid(journeyType)
         }
@@ -172,14 +172,14 @@ class WhatIsYourNationalInsuranceNumberPageSpec extends ItSpec {
       val expectedJourney = tdAll.BankTransfer.journeyEnteredNino
       upsertJourneyToDatabase(expectedJourney)
       test(JourneyType.BankTransfer)
-      pages.enterYourNationalInsuranceNumberBankTransferPage.assertDataPrepopulated(expectedJourney.nationalInsuranceNumber.value)
+      pages.enterYourNationalInsuranceNumberBankTransferPage.assertDataPrepopulated(expectedJourney.nino.value)
       getJourneyFromDatabase(tdAll.journeyId) shouldBeLike expectedJourney
     }
     s"cheque" in {
       val expectedJourney = tdAll.Cheque.journeyEnteredNino
       upsertJourneyToDatabase(expectedJourney)
       test(JourneyType.Cheque)
-      pages.enterYourNationalInsuranceNumberChequePage.assertDataPrepopulated(expectedJourney.nationalInsuranceNumber.value)
+      pages.enterYourNationalInsuranceNumberChequePage.assertDataPrepopulated(expectedJourney.nino.value)
       getJourneyFromDatabase(tdAll.journeyId) shouldBeLike expectedJourney
     }
 

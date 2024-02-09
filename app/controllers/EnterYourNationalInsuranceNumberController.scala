@@ -51,7 +51,7 @@ class EnterYourNationalInsuranceNumberController @Inject() (
     val journey: Journey = request.journey
 
     Ok(views.enterYourNationalInsuranceNumberPage(
-      form = journey.nationalInsuranceNumber.fold(
+      form = journey.nino.fold(
         WhatIsYourNationalInsuranceNumberForm.form
       )(
           WhatIsYourNationalInsuranceNumberForm.form.fill
@@ -86,8 +86,8 @@ class EnterYourNationalInsuranceNumberController @Inject() (
         nationalInsuranceNumber =>
           journeyService
             .upsert(journey.copy(
-              nationalInsuranceNumber = Some(nationalInsuranceNumber),
-              isChanging              = false
+              nino       = Some(nationalInsuranceNumber),
+              isChanging = false
             ))
             .map(_ => Redirect(nextCall))
       )

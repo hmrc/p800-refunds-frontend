@@ -36,6 +36,12 @@ class AppConfig @Inject() (servicesConfig: ServicesConfig, configuration: Config
     val failedAttemptRepoMaxAttempts: Int = configuration.get[Int]("mongodb.failed-attempts.failed-attempt-repo-max-attempts")
   }
 
+  object Nps {
+    val baseUrl: String = servicesConfig.baseUrl("nps")
+    val username: String = servicesConfig.getString("microservice.services.nps.username")
+    val password: String = servicesConfig.getString("microservice.services.nps.password")
+  }
+
   val govUkRouteIn: String = readConfigAsValidUrlString("urls.gov-uk.govuk-route-in")
 
   val incomeTaxGeneralEnquiriesUrl: String = readConfigAsValidUrlString("urls.gov-uk.income-tax-general-enquiries")
@@ -52,7 +58,6 @@ class AppConfig @Inject() (servicesConfig: ServicesConfig, configuration: Config
 
   object ExternalApiCalls {
     val p800ReferenceValidationBaseUrl: String = servicesConfig.baseUrl("p800-reference-validation")
-    val npsBaseUrl: String = servicesConfig.baseUrl("nps")
 
     val ecospendApiVersionPath: String = "/api/v2.0"
     val ecospendAuthServerUrl: String = servicesConfig.baseUrl("ecospend-auth")

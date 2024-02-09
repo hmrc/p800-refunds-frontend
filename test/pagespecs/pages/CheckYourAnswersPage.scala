@@ -17,7 +17,7 @@
 package pagespecs.pages
 
 import models.journeymodels.JourneyType
-import models.{NationalInsuranceNumber, P800Reference}
+import models.{Nino, P800Reference}
 import org.openqa.selenium.WebDriver
 import pagespecs.pagesupport.{ContentExpectation, Page, PageUtil}
 import testsupport.RichMatchers.convertToAnyShouldWrapper
@@ -33,7 +33,7 @@ class CheckYourAnswersPage(baseUrl: String, pathForJourneyType: String)(implicit
   def assertPageIsDisplayedForBankTransfer(
       p800Reference:           P800Reference,
       dateOfBirth:             String,
-      nationalInsuranceNumber: NationalInsuranceNumber
+      nationalInsuranceNumber: Nino
   ): Unit = withPageClue {
 
     val referenceExpectation: ContentExpectation = ContentExpectation(
@@ -61,7 +61,7 @@ class CheckYourAnswersPage(baseUrl: String, pathForJourneyType: String)(implicit
 
   def assertPageIsDisplayedForCheque(
       p800Reference:           P800Reference,
-      nationalInsuranceNumber: NationalInsuranceNumber
+      nationalInsuranceNumber: Nino
   ): Unit = withPageClue {
 
     val referenceExpectation: ContentExpectation = ContentExpectation(

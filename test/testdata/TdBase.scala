@@ -22,6 +22,7 @@ import models.attemptmodels.{AttemptId, AttemptInfo, IpAddress, NumberOfAttempts
 import models.dateofbirth.{DateOfBirth, DayOfMonth, Month, Year}
 import models.ecospend._
 import models.ecospend.consent._
+import _root_.nps.models.{AssociatedPayableNumber, CurrentOptimisticLock, CustomerAccountNumber, PayeNumber, ReconciliationIdentifier, ReferenceCheckResult, TaxDistrictNumber}
 import testsupport.ItSpec
 
 import java.time.format.DateTimeFormatter
@@ -49,10 +50,18 @@ trait TdBase {
   lazy val dateOfBirth: DateOfBirth = DateOfBirth(dayOfMonth, month, year)
   lazy val dateOfBirthFormatted: String = "01 January 2000"
 
-  lazy val nationalInsuranceNumber: NationalInsuranceNumber = NationalInsuranceNumber("LM001014C")
+  lazy val nino: Nino = Nino("LM001014C")
 
-  lazy val identityVerifiedResponse: IdentityVerificationResponse = IdentityVerificationResponse(IdentityVerified(true), AmountInPence(1234))
-  lazy val identityNotVerifiedResponse: IdentityVerificationResponse = IdentityVerificationResponse(IdentityVerified(false), AmountInPence(1234))
+  lazy val p800ReferenceChecked: ReferenceCheckResult = ReferenceCheckResult.P800ReferenceChecked(
+    reconciliationIdentifier = ReconciliationIdentifier("reconid-123"),
+    paymentNumber            = p800Reference,
+    payeNumber               = PayeNumber("PayeNumber-123"),
+    taxDistrictNumber        = TaxDistrictNumber("EAST LONDON AREA (SERVICE) (717)"),
+    paymentAmount            = BigDecimal("12.34"),
+    associatedPayableNumber  = AssociatedPayableNumber("associatedPayableNumber-1234"),
+    customerAccountNumber    = CustomerAccountNumber("customerAccountNumber-1234"),
+    currentOptimisticLock    = CurrentOptimisticLock(15)
+  )
 
   lazy val bankId: BankId = BankId("obie-barclays-personal")
   lazy val bankDescription: BankDescription = BankDescription(

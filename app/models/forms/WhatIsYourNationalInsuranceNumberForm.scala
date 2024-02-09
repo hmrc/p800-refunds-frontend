@@ -17,7 +17,7 @@
 package models.forms
 
 import language.{Language, Messages}
-import models.NationalInsuranceNumber
+import models.Nino
 import play.api.data.Forms.mapping
 import play.api.data.format.Formatter
 import play.api.data.{Form, FormError, Forms}
@@ -33,17 +33,17 @@ object WhatIsYourNationalInsuranceNumberForm {
   private def cleanInput(input: Option[String]): Option[String] =
     input.map(_.replaceAll("[^0-9a-zA-Z]", "").toUpperCase)
 
-  def form(implicit language: Language): Form[NationalInsuranceNumber] = {
-    val nationalInsuranceNumberMapping = Forms.of(new Formatter[NationalInsuranceNumber] {
-      override def bind(key: String, data: Map[String, String]): Either[Seq[FormError], NationalInsuranceNumber] =
+  def form(implicit language: Language): Form[Nino] = {
+    val nationalInsuranceNumberMapping = Forms.of(new Formatter[Nino] {
+      override def bind(key: String, data: Map[String, String]): Either[Seq[FormError], Nino] =
         cleanInput(data.get(key)) match {
           case Some(value) if value.trim.isEmpty => Left(Seq(FormError(key, Messages.WhatIsYourNationalInsuranceNumber.`Enter your National Insurance number`.show)))
-          case Some(value) if validNationalInsuranceNumber(value) => Right(NationalInsuranceNumber(value))
+          case Some(value) if validNationalInsuranceNumber(value) => Right(Nino(value))
           case Some(_) => Left(Seq(FormError(key, Messages.WhatIsYourNationalInsuranceNumber.`Enter your National Insurance number in the correct format`.show)))
           case None => Left(Seq(FormError(key, Messages.WhatIsYourNationalInsuranceNumber.`Enter your National Insurance number in the correct format`.show)))
         }
 
-      override def unbind(key: String, value: NationalInsuranceNumber): Map[String, String] = Map(key -> value.value)
+      override def unbind(key: String, value: Nino): Map[String, String] = Map(key -> value.value)
     })
 
     Form(

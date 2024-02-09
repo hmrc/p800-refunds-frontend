@@ -47,7 +47,7 @@ class WhatIsYourDateOfBirthPageSpec extends ItSpec {
     pages.checkYourAnswersBankTransferPage.assertPageIsDisplayedForBankTransfer(
       p800Reference           = tdAll.p800Reference,
       dateOfBirth             = tdAll.dateOfBirthFormatted,
-      nationalInsuranceNumber = tdAll.nationalInsuranceNumber
+      nationalInsuranceNumber = tdAll.nino
     )
     getJourneyFromDatabase(tdAll.journeyId) shouldBeLike tdAll.BankTransfer.journeyEnteredDateOfBirth
   }
@@ -94,7 +94,7 @@ class WhatIsYourDateOfBirthPageSpec extends ItSpec {
           pages.checkYourAnswersBankTransferPage.assertPageIsDisplayedForBankTransfer(
             p800Reference           = tdAll.p800Reference,
             dateOfBirth             = s"01 $monthFormatted 2000",
-            nationalInsuranceNumber = tdAll.nationalInsuranceNumber
+            nationalInsuranceNumber = tdAll.nino
           )
           val expectedJourney: Journey = {
             val j = tdAll.BankTransfer.journeyEnteredDateOfBirth

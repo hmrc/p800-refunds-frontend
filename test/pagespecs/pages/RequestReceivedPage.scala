@@ -43,7 +43,7 @@ class RequestReceivedPage(baseUrl: String, pathForJourneyType: String)(implicit 
           |Bank transfer request received
           |Your P800 reference:
           |P800REFNO1
-          |Your refund of £12.34 will now be paid by 1 December 2023.
+          |Your refund of £12.34 will now be paid by 1 December 2524.
           |
           |Print this page
           |
@@ -75,7 +75,7 @@ class RequestReceivedPage(baseUrl: String, pathForJourneyType: String)(implicit 
           |Cheque request received
           |Your P800 reference:
           |P800REFNO1
-          |Your refund of £12.34 will arrive in the post by 16 January 2024.
+          |Your refund of £12.34 will arrive in the post by 16 January 2524.
           |
           |Print this page
           |

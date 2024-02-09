@@ -45,7 +45,7 @@ class EcospendService @Inject() (
   //TODO: remove it and call backend to get the validation result from webhook
   def validate(journey: Journey)(implicit request: JourneyRequest[_]): Future[BankVerification] = for {
     accessToken <- ecospendAuthServerConnector.accessToken
-    bankVerificationResponse <- ecospendConnector.validate(accessToken, BankVerificationRequest(journey.getNationalInsuranceNumber.value))
+    bankVerificationResponse <- ecospendConnector.validate(accessToken, BankVerificationRequest(journey.getNino.value))
   } yield bankVerificationResponse
 
   def createConsent(journey: Journey)(implicit request: JourneyRequest[_]): Future[BankConsentResponse] = for {

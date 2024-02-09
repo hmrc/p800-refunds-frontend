@@ -51,7 +51,6 @@ class WeHaveConfirmedYourIdentityController @Inject() (
     }
     Redirect(nextCall.url)
   }
-
 }
 
 object WeHaveConfirmedYourIdentityController {

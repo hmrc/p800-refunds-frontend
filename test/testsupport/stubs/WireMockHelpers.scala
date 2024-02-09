@@ -17,9 +17,10 @@
 package testsupport.stubs
 
 import cats.syntax.eq._
+import com.github.tomakehurst.wiremock.client.MappingBuilder
 import com.github.tomakehurst.wiremock.client.WireMock._
 import com.github.tomakehurst.wiremock.http.Request
-import com.github.tomakehurst.wiremock.matching.MatchResult
+import com.github.tomakehurst.wiremock.matching.{MatchResult, StringValuePattern}
 import com.github.tomakehurst.wiremock.stubbing.StubMapping
 import play.api.http.Status
 import play.api.libs.json.{Format, Json}
@@ -126,12 +127,19 @@ object WireMockHelpers {
       )
   )
 
-  def stubForGetWithResponseBody(url: String, jsonBody: String, responseStatus: Int = Status.OK): StubMapping = stubFor(
-    get(urlPathEqualTo(url)).willReturn(
+  def stubForGetWithResponseBody(
+      url:             String,
+      responseBody:    String,
+      responseStatus:  Int                               = Status.OK,
+      requiredHeaders: Seq[(String, StringValuePattern)] = Nil
+  ): StubMapping = {
+
+    val mb: MappingBuilder = requiredHeaders.foldLeft(get(urlPathEqualTo(url)))((acc, c) => acc.withHeader(c._1, c._2))
+    stubFor(mb.willReturn(
       aResponse()
         .withStatus(responseStatus)
-        .withBody(jsonBody)
-    )
-  )
+        .withBody(responseBody)
+    ))
+  }
 
 }

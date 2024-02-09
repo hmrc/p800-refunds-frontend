@@ -29,22 +29,22 @@ class WeHaveConfirmedYourIdentityPageSpec extends ItSpec {
 
   "page renders correctly" - {
     "bank transfer" in {
-      upsertJourneyToDatabase(tdAll.BankTransfer.journeyIdentityVerified)
+      upsertJourneyToDatabase(tdAll.BankTransfer.AfterReferenceCheck.journeyReferenceChecked)
       pages.yourIdentityIsConfirmedBankTransferPage.open()
       pages.yourIdentityIsConfirmedBankTransferPage.assertPageIsDisplayed(JourneyType.BankTransfer)
-      getJourneyFromDatabase(tdAll.journeyId) shouldBeLike tdAll.BankTransfer.journeyIdentityVerified
+      getJourneyFromDatabase(tdAll.journeyId) shouldBeLike tdAll.BankTransfer.AfterReferenceCheck.journeyReferenceChecked
     }
     "cheque" in {
-      upsertJourneyToDatabase(tdAll.Cheque.journeyIdentityVerified)
+      upsertJourneyToDatabase(tdAll.Cheque.AfterReferenceCheck.journeyReferenceChecked)
       pages.yourIdentityIsConfirmedChequePage.open()
       pages.yourIdentityIsConfirmedChequePage.assertPageIsDisplayed(JourneyType.Cheque)
-      getJourneyFromDatabase(tdAll.journeyId) shouldBeLike tdAll.Cheque.journeyIdentityVerified
+      getJourneyFromDatabase(tdAll.journeyId) shouldBeLike tdAll.Cheque.AfterReferenceCheck.journeyReferenceChecked
     }
   }
 
   "clicking submit navigates to What Is The Name Of Your Bank Account page" - {
     "bank transfer" in {
-      upsertJourneyToDatabase(tdAll.BankTransfer.journeyIdentityVerified)
+      upsertJourneyToDatabase(tdAll.BankTransfer.AfterReferenceCheck.journeyReferenceChecked)
       EcospendStub.stubEcospendAuth2xxSucceeded
       EcospendStub.stubEcospendGetBanks2xx
       pages.yourIdentityIsConfirmedBankTransferPage.open()
@@ -53,42 +53,42 @@ class WeHaveConfirmedYourIdentityPageSpec extends ItSpec {
       pages.enterTheNameOfYourBankAccountPage.assertPageIsDisplayed()
       EcospendStub.verifyEcospendAccessToken()
       EcospendStub.verifyEcospendGetBanks()
-      getJourneyFromDatabase(tdAll.journeyId) shouldBeLike tdAll.BankTransfer.journeyIdentityVerified
+      getJourneyFromDatabase(tdAll.journeyId) shouldBeLike tdAll.BankTransfer.AfterReferenceCheck.journeyReferenceChecked
     }
     "cheque" in {
-      upsertJourneyToDatabase(tdAll.Cheque.journeyIdentityVerified)
+      upsertJourneyToDatabase(tdAll.Cheque.AfterReferenceCheck.journeyReferenceChecked)
       pages.yourIdentityIsConfirmedChequePage.open()
       pages.yourIdentityIsConfirmedChequePage.assertPageIsDisplayed(JourneyType.Cheque)
       pages.yourIdentityIsConfirmedChequePage.clickSubmit()
       pages.completeYourRefundRequestPage.assertPageIsDisplayed()
-      getJourneyFromDatabase(tdAll.journeyId) shouldBeLike tdAll.Cheque.journeyIdentityVerified
+      getJourneyFromDatabase(tdAll.journeyId) shouldBeLike tdAll.Cheque.AfterReferenceCheck.journeyReferenceChecked
     }
   }
 
   "clicking back button navigates to Check Your Answers page" - {
     "bank transfer" in {
-      upsertJourneyToDatabase(tdAll.BankTransfer.journeyIdentityVerified)
+      upsertJourneyToDatabase(tdAll.BankTransfer.AfterReferenceCheck.journeyReferenceChecked)
       pages.yourIdentityIsConfirmedBankTransferPage.open()
       pages.yourIdentityIsConfirmedBankTransferPage.assertPageIsDisplayed(JourneyType.BankTransfer)
       pages.yourIdentityIsConfirmedBankTransferPage.clickBackButton()
       pages.checkYourAnswersBankTransferPage.assertPageIsDisplayedForBankTransfer(
         tdAll.p800Reference,
         tdAll.dateOfBirthFormatted,
-        tdAll.nationalInsuranceNumber
+        tdAll.nino
       )
-      getJourneyFromDatabase(tdAll.journeyId) shouldBeLike tdAll.BankTransfer.journeyIdentityVerified
+      getJourneyFromDatabase(tdAll.journeyId) shouldBeLike tdAll.BankTransfer.AfterReferenceCheck.journeyReferenceChecked
     }
 
     "cheque" in {
-      upsertJourneyToDatabase(tdAll.Cheque.journeyIdentityVerified)
+      upsertJourneyToDatabase(tdAll.Cheque.AfterReferenceCheck.journeyReferenceChecked)
       pages.yourIdentityIsConfirmedChequePage.open()
       pages.yourIdentityIsConfirmedChequePage.assertPageIsDisplayed(JourneyType.Cheque)
       pages.yourIdentityIsConfirmedChequePage.clickBackButton()
       pages.checkYourAnswersChequePage.assertPageIsDisplayedForCheque(
         tdAll.p800Reference,
-        tdAll.nationalInsuranceNumber
+        tdAll.nino
       )
-      getJourneyFromDatabase(tdAll.journeyId) shouldBeLike tdAll.Cheque.journeyIdentityVerified
+      getJourneyFromDatabase(tdAll.journeyId) shouldBeLike tdAll.Cheque.AfterReferenceCheck.journeyReferenceChecked
     }
   }
 
