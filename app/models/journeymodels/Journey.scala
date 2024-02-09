@@ -16,7 +16,6 @@
 
 package models.journeymodels
 
-import julienrf.json.derived
 import models.dateofbirth.DateOfBirth
 import models.ecospend.BankDescription
 import models.ecospend.consent.BankConsentResponse
@@ -28,55 +27,30 @@ import util.Errors
 
 import java.time.{Clock, Instant}
 
-sealed trait HasFinished
-object HasFinished {
+class Journey(val internal: JourneyInternal) {
 
-  def hasFinished(hasFinished: HasFinished): Boolean = hasFinished match {
-    case No                 => false
-    case YesSucceeded       => true
-    case RefundNotSubmitted => true
-    case LockedOut          => true
-  }
+  /* proxy methods for convenience*/
+  def _id: JourneyId = internal._id
 
-  def isInProgress(hasFinished: HasFinished): Boolean = !HasFinished.hasFinished(hasFinished)
+  def createdAt: Instant = internal.createdAt
 
-  /**
-   * In other words journey in progress
-   */
-  case object No extends HasFinished
+  def hasFinished: HasFinished = internal.hasFinished
 
-  /**
-   * Journey has finished in successful way. The refund was claimed or standing order was requested
-   */
-  case object YesSucceeded extends HasFinished
+  def journeyType: Option[JourneyType] = internal.journeyType
 
-  /**
-   * Claiming refund failed
-   */
-  case object RefundNotSubmitted extends HasFinished
+  def p800Reference: Option[P800Reference] = internal.p800Reference
 
-  /**
-   * User entered too many times incorrect data. He was locked out.
-   */
-  case object LockedOut extends HasFinished
+  def nino: Option[Nino] = internal.nino
 
-  @SuppressWarnings(Array("org.wartremover.warts.Any"))
-  implicit val format: OFormat[HasFinished] = derived.oformat()
-}
+  def isChanging: Boolean = internal.isChanging
 
-final case class Journey(
-    _id:                  JourneyId,
-    createdAt:            Instant,
-    hasFinished:          HasFinished,
-    journeyType:          Option[JourneyType],
-    p800Reference:        Option[P800Reference],
-    nino:                 Option[Nino],
-    isChanging:           Boolean, //flag which is set on change check-your-answers page when user clicks "change" link
-    dateOfBirth:          Option[DateOfBirth],
-    referenceCheckResult: Option[ReferenceCheckResult], //reset this field upon changes of dependant fields
-    bankDescription:      Option[BankDescription],
-    bankConsent:          Option[BankConsentResponse]
-) {
+  def dateOfBirth: Option[DateOfBirth] = internal.dateOfBirth
+
+  def referenceCheckResult: Option[ReferenceCheckResult] = internal.referenceCheckResult
+
+  def bankDescription: Option[BankDescription] = internal.bankDescription
+
+  def bankConsent: Option[BankConsentResponse] = internal.bankConsentResponse
 
   /* derived stuff: */
   def id: JourneyId = _id
@@ -110,15 +84,95 @@ final case class Journey(
     case ReferenceCheckResult.ReferenceDidntMatchNino => false
   }
 
-  val lastUpdated: Instant = Instant.now(Clock.systemUTC())
+  def update(hasFinished: HasFinished): Journey = new Journey(internal.copy(
+    hasFinished = hasFinished
+  ))
 
+  def update(journeyType: JourneyType): Journey = new Journey(internal.copy(
+    journeyType = Some(journeyType)
+  ))
+
+  def update(nino: Nino): Journey = new Journey(
+    internal
+      .resetApiResponses()
+      .copy(
+        nino = Some(nino)
+      )
+  )
+
+  def update(dateOfBirth: DateOfBirth): Journey = new Journey(
+    internal
+      .resetApiResponses()
+      .copy(
+        dateOfBirth = Some(dateOfBirth)
+      )
+  )
+
+  def update(isChanging: Boolean): Journey = new Journey(internal.copy(
+    isChanging = isChanging
+  ))
+
+  def update(p800Reference: P800Reference): Journey = new Journey(
+    internal
+      .resetApiResponses()
+      .copy(
+        p800Reference = Some(p800Reference)
+      )
+  )
+
+  def update(referenceCheckResult: ReferenceCheckResult): Journey = new Journey(internal.copy(
+    referenceCheckResult = Some(referenceCheckResult)
+  ))
+
+  def update(bankDescription: BankDescription): Journey = new Journey(
+    internal
+      .copy(
+        bankDescription     = Some(bankDescription),
+        bankConsentResponse = None
+      //TODO: reset other API responses populated bankdDescription
+      )
+  )
+
+  def update(bankConsentResponse: BankConsentResponse): Journey = new Journey(
+    internal
+      .copy(
+        bankConsentResponse = Some(bankConsentResponse)
+      //TODO: reset other API responses populated bankConsentResponse
+      )
+  )
+
+  private implicit class JourneyOps(i: JourneyInternal) {
+    def resetApiResponses(): JourneyInternal = i.copy(
+      referenceCheckResult = None,
+      bankDescription      = None,
+      bankConsentResponse  = None
+    )
+  }
 }
 
 object Journey {
-  implicit val format: OFormat[Journey] = JourneyFormat.format
-
   def deriveRedirectByJourneyType[A](journeyType: JourneyType, chequeJourneyRedirect: A, bankJourneyRedirect: A): A = journeyType match {
     case JourneyType.Cheque       => chequeJourneyRedirect
     case JourneyType.BankTransfer => bankJourneyRedirect
   }
+}
+
+final case class JourneyInternal(
+    _id:                  JourneyId,
+    createdAt:            Instant,
+    hasFinished:          HasFinished,
+    journeyType:          Option[JourneyType],
+    p800Reference:        Option[P800Reference],
+    nino:                 Option[Nino],
+    isChanging:           Boolean, //flag which is set on change check-your-answers page when user clicks "change" link
+    dateOfBirth:          Option[DateOfBirth],
+    referenceCheckResult: Option[ReferenceCheckResult],
+    bankDescription:      Option[BankDescription],
+    bankConsentResponse:  Option[BankConsentResponse]
+) {
+  val lastUpdated: Instant = Instant.now(Clock.systemUTC())
+}
+
+object JourneyInternal {
+  implicit val format: OFormat[JourneyInternal] = JourneyFormat.format
 }

@@ -94,7 +94,7 @@ trait TdBase {
     ConsentPermission.Parties
   )
 
-  lazy val bankConsent: BankConsentResponse = BankConsentResponse(
+  lazy val bankConsentResponse: BankConsentResponse = BankConsentResponse(
     id                = consentId,
     bankReferenceId   = bankReferenceId,
     bankConsentUrl    = bankConsentUrl,

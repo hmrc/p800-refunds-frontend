@@ -17,7 +17,7 @@
 package pagespecs
 
 import models.dateofbirth.Month
-import models.journeymodels.{Journey, JourneyType}
+import models.journeymodels.{JourneyInternal, JourneyType}
 import testsupport.ItSpec
 
 import java.time.{LocalDate, LocalDateTime}
@@ -96,7 +96,7 @@ class WhatIsYourDateOfBirthPageSpec extends ItSpec {
             dateOfBirth             = s"01 $monthFormatted 2000",
             nationalInsuranceNumber = tdAll.nino
           )
-          val expectedJourney: Journey = {
+          val expectedJourney: JourneyInternal = {
             val j = tdAll.BankTransfer.journeyEnteredDateOfBirth
             val dob = j.dateOfBirth.value
             j.copy(dateOfBirth = Some(j.dateOfBirth.value.copy(

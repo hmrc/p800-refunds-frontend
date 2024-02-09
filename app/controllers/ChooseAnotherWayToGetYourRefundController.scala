@@ -68,7 +68,7 @@ class ChooseAnotherWayToGetYourRefundController @Inject() (
         case PtaOrChequeFormValue.Cheque =>
           journeyService
             .upsert(
-              journey.copy(journeyType = Some(JourneyType.Cheque))
+              journey.update(journeyType = JourneyType.Cheque)
             )
             .map { updatedJourney =>
               if (journey.isIdentityVerified) {
@@ -96,7 +96,7 @@ class ChooseAnotherWayToGetYourRefundController @Inject() (
           )
         case PtaOrBankTransferFormValue.BankTransferLoggedOut =>
           journeyService
-            .upsert(journey.copy(journeyType = Some(JourneyType.BankTransfer)))
+            .upsert(journey.update(journeyType = JourneyType.BankTransfer))
             .map(updatedJourney => Redirect(WeNeedYouToConfirmYourIdentityController.redirectLocation(updatedJourney)))
       }
     )

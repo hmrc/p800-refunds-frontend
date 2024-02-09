@@ -16,12 +16,12 @@
 
 package specs
 
-import models.journeymodels.{Journey, JourneyId}
+import models.journeymodels.{JourneyId, JourneyInternal}
 import repository.JourneyRepo
 import testsupport.ItSpec
 import uk.gov.hmrc.mongo.test.DefaultPlayMongoRepositorySupport
 
-class JourneyRepoSpec extends ItSpec with DefaultPlayMongoRepositorySupport[Journey] {
+class JourneyRepoSpec extends ItSpec with DefaultPlayMongoRepositorySupport[JourneyInternal] {
 
   override def beforeEach(): Unit = { () }
 

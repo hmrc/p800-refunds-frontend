@@ -18,7 +18,7 @@ package pagespecs
 
 import models.{Nino, P800Reference}
 import models.dateofbirth.{DateOfBirth, DayOfMonth, Month, Year}
-import models.journeymodels.{Journey, JourneyType}
+import models.journeymodels.{Journey, JourneyInternal, JourneyType}
 import testsupport.ItSpec
 import testsupport.stubs.NpsReferenceCheckStub
 
@@ -156,7 +156,7 @@ class CheckYourAnswersSpec extends ItSpec {
       //TODO TraceIndividual API
       pages.checkYourAnswersBankTransferPage.open()
       val j = tdAll.BankTransfer.AfterReferenceCheck.journeyReferenceChecked
-      NpsReferenceCheckStub.checkReference(j.nino.value, j.p800Reference.value, j.getP800ReferenceChecked(request = tdAll.fakeRequest))
+      NpsReferenceCheckStub.checkReference(j.nino.value, j.p800Reference.value, new Journey(j).getP800ReferenceChecked(request = tdAll.fakeRequest))
       pages.checkYourAnswersBankTransferPage.clickSubmit()
       pages.yourIdentityIsConfirmedBankTransferPage.assertPageIsDisplayed(JourneyType.BankTransfer)
       NpsReferenceCheckStub.verifyCheckReference(j.nino.value, j.p800Reference.value)
@@ -166,7 +166,7 @@ class CheckYourAnswersSpec extends ItSpec {
       upsertJourneyToDatabase(tdAll.Cheque.journeyEnteredNino)
       pages.checkYourAnswersChequePage.open()
       val j = tdAll.Cheque.AfterReferenceCheck.journeyReferenceChecked
-      NpsReferenceCheckStub.checkReference(j.nino.value, j.p800Reference.value, j.getP800ReferenceChecked(request = tdAll.fakeRequest))
+      NpsReferenceCheckStub.checkReference(j.nino.value, j.p800Reference.value, new Journey(j).getP800ReferenceChecked(request = tdAll.fakeRequest))
       pages.checkYourAnswersChequePage.clickSubmit()
       pages.yourIdentityIsConfirmedChequePage.assertPageIsDisplayed(JourneyType.Cheque)
       NpsReferenceCheckStub.verifyCheckReference(j.nino.value, j.p800Reference.value)
@@ -248,7 +248,7 @@ class CheckYourAnswersSpec extends ItSpec {
     //todo test for when user goes from 2 failed attempts to 3, then journey should be hasFinished.LockedOut
 
     "bank transfer - when user has 2 existing failed attempts, 3rd attempt also fails" in {
-      val j: Journey = tdAll.BankTransfer.AfterReferenceCheck.journeyReferenceDidntMatchNino
+      val j: JourneyInternal = tdAll.BankTransfer.AfterReferenceCheck.journeyReferenceDidntMatchNino
       NpsReferenceCheckStub.checkReferenceReferenceDidntMatchNino(j.nino.value, j.p800Reference.value)
 
       upsertJourneyToDatabase(j)
@@ -260,7 +260,7 @@ class CheckYourAnswersSpec extends ItSpec {
     }
 
     "cheque - when user has 2 existing failed attempts, 3rd attempt also fails" in {
-      val j: Journey = tdAll.Cheque.AfterReferenceCheck.journeyReferenceDidntMatchNino
+      val j: JourneyInternal = tdAll.Cheque.AfterReferenceCheck.journeyReferenceDidntMatchNino
       NpsReferenceCheckStub.checkReferenceReferenceDidntMatchNino(j.nino.value, j.p800Reference.value)
 
       upsertJourneyToDatabase(j)

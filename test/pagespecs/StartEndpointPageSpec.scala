@@ -16,7 +16,7 @@
 
 package pagespecs
 
-import models.journeymodels.Journey
+import models.journeymodels.JourneyInternal
 import play.api.libs.json.Json
 import testsupport.ItSpec
 
@@ -26,8 +26,8 @@ class StartEndpointPageSpec extends ItSpec {
     pages.startEndpoint.open()
     pages.doYouWantToSignInPage.assertPageIsDisplayed()
     goToViaPath("/get-an-income-tax-refund/test-only/show-journey")
-    val journey = Json.parse(webDriver.getPageSource).as[Journey]
+    val journey = Json.parse(webDriver.getPageSource).as[JourneyInternal]
     // relaxed assertion, it has new journeyId when this endpoint is called - we mainly care that it's started
-    getJourneyFromDatabase(journey._id) shouldBeLike tdAll.journeyStarted.copy(_id       = journey.id, createdAt = journey.createdAt)
+    getJourneyFromDatabase(journey._id) shouldBeLike tdAll.journeyStarted.copy(_id       = journey._id, createdAt = journey.createdAt)
   }
 }

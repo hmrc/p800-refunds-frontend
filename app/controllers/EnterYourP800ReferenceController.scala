@@ -87,9 +87,10 @@ class EnterYourP800ReferenceController @Inject() (
         ))),
         p800Reference => {
           journeyService
-            .upsert(journey.copy(
-              p800Reference = Some(p800Reference),
-              isChanging    = false
+            .upsert(journey.update(
+              p800Reference = p800Reference
+            ).update(
+              isChanging = false
             ))
             .map(_ => Redirect(nextCall))
         }

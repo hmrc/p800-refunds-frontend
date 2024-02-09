@@ -23,16 +23,16 @@ import java.time.Instant
 
 private[journeymodels] object JourneyFormat {
 
-  val format: OFormat[Journey] = {
+  val format: OFormat[JourneyInternal] = {
 
     implicit val instantFormat: Format[Instant] = MongoJavatimeFormats.instantFormat
 
     @SuppressWarnings(Array("org.wartremover.warts.Any"))
-    val defaultFormat: OFormat[Journey] = Json.format[Journey]
+    val defaultFormat: OFormat[JourneyInternal] = Json.format[JourneyInternal]
 
     //we need to write some extra fields on the top of the structure so it's
     //possible to index on them and use them in queries
-    val customWrites = OWrites[Journey](j =>
+    val customWrites = OWrites[JourneyInternal](j =>
       defaultFormat.writes(j) ++ Json.obj(
         "createdAt" -> MongoJavatimeFormats.instantFormat.writes(j.createdAt),
         "lastUpdated" -> MongoJavatimeFormats.instantFormat.writes(j.lastUpdated)

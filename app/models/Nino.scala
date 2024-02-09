@@ -21,7 +21,7 @@ import play.api.libs.json.{Json, Format}
 /**
  * National Insurance Number (Nino)
  */
-final case class Nino(value: String) extends AnyVal
+final case class Nino(value: String)
 
 object Nino {
   implicit val formats: Format[Nino] = Json.valueFormat[Nino]

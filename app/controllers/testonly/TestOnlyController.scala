@@ -16,8 +16,8 @@
 
 package controllers.testonly
 
-import action.{Actions, JourneyRequest, JourneyIdKey}
-import models.ecospend.consent.{ConsentStatus, BankConsentResponse}
+import action.{Actions, JourneyIdKey, JourneyRequest}
+import models.ecospend.consent.{BankConsentResponse, ConsentStatus}
 import models.forms.testonly.{BankStubForm, BankStubFormValue}
 import models.journeymodels.{HasFinished, Journey, JourneyId, JourneyType}
 import play.api.libs.json.Json
@@ -68,7 +68,7 @@ class TestOnlyController @Inject() (
 
   //TODO: remove it once we integrate with APIs
   val finishSucceedBankTransfer: Action[AnyContent] = as.journeyActionForTestOnly.async { implicit r =>
-    journeyService.upsert(r.journey.copy(hasFinished = HasFinished.YesSucceeded)).map { _ =>
+    journeyService.upsert(r.journey.update(hasFinished = HasFinished.YesSucceeded)).map { _ =>
       Redirect(r.journey.getJourneyType match {
         case JourneyType.Cheque       => controllers.routes.RequestReceivedController.getCheque
         case JourneyType.BankTransfer => controllers.routes.RequestReceivedController.getBankTransfer
@@ -79,7 +79,7 @@ class TestOnlyController @Inject() (
 
   //TODO: remove it once we integrate with APIs
   val finishFailBankTransfer: Action[AnyContent] = as.journeyActionForTestOnly.async { implicit r =>
-    journeyService.upsert(r.journey.copy(hasFinished = HasFinished.RefundNotSubmitted)).map(_ =>
+    journeyService.upsert(r.journey.update(hasFinished = HasFinished.RefundNotSubmitted)).map(_ =>
       Redirect(controllers.routes.RefundRequestNotSubmittedController.get))
   }
 
@@ -119,7 +119,7 @@ class TestOnlyController @Inject() (
       maybeJourney: Option[Journey] <- journeyService.find(journeyId)
     } yield Ok(
       maybeJourney
-        .map(journey => Json.prettyPrint(Json.toJson(journey)))
+        .map(journey => Json.prettyPrint(Json.toJson(journey.internal)))
         .getOrElse(s"No Journey in mongo with journeyId: [${journeyId.value}]")
     )
   }

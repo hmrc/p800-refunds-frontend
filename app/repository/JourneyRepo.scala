@@ -17,7 +17,7 @@
 package repository
 
 import config.AppConfig
-import models.journeymodels.{Journey, JourneyId}
+import models.journeymodels.{JourneyId, JourneyInternal}
 import org.mongodb.scala.model.{IndexModel, IndexOptions, Indexes}
 import repository.JourneyRepo._
 import repository.Repo.{Id, IdExtractor}
@@ -34,11 +34,11 @@ final class JourneyRepo @Inject() (
     mongoComponent: MongoComponent,
     config:         AppConfig
 )(implicit ec: ExecutionContext)
-  extends Repo[JourneyId, Journey](
+  extends Repo[JourneyId, JourneyInternal](
     collectionName = "journey",
     mongoComponent = mongoComponent,
     indexes        = JourneyRepo.indexes(config.JourneyRepo.journeyRepoTtl),
-    extraCodecs    = Seq(Codecs.playFormatCodec(Journey.format)),
+    extraCodecs    = Seq(Codecs.playFormatCodec(JourneyInternal.format)),
     replaceIndexes = true
   ) {
 
@@ -50,8 +50,8 @@ object JourneyRepo {
     override def value(i: JourneyId): String = i.value
   }
 
-  implicit val journeyIdExtractor: IdExtractor[Journey, JourneyId] = new IdExtractor[Journey, JourneyId] {
-    override def id(j: Journey): JourneyId = j._id
+  implicit val journeyIdExtractor: IdExtractor[JourneyInternal, JourneyId] = new IdExtractor[JourneyInternal, JourneyId] {
+    override def id(j: JourneyInternal): JourneyId = j._id
   }
 
   def indexes(cacheTtl: FiniteDuration): Seq[IndexModel] = Seq(

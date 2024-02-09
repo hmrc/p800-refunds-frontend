@@ -18,7 +18,7 @@ package testsupport
 
 import com.google.inject.AbstractModule
 import models.attemptmodels.AttemptInfo
-import models.journeymodels.{Journey, JourneyId}
+import models.journeymodels.{Journey, JourneyId, JourneyInternal}
 import org.openqa.selenium.WebDriver
 import org.openqa.selenium.htmlunit.HtmlUnitDriver
 import org.scalatest.freespec.AnyFreeSpecLike
@@ -104,14 +104,14 @@ trait ItSpec extends AnyFreeSpecLike
     ()
   }
 
-  def upsertJourneyToDatabase(journey: Journey): Unit = {
+  def upsertJourneyToDatabase(journey: JourneyInternal): Unit = {
     val journeyRepo: JourneyRepo = app.injector.instanceOf[JourneyRepo]
     journeyRepo.upsert(journey).futureValue
   }
 
   def getJourneyFromDatabase(journeyId: JourneyId): Journey = {
     val journeyRepo: JourneyRepo = app.injector.instanceOf[JourneyRepo]
-    journeyRepo.findById(journeyId).futureValue.value
+    new Journey(journeyRepo.findById(journeyId).futureValue.value)
   }
 
   def upsertFailedAttemptToDatabase(attemptInfo: AttemptInfo): Unit = {
@@ -131,7 +131,11 @@ trait ItSpec extends AnyFreeSpecLike
      * Asserts the journey matches expected Journey ignoring `createdAt`
      */
     def shouldBeLike(expected: Journey): Assertion = {
-      j.copy(createdAt = expected.createdAt) shouldBe expected
+      j.internal.copy(createdAt = expected.createdAt) shouldBe expected.internal
+    }
+
+    def shouldBeLike(expected: JourneyInternal): Assertion = {
+      j.internal.copy(createdAt = expected.createdAt) shouldBe expected
     }
   }
 

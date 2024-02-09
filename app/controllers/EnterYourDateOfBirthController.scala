@@ -68,8 +68,8 @@ class EnterYourDateOfBirthController @Inject() (
         },
         validForm => {
           journeyService
-            .upsert(journey.copy(
-              dateOfBirth = Some(validForm.date)
+            .upsert(journey.update(
+              dateOfBirth = validForm.date
             ))
             .map(_ => Redirect(controllers.CheckYourAnswersController.redirectLocation(request.journey)))
         }

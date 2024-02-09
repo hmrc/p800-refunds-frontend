@@ -85,8 +85,9 @@ class EnterYourNationalInsuranceNumberController @Inject() (
         },
         nationalInsuranceNumber =>
           journeyService
-            .upsert(journey.copy(
-              nino       = Some(nationalInsuranceNumber),
+            .upsert(journey.update(
+              nino = nationalInsuranceNumber
+            ).update(
               isChanging = false
             ))
             .map(_ => Redirect(nextCall))

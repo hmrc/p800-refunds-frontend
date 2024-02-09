@@ -54,7 +54,7 @@ class RefundRequestNotSubmittedController @Inject() (
     Errors.require(request.journey.getJourneyType === JourneyType.BankTransfer, "This page is only for BankTransfer journey")
 
     journeyService
-      .upsert(request.journey.copy(hasFinished = HasFinished.No))
+      .upsert(request.journey.update(hasFinished = HasFinished.No))
       //TODO: invalidate API calls
       .map(_ => Redirect(controllers.routes.ChooseAnotherWayToGetYourRefundController.getBankTransfer))
   }
