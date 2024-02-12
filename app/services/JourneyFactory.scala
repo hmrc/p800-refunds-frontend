@@ -16,7 +16,7 @@
 
 package services
 
-import models.journeymodels.{HasFinished, Journey}
+import models.journeymodels.{HasFinished, IsChanging, Journey}
 
 import java.time.{Clock, Instant}
 import javax.inject.{Inject, Singleton}
@@ -34,11 +34,11 @@ class JourneyFactory @Inject() (
     journeyType          = None,
     p800Reference        = None,
     nino                 = None,
-    isChanging           = false,
+    isChanging           = IsChanging.No,
     dateOfBirth          = None,
     referenceCheckResult = None,
     bankDescription      = None,
-    bankConsent          = None
+    bankConsentResponse  = None
   )
 
 }

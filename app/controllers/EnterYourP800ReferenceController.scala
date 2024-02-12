@@ -75,8 +75,10 @@ class EnterYourP800ReferenceController @Inject() (
      * It must navigate to the next page or to the checkYourAnswers page depending if it was a "change" or not.
      */
     val nextCall =
-      if (journey.isChanging) controllers.CheckYourAnswersController.redirectLocation(request.journey)
-      else EnterYourNationalInsuranceNumberController.redirectLocation(request.journey)
+      journey.isChanging match {
+        case IsChanging.Yes => controllers.CheckYourAnswersController.redirectLocation(request.journey)
+        case IsChanging.No  => EnterYourNationalInsuranceNumberController.redirectLocation(request.journey)
+      }
 
     EnterP800ReferenceForm
       .form
@@ -87,9 +89,10 @@ class EnterYourP800ReferenceController @Inject() (
         ))),
         p800Reference => {
           journeyService
-            .upsert(journey.copy(
-              p800Reference = Some(p800Reference),
-              isChanging    = false
+            .upsert(journey.update(
+              p800Reference = p800Reference
+            ).copy(
+              isChanging = IsChanging.No
             ))
             .map(_ => Redirect(nextCall))
         }

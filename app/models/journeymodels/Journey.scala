@@ -16,7 +16,6 @@
 
 package models.journeymodels
 
-import julienrf.json.derived
 import models.dateofbirth.DateOfBirth
 import models.ecospend.BankDescription
 import models.ecospend.consent.BankConsentResponse
@@ -28,42 +27,6 @@ import util.Errors
 
 import java.time.{Clock, Instant}
 
-sealed trait HasFinished
-object HasFinished {
-
-  def hasFinished(hasFinished: HasFinished): Boolean = hasFinished match {
-    case No                 => false
-    case YesSucceeded       => true
-    case RefundNotSubmitted => true
-    case LockedOut          => true
-  }
-
-  def isInProgress(hasFinished: HasFinished): Boolean = !HasFinished.hasFinished(hasFinished)
-
-  /**
-   * In other words journey in progress
-   */
-  case object No extends HasFinished
-
-  /**
-   * Journey has finished in successful way. The refund was claimed or standing order was requested
-   */
-  case object YesSucceeded extends HasFinished
-
-  /**
-   * Claiming refund failed
-   */
-  case object RefundNotSubmitted extends HasFinished
-
-  /**
-   * User entered too many times incorrect data. He was locked out.
-   */
-  case object LockedOut extends HasFinished
-
-  @SuppressWarnings(Array("org.wartremover.warts.Any"))
-  implicit val format: OFormat[HasFinished] = derived.oformat()
-}
-
 final case class Journey(
     _id:                  JourneyId,
     createdAt:            Instant,
@@ -71,12 +34,65 @@ final case class Journey(
     journeyType:          Option[JourneyType],
     p800Reference:        Option[P800Reference],
     nino:                 Option[Nino],
-    isChanging:           Boolean, //flag which is set on change check-your-answers page when user clicks "change" link
+    isChanging:           IsChanging,
     dateOfBirth:          Option[DateOfBirth],
     referenceCheckResult: Option[ReferenceCheckResult], //reset this field upon changes of dependant fields
     bankDescription:      Option[BankDescription],
-    bankConsent:          Option[BankConsentResponse]
+    bankConsentResponse:  Option[BankConsentResponse]
 ) {
+
+  /*
+   * Convenient updates methods which automatically reset relevant API responses.
+   */
+  def update(nino: Nino): Journey =
+    this
+      .resetCheckReferenceApiResponses()
+      .copy(
+        nino = Some(nino)
+      )
+
+  def update(dateOfBirth: DateOfBirth): Journey =
+    this
+      .resetCheckReferenceApiResponses()
+      .copy(
+        dateOfBirth = Some(dateOfBirth)
+      )
+
+  def update(p800Reference: P800Reference): Journey =
+    this
+      .resetCheckReferenceApiResponses()
+      .copy(
+        p800Reference = Some(p800Reference)
+      )
+
+  def update(referenceCheckResult: ReferenceCheckResult): Journey =
+    this
+      .resetCheckReferenceApiResponses()
+      .copy(
+        referenceCheckResult = Some(referenceCheckResult)
+      //TODO reset individual trace API and other API results which happen after that call
+      )
+
+  def update(bankDescription: BankDescription): Journey =
+    this
+      .copy(
+        bankDescription     = Some(bankDescription),
+        bankConsentResponse = None
+      //TODO: reset other API responses populated bankdDescription
+      )
+
+  def update(bankConsentResponse: BankConsentResponse): Journey =
+    this
+      .copy(
+        bankConsentResponse = Some(bankConsentResponse)
+      //TODO: reset other API responses populated bankConsentResponse
+      )
+
+  private def resetCheckReferenceApiResponses(): Journey = this.copy(
+    referenceCheckResult = None,
+    bankDescription      = None,
+    bankConsentResponse  = None
+  )
 
   /* derived stuff: */
   def id: JourneyId = _id
@@ -93,7 +109,7 @@ final case class Journey(
 
   def getBankDescription(implicit request: Request[_]): BankDescription = bankDescription.getOrElse(Errors.throwServerErrorException(s"Expected 'bankDescription' to be defined but it was None [${journeyId.toString}] "))
 
-  def getBankConsent(implicit request: Request[_]): BankConsentResponse = bankConsent.getOrElse(Errors.throwBadRequestException("Expected 'bankConsent' to be defined but it was None [${journeyId.toString}] "))
+  def getBankConsent(implicit request: Request[_]): BankConsentResponse = bankConsentResponse.getOrElse(Errors.throwBadRequestException("Expected 'bankConsent' to be defined but it was None [${journeyId.toString}] "))
 
   def getReferenceCheckResult(implicit request: Request[_]): ReferenceCheckResult = referenceCheckResult.getOrElse(Errors.throwServerErrorException(s"Expected 'referenceCheckResult' to be defined but it was None [${journeyId.toString}] "))
 

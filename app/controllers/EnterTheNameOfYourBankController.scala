@@ -74,8 +74,8 @@ class EnterTheNameOfYourBankController @Inject() (
         bankId => {
           for {
             bankDescription <- bankDescriptionForBankId(bankId)
-            newJourney = journey.copy(
-              bankDescription = Some(bankDescription)
+            newJourney = journey.update(
+              bankDescription = bankDescription
             )
             _ <- journeyService.upsert(newJourney)
           } yield Redirect(controllers.routes.GiveYourPermissionController.get)
