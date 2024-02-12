@@ -74,7 +74,10 @@ class EnterYourNationalInsuranceNumberController @Inject() (
       case JourneyType.BankTransfer => controllers.routes.EnterYourDateOfBirthController.get
       case JourneyType.Cheque       => controllers.routes.CheckYourAnswersController.getCheque
     }
-    val nextCall = if (request.journey.isChanging) controllers.CheckYourAnswersController.redirectLocation(request.journey) else defaultNextCall
+    val nextCall = request.journey.isChanging match {
+      case IsChanging.Yes => controllers.CheckYourAnswersController.redirectLocation(request.journey)
+      case IsChanging.No  => defaultNextCall
+    }
 
     WhatIsYourNationalInsuranceNumberForm
       .form
@@ -85,9 +88,10 @@ class EnterYourNationalInsuranceNumberController @Inject() (
         },
         nationalInsuranceNumber =>
           journeyService
-            .upsert(journey.copy(
-              nino       = Some(nationalInsuranceNumber),
-              isChanging = false
+            .upsert(journey.update(
+              nino = nationalInsuranceNumber
+            ).copy(
+              isChanging = IsChanging.No
             ))
             .map(_ => Redirect(nextCall))
       )

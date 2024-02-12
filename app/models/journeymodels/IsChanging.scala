@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2024 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,13 +14,20 @@
  * limitations under the License.
  */
 
-package models
+package models.journeymodels
+import julienrf.json.derived
+import play.api.libs.json.OFormat
 
-import play.api.libs.json.{Format, Json}
+/**
+ * Flag which is set on change check-your-answers page when user clicks "change" link
+ */
+sealed trait IsChanging
 
-final case class P800Reference(value: String)
+object IsChanging {
+  case object Yes extends IsChanging
+  case object No extends IsChanging
 
-object P800Reference {
-  implicit val formats: Format[P800Reference] = Json.valueFormat[P800Reference]
+  @SuppressWarnings(Array("org.wartremover.warts.Any"))
+  implicit val format: OFormat[IsChanging] = derived.oformat[IsChanging]()
 }
 

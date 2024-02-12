@@ -55,8 +55,8 @@ class GiveYourPermissionController @Inject() (
 
     for {
       bankConsentResponse: BankConsentResponse <- ecospendService.createConsent(journey)
-      newJourney = journey.copy(
-        bankConsent = Some(bankConsentResponse)
+      newJourney = journey.update(
+        bankConsentResponse = bankConsentResponse
       )
       _ <- journeyService.upsert(newJourney)
     } yield Redirect(bankConsentResponse.bankConsentUrl.toString)

@@ -80,7 +80,7 @@ class CheckYourAnswersController @Inject() (
   def changeNationalInsuranceNumber: Action[AnyContent] = actions.journeyInProgress.async { implicit request =>
     val journey = request.journey
     journeyService
-      .upsert(journey.copy(isChanging = true))
+      .upsert(journey.copy(isChanging = IsChanging.Yes))
       .map(_ =>
         Redirect(EnterYourNationalInsuranceNumberController.redirectLocation(journey)))
   }
@@ -92,7 +92,7 @@ class CheckYourAnswersController @Inject() (
   def changeP800Reference: Action[AnyContent] = actions.journeyInProgress.async { implicit request =>
     val journey = request.journey
     journeyService
-      .upsert(journey.copy(isChanging = true))
+      .upsert(journey.copy(isChanging = IsChanging.Yes))
       .map(_ => Redirect(EnterYourP800ReferenceController.redirectLocation(journey)))
   }
 
@@ -119,10 +119,10 @@ class CheckYourAnswersController @Inject() (
                 // if verification is successful, reflect this in journey, redirect to confirmed identity
                 referenceCheckResult match {
                   case _: ReferenceCheckResult.P800ReferenceChecked => journeyService
-                    .upsert(journey.copy(referenceCheckResult = Some(referenceCheckResult)))
+                    .upsert(journey.update(referenceCheckResult = referenceCheckResult))
                     .map(_ => controllers.WeHaveConfirmedYourIdentityController.redirectLocation(journey))
                   case ReferenceCheckResult.RefundAlreadyTaken => journeyService
-                    .upsert(journey.copy(referenceCheckResult = Some(referenceCheckResult)))
+                    .upsert(journey.update(referenceCheckResult = referenceCheckResult))
                     .map(_ => controllers.CannotConfirmYourIdentityTryAgainController.redirectLocation(journey))
                   case ReferenceCheckResult.ReferenceDidntMatchNino =>
                     {
@@ -133,12 +133,12 @@ class CheckYourAnswersController @Inject() (
                           // if newly updated failed attempt count is over the threshold, update journey to HasFinished.LockedOut, redirecting to no more attempts
                           if (AttemptInfo.shouldBeLockedOut(maybeAttemptInfo, appConfig.FailedAttemptRepo.failedAttemptRepoMaxAttempts)) {
                             journeyService
-                              .upsert(journey.copy(referenceCheckResult = Some(referenceCheckResult), hasFinished = HasFinished.LockedOut))
+                              .upsert(journey.update(referenceCheckResult = referenceCheckResult).copy(hasFinished = HasFinished.LockedOut))
                               .map(_ => controllers.NoMoreAttemptsLeftToConfirmYourIdentityController.redirectLocation(journey))
                           } else {
                             // otherwise attempts is not over threshold, redirect to cannot confirm your identity page
                             journeyService
-                              .upsert(journey.copy(referenceCheckResult = Some(referenceCheckResult)))
+                              .upsert(journey.update(referenceCheckResult = referenceCheckResult))
                               .map(_ => controllers.CannotConfirmYourIdentityTryAgainController.redirectLocation(journey))
                           }
                         }
