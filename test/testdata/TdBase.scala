@@ -16,18 +16,20 @@
 
 package testdata
 
+import _root_.nps.models.{AssociatedPayableNumber, CurrentOptimisticLock, CustomerAccountNumber, PayeNumber, ReconciliationIdentifier, ReferenceCheckResult, TaxDistrictNumber}
 import akka.http.scaladsl.model.Uri
 import models._
 import models.attemptmodels.{AttemptId, AttemptInfo, IpAddress, NumberOfAttempts}
 import models.dateofbirth.{DateOfBirth, DayOfMonth, Month, Year}
 import models.ecospend._
+import models.ecospend.account._
 import models.ecospend.consent._
-import _root_.nps.models.{AssociatedPayableNumber, CurrentOptimisticLock, CustomerAccountNumber, PayeNumber, ReconciliationIdentifier, ReferenceCheckResult, TaxDistrictNumber}
 import testsupport.ItSpec
 
 import java.time.format.DateTimeFormatter
 import java.time.{Instant, LocalDateTime, ZoneOffset}
 import java.util.UUID
+import java.util.Currency
 
 trait TdBase {
 
@@ -104,5 +106,27 @@ trait TdBase {
     consentEndDate    = localDateTime,
     consentExpiryDate = localDateTime,
     permissions       = permissions
+  )
+
+  lazy val accountId: UUID = UUID.fromString("00000000-0000-0000-0000-000000000000")
+  lazy val bankAccountSummary: BankAccountSummary = BankAccountSummary(
+    id                    = accountId,
+    bankId                = bankId,
+    merchantId            = None,
+    merchantUserId        = None,
+    ttype                 = BankAccountType.Personal,
+    subType               = BankAccountSubType.CurrentAccount,
+    currency              = Currency.getInstance("GBP"),
+    accountFormat         = BankAccountFormat.SortCode,
+    accountIdentification = AccountIdentification("44556610002333"),
+    calculatedOwnerName   = CalculatedOwnerName("Greg Greggson"),
+    accountOwnerName      = AccountOwnerName("Greg Greggson"),
+    displayName           = DisplayName("Greg G Greggson"),
+    balance               = 123.7,
+    lastUpdateTime        = localDateTime,
+    parties               = List(BankAccountParty(
+      name          = BankPartyName("Greg Greggson"),
+      fullLegalName = BankPartyFullLegalName("Greg Greggory Greggson")
+    ))
   )
 }

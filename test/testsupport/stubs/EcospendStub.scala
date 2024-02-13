@@ -19,17 +19,20 @@ package testsupport.stubs
 import com.github.tomakehurst.wiremock.client.WireMock._
 import com.github.tomakehurst.wiremock.stubbing.StubMapping
 import models.ecospend.BankId
-import models.ecospend.consent.ConsentStatus
 import models.ecospend.consent.BankConsentRequest
+import models.ecospend.consent.ConsentStatus
 import models.ecospend.verification.{BankVerificationRequest, VerificationStatus}
 import play.api.http.Status
 import testsupport.ItSpec
+
+import java.util.UUID
 
 object EcospendStub {
   val authUrl: String = "/connect/token"
   val banksUrl: String = "/api/v2.0/banks"
   val validateUrl: String = "/api/v2.0/validate"
   val consentUrl: String = "/api/v2.0/consents"
+  val accountSummaryUrl: String = "/api/v2.0/accounts/summary"
 
   val authJsonResponseBody2xx: String =
     //language=JSON
@@ -181,4 +184,37 @@ object EcospendStub {
       WireMockHelpers.verifyExactlyWithBodyParse(consentUrl, numberOfRequests)(BankConsentRequest.format)
   }
 
+  object AccountStub {
+    def stubAccountSummary2xxSucceeded(consentId: UUID): StubMapping =
+      WireMockHelpers.stubForGetWithResponseBody(accountSummaryUrl, validateBankAccountSummaryResponseJson(consentId))
+
+    def accountSummaryValidate(numberOfRequests: Int = 1): Unit =
+      WireMockHelpers.verifyExactlyWithHeader(accountSummaryUrl, "consent_id", numberOfRequests)
+
+    def validateBankAccountSummaryResponseJson(consentId: UUID): String =
+      //language=JSON
+      s"""
+        [
+          {
+            "id": "${consentId.toString}",
+            "bank_id": "obie-barclays-personal",
+            "type": "Personal",
+            "sub_type": "CurrentAccount",
+            "currency": "GBP",
+            "account_format": "SortCode",
+            "account_identification": "44556610002333",
+            "calculated_owner_name": "Greg Greggson",
+            "account_owner_name": "Greg Greggson",
+            "display_name": "Greg G Greggson",
+            "balance": 123.7,
+            "last_update_time": "2059-11-25T16:33:51.880",
+            "parties": [
+              {
+                "name": "Greg Greggson",
+                "full_legal_name": "Greg Greggory Greggson"
+              }
+            ]
+          }
+        ]""".stripMargin
+  }
 }

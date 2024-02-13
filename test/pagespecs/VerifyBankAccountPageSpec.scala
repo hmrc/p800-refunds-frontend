@@ -31,6 +31,8 @@ class VerifyBankAccountPageSpec extends ItSpec {
     //TODO: uncomment the wiremock stuff when we know what ecospend api looks like and is wired up
     //    EcospendStub.stubEcospendAuth2xxSucceeded
     //    EcospendStub.ValidateStubs.stubValidateNotValidatedYet
+    EcospendStub.stubEcospendAuth2xxSucceeded
+    EcospendStub.AccountStub.stubAccountSummary2xxSucceeded(tdAll.consentId)
     pages.verifyBankAccountPage.open()
     pages.verifyBankAccountPage.assertPageIsDisplayed()
     //    EcospendStub.ValidateStubs.verifyValidate()
@@ -40,45 +42,73 @@ class VerifyBankAccountPageSpec extends ItSpec {
     //TODO: uncomment the wiremock stuff when we know what ecospend api looks like and is wired up
     //    EcospendStub.stubEcospendAuth2xxSucceeded
     //    EcospendStub.ValidateStubs.stubValidateNotValidatedYet
+    EcospendStub.stubEcospendAuth2xxSucceeded
+    EcospendStub.AccountStub.stubAccountSummary2xxSucceeded(tdAll.consentId)
+
     pages.verifyBankAccountPage.open()
     pages.verifyBankAccountPage.assertPageIsDisplayed()
     pages.verifyBankAccountPage.clickRefreshThisPageLink()
     pages.verifyBankAccountPage.assertPageIsDisplayed()
-    //    EcospendStub.ValidateStubs.verifyValidate(2)
+    // EcospendStub.ValidateStubs.verifyValidate(2)
   }
 
   //TODO: unignore this when we have the callbacks/fetching of the bank verification statuses from ecospend along with other API calls
   "redirect to bank transfer 'Request received' page when verification call returns Successful" ignore {
     EcospendStub.stubEcospendAuth2xxSucceeded
     EcospendStub.ValidateStubs.stubValidateNotValidatedYet
+    EcospendStub.stubEcospendAuth2xxSucceeded
+    EcospendStub.AccountStub.stubAccountSummary2xxSucceeded(tdAll.consentId)
+
     pages.verifyBankAccountPage.open()
     pages.verifyBankAccountPage.assertPageIsDisplayed()
     EcospendStub.ValidateStubs.stubValidatePaymentSuccessful()
     pages.verifyBankAccountPage.clickRefreshThisPageLink()
     pages.requestReceivedBankTransferPage.assertPageIsDisplayedForBankTransfer()
-    EcospendStub.ValidateStubs.verifyValidate(2)
+
+    EcospendStub.ValidateStubs.verifyValidate(numberOfRequests = 2)
   }
 
   //TODO: unignore this when we have the callbacks/fetching of the bank verification statuses from ecospend along with other API calls
   "redirect to 'Request not submitted' page when verification call returns UnSuccessful" ignore {
     EcospendStub.stubEcospendAuth2xxSucceeded
     EcospendStub.ValidateStubs.stubValidateNotValidatedYet
+    EcospendStub.stubEcospendAuth2xxSucceeded
+    EcospendStub.AccountStub.stubAccountSummary2xxSucceeded(tdAll.consentId)
+
     pages.verifyBankAccountPage.open()
     pages.verifyBankAccountPage.assertPageIsDisplayed()
     EcospendStub.ValidateStubs.stubValidatePaymentUnSuccessful()
     pages.verifyBankAccountPage.clickRefreshThisPageLink()
     pages.refundRequestNotSubmittedPage.assertPageIsDisplayed()
+
     EcospendStub.ValidateStubs.verifyValidate(2)
   }
 
   "clicking 'Back' sends user to 'What is the name of your bank account' page" in {
     EcospendStub.stubEcospendAuth2xxSucceeded
     EcospendStub.ValidateStubs.stubValidateNotValidatedYet
+    EcospendStub.stubEcospendAuth2xxSucceeded
+    EcospendStub.AccountStub.stubAccountSummary2xxSucceeded(tdAll.consentId)
     EcospendStub.stubEcospendGetBanks2xx
+
     pages.verifyBankAccountPage.open()
     pages.verifyBankAccountPage.assertPageIsDisplayed()
     pages.verifyBankAccountPage.clickBackButton()
     pages.enterTheNameOfYourBankAccountPage.assertPageIsDisplayed()
+  }
+
+  "refreshing the page does not re-send the account summary request" in {
+    EcospendStub.stubEcospendAuth2xxSucceeded
+    EcospendStub.ValidateStubs.stubValidateNotValidatedYet
+    EcospendStub.stubEcospendAuth2xxSucceeded
+    EcospendStub.AccountStub.stubAccountSummary2xxSucceeded(tdAll.consentId)
+
+    pages.verifyBankAccountPage.open()
+    pages.verifyBankAccountPage.assertPageIsDisplayed()
+    pages.verifyBankAccountPage.clickRefreshThisPageLink()
+    pages.verifyBankAccountPage.assertPageIsDisplayed()
+
+    EcospendStub.AccountStub.accountSummaryValidate(numberOfRequests = 1)
   }
 
 }

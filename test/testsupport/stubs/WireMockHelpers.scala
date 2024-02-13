@@ -29,6 +29,16 @@ object WireMockHelpers {
 
   def verifyNone(url: String): Unit = verify(exactly(0), postRequestedFor(urlPathEqualTo(url)))
 
+  def verifyExactlyWithHeader(url: String, headerKey: String, count: Int): Unit = verify(
+    exactly(count),
+    getRequestedFor(urlPathEqualTo(url))
+      .andMatching((request: Request) =>
+        customValueMatcherWithHeader(url, headerKey, request))
+  )
+
+  private def customValueMatcherWithHeader(url: String, headerKey: String, request: Request): MatchResult =
+    MatchResult.of(request.getUrl === url && request.header(headerKey).isPresent)
+
   /**
    * Useful wiremock helper to verify that the request body serialises to what we expect.
    * Hint: If it's not working and you can't work out why, check what A you are passing in... :)

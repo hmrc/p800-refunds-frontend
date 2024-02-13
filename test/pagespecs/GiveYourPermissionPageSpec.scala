@@ -49,6 +49,8 @@ class GiveYourPermissionPageSpec extends ItSpec {
     EcospendStub.ValidateStubs.stubValidateNotValidatedYet
     EcospendStub.stubEcospendAuth2xxSucceeded
     EcospendStub.ConsentStubs.stubConsent2xxSucceeded(tdAll.bankId)
+    EcospendStub.stubEcospendAuth2xxSucceeded
+    EcospendStub.AccountStub.stubAccountSummary2xxSucceeded(tdAll.consentId)
 
     pages.giveYourPermissionPage.open()
     pages.giveYourPermissionPage.assertPageIsDisplayed()
@@ -58,7 +60,7 @@ class GiveYourPermissionPageSpec extends ItSpec {
     pages.bankStubPage.clickSubmit()
     pages.verifyBankAccountPage.assertPageIsDisplayed()
 
-    getJourneyFromDatabase(tdAll.journeyId) shouldBeLike tdAll.BankTransfer.journeyPermissionGiven
+    getJourneyFromDatabase(tdAll.journeyId) shouldBeLike tdAll.BankTransfer.journeyAccountSummary
   }
 
   "clicking 'Choose another way to get my money' redirects to 'Choose another way to get my refund' page" in {

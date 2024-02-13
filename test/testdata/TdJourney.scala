@@ -39,7 +39,8 @@ trait TdJourney {
     dateOfBirth          = None,
     referenceCheckResult = None,
     bankDescription      = None,
-    bankConsentResponse  = None
+    bankConsentResponse  = None,
+    bankAccountSummary   = None
   )
 
   object BankTransfer {
@@ -98,6 +99,10 @@ trait TdJourney {
 
     lazy val journeyPermissionGiven: Journey = journeySelectedBank.copy(
       bankConsentResponse = Some(dependencies.bankConsent)
+    )
+
+    lazy val journeyAccountSummary: Journey = journeyPermissionGiven.copy(
+      bankAccountSummary = Some(dependencies.bankAccountSummary)
     )
 
     lazy val journeyReceivedNotificationFromEcospend: Journey =
