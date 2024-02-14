@@ -1,0 +1,104 @@
+@*
+ * Copyright 2024 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import language.Messages
+@import views.ViewsHelpers
+@import views.html.testonly.TestOnlyLayout
+@import uk.gov.hmrc.govukfrontend.views.html.components._
+@import uk.gov.hmrc.govukfrontend.views.html.components.implicits._
+@import models.forms.testonly.WebhookSimulationForm
+@import models.forms.testonly.WebhookSimulationForm.{EventValue, RecordType}
+
+@this(testOnlyLayout: TestOnlyLayout, viewsHelpers: ViewsHelpers)
+
+@(form: Form[WebhookSimulationForm])(implicit request: Request[_])
+
+@import viewsHelpers.requestSupport._
+
+@testOnlyLayout {
+
+    @if(form.errors.nonEmpty) {
+        @viewsHelpers.govukErrorSummary(ErrorSummary(errorList = form.errors.asTextErrorLinks, title = Text(Messages.CommonMessages.`There is a problem`.show)))
+    }
+
+    <h1 class="govuk-heading-xl">Simulate webhook notification</h1>
+    <p class="govuk-body">I'm a stub where you can simulate sending webhook notification to external api.</p>
+
+    @viewsHelpers.formWithCsrf(action = controllers.testonly.routes.TestOnlyController.simulateWebhookPost) {
+
+        @viewsHelpers.govukInput(Input(
+            id = "recordId",
+            name = "recordId",
+            classes = "govuk-!-width-two-thirds",
+            label = Label(
+                content = Text("Record Id"),
+                isPageHeading = false,
+                classes = "govuk-label--m"
+            ),
+            hint = Some(Hint(content = Text("ecospend record_id"))),
+            autocomplete = Some("off"),
+            spellcheck = Some(false)
+        ).withFormField(form("recordId")))
+
+        @viewsHelpers.govukRadios(Radios(
+            fieldset = Some(Fieldset(
+                legend = Some(Legend(
+                    content = Text("Record type"),
+                    classes = "govuk-fieldset__legend--m",
+                    isPageHeading = true
+                ))
+            )),
+            hint = Some(Hint(
+                content = Text("Select the record type to send in the notification (usually AccountAssessment)")
+            )),
+            idPrefix = Some("recordType"),
+            name = "recordType",
+            items = RecordType.values.map { recordType: RecordType =>
+                RadioItem(
+                    content = Text(recordType.entryName),
+                    value = Some(recordType.entryName)
+                )
+            }
+        ).withFormField(form("recordType")))
+
+
+        @viewsHelpers.govukRadios(Radios(
+            fieldset = Some(Fieldset(
+                legend = Some(Legend(
+                    content = Text("Event Value"),
+                    classes = "govuk-fieldset__legend--m",
+                    isPageHeading = true
+                ))
+            )),
+            hint = Some(Hint(
+                content = Text("Select the event value to send in the notification")
+            )),
+            idPrefix = Some("eventValue"),
+            name = "eventValue",
+            items = EventValue.values.map { eventValue: EventValue =>
+                    RadioItem(
+                        content = Text(eventValue.entryName),
+                        value = Some(eventValue.entryName)
+                    )
+            }
+        ).withFormField(form("eventValue")))
+
+        @viewsHelpers.govukButton(Button(
+            content = Text("Trigger notification"),
+            id      = Some("submit")
+        ))
+    }
+}

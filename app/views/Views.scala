@@ -49,5 +49,6 @@ class ViewsTestOnly @Inject() (
     val incomeTaxGeneralEnquiriesStubPage: views.html.testonly.IncomeTaxGeneralEnquiriesStubPage,
     val govUkStubPage:                     views.html.testonly.GovUkStubPage,
     val ptaSignInStubPage:                 views.html.testonly.PtaSignInStubPage,
-    val bankStubPage:                      views.html.testonly.BankStubPage
+    val bankStubPage:                      views.html.testonly.BankStubPage,
+    val webhookNotificationSimulationPage: views.html.testonly.WebhookNotificationSimulationPage
 )

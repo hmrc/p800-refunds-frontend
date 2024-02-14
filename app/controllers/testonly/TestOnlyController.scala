@@ -16,13 +16,15 @@
 
 package controllers.testonly
 
-import action.{Actions, JourneyRequest, JourneyIdKey}
-import models.ecospend.consent.{ConsentStatus, BankConsentResponse}
-import models.forms.testonly.{BankStubForm, BankStubFormValue}
+import action.{Actions, JourneyIdKey, JourneyRequest}
+import config.AppConfig
+import models.ecospend.consent.{BankConsentResponse, ConsentStatus}
+import models.forms.testonly.{BankStubForm, BankStubFormValue, WebhookSimulationForm}
 import models.journeymodels.{HasFinished, Journey, JourneyId, JourneyType}
-import play.api.libs.json.Json
+import play.api.libs.json.{JsValue, Json}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import services.{FailedVerificationAttemptService, JourneyService}
+import uk.gov.hmrc.http.{HttpClient, HttpReads}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import views.ViewsTestOnly
 
@@ -35,7 +37,9 @@ class TestOnlyController @Inject() (
     viewsTestOnly:                    ViewsTestOnly,
     journeyService:                   JourneyService,
     failedVerificationAttemptService: FailedVerificationAttemptService,
-    as:                               Actions
+    as:                               Actions,
+    httpClient:                       HttpClient,
+    appConfig:                        AppConfig
 )(implicit ec: ExecutionContext) extends FrontendController(mcc) {
 
   val landing: Action[AnyContent] = as.default { implicit request =>
@@ -135,4 +139,37 @@ class TestOnlyController @Inject() (
       .drop()
       .map(_ => Ok("failed-verification-attempts repo dropped."))
   }
+
+  val simulateWebhook: Action[AnyContent] = as.default { implicit request =>
+    Ok(viewsTestOnly.webhookNotificationSimulationPage(WebhookSimulationForm.form))
+  }
+
+  val simulateWebhookPost: Action[AnyContent] = as.default.async { implicit request =>
+    WebhookSimulationForm.form.bindFromRequest().fold(
+      formWithErrors => Future.successful(BadRequest(viewsTestOnly.webhookNotificationSimulationPage(
+        form = formWithErrors
+      ))), { webhookSimulationForm: WebhookSimulationForm =>
+
+        val webhookJson: JsValue = Json.parse(
+          s"""
+             |{
+             |  "event_value":"${webhookSimulationForm.eventValue.entryName}",
+             |  "record_type":"${webhookSimulationForm.recordType.entryName}",
+             |  "record_id":"${webhookSimulationForm.recordId}"
+             |}""".stripMargin
+        )
+
+        implicit val reads: HttpReads[Unit] = HttpReads.Implicits.readUnit
+        //TODO: move this to connector when we properly integrate with external api in another ticket,
+        // although it is test only so maybe it shouldn't live in connector...
+        // also, this value will also likely change
+        val webhookUrl = appConfig.P800RefundsExternalApi.p800RefundsExternalApiBaseUrl + "/status"
+        httpClient
+          .POST[JsValue, Unit](webhookUrl, webhookJson) //todo headers?
+          .map(_ => Ok(s"Sending notification to: $webhookUrl \nNotification sent: \n${Json.toJson(webhookJson).toString()}"))
+      }
+
+    )
+  }
+
 }

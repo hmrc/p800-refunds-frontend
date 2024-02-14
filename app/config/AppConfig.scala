@@ -68,6 +68,10 @@ class AppConfig @Inject() (servicesConfig: ServicesConfig, configuration: Config
     val ecospendAuthScope: String = configuration.get[String]("ecospend.oauth.scope")
   }
 
+  object P800RefundsExternalApi {
+    val p800RefundsExternalApiBaseUrl: String = servicesConfig.baseUrl("p800-refunds-external-api")
+  }
+
   /**
    * The application loads the configuration from the provided `configPath` and checks if it's a valid URL.
    * If it's not a valid URL, an exception is thrown.

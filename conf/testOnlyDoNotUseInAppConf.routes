@@ -36,3 +36,6 @@ GET        /get-an-income-tax-refund/test-only/clear-attempts                   
 # Stubbed bank page. in production this would be determined by the response of the ecospend consent API
 GET        /get-an-income-tax-refund/test-only/bank-page                                controllers.testonly.TestOnlyController.getBankPage
 POST       /get-an-income-tax-refund/test-only/bank-page                                controllers.testonly.TestOnlyController.postBankPage
+
+GET        /get-an-income-tax-refund/test-only/simulate-webhook                         controllers.testonly.TestOnlyController.simulateWebhook
+POST       /get-an-income-tax-refund/test-only/simulate-webhook                         controllers.testonly.TestOnlyController.simulateWebhookPost
