@@ -50,7 +50,10 @@
                 }" >show failed attempts json</a> |
                 <a href="@{
                     controllers.testonly.routes.TestOnlyController.clearAttempts.url
-                }" >drop failed attempts collection</a>
+                }" >drop failed attempts collection</a> |
+                <a href="@{
+                    controllers.testonly.routes.TestOnlyController.simulateWebhook.url
+                }" >webhook notification</a>
             </div>
 
             <div class="temporary result-highlight">
