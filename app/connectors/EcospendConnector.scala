@@ -21,11 +21,13 @@ import config.AppConfig
 import models.ecospend.verification.{BankVerification, BankVerificationRequest}
 import models.ecospend.{EcospendAccessToken, EcospendGetBanksResponse}
 import models.ecospend.consent.{BankConsentRequest, BankConsentResponse}
+import models.ecospend.account.BankAccountSummaryResponse
 import requests.RequestSupport
 import uk.gov.hmrc.http.HttpClient
 import uk.gov.hmrc.http.HttpReads.Implicits._
 import util.JourneyLogger
 
+import java.util.UUID
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -70,6 +72,20 @@ class EcospendConnector @Inject() (
       url     = createConsentUrl,
       body    = bankConsentRequest,
       headers = authorizationHeader(accessToken)
+    )
+  }
+
+  private val accountSummaryUrl: String = appConfig.ExternalApiCalls.ecospendUrl + "/accounts/summary"
+
+  def getAccountSummary(
+      accessToken: EcospendAccessToken,
+      consentId:   UUID
+  )(implicit request: JourneyRequest[_]): Future[BankAccountSummaryResponse] = captureException {
+    httpClient.GET[BankAccountSummaryResponse](
+      url     = accountSummaryUrl,
+      headers = authorizationHeader(accessToken) ++ Seq(
+        ("consent_id", consentId.toString)
+      )
     )
   }
 

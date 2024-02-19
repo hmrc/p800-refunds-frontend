@@ -19,6 +19,7 @@ package models.journeymodels
 import models.dateofbirth.DateOfBirth
 import models.ecospend.BankDescription
 import models.ecospend.consent.BankConsentResponse
+import models.ecospend.account.BankAccountSummary
 import models.{AmountInPence, Nino, P800Reference}
 import nps.models.ReferenceCheckResult
 import play.api.libs.json.OFormat
@@ -38,7 +39,8 @@ final case class Journey(
     dateOfBirth:          Option[DateOfBirth],
     referenceCheckResult: Option[ReferenceCheckResult], //reset this field upon changes of dependant fields
     bankDescription:      Option[BankDescription],
-    bankConsentResponse:  Option[BankConsentResponse]
+    bankConsentResponse:  Option[BankConsentResponse],
+    bankAccountSummary:   Option[BankAccountSummary]
 ) {
 
   /*
@@ -84,14 +86,23 @@ final case class Journey(
   def update(bankConsentResponse: BankConsentResponse): Journey =
     this
       .copy(
-        bankConsentResponse = Some(bankConsentResponse)
+        bankConsentResponse = Some(bankConsentResponse),
+        bankAccountSummary  = None
       //TODO: reset other API responses populated bankConsentResponse
+      )
+
+  def update(bankAccountSummary: BankAccountSummary): Journey =
+    this
+      .copy(
+        bankAccountSummary = Some(bankAccountSummary)
+      //TODO: reset other API responses populated bankAccountSummary
       )
 
   private def resetCheckReferenceApiResponses(): Journey = this.copy(
     referenceCheckResult = None,
     bankDescription      = None,
-    bankConsentResponse  = None
+    bankConsentResponse  = None,
+    bankAccountSummary   = None
   )
 
   /* derived stuff: */
@@ -110,6 +121,8 @@ final case class Journey(
   def getBankDescription(implicit request: Request[_]): BankDescription = bankDescription.getOrElse(Errors.throwServerErrorException(s"Expected 'bankDescription' to be defined but it was None [${journeyId.toString}] "))
 
   def getBankConsent(implicit request: Request[_]): BankConsentResponse = bankConsentResponse.getOrElse(Errors.throwBadRequestException("Expected 'bankConsent' to be defined but it was None [${journeyId.toString}] "))
+
+  def getBankAccountSummary(implicit request: Request[_]): BankAccountSummary = bankAccountSummary.getOrElse(Errors.throwBadRequestException("Expected 'bankAccountSummary' to be defined but it was None [${journeyId.toString}] "))
 
   def getReferenceCheckResult(implicit request: Request[_]): ReferenceCheckResult = referenceCheckResult.getOrElse(Errors.throwServerErrorException(s"Expected 'referenceCheckResult' to be defined but it was None [${journeyId.toString}] "))
 

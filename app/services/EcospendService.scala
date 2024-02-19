@@ -20,9 +20,11 @@ import action.JourneyRequest
 import akka.http.scaladsl.model.Uri
 import connectors.{EcospendAuthServerConnector, EcospendConnector}
 import models.ecospend.BankDescription
+import models.ecospend.account.BankAccountSummary
 import models.ecospend.consent.{BankConsentRequest, BankConsentResponse, ConsentPermission, ConsentReferrerChannel, ConsentCreationReason}
 import models.ecospend.verification.{BankVerification, BankVerificationRequest}
 import models.journeymodels.Journey
+import util.Errors
 
 import java.time.LocalDateTime
 import javax.inject.{Inject, Singleton}
@@ -72,5 +74,16 @@ class EcospendService @Inject() (
       additionalParams = None,
       creationReason   = ConsentCreationReason.Algorithm
     )
+
+  def getAccountSummary(journey: Journey)(implicit request: JourneyRequest[_]): Future[BankAccountSummary] =
+    journey.bankAccountSummary match {
+      case None =>
+        for {
+          accessToken <- ecospendAuthServerConnector.accessToken
+          bankAccountSummaryResponse <- ecospendConnector.getAccountSummary(accessToken, journey.getBankConsent.id)
+        } yield bankAccountSummaryResponse.value.headOption.getOrElse(Errors.throwServerErrorException("Failed to get BankAccountSummary from BankAccountSummaryResponse"))
+      case Some(bankAccountSummary) =>
+        Future.successful(bankAccountSummary)
+    }
 
 }

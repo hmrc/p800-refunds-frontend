@@ -35,8 +35,8 @@ class GiveYourPermissionPageSpec extends ItSpec {
 
   // TODO: ticket says url will be determined in another ticket - I think this is right though.
   "clicking 'Change my bank' redirects to 'What is the name of your bank' page" in {
-    EcospendStub.stubEcospendAuth2xxSucceeded
-    EcospendStub.stubEcospendGetBanks2xx
+    EcospendStub.AuthStubs.stubEcospendAuth2xxSucceeded
+    EcospendStub.BanksStubs.stubEcospendGetBanks2xx
     pages.giveYourPermissionPage.open()
     pages.giveYourPermissionPage.assertPageIsDisplayed()
     pages.giveYourPermissionPage.clickChangeBank()
@@ -45,10 +45,12 @@ class GiveYourPermissionPageSpec extends ItSpec {
   }
 
   "clicking 'Approve this refund' redirects to 'Verifying bank account' via 'Bank Stub Page'" in {
-    EcospendStub.stubEcospendAuth2xxSucceeded
+    EcospendStub.AuthStubs.stubEcospendAuth2xxSucceeded
     EcospendStub.ValidateStubs.stubValidateNotValidatedYet
-    EcospendStub.stubEcospendAuth2xxSucceeded
+    EcospendStub.AuthStubs.stubEcospendAuth2xxSucceeded
     EcospendStub.ConsentStubs.stubConsent2xxSucceeded(tdAll.bankId)
+    EcospendStub.AuthStubs.stubEcospendAuth2xxSucceeded
+    EcospendStub.AccountStub.stubAccountSummary2xxSucceeded(tdAll.consentId)
 
     pages.giveYourPermissionPage.open()
     pages.giveYourPermissionPage.assertPageIsDisplayed()
@@ -58,7 +60,7 @@ class GiveYourPermissionPageSpec extends ItSpec {
     pages.bankStubPage.clickSubmit()
     pages.verifyBankAccountPage.assertPageIsDisplayed()
 
-    getJourneyFromDatabase(tdAll.journeyId) shouldBeLike tdAll.BankTransfer.journeyPermissionGiven
+    getJourneyFromDatabase(tdAll.journeyId) shouldBeLike tdAll.BankTransfer.journeyAccountSummary
   }
 
   "clicking 'Choose another way to get my money' redirects to 'Choose another way to get my refund' page" in {
@@ -70,8 +72,8 @@ class GiveYourPermissionPageSpec extends ItSpec {
   }
 
   "clicking 'Back' redirects user to 'Select a bank account' page" in {
-    EcospendStub.stubEcospendAuth2xxSucceeded
-    EcospendStub.stubEcospendGetBanks2xx
+    EcospendStub.AuthStubs.stubEcospendAuth2xxSucceeded
+    EcospendStub.BanksStubs.stubEcospendGetBanks2xx
     pages.giveYourPermissionPage.open()
     pages.giveYourPermissionPage.assertPageIsDisplayed()
     pages.giveYourPermissionPage.clickBackButton()

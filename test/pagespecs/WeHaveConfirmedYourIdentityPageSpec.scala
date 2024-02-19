@@ -45,14 +45,14 @@ class WeHaveConfirmedYourIdentityPageSpec extends ItSpec {
   "clicking submit navigates to What Is The Name Of Your Bank Account page" - {
     "bank transfer" in {
       upsertJourneyToDatabase(tdAll.BankTransfer.AfterReferenceCheck.journeyReferenceChecked)
-      EcospendStub.stubEcospendAuth2xxSucceeded
-      EcospendStub.stubEcospendGetBanks2xx
+      EcospendStub.AuthStubs.stubEcospendAuth2xxSucceeded
+      EcospendStub.BanksStubs.stubEcospendGetBanks2xx
       pages.yourIdentityIsConfirmedBankTransferPage.open()
       pages.yourIdentityIsConfirmedBankTransferPage.assertPageIsDisplayed(JourneyType.BankTransfer)
       pages.yourIdentityIsConfirmedBankTransferPage.clickSubmit()
       pages.enterTheNameOfYourBankAccountPage.assertPageIsDisplayed()
-      EcospendStub.verifyEcospendAccessToken()
-      EcospendStub.verifyEcospendGetBanks()
+      EcospendStub.AuthStubs.verifyEcospendAccessToken()
+      EcospendStub.BanksStubs.verifyEcospendGetBanks()
       getJourneyFromDatabase(tdAll.journeyId) shouldBeLike tdAll.BankTransfer.AfterReferenceCheck.journeyReferenceChecked
     }
     "cheque" in {

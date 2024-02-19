@@ -29,6 +29,16 @@ object WireMockHelpers {
 
   def verifyNone(url: String): Unit = verify(exactly(0), postRequestedFor(urlPathEqualTo(url)))
 
+  def verifyGetExactlyWithHeader(url: String, headerKey: String, count: Int): Unit = verify(
+    exactly(count),
+    getRequestedFor(urlPathEqualTo(url))
+      .andMatching((request: Request) =>
+        customValueMatcherWithHeader(url, headerKey, request))
+  )
+
+  private def customValueMatcherWithHeader(url: String, headerKey: String, request: Request): MatchResult =
+    MatchResult.of(request.getUrl === url && request.header(headerKey).isPresent)
+
   /**
    * Useful wiremock helper to verify that the request body serialises to what we expect.
    * Hint: If it's not working and you can't work out why, check what A you are passing in... :)
@@ -83,20 +93,31 @@ object WireMockHelpers {
   private def customValueMatcher[A](url: String, request: Request)(implicit format: Format[A]): MatchResult =
     MatchResult.of(request.getUrl === url && Json.parse(request.getBodyAsString).asOpt[A].nonEmpty)
 
-  def stubForPostNoResponseBody(url: String, responseStatus: Int = Status.OK): StubMapping = stubFor(
-    post(urlPathEqualTo(url)).willReturn(
-      aResponse()
-        .withStatus(responseStatus)
-    )
+  def stubForPostNoResponseBody(
+      url:             String,
+      responseStatus:  Int                               = Status.OK,
+      requiredHeaders: Seq[(String, StringValuePattern)] = Nil
+  ): StubMapping = stubFor(
+    postMappingWithHeaders(url, requiredHeaders)
+      .willReturn(
+        aResponse()
+          .withStatus(responseStatus)
+      )
   )
 
-  def stubForPostWithResponseBody(url: String, jsonBody: String, responseStatus: Int = Status.OK): StubMapping = stubFor(
-    post(urlPathEqualTo(url)).willReturn(
-      aResponse()
-        .withStatus(responseStatus)
-        .withHeader("Content-Type", "application/json")
-        .withBody(jsonBody)
-    )
+  def stubForPostWithResponseBody(
+      url:              String,
+      responseJsonBody: String,
+      responseStatus:   Int                               = Status.OK,
+      requiredHeaders:  Seq[(String, StringValuePattern)] = Nil
+  ): StubMapping = stubFor(
+    postMappingWithHeaders(url, requiredHeaders)
+      .willReturn(
+        aResponse()
+          .withStatus(responseStatus)
+          .withHeader("Content-Type", "application/json")
+          .withBody(responseJsonBody)
+      )
   )
 
   //TODO rewrite stubs using this method
@@ -104,9 +125,10 @@ object WireMockHelpers {
       url:              String,
       requestBodyJson:  String,
       responseJsonBody: String,
-      responseStatus:   Int    = Status.OK
+      responseStatus:   Int                               = Status.OK,
+      requiredHeaders:  Seq[(String, StringValuePattern)] = Nil
   ): StubMapping = stubFor(
-    post(urlPathEqualTo(url))
+    postMappingWithHeaders(url, requiredHeaders)
       .withRequestBody(
         equalToJson(requestBodyJson, true, true)
       )
@@ -117,8 +139,14 @@ object WireMockHelpers {
       )
   )
 
-  def stubForPostWithRequestBodyMatching(url: String, requestMatchingPath: String, jsonBody: String, responseStatus: Int = Status.OK): StubMapping = stubFor(
-    post(urlPathEqualTo(url))
+  def stubForPostWithRequestBodyMatching(
+      url:                 String,
+      requestMatchingPath: String,
+      jsonBody:            String,
+      responseStatus:      Int                               = Status.OK,
+      requiredHeaders:     Seq[(String, StringValuePattern)] = Nil
+  ): StubMapping = stubFor(
+    postMappingWithHeaders(url, requiredHeaders)
       .withRequestBody(matchingJsonPath(requestMatchingPath))
       .willReturn(
         aResponse()
@@ -126,6 +154,12 @@ object WireMockHelpers {
           .withBody(jsonBody)
       )
   )
+
+  private def postMappingWithHeaders(
+      url:             String,
+      requiredHeaders: Seq[(String, StringValuePattern)]
+  ): MappingBuilder =
+    requiredHeaders.foldLeft(post(urlPathEqualTo(url)))((acc, c) => acc.withHeader(c._1, c._2))
 
   def stubForGetWithResponseBody(
       url:             String,
