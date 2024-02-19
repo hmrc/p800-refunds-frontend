@@ -36,7 +36,7 @@ class RequestReceivedController @Inject() (
   def getBankTransfer: Action[AnyContent] = actions.journeyFinished { implicit request =>
     val journey: Journey = request.journey
 
-    if (journey.hasFinished === HasFinished.RefundNotSubmitted) {
+    if (journey.hasFinished === HasFinished.YesRefundNotSubmitted) {
       Redirect(controllers.routes.RefundRequestNotSubmittedController.get)
     } else {
 
@@ -49,7 +49,7 @@ class RequestReceivedController @Inject() (
   def getCheque: Action[AnyContent] = actions.journeyFinished { implicit request =>
     val journey: Journey = request.journey
 
-    if (journey.hasFinished === HasFinished.RefundNotSubmitted) {
+    if (journey.hasFinished === HasFinished.YesRefundNotSubmitted) {
       Redirect(controllers.routes.RefundRequestNotSubmittedController.get)
     } else {
 

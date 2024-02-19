@@ -83,7 +83,7 @@ class TestOnlyController @Inject() (
 
   //TODO: remove it once we integrate with APIs
   val finishFailBankTransfer: Action[AnyContent] = as.journeyActionForTestOnly.async { implicit r =>
-    journeyService.upsert(r.journey.copy(hasFinished = HasFinished.RefundNotSubmitted)).map(_ =>
+    journeyService.upsert(r.journey.copy(hasFinished = HasFinished.YesRefundNotSubmitted)).map(_ =>
       Redirect(controllers.routes.RefundRequestNotSubmittedController.get))
   }
 

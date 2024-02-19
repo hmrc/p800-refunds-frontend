@@ -17,14 +17,12 @@
 package controllers
 
 import action.{Actions, JourneyRequest}
-import config.AppConfig
 import language.Messages
-import models.attemptmodels.AttemptInfo
 import models.dateofbirth.DateOfBirth
 import models.journeymodels._
 import models.{Nino, P800Reference}
-import nps.NpsConnector
-import nps.models.ReferenceCheckResult
+import nps.models.{ReferenceCheckResult, TraceIndividualRequest, TraceIndividualResponse}
+import nps.{ReferenceCheckConnector, TraceIndividualConnector}
 import play.api.mvc._
 import requests.RequestSupport
 import services.{FailedVerificationAttemptService, JourneyService}
@@ -47,8 +45,8 @@ class CheckYourAnswersController @Inject() (
     views:                            Views,
     actions:                          Actions,
     failedVerificationAttemptService: FailedVerificationAttemptService,
-    appConfig:                        AppConfig,
-    npsConnector:                     NpsConnector
+    referenceCheckConnector:          ReferenceCheckConnector,
+    traceIndividualConnector:         TraceIndividualConnector
 )(implicit ec: ExecutionContext) extends FrontendController(mcc) {
 
   import requestSupport._
@@ -96,61 +94,68 @@ class CheckYourAnswersController @Inject() (
       .map(_ => Redirect(EnterYourP800ReferenceController.redirectLocation(journey)))
   }
 
-  def post: Action[AnyContent] = actions.journeyInProgress.async { implicit request =>
-    val journey: Journey = request.journey
-    processForm(journey)
+  private val `YYYY-MM-DD` = DateTimeFormatter.ISO_LOCAL_DATE
+
+  @SuppressWarnings(Array("org.wartremover.warts.Any"))
+  def post: Action[AnyContent] = actions
+    .journeyInProgress
+    .andThen(checkP800Reference)
+    .andThen(processFailedReferenceCheck)
+    .async { implicit request =>
+      val journey: Journey = request.journey
+      for {
+        maybeTraceIndividualResponse: Option[TraceIndividualResponse] <- journey.getJourneyType match {
+          case JourneyType.BankTransfer => traceIndividualConnector
+            .traceIndividual(traceIndividualRequest = TraceIndividualRequest(
+              journey.getNino,
+              formatDateOfBirth(journey.getDateOfBirth, `YYYY-MM-DD`)
+            )).map(Some(_))
+          case JourneyType.Cheque => Future.successful(None)
+        }
+        journey <- journeyService.upsert(journey.update(maybeTraceIndividualResponse = maybeTraceIndividualResponse))
+      } yield Redirect(controllers.WeHaveConfirmedYourIdentityController.redirectLocation(journey))
+
+    }
+
+  @SuppressWarnings(Array("org.wartremover.warts.Any"))
+  private val checkP800Reference: ActionRefiner[JourneyRequest, JourneyRequest] = new ActionRefiner[JourneyRequest, JourneyRequest] {
+    override protected def refine[A](request: JourneyRequest[A]): Future[Either[Result, JourneyRequest[A]]] = {
+      implicit val r: JourneyRequest[A] = request
+      referenceCheckConnector.p800ReferenceCheck(r.journey.getNino, r.journey.getP800Reference).map { referenceCheckResult =>
+        Right(new JourneyRequest[A](journey = r.journey.update(referenceCheckResult), request = r.request))
+      }
+    }
+
+    override protected def executionContext: ExecutionContext = ec
   }
 
-  private def processForm(journey: Journey)(implicit request: JourneyRequest[AnyContent]): Future[Result] = {
-    //TODO: discuss refactoring options, this becomes a monster function...
-    val updateLogicResultingInRedirect: Future[Call] =
-      failedVerificationAttemptService
-        .find()
-        .flatMap { attemptInfoExists: Option[AttemptInfo] =>
-          // if failed count is already at 3, ensure journey is HasFinished.LockedOut, redirect to no more attempts
-          if (AttemptInfo.shouldBeLockedOut(attemptInfoExists, appConfig.FailedAttemptRepo.failedAttemptRepoMaxAttempts)) {
-            journeyService.upsert(journey.copy(hasFinished = HasFinished.LockedOut))
-              .map(_ => controllers.NoMoreAttemptsLeftToConfirmYourIdentityController.redirectLocation(journey))
-          } else {
-            // otherwise call identity verification
-            npsConnector
-              .p800ReferenceCheck(journey.getNino, journey.getP800Reference)
-              .flatMap { referenceCheckResult: ReferenceCheckResult =>
-                // if verification is successful, reflect this in journey, redirect to confirmed identity
-                referenceCheckResult match {
-                  case _: ReferenceCheckResult.P800ReferenceChecked => journeyService
-                    .upsert(journey.update(referenceCheckResult = referenceCheckResult))
-                    .map(_ => controllers.WeHaveConfirmedYourIdentityController.redirectLocation(journey))
-                  case ReferenceCheckResult.RefundAlreadyTaken => journeyService
-                    .upsert(journey.update(referenceCheckResult = referenceCheckResult))
-                    .map(_ => controllers.CannotConfirmYourIdentityTryAgainController.redirectLocation(journey))
-                  case ReferenceCheckResult.ReferenceDidntMatchNino =>
-                    {
-                      // otherwise (verification failed) update the number of failed attempts
-                      failedVerificationAttemptService
-                        .upsertRecordIfVerificationFails
-                        .flatMap { (maybeAttemptInfo: Option[AttemptInfo]) =>
-                          // if newly updated failed attempt count is over the threshold, update journey to HasFinished.LockedOut, redirecting to no more attempts
-                          if (AttemptInfo.shouldBeLockedOut(maybeAttemptInfo, appConfig.FailedAttemptRepo.failedAttemptRepoMaxAttempts)) {
-                            journeyService
-                              .upsert(journey.update(referenceCheckResult = referenceCheckResult).copy(hasFinished = HasFinished.LockedOut))
-                              .map(_ => controllers.NoMoreAttemptsLeftToConfirmYourIdentityController.redirectLocation(journey))
-                          } else {
-                            // otherwise attempts is not over threshold, redirect to cannot confirm your identity page
-                            journeyService
-                              .upsert(journey.update(referenceCheckResult = referenceCheckResult))
-                              .map(_ => controllers.CannotConfirmYourIdentityTryAgainController.redirectLocation(journey))
-                          }
-                        }
-                    }
+  @SuppressWarnings(Array("org.wartremover.warts.Any"))
+  private val processFailedReferenceCheck: ActionFilter[JourneyRequest] = new ActionFilter[JourneyRequest] {
+    override protected def filter[A](request: JourneyRequest[A]): Future[Option[Result]] = {
+      implicit val r: JourneyRequest[A] = request
+      r.journey.getReferenceCheckResult match {
+        case _: ReferenceCheckResult.P800ReferenceChecked =>
+          //All good, proceed to next action
+          Future.successful(None)
+        case ReferenceCheckResult.RefundAlreadyTaken =>
+          journeyService
+            .upsert(r.journey)
+            .map(j => Some(Redirect(controllers.CannotConfirmYourIdentityTryAgainController.redirectLocation(j))))
+        case ReferenceCheckResult.ReferenceDidntMatchNino =>
+          for {
+            shouldBeLockedOut <- failedVerificationAttemptService.updateNumberOfFailedAttempts()
+            result <- if (shouldBeLockedOut) {
+              journeyService
+                .upsert(r.journey.copy(hasFinished = HasFinished.YesLockedOut))
+                .map(j => Some(Redirect(controllers.NoMoreAttemptsLeftToConfirmYourIdentityController.redirectLocation(j))))
+            } else journeyService
+              .upsert(r.journey)
+              .map(j => Some(Redirect(controllers.CannotConfirmYourIdentityTryAgainController.redirectLocation(j))))
+          } yield result
+      }
+    }
 
-                }
-              }
-          }
-        }
-
-    updateLogicResultingInRedirect
-      .map(redirect => Redirect(redirect))
+    override protected def executionContext: ExecutionContext = ec
   }
 
   private def buildSummaryList(
@@ -180,11 +185,13 @@ class CheckYourAnswersController @Inject() (
     )
   }
 
+  private val `dd MMMM yyyy`: DateTimeFormatter = DateTimeFormatter.ofPattern("dd MMMM yyyy")
+
   private def dateOfBirthSummaryRow(dateOfBirth: DateOfBirth)(implicit request: Request[_]): SummaryListRow = {
     buildSummaryListRow(
       Messages.CheckYourAnswersMessages.`Date of birth`.show,
       id    = "date-of-birth",
-      value = formatDateOfBirth(dateOfBirth),
+      value = formatDateOfBirth(dateOfBirth, `dd MMMM yyyy`),
       call  = controllers.routes.CheckYourAnswersController.changeDateOfBirth
     )
   }
@@ -215,11 +222,10 @@ class CheckYourAnswersController @Inject() (
     classes = ""
   )
 
-  private val dateFormatter = DateTimeFormatter.ofPattern("dd MMMM yyyy")
-
-  private def formatDateOfBirth(dateOfBirth: DateOfBirth)(implicit request: Request[_]): String = {
+  private def formatDateOfBirth(dateOfBirth: DateOfBirth, formatter: DateTimeFormatter)(implicit request: Request[_]): String = {
     Try(DateOfBirth.asLocalDate(dateOfBirth)) match {
-      case Success(date) => date.format(dateFormatter)
+      case Success(date) =>
+        date.format(formatter)
       case Failure(ex) =>
         JourneyLogger.error(s"Error formatting date, investigate (the journey was not interrupted)", ex)
         s"${dateOfBirth.dayOfMonth.value} ${dateOfBirth.month.value} ${dateOfBirth.year.value} "

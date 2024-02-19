@@ -29,10 +29,10 @@ class WeHaveConfirmedYourIdentityPageSpec extends ItSpec {
 
   "page renders correctly" - {
     "bank transfer" in {
-      upsertJourneyToDatabase(tdAll.BankTransfer.AfterReferenceCheck.journeyReferenceChecked)
+      upsertJourneyToDatabase(tdAll.BankTransfer.journeyAfterTracedIndividual)
       pages.yourIdentityIsConfirmedBankTransferPage.open()
       pages.yourIdentityIsConfirmedBankTransferPage.assertPageIsDisplayed(JourneyType.BankTransfer)
-      getJourneyFromDatabase(tdAll.journeyId) shouldBeLike tdAll.BankTransfer.AfterReferenceCheck.journeyReferenceChecked
+      getJourneyFromDatabase(tdAll.journeyId) shouldBeLike tdAll.BankTransfer.journeyAfterTracedIndividual
     }
     "cheque" in {
       upsertJourneyToDatabase(tdAll.Cheque.AfterReferenceCheck.journeyReferenceChecked)
@@ -44,7 +44,7 @@ class WeHaveConfirmedYourIdentityPageSpec extends ItSpec {
 
   "clicking submit navigates to What Is The Name Of Your Bank Account page" - {
     "bank transfer" in {
-      upsertJourneyToDatabase(tdAll.BankTransfer.AfterReferenceCheck.journeyReferenceChecked)
+      upsertJourneyToDatabase(tdAll.BankTransfer.journeyAfterTracedIndividual)
       EcospendStub.AuthStubs.stubEcospendAuth2xxSucceeded
       EcospendStub.BanksStubs.stubEcospendGetBanks2xx
       pages.yourIdentityIsConfirmedBankTransferPage.open()
@@ -53,7 +53,7 @@ class WeHaveConfirmedYourIdentityPageSpec extends ItSpec {
       pages.enterTheNameOfYourBankAccountPage.assertPageIsDisplayed()
       EcospendStub.AuthStubs.verifyEcospendAccessToken()
       EcospendStub.BanksStubs.verifyEcospendGetBanks()
-      getJourneyFromDatabase(tdAll.journeyId) shouldBeLike tdAll.BankTransfer.AfterReferenceCheck.journeyReferenceChecked
+      getJourneyFromDatabase(tdAll.journeyId) shouldBeLike tdAll.BankTransfer.journeyAfterTracedIndividual
     }
     "cheque" in {
       upsertJourneyToDatabase(tdAll.Cheque.AfterReferenceCheck.journeyReferenceChecked)
@@ -67,7 +67,7 @@ class WeHaveConfirmedYourIdentityPageSpec extends ItSpec {
 
   "clicking back button navigates to Check Your Answers page" - {
     "bank transfer" in {
-      upsertJourneyToDatabase(tdAll.BankTransfer.AfterReferenceCheck.journeyReferenceChecked)
+      upsertJourneyToDatabase(tdAll.BankTransfer.journeyAfterTracedIndividual)
       pages.yourIdentityIsConfirmedBankTransferPage.open()
       pages.yourIdentityIsConfirmedBankTransferPage.assertPageIsDisplayed(JourneyType.BankTransfer)
       pages.yourIdentityIsConfirmedBankTransferPage.clickBackButton()
@@ -76,7 +76,7 @@ class WeHaveConfirmedYourIdentityPageSpec extends ItSpec {
         tdAll.dateOfBirthFormatted,
         tdAll.nino
       )
-      getJourneyFromDatabase(tdAll.journeyId) shouldBeLike tdAll.BankTransfer.AfterReferenceCheck.journeyReferenceChecked
+      getJourneyFromDatabase(tdAll.journeyId) shouldBeLike tdAll.BankTransfer.journeyAfterTracedIndividual
     }
 
     "cheque" in {

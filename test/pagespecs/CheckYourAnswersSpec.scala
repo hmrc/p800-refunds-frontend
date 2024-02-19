@@ -19,8 +19,9 @@ package pagespecs
 import models.{Nino, P800Reference}
 import models.dateofbirth.{DateOfBirth, DayOfMonth, Month, Year}
 import models.journeymodels.{Journey, JourneyType}
+import nps.models.TraceIndividualRequest
 import testsupport.ItSpec
-import testsupport.stubs.NpsReferenceCheckStub
+import testsupport.stubs.{NpsReferenceCheckStub, NpsTraceIndividualStub}
 
 class CheckYourAnswersSpec extends ItSpec {
 
@@ -153,13 +154,18 @@ class CheckYourAnswersSpec extends ItSpec {
   "clicking submit redirects to 'Your identity is confirmed' if response from NPS indicates identity verification is successful" - {
     "bank transfer" in {
       upsertJourneyToDatabase(tdAll.BankTransfer.journeyEnteredDateOfBirth)
-      //TODO TraceIndividual API
       pages.checkYourAnswersBankTransferPage.open()
-      val j = tdAll.BankTransfer.AfterReferenceCheck.journeyReferenceChecked
+      val j = tdAll.BankTransfer.journeyAfterTracedIndividual
       NpsReferenceCheckStub.checkReference(j.nino.value, j.p800Reference.value, j.getP800ReferenceChecked(request = tdAll.fakeRequest))
+      NpsTraceIndividualStub.traceIndividual(
+        request  = TraceIndividualRequest(j.nino.value, tdAll.`dateOfBirthFormatted YYYY-MM-DD`),
+        response = j.traceIndividualResponse.value
+      )
+
       pages.checkYourAnswersBankTransferPage.clickSubmit()
       pages.yourIdentityIsConfirmedBankTransferPage.assertPageIsDisplayed(JourneyType.BankTransfer)
       NpsReferenceCheckStub.verifyCheckReference(j.nino.value, j.p800Reference.value)
+      NpsTraceIndividualStub.verifyTraceIndividual()
       getJourneyFromDatabase(tdAll.journeyId) shouldBeLike j
     }
     "cheque" in {
@@ -181,8 +187,7 @@ class CheckYourAnswersSpec extends ItSpec {
       upsertJourneyToDatabase(j)
 
       NpsReferenceCheckStub.checkReferenceReferenceDidntMatchNino(j.nino.value, j.p800Reference.value)
-
-      //TODO TraceIndividual API
+      //No need for TraceIndividual stub as it won't be called
 
       pages.checkYourAnswersBankTransferPage.open()
       pages.checkYourAnswersBankTransferPage.assertPageIsDisplayedForBankTransfer(

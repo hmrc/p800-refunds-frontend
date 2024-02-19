@@ -22,10 +22,10 @@ import play.api.libs.json.OFormat
 object HasFinished {
 
   def hasFinished(hasFinished: HasFinished): Boolean = hasFinished match {
-    case No                 => false
-    case YesSucceeded       => true
-    case RefundNotSubmitted => true
-    case LockedOut          => true
+    case No                    => false
+    case YesSucceeded          => true
+    case YesRefundNotSubmitted => true
+    case YesLockedOut          => true
   }
 
   def isInProgress(hasFinished: HasFinished): Boolean = !HasFinished.hasFinished(hasFinished)
@@ -43,12 +43,12 @@ object HasFinished {
   /**
    * Claiming refund failed
    */
-  case object RefundNotSubmitted extends HasFinished
+  case object YesRefundNotSubmitted extends HasFinished
 
   /**
    * User entered too many times incorrect data. He was locked out.
    */
-  case object LockedOut extends HasFinished
+  case object YesLockedOut extends HasFinished
 
   @SuppressWarnings(Array("org.wartremover.warts.Any"))
   implicit val format: OFormat[HasFinished] = derived.oformat()

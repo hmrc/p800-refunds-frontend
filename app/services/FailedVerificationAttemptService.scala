@@ -17,6 +17,7 @@
 package services
 
 import com.google.inject.{Inject, Singleton}
+import config.AppConfig
 import models.attemptmodels.{AttemptInfo, IpAddress}
 import play.api.mvc.RequestHeader
 import repository.FailedVerificationAttemptRepo
@@ -24,7 +25,10 @@ import repository.FailedVerificationAttemptRepo
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class FailedVerificationAttemptService @Inject() (failedVerificationAttemptRepo: FailedVerificationAttemptRepo)(implicit ec: ExecutionContext) {
+class FailedVerificationAttemptService @Inject() (
+    failedVerificationAttemptRepo: FailedVerificationAttemptRepo,
+    appConfig:                     AppConfig
+)(implicit ec: ExecutionContext) {
 
   //TODO: encrypt/decrypt the ip address in service layer - OPS-11735
   //TODO: find in action when landing, so we can lock users out straight away - OPS-11736
@@ -32,12 +36,22 @@ class FailedVerificationAttemptService @Inject() (failedVerificationAttemptRepo:
   def find()(implicit requestHeader: RequestHeader): Future[Option[AttemptInfo]] =
     failedVerificationAttemptRepo.findByIpAddress(IpAddress(requestHeader.remoteAddress))
 
-  def upsertRecordIfVerificationFails(implicit requestHeader: RequestHeader): Future[Option[AttemptInfo]] = {
+  def shouldBeLockedOut()(implicit requestHeader: RequestHeader): Future[Boolean] = {
+    failedVerificationAttemptRepo
+      .findByIpAddress(IpAddress(requestHeader.remoteAddress))
+      .map{ _.map(AttemptInfo.shouldBeLockedOut(_, appConfig.FailedAttemptRepo.failedAttemptRepoMaxAttempts)) }
+      .map(_.getOrElse(false))
+  }
+
+  /**
+   * Returns if user should be locked out after update.
+   */
+  def updateNumberOfFailedAttempts()(implicit requestHeader: RequestHeader): Future[Boolean] = {
     for {
       maybeAttemptInfo <- failedVerificationAttemptRepo.findByIpAddress(IpAddress(requestHeader.remoteAddress))
-      newAttemptInfo = maybeAttemptInfo.fold(AttemptInfo.newAttemptInfo)(a => a.incrementAttemptNumberByOne)
-      maybeAttemptInfoAfterUpsert <- failedVerificationAttemptRepo.upsert(newAttemptInfo).map(_ => Some(newAttemptInfo))
-    } yield maybeAttemptInfoAfterUpsert
+      newAttemptInfo: AttemptInfo = maybeAttemptInfo.fold(AttemptInfo.newAttemptInfo)(a => a.incrementAttemptNumberByOne)
+      attemptInfoAfterUpsert: AttemptInfo <- failedVerificationAttemptRepo.upsert(newAttemptInfo).map(_ => newAttemptInfo)
+    } yield AttemptInfo.shouldBeLockedOut(attemptInfoAfterUpsert, appConfig.FailedAttemptRepo.failedAttemptRepoMaxAttempts)
   }
 
   def drop(): Future[Unit] = failedVerificationAttemptRepo.drop()
