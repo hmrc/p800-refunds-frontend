@@ -118,10 +118,10 @@ trait TdBase {
     subType               = BankAccountSubType.CurrentAccount,
     currency              = Currency.getInstance("GBP"),
     accountFormat         = BankAccountFormat.SortCode,
-    accountIdentification = AccountIdentification("44556610002333"),
+    accountIdentification = BankAccountIdentification("44556610002333"),
     calculatedOwnerName   = CalculatedOwnerName("Greg Greggson"),
-    accountOwnerName      = AccountOwnerName("Greg Greggson"),
-    displayName           = DisplayName("Greg G Greggson"),
+    accountOwnerName      = BankAccountOwnerName("Greg Greggson"),
+    displayName           = BankAccountDisplayName("Greg G Greggson"),
     balance               = 123.7,
     lastUpdateTime        = localDateTime,
     parties               = List(BankAccountParty(

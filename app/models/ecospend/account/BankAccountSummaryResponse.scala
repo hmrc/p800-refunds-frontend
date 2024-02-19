@@ -16,8 +16,7 @@
 
 package models.ecospend.account
 
-import enumeratum._
-import play.api.libs.json._
+import play.api.libs.json.{Json, Format, OFormat, Reads, Writes, JsonConfiguration, JsonNaming, JsSuccess, JsError, JsString}
 import models.ecospend.BankId
 import _root_.util.SafeEquals.EqualsOps
 
@@ -39,10 +38,10 @@ final case class BankAccountSummary(
     subType:               BankAccountSubType,
     currency:              Currency,
     accountFormat:         BankAccountFormat,
-    accountIdentification: AccountIdentification,
+    accountIdentification: BankAccountIdentification,
     calculatedOwnerName:   CalculatedOwnerName,
-    accountOwnerName:      AccountOwnerName,
-    displayName:           DisplayName,
+    accountOwnerName:      BankAccountOwnerName,
+    displayName:           BankAccountDisplayName,
     balance:               Double,
     lastUpdateTime:        LocalDateTime,
     parties:               List[BankAccountParty]
@@ -77,87 +76,5 @@ object BankAccountSummary {
 
     Json.format[BankAccountSummary]
   }
-}
-
-final case class BankAccountParty(
-    name:          BankPartyName,
-    fullLegalName: BankPartyFullLegalName
-)
-
-@SuppressWarnings(Array("org.wartremover.warts.Any"))
-object BankAccountParty {
-  implicit val format: OFormat[BankAccountParty] = {
-    implicit val config: JsonConfiguration = JsonConfiguration(JsonNaming.SnakeCase)
-
-    Json.format[BankAccountParty]
-  }
-}
-
-final case class BankPartyName(value: String) extends AnyVal
-object BankPartyName {
-  implicit val format: Format[BankPartyName] = Json.valueFormat[BankPartyName]
-}
-
-final case class BankPartyFullLegalName(value: String) extends AnyVal
-object BankPartyFullLegalName {
-  implicit val format: Format[BankPartyFullLegalName] = Json.valueFormat[BankPartyFullLegalName]
-}
-
-sealed trait BankAccountType extends EnumEntry
-object BankAccountType extends Enum[BankAccountType] with PlayJsonEnum[BankAccountType] {
-  val values = findValues
-
-  case object Business extends BankAccountType
-  case object Personal extends BankAccountType
-  case object SoleTrader extends BankAccountType
-  case object Joint extends BankAccountType
-  case object BankingAsAService extends BankAccountType
-}
-
-sealed trait BankAccountSubType extends EnumEntry
-object BankAccountSubType extends Enum[BankAccountSubType] with PlayJsonEnum[BankAccountSubType] {
-  val values = findValues
-
-  case object ChargeCard extends BankAccountSubType
-  case object CreditCard extends BankAccountSubType
-  case object CurrentAccount extends BankAccountSubType
-  case object EMoney extends BankAccountSubType
-  case object Loan extends BankAccountSubType
-  case object Mortgage extends BankAccountSubType
-  case object PrePaidCard extends BankAccountSubType
-  case object Savings extends BankAccountSubType
-  case object Primary extends BankAccountSubType
-  case object Additional extends BankAccountSubType
-  case object FixedTermDeposit extends BankAccountSubType
-}
-
-sealed trait BankAccountFormat extends EnumEntry
-object BankAccountFormat extends Enum[BankAccountFormat] with PlayJsonEnum[BankAccountFormat] {
-  val values = findValues
-
-  case object SortCode extends BankAccountFormat
-  case object Iban extends BankAccountFormat
-  case object Bban extends BankAccountFormat
-  case object Pan extends BankAccountFormat
-}
-
-final case class AccountIdentification(value: String) extends AnyVal
-object AccountIdentification {
-  implicit val format: Format[AccountIdentification] = Json.valueFormat[AccountIdentification]
-}
-
-final case class CalculatedOwnerName(value: String) extends AnyVal
-object CalculatedOwnerName {
-  implicit val format: Format[CalculatedOwnerName] = Json.valueFormat[CalculatedOwnerName]
-}
-
-final case class AccountOwnerName(value: String) extends AnyVal
-object AccountOwnerName {
-  implicit val format: Format[AccountOwnerName] = Json.valueFormat[AccountOwnerName]
-}
-
-final case class DisplayName(value: String) extends AnyVal
-object DisplayName {
-  implicit val format: Format[DisplayName] = Json.valueFormat[DisplayName]
 }
 
