@@ -28,8 +28,8 @@ class WhatIsTheNameOfYourBankAccountPageSpec extends ItSpec {
     addJourneyIdToSession(tdAll.journeyId)
     upsertJourneyToDatabase(tdAll.BankTransfer.AfterReferenceCheck.journeyReferenceChecked)
 
-    EcospendStub.stubEcospendAuth2xxSucceeded
-    EcospendStub.stubEcospendGetBanks2xx
+    EcospendStub.AuthStubs.stubEcospendAuth2xxSucceeded
+    EcospendStub.BanksStubs.stubEcospendGetBanks2xx
 
     ()
   }
@@ -38,8 +38,8 @@ class WhatIsTheNameOfYourBankAccountPageSpec extends ItSpec {
     pages.enterTheNameOfYourBankAccountPage.open()
     pages.enterTheNameOfYourBankAccountPage.assertPageIsDisplayed()
 
-    EcospendStub.verifyEcospendAccessToken()
-    EcospendStub.verifyEcospendGetBanks()
+    EcospendStub.AuthStubs.verifyEcospendAccessToken()
+    EcospendStub.BanksStubs.verifyEcospendGetBanks()
   }
 
   "Clicking 'Continue' after selecing a bank name redirects to 'Give your permission' page" in {
@@ -49,8 +49,8 @@ class WhatIsTheNameOfYourBankAccountPageSpec extends ItSpec {
     pages.enterTheNameOfYourBankAccountPage.clickSubmit()
     pages.giveYourPermissionPage.assertPageIsDisplayed()
 
-    EcospendStub.verifyEcospendAccessToken(numberOfRequests = 2)
-    EcospendStub.verifyEcospendGetBanks(numberOfRequests = 2)
+    EcospendStub.AuthStubs.verifyEcospendAccessToken(numberOfRequests = 2)
+    EcospendStub.BanksStubs.verifyEcospendGetBanks(numberOfRequests = 2)
   }
 
   "Clicking 'My account is not listed' redirects to 'Choose another option' page" in {
@@ -59,8 +59,8 @@ class WhatIsTheNameOfYourBankAccountPageSpec extends ItSpec {
     pages.enterTheNameOfYourBankAccountPage.clickMyAccountIsNotListed()
     pages.chooseAnotherWayToReceiveYourRefundBankTransferPage.assertPageIsDisplayedPtaOrCheque()
 
-    EcospendStub.verifyEcospendAccessToken()
-    EcospendStub.verifyEcospendGetBanks()
+    EcospendStub.AuthStubs.verifyEcospendAccessToken()
+    EcospendStub.BanksStubs.verifyEcospendGetBanks()
   }
 
   "Clicking 'Continue' without selecting a bank shows error" in {
@@ -69,8 +69,8 @@ class WhatIsTheNameOfYourBankAccountPageSpec extends ItSpec {
     pages.enterTheNameOfYourBankAccountPage.clickSubmit()
     pages.enterTheNameOfYourBankAccountPage.assertPageShowsError() // should fail?
 
-    EcospendStub.verifyEcospendAccessToken(numberOfRequests = 2)
-    EcospendStub.verifyEcospendGetBanks(numberOfRequests = 2)
+    EcospendStub.AuthStubs.verifyEcospendAccessToken(numberOfRequests = 2)
+    EcospendStub.BanksStubs.verifyEcospendGetBanks(numberOfRequests = 2)
   }
 
   "Clicking 'Back' redirects to /we-have-confirmed-your-identity" in {
@@ -79,7 +79,7 @@ class WhatIsTheNameOfYourBankAccountPageSpec extends ItSpec {
     pages.enterTheNameOfYourBankAccountPage.clickBackButton()
     pages.yourIdentityIsConfirmedBankTransferPage.assertPageIsDisplayed(JourneyType.BankTransfer)
 
-    EcospendStub.verifyEcospendAccessToken()
-    EcospendStub.verifyEcospendGetBanks()
+    EcospendStub.AuthStubs.verifyEcospendAccessToken()
+    EcospendStub.BanksStubs.verifyEcospendGetBanks()
   }
 }

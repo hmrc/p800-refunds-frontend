@@ -29,9 +29,9 @@ class VerifyBankAccountPageSpec extends ItSpec {
 
   "/verifying-bank-account renders the 'We are verifying your bank account' page" in {
     //TODO: uncomment the wiremock stuff when we know what ecospend api looks like and is wired up
-    //    EcospendStub.stubEcospendAuth2xxSucceeded
+    //    EcospendStub.AuthStubs.stubEcospendAuth2xxSucceeded
     //    EcospendStub.ValidateStubs.stubValidateNotValidatedYet
-    EcospendStub.stubEcospendAuth2xxSucceeded
+    EcospendStub.AuthStubs.stubEcospendAuth2xxSucceeded
     EcospendStub.AccountStub.stubAccountSummary2xxSucceeded(tdAll.consentId)
     pages.verifyBankAccountPage.open()
     pages.verifyBankAccountPage.assertPageIsDisplayed()
@@ -40,9 +40,9 @@ class VerifyBankAccountPageSpec extends ItSpec {
 
   "clicking 'refresh this page' refreshes the page - showing the same page if bank is not verified yet" in {
     //TODO: uncomment the wiremock stuff when we know what ecospend api looks like and is wired up
-    //    EcospendStub.stubEcospendAuth2xxSucceeded
+    //    EcospendStub.AuthStubs.stubEcospendAuth2xxSucceeded
     //    EcospendStub.ValidateStubs.stubValidateNotValidatedYet
-    EcospendStub.stubEcospendAuth2xxSucceeded
+    EcospendStub.AuthStubs.stubEcospendAuth2xxSucceeded
     EcospendStub.AccountStub.stubAccountSummary2xxSucceeded(tdAll.consentId)
 
     pages.verifyBankAccountPage.open()
@@ -54,9 +54,9 @@ class VerifyBankAccountPageSpec extends ItSpec {
 
   //TODO: unignore this when we have the callbacks/fetching of the bank verification statuses from ecospend along with other API calls
   "redirect to bank transfer 'Request received' page when verification call returns Successful" ignore {
-    EcospendStub.stubEcospendAuth2xxSucceeded
+    EcospendStub.AuthStubs.stubEcospendAuth2xxSucceeded
     EcospendStub.ValidateStubs.stubValidateNotValidatedYet
-    EcospendStub.stubEcospendAuth2xxSucceeded
+    EcospendStub.AuthStubs.stubEcospendAuth2xxSucceeded
     EcospendStub.AccountStub.stubAccountSummary2xxSucceeded(tdAll.consentId)
 
     pages.verifyBankAccountPage.open()
@@ -70,9 +70,9 @@ class VerifyBankAccountPageSpec extends ItSpec {
 
   //TODO: unignore this when we have the callbacks/fetching of the bank verification statuses from ecospend along with other API calls
   "redirect to 'Request not submitted' page when verification call returns UnSuccessful" ignore {
-    EcospendStub.stubEcospendAuth2xxSucceeded
+    EcospendStub.AuthStubs.stubEcospendAuth2xxSucceeded
     EcospendStub.ValidateStubs.stubValidateNotValidatedYet
-    EcospendStub.stubEcospendAuth2xxSucceeded
+    EcospendStub.AuthStubs.stubEcospendAuth2xxSucceeded
     EcospendStub.AccountStub.stubAccountSummary2xxSucceeded(tdAll.consentId)
 
     pages.verifyBankAccountPage.open()
@@ -85,11 +85,11 @@ class VerifyBankAccountPageSpec extends ItSpec {
   }
 
   "clicking 'Back' sends user to 'What is the name of your bank account' page" in {
-    EcospendStub.stubEcospendAuth2xxSucceeded
+    EcospendStub.AuthStubs.stubEcospendAuth2xxSucceeded
     EcospendStub.ValidateStubs.stubValidateNotValidatedYet
-    EcospendStub.stubEcospendAuth2xxSucceeded
+    EcospendStub.AuthStubs.stubEcospendAuth2xxSucceeded
     EcospendStub.AccountStub.stubAccountSummary2xxSucceeded(tdAll.consentId)
-    EcospendStub.stubEcospendGetBanks2xx
+    EcospendStub.BanksStubs.stubEcospendGetBanks2xx
 
     pages.verifyBankAccountPage.open()
     pages.verifyBankAccountPage.assertPageIsDisplayed()
@@ -98,9 +98,9 @@ class VerifyBankAccountPageSpec extends ItSpec {
   }
 
   "refreshing the page does not re-send the account summary request" in {
-    EcospendStub.stubEcospendAuth2xxSucceeded
+    EcospendStub.AuthStubs.stubEcospendAuth2xxSucceeded
     EcospendStub.ValidateStubs.stubValidateNotValidatedYet
-    EcospendStub.stubEcospendAuth2xxSucceeded
+    EcospendStub.AuthStubs.stubEcospendAuth2xxSucceeded
     EcospendStub.AccountStub.stubAccountSummary2xxSucceeded(tdAll.consentId)
 
     pages.verifyBankAccountPage.open()

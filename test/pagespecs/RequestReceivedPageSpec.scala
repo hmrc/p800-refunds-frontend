@@ -46,7 +46,7 @@ class RequestReceivedPageSpec extends ItSpec {
   "[bank transfer ]user is kept in the final page if clicked browser's back button" ignore {
     upsertJourneyToDatabase(tdAll.BankTransfer.journeyPermissionGiven)
     getJourneyFromDatabase(tdAll.journeyId) shouldBeLike tdAll.BankTransfer.journeyPermissionGiven
-    EcospendStub.stubEcospendAuth2xxSucceeded
+    EcospendStub.AuthStubs.stubEcospendAuth2xxSucceeded
     EcospendStub.ValidateStubs.stubValidateNotValidatedYet
     //setup the history in the browser:
     pages.verifyBankAccountPage.open()
