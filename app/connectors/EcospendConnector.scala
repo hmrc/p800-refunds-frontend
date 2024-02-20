@@ -18,11 +18,12 @@ package connectors
 
 import action.JourneyRequest
 import config.AppConfig
+import models.ecospend.account.BankAccountSummaryResponse
+import models.ecospend.consent.{BankConsentRequest, BankConsentResponse}
 import models.ecospend.verification.{BankVerification, BankVerificationRequest}
 import models.ecospend.{EcospendAccessToken, EcospendGetBanksResponse}
-import models.ecospend.consent.{BankConsentRequest, BankConsentResponse}
-import models.ecospend.account.BankAccountSummaryResponse
 import requests.RequestSupport
+import uk.gov.hmrc.http.HeaderNames
 import uk.gov.hmrc.http.HttpClient
 import uk.gov.hmrc.http.HttpReads.Implicits._
 import util.JourneyLogger
@@ -45,7 +46,9 @@ class EcospendConnector @Inject() (
   def getListOfAvailableBanks(accessToken: EcospendAccessToken)(implicit request: JourneyRequest[_]): Future[EcospendGetBanksResponse] = captureException {
     httpClient.GET[EcospendGetBanksResponse](
       url     = banksUrl,
-      headers = authorizationHeader(accessToken)
+      headers = Seq(
+        authorizationHeader(accessToken)
+      )
     )
   }
 
@@ -58,7 +61,9 @@ class EcospendConnector @Inject() (
     httpClient.POST[BankVerificationRequest, BankVerification](
       url     = validateUrl,
       body    = bankVerificationRequest,
-      headers = authorizationHeader(accessToken)
+      headers = Seq(
+        authorizationHeader(accessToken)
+      )
     )
   }
 
@@ -71,7 +76,9 @@ class EcospendConnector @Inject() (
     httpClient.POST[BankConsentRequest, BankConsentResponse](
       url     = createConsentUrl,
       body    = bankConsentRequest,
-      headers = authorizationHeader(accessToken)
+      headers = Seq(
+        authorizationHeader(accessToken)
+      )
     )
   }
 
@@ -83,11 +90,25 @@ class EcospendConnector @Inject() (
   )(implicit request: JourneyRequest[_]): Future[BankAccountSummaryResponse] = captureException {
     httpClient.GET[BankAccountSummaryResponse](
       url     = accountSummaryUrl,
-      headers = authorizationHeader(accessToken) ++ Seq(
-        ("consent_id", consentId.toString)
-      )
+      headers = Seq(
+        authorizationHeader(accessToken),
+      ) ++ consentIdHeader(consentId)
     )
   }
+
+  private def authorizationHeader(accessToken: EcospendAccessToken): (String, String) =
+    HeaderNames.authorisation -> s"Bearer ${accessToken.token}"
+
+  private val consentIdHeaderKey: String = "consent_id"
+  private val developmentConsentIdHeaderKey: String = "consent-id"
+
+  // Platform drops HTTP headers containing underscore characters.
+  // As a workaround for testing a duplicate header is sent without an underscore.
+  // Outbound requests should not be affected.
+  private def consentIdHeader(consentId: UUID): Seq[(String, String)] = Seq(
+    consentIdHeaderKey -> consentId.toString,
+    developmentConsentIdHeaderKey -> consentId.toString
+  )
 
   private def captureException[A](future: => Future[A])(implicit request: JourneyRequest[_]): Future[A] =
     future.recover {
@@ -95,8 +116,5 @@ class EcospendConnector @Inject() (
         JourneyLogger.warn(s"Ecospend call failed with exception: ${ex.toString}")
         throw ex
     }
-
-  private def authorizationHeader(accessToken: EcospendAccessToken) =
-    Seq(("Authorization", s"Bearer ${accessToken.token}"))
 }
 
