@@ -30,6 +30,7 @@ import java.time.LocalDateTime
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.duration.DurationInt
 import scala.concurrent.{ExecutionContext, Future}
+import util.JourneyLogger
 
 @Singleton()
 class EcospendService @Inject() (
@@ -80,7 +81,9 @@ class EcospendService @Inject() (
       case None =>
         for {
           accessToken <- ecospendAuthServerConnector.accessToken
-          bankAccountSummaryResponse <- ecospendConnector.getAccountSummary(accessToken, journey.getBankConsent.id)
+          consentId = journey.getBankConsent.id
+          _ = JourneyLogger.info(s"EcospendService: Account Summary call: [consent_id: ${consentId.toString}]")
+          bankAccountSummaryResponse <- ecospendConnector.getAccountSummary(accessToken, consentId)
         } yield bankAccountSummaryResponse.value.headOption.getOrElse(Errors.throwServerErrorException("Failed to get BankAccountSummary from BankAccountSummaryResponse"))
       case Some(bankAccountSummary) =>
         Future.successful(bankAccountSummary)

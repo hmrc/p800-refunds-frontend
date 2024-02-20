@@ -30,6 +30,7 @@ import views.Views
 import java.util.UUID
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.ExecutionContext
+import util.JourneyLogger
 
 @Singleton
 class WeAreVerifyingYourBankAccountController @Inject() (
@@ -47,6 +48,12 @@ class WeAreVerifyingYourBankAccountController @Inject() (
     consent_id.fold(Errors.throwBadRequestException("This endpoint requires a valid consent_id query parameter")) { consentId: UUID =>
       Errors.require(journey.getBankConsent.id === consentId, "The consent_id supplied via the query parameter must match that stored in the journey. This should be investigated")
     }
+
+    bank_reference_id.fold(Errors.throwBadRequestException("This endpoint requires a valid bank_reference_id query parameter")) { bankReferenceId: BankReferenceId =>
+      Errors.require(journey.getBankConsent.bankReferenceId === bankReferenceId, "The bank_reference_id supplied via the query parameter must match that stored in the journey. This should be investigated")
+    }
+
+    JourneyLogger.info(s"WeAreVerifyingYourBankAccountController: Account Summary call: [consent_id: ${consent_id.toString}]. Query parameter matches that stored in journey.")
 
     for {
       // TODO: Assert status, consent_id & bank_reference_id match that contained within the journey

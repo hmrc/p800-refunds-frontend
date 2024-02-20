@@ -45,7 +45,9 @@ class EcospendConnector @Inject() (
   def getListOfAvailableBanks(accessToken: EcospendAccessToken)(implicit request: JourneyRequest[_]): Future[EcospendGetBanksResponse] = captureException {
     httpClient.GET[EcospendGetBanksResponse](
       url     = banksUrl,
-      headers = authorizationHeader(accessToken)
+      headers = Seq(
+        authorizationHeader(accessToken)
+      )
     )
   }
 
@@ -58,7 +60,9 @@ class EcospendConnector @Inject() (
     httpClient.POST[BankVerificationRequest, BankVerification](
       url     = validateUrl,
       body    = bankVerificationRequest,
-      headers = authorizationHeader(accessToken)
+      headers = Seq(
+        authorizationHeader(accessToken)
+      )
     )
   }
 
@@ -71,23 +75,34 @@ class EcospendConnector @Inject() (
     httpClient.POST[BankConsentRequest, BankConsentResponse](
       url     = createConsentUrl,
       body    = bankConsentRequest,
-      headers = authorizationHeader(accessToken)
+      headers = Seq(
+        authorizationHeader(accessToken)
+      )
     )
   }
 
   private val accountSummaryUrl: String = appConfig.ExternalApiCalls.ecospendUrl + "/accounts/summary"
+  private val consentIdHeaderKey: String = "consent_id"
 
   def getAccountSummary(
       accessToken: EcospendAccessToken,
       consentId:   UUID
   )(implicit request: JourneyRequest[_]): Future[BankAccountSummaryResponse] = captureException {
+    JourneyLogger.info(s"EcospendConnector: Account Summary call: [${consentIdHeaderKey}: ${consentId.toString}]")
     httpClient.GET[BankAccountSummaryResponse](
       url     = accountSummaryUrl,
-      headers = authorizationHeader(accessToken) ++ Seq(
-        ("consent_id", consentId.toString)
+      headers = Seq(
+        authorizationHeader(accessToken),
+        consentIdHeader(consentId)
       )
     )
   }
+
+  private def authorizationHeader(accessToken: EcospendAccessToken): (String, String) =
+    "Authorization" -> s"Bearer ${accessToken.token}"
+
+  private def consentIdHeader(consentId: UUID): (String, String) =
+    consentIdHeaderKey -> consentId.toString
 
   private def captureException[A](future: => Future[A])(implicit request: JourneyRequest[_]): Future[A] =
     future.recover {
@@ -95,8 +110,5 @@ class EcospendConnector @Inject() (
         JourneyLogger.warn(s"Ecospend call failed with exception: ${ex.toString}")
         throw ex
     }
-
-  private def authorizationHeader(accessToken: EcospendAccessToken) =
-    Seq(("Authorization", s"Bearer ${accessToken.token}"))
 }
 
