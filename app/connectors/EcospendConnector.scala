@@ -81,6 +81,7 @@ class EcospendConnector @Inject() (
       accessToken: EcospendAccessToken,
       consentId:   UUID
   )(implicit request: JourneyRequest[_]): Future[BankAccountSummaryResponse] = captureException {
+    JourneyLogger.info(s"EcospendConnector: Account Summary call: [consent_id: ${consentId.toString}]")
     httpClient.GET[BankAccountSummaryResponse](
       url     = accountSummaryUrl,
       headers = authorizationHeader(accessToken) ++ Seq(
