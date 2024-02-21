@@ -29,18 +29,19 @@ trait TdJourney {
   lazy val journeyId: JourneyId = JourneyId("64886ed616fe8b501cbf0088")
 
   lazy val journeyStarted: Journey = Journey(
-    _id                  = journeyId,
-    createdAt            = dependencies.instant,
-    hasFinished          = HasFinished.No,
-    journeyType          = None,
-    p800Reference        = None,
-    nino                 = None,
-    isChanging           = IsChanging.No,
-    dateOfBirth          = None,
-    referenceCheckResult = None,
-    bankDescription      = None,
-    bankConsentResponse  = None,
-    bankAccountSummary   = None
+    _id                     = journeyId,
+    createdAt               = dependencies.instant,
+    hasFinished             = HasFinished.No,
+    journeyType             = None,
+    p800Reference           = None,
+    nino                    = None,
+    isChanging              = IsChanging.No,
+    dateOfBirth             = None,
+    referenceCheckResult    = None,
+    traceIndividualResponse = None,
+    bankDescription         = None,
+    bankConsentResponse     = None,
+    bankAccountSummary      = None
   )
 
   object BankTransfer {
@@ -86,14 +87,18 @@ trait TdJourney {
 
     lazy val journeyLockedOutFromFailedAttempts: Journey = {
       val j = AfterReferenceCheck.journeyReferenceDidntMatchNino.copy(
-        hasFinished = HasFinished.LockedOut
+        hasFinished = HasFinished.YesLockedOut
       )
       require(!j.isIdentityVerified, "this journey instance has to have NOT verified identity")
       require(hasFinished(j.hasFinished), "this journey instance should be in finished state")
       j
     }
 
-    lazy val journeySelectedBank: Journey = AfterReferenceCheck.journeyReferenceChecked.copy(
+    lazy val journeyAfterTracedIndividual: Journey = AfterReferenceCheck.journeyReferenceChecked.copy(
+      traceIndividualResponse = Some(dependencies.traceIndividualResponse)
+    )
+
+    lazy val journeySelectedBank: Journey = journeyAfterTracedIndividual.copy(
       bankDescription = Some(dependencies.bankDescription)
     )
 
@@ -118,7 +123,7 @@ trait TdJourney {
     lazy val journeyClaimOverpaymentFailed: Journey =
       //TODO: API responses
       journeyReceivedNotificationFromEcospend.copy(
-        hasFinished = HasFinished.RefundNotSubmitted
+        hasFinished = HasFinished.YesRefundNotSubmitted
       )
 
     /**
@@ -172,7 +177,7 @@ trait TdJourney {
 
     lazy val journeyLockedOutFromFailedAttempts: Journey = {
       val j = AfterReferenceCheck.journeyReferenceDidntMatchNino.copy(
-        hasFinished = HasFinished.LockedOut
+        hasFinished = HasFinished.YesLockedOut
       )
       require(!j.isIdentityVerified, "this journey instance has to have NOT verified identity")
       require(hasFinished(j.hasFinished), "this journey instance should be in finished state")

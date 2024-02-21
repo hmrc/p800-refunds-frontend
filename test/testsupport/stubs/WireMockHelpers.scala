@@ -25,6 +25,8 @@ import com.github.tomakehurst.wiremock.stubbing.StubMapping
 import play.api.http.Status
 import play.api.libs.json.{Format, Json}
 
+import scala.jdk.CollectionConverters.MapHasAsJava
+
 object WireMockHelpers {
 
   def verifyNone(url: String): Unit = verify(exactly(0), postRequestedFor(urlPathEqualTo(url)))
@@ -105,39 +107,27 @@ object WireMockHelpers {
       )
   )
 
-  def stubForPostWithResponseBody(
-      url:              String,
-      responseJsonBody: String,
-      responseStatus:   Int                               = Status.OK,
-      requiredHeaders:  Seq[(String, StringValuePattern)] = Nil
-  ): StubMapping = stubFor(
-    postMappingWithHeaders(url, requiredHeaders)
-      .willReturn(
-        aResponse()
-          .withStatus(responseStatus)
-          .withHeader("Content-Type", "application/json")
-          .withBody(responseJsonBody)
-      )
-  )
-
-  //TODO rewrite stubs using this method
   def stubForPost(
-      url:              String,
-      requestBodyJson:  String,
-      responseJsonBody: String,
-      responseStatus:   Int                               = Status.OK,
-      requiredHeaders:  Seq[(String, StringValuePattern)] = Nil
-  ): StubMapping = stubFor(
-    postMappingWithHeaders(url, requiredHeaders)
-      .withRequestBody(
-        equalToJson(requestBodyJson, true, true)
-      )
-      .willReturn(
-        aResponse()
-          .withStatus(responseStatus)
-          .withBody(responseJsonBody)
-      )
-  )
+      url:             String,
+      responseBody:    String,
+      responseStatus:  Int                               = Status.OK,
+      requestBodyJson: Option[String]                    = None,
+      queryParams:     Map[String, StringValuePattern]   = Map.empty,
+      requiredHeaders: Seq[(String, StringValuePattern)] = Nil
+  ): StubMapping = {
+    val mb: MappingBuilder = postMappingWithHeaders(url, requiredHeaders)
+
+    stubFor(
+      requestBodyJson.fold(mb)(requestBodyJson => mb.withRequestBody(equalToJson(requestBodyJson, true, true)))
+        .withQueryParams(queryParams.asJava)
+        .willReturn(
+          aResponse()
+            .withStatus(responseStatus)
+            .withHeader("Content-Type", "application/json")
+            .withBody(responseBody)
+        )
+    )
+  }
 
   def stubForPostWithRequestBodyMatching(
       url:                 String,

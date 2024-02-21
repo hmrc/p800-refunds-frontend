@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2024 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,15 +14,17 @@
  * limitations under the License.
  */
 
-package testsupport.stubs
+package nps.models
 
-import com.github.tomakehurst.wiremock.stubbing.StubMapping
-import testsupport.stubs.WireMockHelpers._
+import models.Nino
+import play.api.libs.json.{Json, OFormat}
 
-object ReferenceValidationStub {
+final case class TraceIndividualRequest(
+    identifier:  Nino,
+    dateOfBirth: String
+)
 
-  val url = "/validate-reference"
-
-  def validateReference2xxValid: StubMapping = stubForPost(url, """{ "isValid": true }""")
-  def validateReference2xxInvalid: StubMapping = stubForPost(url, """{ "isValid": false }""")
+object TraceIndividualRequest {
+  @SuppressWarnings(Array("org.wartremover.warts.Any"))
+  implicit val format: OFormat[TraceIndividualRequest] = Json.format[TraceIndividualRequest]
 }

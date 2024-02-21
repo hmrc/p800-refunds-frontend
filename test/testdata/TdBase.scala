@@ -16,7 +16,7 @@
 
 package testdata
 
-import _root_.nps.models.{AssociatedPayableNumber, CurrentOptimisticLock, CustomerAccountNumber, PayeNumber, ReconciliationIdentifier, ReferenceCheckResult, TaxDistrictNumber}
+import _root_.nps.models.{AssociatedPayableNumber, CurrentOptimisticLock, CustomerAccountNumber, PayeNumber, ReconciliationIdentifier, ReferenceCheckResult, TaxDistrictNumber, TraceIndividualResponse}
 import akka.http.scaladsl.model.Uri
 import models._
 import models.attemptmodels.{AttemptId, AttemptInfo, IpAddress, NumberOfAttempts}
@@ -51,6 +51,7 @@ trait TdBase {
   lazy val year: Year = Year("2000")
   lazy val dateOfBirth: DateOfBirth = DateOfBirth(dayOfMonth, month, year)
   lazy val dateOfBirthFormatted: String = "01 January 2000"
+  lazy val `dateOfBirthFormatted YYYY-MM-DD`: String = "2000-01-01"
 
   lazy val nino: Nino = Nino("LM001014C")
 
@@ -63,6 +64,13 @@ trait TdBase {
     associatedPayableNumber  = AssociatedPayableNumber("associatedPayableNumber-1234"),
     customerAccountNumber    = CustomerAccountNumber("customerAccountNumber-1234"),
     currentOptimisticLock    = CurrentOptimisticLock(15)
+  )
+
+  lazy val traceIndividualResponse = TraceIndividualResponse(
+    title          = Some("Sir"),
+    firstForename  = Some("Accolon"),
+    secondForename = None,
+    surname        = "of Gaul"
   )
 
   lazy val bankId: BankId = BankId("obie-barclays-personal")

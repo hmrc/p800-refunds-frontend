@@ -21,7 +21,7 @@ import models.ecospend.BankDescription
 import models.ecospend.consent.BankConsentResponse
 import models.ecospend.account.BankAccountSummary
 import models.{AmountInPence, Nino, P800Reference}
-import nps.models.ReferenceCheckResult
+import nps.models.{ReferenceCheckResult, TraceIndividualResponse}
 import play.api.libs.json.OFormat
 import play.api.mvc.Request
 import util.Errors
@@ -29,18 +29,19 @@ import util.Errors
 import java.time.{Clock, Instant}
 
 final case class Journey(
-    _id:                  JourneyId,
-    createdAt:            Instant,
-    hasFinished:          HasFinished,
-    journeyType:          Option[JourneyType],
-    p800Reference:        Option[P800Reference],
-    nino:                 Option[Nino],
-    isChanging:           IsChanging,
-    dateOfBirth:          Option[DateOfBirth],
-    referenceCheckResult: Option[ReferenceCheckResult], //reset this field upon changes of dependant fields
-    bankDescription:      Option[BankDescription],
-    bankConsentResponse:  Option[BankConsentResponse],
-    bankAccountSummary:   Option[BankAccountSummary]
+    _id:                     JourneyId,
+    createdAt:               Instant,
+    hasFinished:             HasFinished,
+    journeyType:             Option[JourneyType],
+    p800Reference:           Option[P800Reference],
+    nino:                    Option[Nino],
+    isChanging:              IsChanging,
+    dateOfBirth:             Option[DateOfBirth],
+    referenceCheckResult:    Option[ReferenceCheckResult], //reset this field upon changes of dependant fields
+    traceIndividualResponse: Option[TraceIndividualResponse], //reset this field upon changes of dependant fields
+    bankDescription:         Option[BankDescription],
+    bankConsentResponse:     Option[BankConsentResponse],
+    bankAccountSummary:      Option[BankAccountSummary]
 ) {
 
   /*
@@ -48,31 +49,40 @@ final case class Journey(
    */
   def update(nino: Nino): Journey =
     this
-      .resetCheckReferenceApiResponses()
+      .resetAllApiResponses()
       .copy(
         nino = Some(nino)
       )
 
   def update(dateOfBirth: DateOfBirth): Journey =
     this
-      .resetCheckReferenceApiResponses()
+      .resetAllApiResponses()
       .copy(
         dateOfBirth = Some(dateOfBirth)
       )
 
   def update(p800Reference: P800Reference): Journey =
     this
-      .resetCheckReferenceApiResponses()
+      .resetAllApiResponses()
       .copy(
         p800Reference = Some(p800Reference)
       )
 
   def update(referenceCheckResult: ReferenceCheckResult): Journey =
     this
-      .resetCheckReferenceApiResponses()
+      .resetAllApiResponses()
       .copy(
-        referenceCheckResult = Some(referenceCheckResult)
-      //TODO reset individual trace API and other API results which happen after that call
+        referenceCheckResult    = Some(referenceCheckResult),
+        traceIndividualResponse = None
+      )
+
+  def update(maybeTraceIndividualResponse: Option[TraceIndividualResponse]): Journey =
+    this
+      .copy(
+        traceIndividualResponse = maybeTraceIndividualResponse,
+        bankDescription         = None,
+        bankConsentResponse     = None,
+        bankAccountSummary      = None
       )
 
   def update(bankDescription: BankDescription): Journey =
@@ -98,7 +108,7 @@ final case class Journey(
       //TODO: reset other API responses populated bankAccountSummary
       )
 
-  private def resetCheckReferenceApiResponses(): Journey = this.copy(
+  private def resetAllApiResponses(): Journey = this.copy(
     referenceCheckResult = None,
     bankDescription      = None,
     bankConsentResponse  = None,

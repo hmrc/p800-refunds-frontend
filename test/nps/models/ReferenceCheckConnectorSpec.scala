@@ -16,22 +16,22 @@
 
 package nps.models
 
-import nps.NpsConnector
+import nps.ReferenceCheckConnector
 import testsupport.UnitSpec
 import uk.gov.hmrc.http.{HttpResponse, UpstreamErrorResponse}
 
-class NpsConnectorSpec extends UnitSpec {
+class ReferenceCheckConnectorSpec extends UnitSpec {
 
   "read 422 with specific code as RefundAlreadyTaken" in {
     val codeForRefundAlreadyTaken = """TODO-refund-already-taken"""
     val response: HttpResponse = HttpResponse(422, s"""{"failures":[{"reason":"Refund already taken","code":"$codeForRefundAlreadyTaken"}]}""")
-    NpsConnector.reads.read("GET", "url", response) shouldBe ReferenceCheckResult.RefundAlreadyTaken
+    ReferenceCheckConnector.reads.read("GET", "url", response) shouldBe ReferenceCheckResult.RefundAlreadyTaken
   }
 
   "read 422 with other codes as Upstream4xxResponse" in {
     val response: HttpResponse = HttpResponse(422, s"""{"failures":[{"reason":"insert coin","code":"not-enough-mana"}]}""")
     val thrown = intercept[UpstreamErrorResponse](
-      NpsConnector.reads.read("GET", "url", response)
+      ReferenceCheckConnector.reads.read("GET", "url", response)
     )
     thrown.getMessage() shouldBe """GET of 'url' returned 422. Response body: '{"failures":[{"reason":"insert coin","code":"not-enough-mana"}]}'"""
     thrown.statusCode shouldBe 422

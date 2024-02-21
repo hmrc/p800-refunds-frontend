@@ -17,7 +17,6 @@
 package nps
 
 import _root_.models.{Nino, P800Reference}
-import config.AppConfig
 import nps.models.{P800ReferenceCheckResultFailures, ReferenceCheckResult}
 import play.api.Logger
 import play.api.http.Status
@@ -28,57 +27,32 @@ import uk.gov.hmrc.http.HttpReads.Implicits._
 import uk.gov.hmrc.http.{HttpClient, HttpErrorFunctions, HttpReads, HttpResponse, JsValidationException, UpstreamErrorResponse}
 import util.SafeEquals._
 
-import java.util.{Base64, UUID}
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 /**
- * This connector will call Nps endpoints (via HIP/IF).
+ * This connector will call Nps' Check P800 Reference API endpoint.
  */
 @Singleton
-class NpsConnector @Inject() (
-    appConfig:  AppConfig,
+class ReferenceCheckConnector @Inject() (
+    npsConfig:  NpsConfig,
     httpClient: HttpClient
 )(implicit ec: ExecutionContext) {
 
-  private def p800ReferenceUrl(nino: Nino, p800Reference: P800Reference): String = appConfig.Nps.baseUrl +
+  private def url(nino: Nino, p800Reference: P800Reference): String = npsConfig.baseUrl +
     s"/nps-json-service/nps/v1/api/reconciliation/p800/${nino.value}/${p800Reference.value}"
 
   def p800ReferenceCheck(nino: Nino, p800Reference: P800Reference)(implicit requestHeader: RequestHeader): Future[ReferenceCheckResult] = {
-    implicit val reads: HttpReads[ReferenceCheckResult] = NpsConnector.reads
+    implicit val reads: HttpReads[ReferenceCheckResult] = ReferenceCheckConnector.reads
     httpClient
       .GET[ReferenceCheckResult](
-        url     = p800ReferenceUrl(nino, p800Reference),
-        headers = Seq(
-          authorisationHeader,
-          makeCorrelationIdHeader(),
-          makeOriginatorIdHeader()
-        )
+        url     = url(nino, p800Reference),
+        headers = npsConfig.makeHeadersForNps()
       )
   }
-
-  private val authorisationHeader: (String, String) = {
-      def encodeString(input: String): String = {
-        val encoder: Base64.Encoder = Base64.getEncoder
-        val encodedBytes = encoder.encode(input.getBytes("UTF-8"))
-        new String(encodedBytes, "UTF-8")
-      }
-    val credentials = s"${appConfig.Nps.username}:${appConfig.Nps.password}"
-    val credentialsEncoded = encodeString(credentials)
-    "Authorization" -> s"Basic $credentialsEncoded"
-  }
-
-  private def makeCorrelationIdHeader(): (String, String) = {
-    "CorrelationId" -> UUID.randomUUID().toString
-  }
-
-  private def makeOriginatorIdHeader(): (String, String) = {
-    "gov-uk-originator-id" -> "DA2_MRA_DIGITAL"
-  }
-
 }
 
-object NpsConnector {
+object ReferenceCheckConnector {
 
   // A few notes:
   // 1) Constructing Awkward HttpReads[ReferenceCheckResult] is necessary for mapping HttpResponse

@@ -64,8 +64,8 @@ class Actions @Inject() (
         case Some(JourneyType.BankTransfer) => controllers.routes.RequestReceivedController.getBankTransfer
         case None                           => throw new RuntimeException(s"This case is not supported for YesSucceeded, journey should have a journeyType [${journey.id.toString}] [${journey.hasFinished.toString}]")
       }
-    case HasFinished.RefundNotSubmitted => controllers.routes.RefundRequestNotSubmittedController.get
-    case HasFinished.LockedOut => journey.journeyType match {
+    case HasFinished.YesRefundNotSubmitted => controllers.routes.RefundRequestNotSubmittedController.get
+    case HasFinished.YesLockedOut => journey.journeyType match {
       case Some(JourneyType.Cheque)       => controllers.routes.NoMoreAttemptsLeftToConfirmYourIdentityController.getCheque
       case Some(JourneyType.BankTransfer) => controllers.routes.NoMoreAttemptsLeftToConfirmYourIdentityController.getBankTransfer
       case None                           => throw new RuntimeException(s"This case is not supported for LockedOut, journey should have a journeyType [${journey.id.toString}] [${journey.hasFinished.toString}]")
@@ -75,10 +75,10 @@ class Actions @Inject() (
 
   //TODO: this might need some extra refinement
   private def redirectWhenJourneyIsInProgress(journey: Journey): Call = journey.hasFinished match {
-    case HasFinished.YesSucceeded       => throw new RuntimeException(s"This case is not supported [YesSucceeded], journey should be in progress [${journey.id.toString}] [${journey.hasFinished.toString}]")
-    case HasFinished.RefundNotSubmitted => throw new RuntimeException(s"This case is not supported [RefundNotSubmitted], journey should be in progress [${journey.id.toString}] [${journey.hasFinished.toString}]")
-    case HasFinished.LockedOut          => throw new RuntimeException(s"This case is not supported [LockedOut], journey should be in progress [${journey.id.toString}] [${journey.hasFinished.toString}]")
-    case HasFinished.No                 => controllers.routes.DoYouWantToSignInController.get
+    case HasFinished.YesSucceeded          => throw new RuntimeException(s"This case is not supported [YesSucceeded], journey should be in progress [${journey.id.toString}] [${journey.hasFinished.toString}]")
+    case HasFinished.YesRefundNotSubmitted => throw new RuntimeException(s"This case is not supported [RefundNotSubmitted], journey should be in progress [${journey.id.toString}] [${journey.hasFinished.toString}]")
+    case HasFinished.YesLockedOut          => throw new RuntimeException(s"This case is not supported [LockedOut], journey should be in progress [${journey.id.toString}] [${journey.hasFinished.toString}]")
+    case HasFinished.No                    => controllers.routes.DoYouWantToSignInController.get
   }
 
 }

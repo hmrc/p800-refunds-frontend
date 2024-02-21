@@ -28,18 +28,19 @@ class JourneyFactory @Inject() (
 ) {
 
   def makeNewJourney(): Journey = Journey(
-    _id                  = journeyIdGenerator.nextJourneyId(),
-    createdAt            = Instant.now(clock),
-    hasFinished          = HasFinished.No,
-    journeyType          = None,
-    p800Reference        = None,
-    nino                 = None,
-    isChanging           = IsChanging.No,
-    dateOfBirth          = None,
-    referenceCheckResult = None,
-    bankDescription      = None,
-    bankConsentResponse  = None,
-    bankAccountSummary   = None
+    _id                     = journeyIdGenerator.nextJourneyId(),
+    createdAt               = Instant.now(clock),
+    hasFinished             = HasFinished.No,
+    journeyType             = None,
+    p800Reference           = None,
+    nino                    = None,
+    isChanging              = IsChanging.No,
+    dateOfBirth             = None,
+    referenceCheckResult    = None,
+    traceIndividualResponse = None,
+    bankDescription         = None,
+    bankConsentResponse     = None,
+    bankAccountSummary      = None
   )
 
 }

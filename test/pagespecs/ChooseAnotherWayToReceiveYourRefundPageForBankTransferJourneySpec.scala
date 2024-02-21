@@ -42,8 +42,9 @@ class ChooseAnotherWayToReceiveYourRefundPageForBankTransferJourneySpec extends 
       pages.chooseAnotherWayToReceiveYourRefundBankTransferPage.clickSubmit()
       pages.completeYourRefundRequestPage.assertPageIsDisplayed()
       val expectedJourney = tdAll.Cheque.AfterReferenceCheck.journeyReferenceChecked.copy(
-        dateOfBirth     = tdAll.BankTransfer.journeySelectedBank.dateOfBirth, //Date of Birth is also copied
-        bankDescription = tdAll.BankTransfer.journeySelectedBank.bankDescription, //also bankDescription is copied
+        dateOfBirth             = tdAll.BankTransfer.journeySelectedBank.dateOfBirth, //Date of Birth is also copied
+        traceIndividualResponse = tdAll.BankTransfer.journeySelectedBank.traceIndividualResponse, //Date of Birth is also copied
+        bankDescription         = tdAll.BankTransfer.journeySelectedBank.bankDescription, //also bankDescription is copied
       )
       getJourneyFromDatabase(tdAll.journeyId) shouldBeLike expectedJourney
     }

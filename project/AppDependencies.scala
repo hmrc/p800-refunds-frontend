@@ -25,13 +25,12 @@ object AppDependencies {
     "uk.gov.hmrc"             %% "bootstrap-test-play-28"     % bootstrapVersion exclude("com.github.tomakehurst", "wiremock-jre8"),
     "uk.gov.hmrc.mongo"       %% "hmrc-mongo-test-play-28"    % hmrcMongoVersion,
     "org.jsoup"               %  "jsoup"                      % "1.17.2",
-    "com.github.tomakehurst"  %  "wiremock-standalone"        % "3.0.1",
     "org.scalatest"           %% "scalatest"                  % "3.2.18",
     "com.vladsch.flexmark"    %  "flexmark-all"               % "0.62.2",
     "org.pegdown"             %  "pegdown"                    % "1.6.0",
     "org.seleniumhq.selenium" %  "selenium-java"              % "4.18.0",
     "org.seleniumhq.selenium" %  "htmlunit-driver"            % "4.13.0",
-    "org.wiremock"            %  "wiremock-standalone"        % "3.4.0",
+    "org.wiremock"            %  "wiremock-standalone"        % "3.4.1",
     "org.scalatestplus.play"  %% "scalatestplus-play"         % "5.1.0"
   // format: ON
   ).map(_ % Test)

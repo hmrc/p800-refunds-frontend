@@ -37,8 +37,8 @@ object AttemptInfo {
     numberOfFailedAttempts = NumberOfAttempts(1)
   )
 
-  def shouldBeLockedOut(attemptInfo: Option[AttemptInfo], maxFailedAttempts: Int): Boolean =
-    attemptInfo.map(_.numberOfFailedAttempts.value).getOrElse(0) >= maxFailedAttempts
+  def shouldBeLockedOut(attemptInfo: AttemptInfo, maxFailedAttempts: Int): Boolean =
+    attemptInfo.numberOfFailedAttempts.value >= maxFailedAttempts
 
   implicit val instantFormat: Format[Instant] = MongoJavatimeFormats.instantFormat
 

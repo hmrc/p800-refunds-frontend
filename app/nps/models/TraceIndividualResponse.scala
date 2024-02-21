@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2024 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,15 +14,21 @@
  * limitations under the License.
  */
 
-package testsupport.stubs
+package nps.models
 
-import com.github.tomakehurst.wiremock.stubbing.StubMapping
-import testsupport.stubs.WireMockHelpers._
+import play.api.libs.json.{Json, OFormat}
 
-object ReferenceValidationStub {
+/**
+ * We're storing only few fields which will be actually used
+ */
+final case class TraceIndividualResponse(
+    title:          Option[String],
+    firstForename:  Option[String],
+    secondForename: Option[String],
+    surname:        String
+)
 
-  val url = "/validate-reference"
-
-  def validateReference2xxValid: StubMapping = stubForPost(url, """{ "isValid": true }""")
-  def validateReference2xxInvalid: StubMapping = stubForPost(url, """{ "isValid": false }""")
+object TraceIndividualResponse {
+  @SuppressWarnings(Array("org.wartremover.warts.Any"))
+  implicit val format: OFormat[TraceIndividualResponse] = Json.format[TraceIndividualResponse]
 }
