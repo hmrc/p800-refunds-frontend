@@ -39,11 +39,14 @@ class TraceIndividualConnector @Inject() (
 
   def traceIndividual(traceIndividualRequest: TraceIndividualRequest)(implicit requestHeader: RequestHeader): Future[TraceIndividualResponse] = {
     httpClient
-      .POST[TraceIndividualRequest, TraceIndividualResponse](
+      .POST[TraceIndividualRequest, List[TraceIndividualResponse]](
         url     = url,
         body    = traceIndividualRequest,
         headers = npsConfig.makeHeadersForNps()
-      )
+      ).map{
+          case traceIndividualResponse :: Nil => traceIndividualResponse
+          case l                              => throw new RuntimeException(s"Unexpected response from NPS. Expecting only one record in the list, got ${l.size.toString} items")
+        }
   }
 
 }
