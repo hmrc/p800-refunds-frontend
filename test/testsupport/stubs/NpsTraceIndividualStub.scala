@@ -28,7 +28,7 @@ object NpsTraceIndividualStub {
   def traceIndividual(request: TraceIndividualRequest, response: TraceIndividualResponse): StubMapping = {
     WireMockHelpers.stubForPost(
       url             = url,
-      responseBody    = Json.prettyPrint(Json.toJson(response)),
+      responseBody    = Json.prettyPrint(Json.toJson(List(response))),
       responseStatus  = Status.OK,
       requestBodyJson = Some(Json.prettyPrint(Json.toJson(request))),
       queryParams     = Map("exactMatch" -> matching("true"), "returnRealName" -> matching("true")),
