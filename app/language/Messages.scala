@@ -670,6 +670,32 @@ object Messages {
     )
   }
 
+  object YourRefundRequestHasNotBeenSubmitted {
+    val yourRefundRequest: Message = Message(
+      english = "Your refund request has not been submitted"
+    )
+
+    val technicalIssue: Message = Message(
+      english = "There has been a technical issue, you can:"
+    )
+
+    val tryAgain: Message = Message(
+      english = "try again"
+    )
+
+    val chooseAnother: Message = Message(
+      english = "choose another way to get your refund"
+    )
+
+    val calculateTax: Message = Message(
+      english = "return to tax calculation letter (P800) guidance "
+    )
+
+    val andTryAgain: Message = Message(
+      english = "and try again later"
+    )
+
+  }
   object YouCannotConfirmSecurityDetailsYet {
     val cannotConfirm: Message = Message(
       english = "You cannot confirm your security details yet"
