@@ -16,7 +16,7 @@
 
 package models.ecospend
 
-import akka.http.scaladsl.model.Uri
+import org.apache.pekko.http.scaladsl.model.Uri
 import play.api.libs.json.{Json, OFormat}
 import models.UriFormats.uriJsonFormat
 

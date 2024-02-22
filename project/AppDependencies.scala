@@ -7,13 +7,13 @@ object AppDependencies {
 
   val compile: Seq[ModuleID] = Seq(
     // format: OFF
-    "uk.gov.hmrc"       %% "bootstrap-frontend-play-28" % bootstrapVersion,
-    "uk.gov.hmrc"       %% "http-verbs-play-28"         % "14.12.0",
-    "uk.gov.hmrc.mongo" %% "hmrc-mongo-play-28"         % hmrcMongoVersion,
-    "uk.gov.hmrc"       %% "play-frontend-hmrc"         % "7.29.0-play-28",
-    "com.beachape"      %% "enumeratum-play"            % "1.7.0", //later version results in JsBoolean error for case classes when being used with BsonDocs
+    "uk.gov.hmrc"       %% "bootstrap-frontend-play-30" % bootstrapVersion,
+    "uk.gov.hmrc"       %% "http-verbs-play-30"         % "14.12.0",
+    "uk.gov.hmrc.mongo" %% "hmrc-mongo-play-30"         % hmrcMongoVersion,
+    "uk.gov.hmrc"       %% "play-frontend-hmrc-play-30" % "8.5.0",
+    "com.beachape"      %% "enumeratum-play"            % "1.8.0", //later version results in JsBoolean error for case classes when being used with BsonDocs
     "org.typelevel"     %% "cats-core"                  % "2.10.0",
-    "org.julienrf"      %% "play-json-derived-codecs"   % "7.0.0", //choose carefully
+    "org.julienrf"      %% "play-json-derived-codecs"   % "10.1.0", //choose carefully
     "io.scalaland"      %% "chimney"                    % "0.8.5",
     "org.webjars"       %  "jquery"                     % "3.7.1",
     "org.webjars.npm"   %  "accessible-autocomplete"    % "2.0.4"
@@ -22,11 +22,9 @@ object AppDependencies {
 
   val test: Seq[ModuleID] = Seq(
     // format: OFF
-    "uk.gov.hmrc"             %% "bootstrap-test-play-28"     % bootstrapVersion exclude("com.github.tomakehurst", "wiremock-jre8"),
-    "uk.gov.hmrc.mongo"       %% "hmrc-mongo-test-play-28"    % hmrcMongoVersion,
+    "uk.gov.hmrc"             %% "bootstrap-test-play-30"     % bootstrapVersion exclude("com.github.tomakehurst", "wiremock-jre8"),
+    "uk.gov.hmrc.mongo"       %% "hmrc-mongo-test-play-30"    % hmrcMongoVersion,
     "org.jsoup"               %  "jsoup"                      % "1.17.2",
-    "org.scalatest"           %% "scalatest"                  % "3.2.18",
-    "com.vladsch.flexmark"    %  "flexmark-all"               % "0.62.2",
     "org.pegdown"             %  "pegdown"                    % "1.6.0",
     "org.seleniumhq.selenium" %  "selenium-java"              % "4.18.1",
     "org.seleniumhq.selenium" %  "htmlunit-driver"            % "4.13.0",

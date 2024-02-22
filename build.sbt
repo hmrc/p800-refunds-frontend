@@ -1,5 +1,3 @@
-import scala.collection.immutable.Seq
-
 val strictBuilding: SettingKey[Boolean] = StrictBuilding.strictBuilding //defining here so it can be set before running sbt like `sbt 'set Global / strictBuilding := true' ...`
 StrictBuilding.strictBuildingSetting
 
@@ -9,7 +7,7 @@ lazy val microservice = Project("p800-refunds-frontend", file("."))
   .disablePlugins(JUnitXmlReportPlugin)
   .settings(
     majorVersion        := 0,
-    scalaVersion        := "2.13.8",
+    scalaVersion        := "2.13.12",
     libraryDependencies ++= AppDependencies.compile ++ AppDependencies.test,
     Compile / doc / scalacOptions := Seq(), //this will allow to have warnings in `doc` task
     Test / doc / scalacOptions := Seq(), //this will allow to have warnings in `doc` task

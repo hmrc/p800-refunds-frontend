@@ -16,7 +16,7 @@
 
 package models
 
-import akka.http.scaladsl.model.Uri
+import org.apache.pekko.http.scaladsl.model.Uri
 import play.api.libs.functional.syntax._
 import play.api.libs.json._
 

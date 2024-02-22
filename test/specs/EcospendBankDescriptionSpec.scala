@@ -16,7 +16,7 @@
 
 package specs
 
-import akka.http.scaladsl.model.Uri
+import org.apache.pekko.http.scaladsl.model.Uri
 import models.ecospend.{BankId, EcospendBankAbilities, EcospendBankDescription, BankName, BankFriendlyName, BankGroup}
 import play.api.libs.json.{Format, JsSuccess, Json, Reads}
 import testsupport.UnitSpec

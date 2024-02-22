@@ -74,7 +74,7 @@ class AppConfig @Inject() (servicesConfig: ServicesConfig, configuration: Config
    */
   private def readConfigAsValidUrlString(configPath: String): String = {
     val url: String = configuration.get[String](configPath)
-    Try(new java.net.URL(url)).fold[String](
+    Try(new java.net.URI(url)).fold[String](
       e => throw new RuntimeException(s"Invalid URL in config under [$configPath]", e),
       _ => url
     )
