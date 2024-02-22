@@ -17,7 +17,7 @@
 package services
 
 import action.JourneyRequest
-import akka.http.scaladsl.model.Uri
+import org.apache.pekko.http.scaladsl.model.Uri
 import connectors.{EcospendAuthServerConnector, EcospendConnector}
 import models.ecospend.BankDescription
 import models.ecospend.account.BankAccountSummary
