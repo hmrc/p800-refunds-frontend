@@ -109,10 +109,11 @@ final case class Journey(
       )
 
   private def resetAllApiResponses(): Journey = this.copy(
-    referenceCheckResult = None,
-    bankDescription      = None,
-    bankConsentResponse  = None,
-    bankAccountSummary   = None
+    referenceCheckResult    = None,
+    traceIndividualResponse = None,
+    bankDescription         = None,
+    bankConsentResponse     = None,
+    bankAccountSummary      = None
   )
 
   /* derived stuff: */
