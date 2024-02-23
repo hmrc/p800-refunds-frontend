@@ -29,14 +29,14 @@ import util.Errors
 import java.time.{Clock, Instant}
 
 final case class Journey(
-    _id:                     JourneyId,
-    createdAt:               Instant,
-    hasFinished:             HasFinished,
-    journeyType:             Option[JourneyType],
-    p800Reference:           Option[P800Reference],
-    nino:                    Option[Nino],
-    isChanging:              IsChanging,
-    dateOfBirth:             Option[DateOfBirth],
+    _id:           JourneyId,
+    createdAt:     Instant,
+    hasFinished:   HasFinished,
+    journeyType:   Option[JourneyType],
+    p800Reference: Option[P800Reference],
+    nino:          Option[Nino],
+    isChanging:    IsChanging,
+    dateOfBirth:   Option[DateOfBirth],
     // below, API Responses only
     referenceCheckResult:    Option[ReferenceCheckResult], //reset this field upon changes of dependant fields
     traceIndividualResponse: Option[TraceIndividualResponse], //reset this field upon changes of dependant fields

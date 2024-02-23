@@ -70,6 +70,8 @@ GET         /bank-transfer/verifying-your-bank-account                     contr
 GET         /bank-transfer/request-received                                controllers.RequestReceivedController.getBankTransfer
 GET         /cheque/request-received                                       controllers.RequestReceivedController.getCheque
 
+GET         /cheque/claim-your-refund-by-bank-transfer                     controllers.ClaimYourRefundByBankTransferController.get
+
 GET         /bank-transfer/refund-request-not-submitted                    controllers.RefundRequestNotSubmittedController.get
 POST        /bank-transfer/refund-request-not-submitted                    controllers.RefundRequestNotSubmittedController.post
 

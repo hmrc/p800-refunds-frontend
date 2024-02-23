@@ -68,6 +68,8 @@ class Pages(baseUrl: String)(implicit webDriver: WebDriver) {
 
   val youCannotConfirmYourSecurityDetailsYetSpec = new YouCannotConfirmYourSecurityDetailsYetPage(baseUrl = baseUrl)
 
+  val claimYourRefundByBankTransferSpec = new ClaimYourRefundByBankTransferPage(baseUrl = baseUrl)
+
   val yourRefundRequestHasNotBeenSubmittedSpec = new YourRefundRequestHasNotBeenSubmittedPage(baseUrl = baseUrl)
 
   val thereIsAProblemPage = new ThereIsAProblemPage(baseUrl = baseUrl)

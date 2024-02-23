@@ -42,6 +42,7 @@ class Views @Inject() (
     val bankTransferRequestReceivedPage:                views.html.BankTransferRequestReceivedPage,
     val youCannotConfirmSecurityDetailsYet:             views.html.YouCannotConfirmSecurityDetailsYet,
     val yourRefundRequestHasNotBeenSubmitted:           views.html.YourRefundRequestHasNotBeenSubmitted,
+    val claimYourRefundByBankTransfer:                  views.html.ClaimYourRefundByBankTransfer,
     val thereIsAProblem:                                views.html.ThereIsAProblem
 )
 
