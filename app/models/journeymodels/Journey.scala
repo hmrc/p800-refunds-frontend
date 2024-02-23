@@ -37,6 +37,7 @@ final case class Journey(
     nino:                    Option[Nino],
     isChanging:              IsChanging,
     dateOfBirth:             Option[DateOfBirth],
+    // below, API Responses only
     referenceCheckResult:    Option[ReferenceCheckResult], //reset this field upon changes of dependant fields
     traceIndividualResponse: Option[TraceIndividualResponse], //reset this field upon changes of dependant fields
     bankDescription:         Option[BankDescription],
@@ -109,10 +110,11 @@ final case class Journey(
       )
 
   private def resetAllApiResponses(): Journey = this.copy(
-    referenceCheckResult = None,
-    bankDescription      = None,
-    bankConsentResponse  = None,
-    bankAccountSummary   = None
+    referenceCheckResult    = None,
+    traceIndividualResponse = None,
+    bankDescription         = None,
+    bankConsentResponse     = None,
+    bankAccountSummary      = None
   )
 
   /* derived stuff: */
