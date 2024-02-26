@@ -31,7 +31,6 @@
 
 @layout(
     pageTitle = Some(Messages.WeCannotConfirmYourIdentity.`cannot confirm your identity try again`.show),
-    backLinkUrlOverride = Some(controllers.CheckYourAnswersController.redirectLocation(request.journey).url),
     maybeJourneyType = Some(request.journey.getJourneyType)
 ) {
 

@@ -47,7 +47,6 @@
     additionalScripts: Option[Html] = None,
     showBackLink: Boolean = true,
     customBeforeContentBlock: Option[Html] = None,
-    backLinkUrlOverride: Option[String] = None,
     hasErrors: Boolean = false,
     customServiceName: Option[String] = None,
     maybeJourneyType: Option[JourneyType] = None
@@ -83,9 +82,7 @@
       *@
       @{
         if(showBackLink) {
-          backLinkUrlOverride.fold(
-            viewsHelpers.govukBackLink(BackLink(href = "#", classes = "js-visible", content = Text(Messages.CommonMessages.back.show)))
-          )(url => viewsHelpers.govukBackLink(BackLink(href = url, content = Text(Messages.CommonMessages.back.show))))
+            viewsHelpers.govukBackLink(BackLink.mimicsBrowserBackButtonViaJavaScript)
         }
       }
     </div>

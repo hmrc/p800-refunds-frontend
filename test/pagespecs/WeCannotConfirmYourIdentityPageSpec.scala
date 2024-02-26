@@ -48,40 +48,6 @@ class WeCannotConfirmYourIdentityPageSpec extends ItSpec {
       }
   }
 
-  "clicking 'Back' sends user to check your answers" - {
-
-    "bank transfer" in {
-      upsertJourneyToDatabase(tdAll.BankTransfer.AfterReferenceCheck.journeyReferenceDidntMatchNino)
-      test(JourneyType.BankTransfer)
-      pages.checkYourAnswersBankTransferPage.assertPageIsDisplayedForBankTransfer(
-        tdAll.p800Reference,
-        tdAll.dateOfBirthFormatted,
-        tdAll.nino
-      )
-      getJourneyFromDatabase(tdAll.journeyId) shouldBeLike tdAll.BankTransfer.AfterReferenceCheck.journeyReferenceDidntMatchNino
-    }
-    "cheque" in {
-      upsertJourneyToDatabase(tdAll.Cheque.AfterReferenceCheck.journeyReferenceDidntMatchNino)
-      test(JourneyType.Cheque)
-      pages.checkYourAnswersChequePage.assertPageIsDisplayedForCheque(
-        tdAll.p800Reference,
-        tdAll.nino
-      )
-      getJourneyFromDatabase(tdAll.journeyId) shouldBeLike tdAll.Cheque.AfterReferenceCheck.journeyReferenceDidntMatchNino
-    }
-
-      def test(journeyType: JourneyType): Unit = {
-        val page = journeyType match {
-          case JourneyType.Cheque       => pages.weCannotConfirmYourIdentityChequePage
-          case JourneyType.BankTransfer => pages.weCannotConfirmYourIdentityBankTransferPage
-        }
-        page.open()
-        page.assertPageIsDisplayed(journeyType)
-        page.clickBackButton()
-      }
-
-  }
-
   "clicking 'Try again' sends user to 'Check your answers page'" - {
     "bank transfer transfer" in {
       upsertJourneyToDatabase(tdAll.BankTransfer.AfterReferenceCheck.journeyReferenceDidntMatchNino)

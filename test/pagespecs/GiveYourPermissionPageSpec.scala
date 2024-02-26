@@ -70,14 +70,4 @@ class GiveYourPermissionPageSpec extends ItSpec {
     pages.chooseAnotherWayToReceiveYourRefundBankTransferPage.assertPageIsDisplayedPtaOrCheque()
     getJourneyFromDatabase(tdAll.journeyId) shouldBeLike tdAll.BankTransfer.journeySelectedBank
   }
-
-  "clicking 'Back' redirects user to 'Select a bank account' page" in {
-    EcospendStub.AuthStubs.stubEcospendAuth2xxSucceeded
-    EcospendStub.BanksStubs.stubEcospendGetBanks2xx
-    pages.giveYourPermissionPage.open()
-    pages.giveYourPermissionPage.assertPageIsDisplayed()
-    pages.giveYourPermissionPage.clickBackButton()
-    pages.enterTheNameOfYourBankAccountPage.assertPageIsDisplayed()
-    getJourneyFromDatabase(tdAll.journeyId) shouldBeLike tdAll.BankTransfer.journeySelectedBank
-  }
 }

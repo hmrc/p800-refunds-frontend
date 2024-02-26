@@ -41,7 +41,6 @@
 
 @layout(
     pageTitle = Some(Messages.YourChequeWillBePostedToYou.`complete refund request`.show),
-    backLinkUrlOverride = Some(controllers.routes.WeHaveConfirmedYourIdentityController.getCheque.url),
     maybeJourneyType = Some(request.journey.getJourneyType)
 ) {
 

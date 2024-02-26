@@ -34,7 +34,6 @@
 
 @layout(
     pageTitle = Some(Messages.WeNeedToConfirmYourIdentity.`confirm your identity`.show),
-    backLinkUrlOverride = Some(controllers.routes.DoYouWantYourRefundViaBankTransferController.get.url),
     maybeJourneyType = Some(request.journey.getJourneyType)
 ) {
 

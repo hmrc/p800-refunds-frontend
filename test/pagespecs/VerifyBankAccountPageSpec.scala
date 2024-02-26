@@ -84,19 +84,6 @@ class VerifyBankAccountPageSpec extends ItSpec {
     EcospendStub.ValidateStubs.verifyValidate(2)
   }
 
-  "clicking 'Back' sends user to 'What is the name of your bank account' page" in {
-    EcospendStub.AuthStubs.stubEcospendAuth2xxSucceeded
-    EcospendStub.ValidateStubs.stubValidateNotValidatedYet
-    EcospendStub.AuthStubs.stubEcospendAuth2xxSucceeded
-    EcospendStub.AccountStub.stubAccountSummary2xxSucceeded(tdAll.consentId)
-    EcospendStub.BanksStubs.stubEcospendGetBanks2xx
-
-    pages.verifyBankAccountPage.open()
-    pages.verifyBankAccountPage.assertPageIsDisplayed()
-    pages.verifyBankAccountPage.clickBackButton()
-    pages.enterTheNameOfYourBankAccountPage.assertPageIsDisplayed()
-  }
-
   "refreshing the page does not re-send the account summary request" in {
     EcospendStub.AuthStubs.stubEcospendAuth2xxSucceeded
     EcospendStub.ValidateStubs.stubValidateNotValidatedYet

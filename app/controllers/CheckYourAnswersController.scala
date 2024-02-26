@@ -69,10 +69,7 @@ class CheckYourAnswersController @Inject() (
         nino          = journey.getNino
       )
     }
-    Ok(views.checkYourAnswersPage(
-      summaryList = summaryList,
-      journeyType = request.journey.getJourneyType
-    ))
+    Ok(views.checkYourAnswersPage(summaryList = summaryList))
   }
 
   def changeNationalInsuranceNumber: Action[AnyContent] = actions.journeyInProgress.async { implicit request =>

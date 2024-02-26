@@ -122,28 +122,4 @@ class EnterYourP800ReferencePageSpec extends ItSpec {
         pages.ptaSignInPage.assertPageIsDisplayed()
       }
   }
-
-  "Clicking on back button redirects back to 'We need you to confirm your identity' page" - {
-    "bank transfer" in {
-      upsertJourneyToDatabase(tdAll.BankTransfer.journeySelectedType)
-      test(JourneyType.BankTransfer)
-      pages.weNeedYouToConfirmYourIdentityBankTransferPage.assertPageIsDisplayedForBankTransferJourney()
-      getJourneyFromDatabase(tdAll.journeyId) shouldBeLike tdAll.BankTransfer.journeySelectedType
-    }
-    "cheque" in {
-      upsertJourneyToDatabase(tdAll.Cheque.journeySelectedType)
-      test(JourneyType.Cheque)
-      pages.weNeedYouToConfirmYourIdentityChequePage.assertPageIsDisplayedForChequeJourney()
-      getJourneyFromDatabase(tdAll.journeyId) shouldBeLike tdAll.Cheque.journeySelectedType
-    }
-      def test(journeyType: JourneyType) = {
-        val startPage = journeyType match {
-          case JourneyType.BankTransfer => pages.whatIsYourP800ReferenceBankTransferPage
-          case JourneyType.Cheque       => pages.whatIsYourP800ReferenceChequePage
-        }
-        startPage.open()
-        startPage.assertPageIsDisplayed(journeyType)
-        startPage.clickBackButton()
-      }
-  }
 }

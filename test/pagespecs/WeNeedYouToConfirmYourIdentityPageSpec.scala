@@ -75,31 +75,6 @@ class WeNeedYouToConfirmYourIdentityPageSpec extends ItSpec {
       }
   }
 
-  "'Back' button sends user to 'Do you want your refund by bank transfer' page" - {
-    "bank transfer" in {
-      upsertJourneyToDatabase(journeyBankTransfer)
-      test(JourneyType.BankTransfer)
-      getJourneyFromDatabase(tdAll.journeyId) shouldBeLike journeyBankTransfer
-    }
-    "cheque" in {
-      upsertJourneyToDatabase(journeyCheque)
-      test(JourneyType.Cheque)
-      getJourneyFromDatabase(tdAll.journeyId) shouldBeLike journeyCheque
-    }
-
-      def test(journeyType: JourneyType): Unit = {
-        val page = journeyType match {
-          case JourneyType.BankTransfer => pages.weNeedYouToConfirmYourIdentityBankTransferPage
-          case JourneyType.Cheque       => pages.weNeedYouToConfirmYourIdentityChequePage
-        }
-        page.open()
-        page.assertPageIsDisplayed(journeyType)
-        page.clickBackButton()
-        pages.doYouWantYourRefundViaBankTransferPage.assertPageIsDisplayed()
-      }
-
-  }
-
   //Pawel TODO
   //  forAll(Table(
   //    ("journeyState", "expectedPage"),

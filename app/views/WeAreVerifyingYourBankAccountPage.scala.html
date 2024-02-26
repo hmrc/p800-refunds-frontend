@@ -32,7 +32,6 @@
 
 @layout(
     pageTitle = Some(Messages.VerifyBankAccount.`verifying your bank account`.show),
-    backLinkUrlOverride = Some(routes.EnterTheNameOfYourBankController.get.url),
     maybeJourneyType = Some(request.journey.getJourneyType)
 ) {
 

@@ -41,7 +41,6 @@
 
 @layout(
     pageTitle = Some(Messages.WhatIsTheNameOfYourBankAccount.`enter name of your bank`.show),
-    backLinkUrlOverride = Some(controllers.routes.WeHaveConfirmedYourIdentityController.getBankTransfer.url),
     hasErrors = form.errors.nonEmpty,
     maybeJourneyType = Some(request.journey.getJourneyType)
 ) {

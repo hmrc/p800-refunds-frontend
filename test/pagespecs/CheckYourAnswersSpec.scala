@@ -286,23 +286,6 @@ class CheckYourAnswersSpec extends ItSpec {
       }
   }
 
-  "clicking back button navigates to What Is Your National Insurance Number page" - {
-    "bank transfer" in {
-      upsertJourneyToDatabase(tdAll.BankTransfer.journeyEnteredDateOfBirth)
-      pages.checkYourAnswersBankTransferPage.open()
-      pages.checkYourAnswersBankTransferPage.clickBackButton()
-      pages.enterYourDateOfBirthPage.assertPageIsDisplayed()
-      getJourneyFromDatabase(tdAll.journeyId) shouldBeLike tdAll.BankTransfer.journeyEnteredDateOfBirth
-    }
-    "cheque" in {
-      upsertJourneyToDatabase(tdAll.Cheque.journeyEnteredNino)
-      pages.checkYourAnswersChequePage.open()
-      pages.checkYourAnswersChequePage.clickBackButton()
-      pages.enterYourNationalInsuranceNumberChequePage.assertPageIsDisplayed(JourneyType.Cheque)
-      getJourneyFromDatabase(tdAll.journeyId) shouldBeLike tdAll.Cheque.journeyEnteredNino
-    }
-  }
-
   override def beforeEach(): Unit = {
     super.beforeEach()
     addJourneyIdToSession(tdAll.journeyId)
