@@ -16,7 +16,6 @@
 
 package pagespecs
 
-import models.journeymodels.JourneyType
 import testsupport.ItSpec
 import testsupport.stubs.EcospendStub
 
@@ -71,15 +70,5 @@ class WhatIsTheNameOfYourBankAccountPageSpec extends ItSpec {
 
     EcospendStub.AuthStubs.verifyEcospendAccessToken(numberOfRequests = 2)
     EcospendStub.BanksStubs.verifyEcospendGetBanks(numberOfRequests = 2)
-  }
-
-  "Clicking 'Back' redirects to /we-have-confirmed-your-identity" in {
-    pages.enterTheNameOfYourBankAccountPage.open()
-    pages.enterTheNameOfYourBankAccountPage.assertPageIsDisplayed()
-    pages.enterTheNameOfYourBankAccountPage.clickBackButton()
-    pages.yourIdentityIsConfirmedBankTransferPage.assertPageIsDisplayed(JourneyType.BankTransfer)
-
-    EcospendStub.AuthStubs.verifyEcospendAccessToken()
-    EcospendStub.BanksStubs.verifyEcospendGetBanks()
   }
 }

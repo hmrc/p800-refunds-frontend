@@ -65,31 +65,4 @@ class WeHaveConfirmedYourIdentityPageSpec extends ItSpec {
     }
   }
 
-  "clicking back button navigates to Check Your Answers page" - {
-    "bank transfer" in {
-      upsertJourneyToDatabase(tdAll.BankTransfer.journeyAfterTracedIndividual)
-      pages.yourIdentityIsConfirmedBankTransferPage.open()
-      pages.yourIdentityIsConfirmedBankTransferPage.assertPageIsDisplayed(JourneyType.BankTransfer)
-      pages.yourIdentityIsConfirmedBankTransferPage.clickBackButton()
-      pages.checkYourAnswersBankTransferPage.assertPageIsDisplayedForBankTransfer(
-        tdAll.p800Reference,
-        tdAll.dateOfBirthFormatted,
-        tdAll.nino
-      )
-      getJourneyFromDatabase(tdAll.journeyId) shouldBeLike tdAll.BankTransfer.journeyAfterTracedIndividual
-    }
-
-    "cheque" in {
-      upsertJourneyToDatabase(tdAll.Cheque.AfterReferenceCheck.journeyReferenceChecked)
-      pages.yourIdentityIsConfirmedChequePage.open()
-      pages.yourIdentityIsConfirmedChequePage.assertPageIsDisplayed(JourneyType.Cheque)
-      pages.yourIdentityIsConfirmedChequePage.clickBackButton()
-      pages.checkYourAnswersChequePage.assertPageIsDisplayedForCheque(
-        tdAll.p800Reference,
-        tdAll.nino
-      )
-      getJourneyFromDatabase(tdAll.journeyId) shouldBeLike tdAll.Cheque.AfterReferenceCheck.journeyReferenceChecked
-    }
-  }
-
 }

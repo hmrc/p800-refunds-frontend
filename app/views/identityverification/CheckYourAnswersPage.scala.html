@@ -26,19 +26,12 @@
     viewsHelpers: ViewsHelpers
 )
 
-@(
-    summaryList: SummaryList,
-    journeyType: JourneyType
-)(implicit request: JourneyRequest[_])
+@(summaryList: SummaryList)(implicit request: JourneyRequest[_])
 
 @import viewsHelpers.requestSupport._
 
 @layout(
     pageTitle = Some(Messages.CheckYourAnswersMessages.`check your answers`.show),
-    backLinkUrlOverride = Some(journeyType match {
-        case JourneyType.BankTransfer => controllers.routes.EnterYourDateOfBirthController.get.url
-        case JourneyType.Cheque => controllers.routes.EnterYourNationalInsuranceNumberController.getCheque.url
-    }),
     maybeJourneyType = Some(request.journey.getJourneyType)
 ) {
 

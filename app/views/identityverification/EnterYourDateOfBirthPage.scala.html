@@ -39,7 +39,6 @@
 
 @layout(
     pageTitle = Some(Messages.WhatIsYourDateOfBirth.`enter your date of birth`.show),
-    backLinkUrlOverride = Some(controllers.EnterYourNationalInsuranceNumberController.redirectLocation(request.journey).url),
     hasErrors = form.errors.nonEmpty,
     maybeJourneyType = Some(request.journey.getJourneyType)
 ) {

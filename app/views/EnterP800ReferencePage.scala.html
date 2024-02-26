@@ -40,7 +40,6 @@
 
 @layout(
     pageTitle = Some(Messages.EnterP800ReferenceMessages.`enter your P800 reference`.show),
-    backLinkUrlOverride = Some(controllers.WeNeedYouToConfirmYourIdentityController.redirectLocation(request.journey).url),
     hasErrors = form.errors.nonEmpty,
     maybeJourneyType = Some(request.journey.getJourneyType)
 ) {

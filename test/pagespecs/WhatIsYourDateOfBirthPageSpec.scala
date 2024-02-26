@@ -17,7 +17,7 @@
 package pagespecs
 
 import models.dateofbirth.Month
-import models.journeymodels.{Journey, JourneyType}
+import models.journeymodels.Journey
 import testsupport.ItSpec
 
 import java.time.{LocalDate, LocalDateTime}
@@ -108,15 +108,6 @@ class WhatIsYourDateOfBirthPageSpec extends ItSpec {
           getJourneyFromDatabase(tdAll.journeyId) shouldBeLike expectedJourney
         }
     }
-
-  "Clicking 'Back' sends user to whatIsYourNationalInsuranceNumberPage" in {
-    upsertJourneyToDatabase(tdAll.BankTransfer.journeyEnteredDateOfBirth)
-    pages.enterYourDateOfBirthPage.open()
-    pages.enterYourDateOfBirthPage.assertPageIsDisplayed()
-    pages.enterYourDateOfBirthPage.clickBackButton()
-    pages.enterYourNationalInsuranceNumberBankTransferPage.assertPageIsDisplayed(JourneyType.BankTransfer)
-    getJourneyFromDatabase(tdAll.journeyId) shouldBeLike tdAll.BankTransfer.journeyEnteredDateOfBirth
-  }
 
   "Prepopulate the form if the user has already entered it" in {
     upsertJourneyToDatabase(tdAll.BankTransfer.journeyEnteredDateOfBirth)

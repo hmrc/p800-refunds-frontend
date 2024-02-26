@@ -31,7 +31,6 @@
 
 @layout(
     pageTitle = Some(Messages.WeHaveConfirmedYourIdentity.`your identity is confirmed`.show),
-    backLinkUrlOverride = Some(controllers.CheckYourAnswersController.redirectLocation(request.journey).url),
     maybeJourneyType = Some(request.journey.getJourneyType)
 ) {
 

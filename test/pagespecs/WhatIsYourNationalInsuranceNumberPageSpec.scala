@@ -139,33 +139,6 @@ class WhatIsYourNationalInsuranceNumberPageSpec extends ItSpec {
     }
   }
 
-  "Clicking 'Back' redirects to whatIsYourP800ReferencePage" - {
-    s"bank transfer" in {
-      val expectedJourney = tdAll.BankTransfer.journeyEnteredP800Reference
-      upsertJourneyToDatabase(expectedJourney)
-      test(JourneyType.BankTransfer)
-      getJourneyFromDatabase(tdAll.journeyId) shouldBeLike expectedJourney
-    }
-    s"cheque" in {
-      val expectedJourney = tdAll.Cheque.journeyEnteredP800Reference
-      upsertJourneyToDatabase(expectedJourney)
-      test(JourneyType.Cheque)
-      getJourneyFromDatabase(tdAll.journeyId) shouldBeLike expectedJourney
-    }
-
-      def test(journeyType: JourneyType): Unit = {
-        val (startPage, endPage) = journeyType match {
-          case JourneyType.BankTransfer => pages.enterYourNationalInsuranceNumberBankTransferPage -> pages.whatIsYourP800ReferenceBankTransferPage
-          case JourneyType.Cheque       => pages.enterYourNationalInsuranceNumberBankTransferPage -> pages.whatIsYourP800ReferenceChequePage
-        }
-        startPage.open()
-        startPage.assertPageIsDisplayed(journeyType)
-        startPage.clickBackButton()
-        endPage.assertPageIsDisplayed(journeyType)
-      }
-
-  }
-
   "Prepopulate the form if the user has already entered it" - {
 
     s"bank transfer" in {

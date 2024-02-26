@@ -44,14 +44,6 @@ class DoYouWantYourRefundViaBankTransferPageSpec extends ItSpec {
     getJourneyFromDatabase(tdAll.journeyId) shouldBeLike tdAll.Cheque.journeySelectedType withClue "however the journey type becomes Cheque"
   }
 
-  "Clicking 'Back' redirects user to 'Do you want to sign in' page" in {
-    pages.doYouWantYourRefundViaBankTransferPage.open()
-    pages.doYouWantYourRefundViaBankTransferPage.assertPageIsDisplayed()
-    pages.doYouWantYourRefundViaBankTransferPage.clickBackButton()
-    pages.doYouWantToSignInPage.assertPageIsDisplayed()
-    getJourneyFromDatabase(tdAll.journeyId) shouldBeLike tdAll.journeyStarted
-  }
-
   "Selecting nothing and clicking continue shows error" in {
     pages.doYouWantYourRefundViaBankTransferPage.open()
     pages.doYouWantYourRefundViaBankTransferPage.assertPageIsDisplayed()

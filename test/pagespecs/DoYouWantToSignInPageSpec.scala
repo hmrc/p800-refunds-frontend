@@ -44,14 +44,6 @@ class DoYouWantToSignInPageSpec extends ItSpec {
     getJourneyFromDatabase(tdAll.journeyId) shouldBeLike tdAll.journeyStarted
   }
 
-  "Clicking 'Back' redirects back to start page" in {
-    pages.doYouWantToSignInPage.open()
-    pages.doYouWantToSignInPage.assertPageIsDisplayed()
-    pages.doYouWantToSignInPage.clickBackButton()
-    pages.govUkRouteInPage.assertPageIsDisplayed()
-    getJourneyFromDatabase(tdAll.journeyId) shouldBeLike tdAll.journeyStarted
-  }
-
   "Selecting nothing and clicking continue shows error" in {
     pages.doYouWantToSignInPage.open()
     pages.doYouWantToSignInPage.assertPageIsDisplayed()

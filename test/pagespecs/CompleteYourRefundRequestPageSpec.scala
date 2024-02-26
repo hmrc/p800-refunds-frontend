@@ -16,7 +16,6 @@
 
 package pagespecs
 
-import models.journeymodels.JourneyType
 import testsupport.ItSpec
 
 class CompleteYourRefundRequestPageSpec extends ItSpec {
@@ -41,14 +40,6 @@ class CompleteYourRefundRequestPageSpec extends ItSpec {
     // will there be an api call made at this point? todo add wiremock check for that call, if not remove this comment.
     pages.requestReceivedChequePage.assertPageIsDisplayedForCheque()
     getJourneyFromDatabase(tdAll.journeyId) shouldBeLike tdAll.Cheque.journeyClaimedOverpayment
-  }
-
-  "back button sends user to we have confirmed your identity" in {
-    pages.completeYourRefundRequestPage.open()
-    pages.completeYourRefundRequestPage.assertPageIsDisplayed()
-    pages.completeYourRefundRequestPage.clickBackButton()
-    pages.yourIdentityIsConfirmedChequePage.assertPageIsDisplayed(JourneyType.Cheque)
-    getJourneyFromDatabase(tdAll.journeyId) shouldBeLike tdAll.Cheque.AfterReferenceCheck.journeyReferenceChecked
   }
 
 }

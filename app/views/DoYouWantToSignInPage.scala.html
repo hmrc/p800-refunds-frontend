@@ -23,7 +23,6 @@
 
 @this(
     layout: Layout,
-    appConfig: AppConfig,
     viewsHelpers: views.ViewsHelpers
 )
 
@@ -43,7 +42,6 @@
 
 @layout(
     pageTitle = Some(title),
-    backLinkUrlOverride = Some(appConfig.govUkRouteIn),
     hasErrors = form.errors.nonEmpty
 ) {
 

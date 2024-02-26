@@ -40,7 +40,6 @@
 
 @layout(
     pageTitle = Some(Messages.WhatIsYourNationalInsuranceNumber.`enter your National Insurance number`.show),
-    backLinkUrlOverride = Some(controllers.EnterYourP800ReferenceController.redirectLocation(request.journey).url),
     hasErrors = form.errors.nonEmpty,
     maybeJourneyType = Some(request.journey.getJourneyType)
 ) {
