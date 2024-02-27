@@ -95,7 +95,7 @@ class VerifyBankAccountPageSpec extends ItSpec {
     pages.verifyBankAccountPage.clickRefreshThisPageLink()
     pages.verifyBankAccountPage.assertPageIsDisplayed()
 
-    EcospendStub.AccountStub.accountSummaryValidate(numberOfRequests = 1)
+    EcospendStub.AccountStub.accountSummaryValidate(numberOfRequests = 1, tdAll.consentId)
   }
 
 }

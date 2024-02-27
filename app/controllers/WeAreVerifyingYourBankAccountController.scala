@@ -48,6 +48,10 @@ class WeAreVerifyingYourBankAccountController @Inject() (
       Errors.require(journey.getBankConsent.id === consentId, "The consent_id supplied via the query parameter must match that stored in the journey. This should be investigated")
     }
 
+    bank_reference_id.fold(Errors.throwBadRequestException("This endpoint requires a valid bank_reference_id query parameter")) { bankReferenceId: BankReferenceId =>
+      Errors.require(journey.getBankConsent.bankReferenceId === bankReferenceId, "The bank_reference_id supplied via the query parameter must match that stored in the journey. This should be investigated")
+    }
+
     for {
       // TODO: Assert status, consent_id & bank_reference_id match that contained within the journey
       // TODO: Call backend and check what is the outcome of the Ecospend Webhook, if its not there, redirect to itself, if it succeeds and validation ok then progress, if validation fails then redirect to RequestNotSubmitted
