@@ -749,4 +749,31 @@ object Messages {
 
   }
 
+  object IsYourAddressUpToDate {
+    val isYourAddress: Message = Message(
+      english = "Is your address up to date?"
+    )
+
+    val isYourAddressPageTitle: Message = Message(
+      english = "Cheque - is your address up to date"
+    )
+
+    def yourCheque: Message = Message(
+      english = "Your cheque will be sent to the same address as your tax calculation letter."
+    )
+
+    def confirmAndContinue: Message = Message(
+      english = "Confirm and continue"
+    )
+
+    def yes: Message = Message(
+      english = "Yes"
+    )
+
+    def noNeedToUpdate: Message = Message(
+      english = "No, I need to update it"
+    )
+
+  }
+
 }

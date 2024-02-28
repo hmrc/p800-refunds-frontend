@@ -74,6 +74,8 @@ class Pages(baseUrl: String)(implicit webDriver: WebDriver) {
 
   val thereIsAProblemPage = new ThereIsAProblemPage(baseUrl = baseUrl)
 
+  val isYourAddressUpToDate = new IsYourAddressUpToDatePage(baseUrl = baseUrl)
+
   val enterTheNameOfYourBankAccountPage = new EnterTheNameOfYourBankAccountPage(baseUrl = baseUrl)
 
   val requestReceivedBankTransferPage = new RequestReceivedPage(baseUrl            = baseUrl, pathForJourneyType = bankTransferRelativeUrl)
