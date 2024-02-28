@@ -90,8 +90,9 @@ final case class Journey(
     this
       .copy(
         bankDescription     = Some(bankDescription),
-        bankConsentResponse = None
-      //TODO: reset other API responses populated bankdDescription
+        bankConsentResponse = None,
+        bankAccountSummary  = None
+      //TODO: reset other API responses populated bankDescription
       )
 
   def update(bankConsentResponse: BankConsentResponse): Journey =

@@ -80,7 +80,8 @@ class EcospendService @Inject() (
       case None =>
         for {
           accessToken <- ecospendAuthServerConnector.accessToken
-          bankAccountSummaryResponse <- ecospendConnector.getAccountSummary(accessToken, journey.getBankConsent.id)
+          consentId = journey.getBankConsent.id
+          bankAccountSummaryResponse <- ecospendConnector.getAccountSummary(accessToken, consentId)
         } yield bankAccountSummaryResponse.value.headOption.getOrElse(Errors.throwServerErrorException("Failed to get BankAccountSummary from BankAccountSummaryResponse"))
       case Some(bankAccountSummary) =>
         Future.successful(bankAccountSummary)

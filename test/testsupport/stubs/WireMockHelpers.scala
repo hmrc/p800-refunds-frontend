@@ -20,7 +20,7 @@ import cats.syntax.eq._
 import com.github.tomakehurst.wiremock.client.MappingBuilder
 import com.github.tomakehurst.wiremock.client.WireMock._
 import com.github.tomakehurst.wiremock.http.Request
-import com.github.tomakehurst.wiremock.matching.{MatchResult, StringValuePattern}
+import com.github.tomakehurst.wiremock.matching.{RequestPatternBuilder, MatchResult, StringValuePattern}
 import com.github.tomakehurst.wiremock.stubbing.StubMapping
 import play.api.http.Status
 import play.api.libs.json.{Format, Json}
@@ -31,15 +31,16 @@ object WireMockHelpers {
 
   def verifyNone(url: String): Unit = verify(exactly(0), postRequestedFor(urlPathEqualTo(url)))
 
-  def verifyGetExactlyWithHeader(url: String, headerKey: String, count: Int): Unit = verify(
-    exactly(count),
-    getRequestedFor(urlPathEqualTo(url))
-      .andMatching((request: Request) =>
-        customValueMatcherWithHeader(url, headerKey, request))
-  )
+  def verifyGetExactlyWithHeader(url: String, requiredHeaders: Seq[(String, String)], count: Int): Unit = {
+    val rpb: RequestPatternBuilder = requiredHeaders.foldLeft(getRequestedFor(urlPathEqualTo(url)))((acc, c) =>
+      acc.andMatching((request: Request) =>
+        customValueMatcherWithHeader(url, c._1, c._2, request)))
 
-  private def customValueMatcherWithHeader(url: String, headerKey: String, request: Request): MatchResult =
-    MatchResult.of(request.getUrl === url && request.header(headerKey).isPresent)
+    verify(exactly(count), rpb)
+  }
+
+  private def customValueMatcherWithHeader(url: String, headerKey: String, headerValue: String, request: Request): MatchResult =
+    MatchResult.of(request.getUrl === url && request.header(headerKey).containsValue(headerValue))
 
   /**
    * Useful wiremock helper to verify that the request body serialises to what we expect.

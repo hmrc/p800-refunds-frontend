@@ -229,17 +229,28 @@ object EcospendStub {
   }
 
   object AccountStub {
+    private val consentIdHeaderKey: String = "consent_id"
+    private val developmentConsentIdHeaderKey: String = "consent-id"
+
     def stubAccountSummary2xxSucceeded(consentId: UUID): StubMapping =
       WireMockHelpers.stubForGetWithResponseBody(
         url             = accountSummaryUrl,
         responseBody    = validateBankAccountSummaryResponseJson(consentId),
         requiredHeaders = Seq(
-          ("consent_id", matching(consentId.toString))
+          consentIdHeaderKey -> matching(consentId.toString),
+          developmentConsentIdHeaderKey -> matching(consentId.toString)
         ) ++ ecospendHeaders
       )
 
-    def accountSummaryValidate(numberOfRequests: Int = 1): Unit =
-      WireMockHelpers.verifyGetExactlyWithHeader(accountSummaryUrl, "consent_id", numberOfRequests)
+    def accountSummaryValidate(numberOfRequests: Int = 1, consentId: UUID): Unit =
+      WireMockHelpers.verifyGetExactlyWithHeader(
+        accountSummaryUrl,
+        Seq(
+          consentIdHeaderKey -> consentId.toString,
+          developmentConsentIdHeaderKey -> consentId.toString
+        ),
+        numberOfRequests
+      )
 
     def validateBankAccountSummaryResponseJson(consentId: UUID): String =
       //language=JSON
