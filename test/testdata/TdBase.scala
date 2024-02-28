@@ -17,7 +17,7 @@
 package testdata
 
 import _root_.nps.models.{AssociatedPayableNumber, CurrentOptimisticLock, CustomerAccountNumber, PayeNumber, ReconciliationIdentifier, ReferenceCheckResult, TaxDistrictNumber, TraceIndividualResponse}
-import org.apache.pekko.http.scaladsl.model.Uri
+import akka.http.scaladsl.model.Uri
 import models._
 import models.attemptmodels.{AttemptId, AttemptInfo, IpAddress, NumberOfAttempts}
 import models.dateofbirth.{DateOfBirth, DayOfMonth, Month, Year}

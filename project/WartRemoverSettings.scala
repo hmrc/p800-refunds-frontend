@@ -1,8 +1,8 @@
-import sbt.Keys._
 import play.sbt.routes.RoutesKeys.routes
-import sbt._
-import wartremover.Wart
-import wartremover.WartRemover.autoImport._
+import sbt.Keys.compile
+import sbt.{Compile, Test}
+import wartremover.{Wart, Warts}
+import wartremover.WartRemover.autoImport.{wartremoverErrors, wartremoverExcluded}
 
 object WartRemoverSettings {
 
@@ -34,7 +34,6 @@ object WartRemoverSettings {
         Wart.NonUnitStatements,
         Wart.PublicInference
       ),
-      wartremoverExcluded ++= (Compile / routes).value ++
-        target.value.get // stops a weird wart remover Null error being thrown, we don't care about target directory
+      wartremoverExcluded ++= (Compile / routes).value
     )
 }

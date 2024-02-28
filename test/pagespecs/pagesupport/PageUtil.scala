@@ -116,9 +116,9 @@ object PageUtil {
   def readPath()(implicit webDriver: WebDriver): String = {
     val currentUrl = webDriver.getCurrentUrl
     Try {
-      val url = new java.net.URI(currentUrl)
+      val url = new java.net.URL(currentUrl)
 
-      url.getPath + Option(url.getQuery).fold("")("?" + _) + Option(url.getRawFragment).getOrElse("")
+      url.getPath + Option(url.getQuery).fold("")("?" + _) + Option(url.getRef).getOrElse("")
     }.getOrElse(s"Count not construct path from $currentUrl")
   }
 
