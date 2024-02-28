@@ -36,6 +36,24 @@ object NpsIssuePayableOrderStub {
     )
   }
 
+  def issuePayableOrderRefundAlreadyTaken(nino: Nino, p800Reference: P800Reference, request: IssuePayableOrderRequest): StubMapping = {
+    WireMockHelpers.stubForPut(
+      url             = url(nino, p800Reference),
+      responseBody    =
+        //language=JSON
+        """
+        {
+         "failures" : [
+           {"reason" : "Reference ", "code": "TODO-refund-already-taken"}
+         ]
+        }
+        """.stripMargin,
+      responseStatus  = Status.UNPROCESSABLE_ENTITY,
+      requestBodyJson = Some(Json.prettyPrint(Json.toJson(request))),
+      requiredHeaders = npsHeaders
+    )
+  }
+
   def verifyIssuePayableOrder(nino: Nino, p800Reference: P800Reference): Unit =
     verify(exactly(1), putRequestedFor(urlPathEqualTo(url(nino, p800Reference))))
 

@@ -61,4 +61,24 @@ class CompleteYourRefundRequestPageSpec extends ItSpec {
     getJourneyFromDatabase(journey.journeyId) shouldBeLike tdAll.Cheque.journeyClaimedOverpayment
   }
 
+  "when API call fails we don't update the journey state" in {
+    pages.completeYourRefundRequestPage.open()
+    pages.completeYourRefundRequestPage.assertPageIsDisplayed()
+    val journey: Journey = tdAll.Cheque.AfterReferenceCheck.journeyReferenceChecked
+
+    NpsIssuePayableOrderStub.issuePayableOrderRefundAlreadyTaken(
+      journey.nino.value,
+      journey.p800Reference.value,
+      IssuePayableOrderRequest(
+        customerAccountNumber   = tdAll.p800ReferenceChecked.customerAccountNumber,
+        associatedPayableNumber = tdAll.p800ReferenceChecked.associatedPayableNumber,
+        currentOptimisticLock   = tdAll.p800ReferenceChecked.currentOptimisticLock
+      )
+    )
+    pages.completeYourRefundRequestPage.clickSubmitRefundRequest()
+    pages.requestReceivedChequePage.assertPageIsDisplayedWithTechnicalDifficultiesError()
+    NpsIssuePayableOrderStub.verifyIssuePayableOrder(journey.nino.value, journey.p800Reference.value)
+    getJourneyFromDatabase(journey.journeyId) shouldBeLike journey withClue "journey was not updated"
+  }
+
 }
