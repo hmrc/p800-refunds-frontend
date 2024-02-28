@@ -749,6 +749,33 @@ object Messages {
 
   }
 
+  object UpdateYourAddress {
+    val updateYourAdress: Message = Message(
+      english = "Update your address"
+    )
+
+    val updateYourAdressPageTitle: Message = Message(
+      english = "Cheque - update your address"
+    )
+
+    val toUpdateYourAddress: Message = Message(
+      english = "To update your address you need to:"
+    )
+
+    def contactHMRC(contactLink: String): Message = Message(
+      english = s"""<a class="govuk-link" href="$contactLink">Contact HMRC </a> to tell us that you have changed address.""".stripMargin
+    )
+
+    val waitTwoDays: Message = Message(
+      english = "Wait two days for HMRC to update your details."
+    )
+
+    val restartRequest: Message = Message(
+      english = "Restart your refund request."
+    )
+
+  }
+
   object IsYourAddressUpToDate {
     val isYourAddress: Message = Message(
       english = "Is your address up to date?"
