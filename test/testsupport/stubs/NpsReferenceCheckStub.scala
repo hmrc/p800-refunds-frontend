@@ -16,15 +16,13 @@
 
 package testsupport.stubs
 
-import com.github.tomakehurst.wiremock.client.WireMock
-import com.github.tomakehurst.wiremock.client.WireMock.{exactly, matching}
+import com.github.tomakehurst.wiremock.client.WireMock._
 import com.github.tomakehurst.wiremock.stubbing.StubMapping
 import models.{Nino, P800Reference}
 import nps.models.ReferenceCheckResult
 import play.api.http.Status
 import play.api.libs.json.Json
-import WireMock._
-import com.github.tomakehurst.wiremock.matching.StringValuePattern
+import testsupport.stubs.NpsHeaders.npsHeaders
 
 object NpsReferenceCheckStub {
 
@@ -64,11 +62,5 @@ object NpsReferenceCheckStub {
     verify(exactly(1), getRequestedFor(urlPathEqualTo(url(nino, p800Reference))))
 
   private def url(nino: Nino, p800Reference: P800Reference) = s"/nps-json-service/nps/v1/api/reconciliation/p800/${nino.value}/${p800Reference.value}"
-
-  private val npsHeaders: Seq[(String, StringValuePattern)] = Seq(
-    ("CorrelationId", matching(".*")),
-    ("gov-uk-originator-id", matching("DA2_MRA_DIGITAL")),
-    ("Authorization", matching("Basic .*"))
-  )
 
 }

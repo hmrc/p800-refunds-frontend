@@ -18,27 +18,26 @@ package testsupport.stubs
 
 import com.github.tomakehurst.wiremock.client.WireMock._
 import com.github.tomakehurst.wiremock.stubbing.StubMapping
-import nps.models.{TraceIndividualRequest, TraceIndividualResponse}
+import models.{Nino, P800Reference}
+import nps.models.IssuePayableOrderRequest
 import play.api.http.Status
-import play.api.libs.json.Json
+import play.api.libs.json.{JsObject, Json}
 import testsupport.stubs.NpsHeaders.npsHeaders
 
-object NpsTraceIndividualStub {
+object NpsIssuePayableOrderStub {
 
-  def traceIndividual(request: TraceIndividualRequest, response: TraceIndividualResponse): StubMapping = {
-    WireMockHelpers.stubForPost(
-      url             = url,
-      responseBody    = Json.prettyPrint(Json.toJson(List(response))),
+  def issuePayableOrder(nino: Nino, p800Reference: P800Reference, request: IssuePayableOrderRequest, response: JsObject): StubMapping = {
+    WireMockHelpers.stubForPut(
+      url             = url(nino, p800Reference),
+      responseBody    = Json.prettyPrint(response),
       responseStatus  = Status.OK,
       requestBodyJson = Some(Json.prettyPrint(Json.toJson(request))),
-      queryParams     = Map("exactMatch" -> matching("true"), "returnRealName" -> matching("true")),
       requiredHeaders = npsHeaders
     )
   }
 
-  def verifyTraceIndividual(): Unit =
-    verify(exactly(1), postRequestedFor(urlPathEqualTo(url)))
+  def verifyIssuePayableOrder(nino: Nino, p800Reference: P800Reference): Unit =
+    verify(exactly(1), putRequestedFor(urlPathEqualTo(url(nino, p800Reference))))
 
-  private val url: String = s"/nps-json-service/nps/v1/api/individual/trace-individual"
-
+  private def url(nino: Nino, p800Reference: P800Reference) = s"/nps-json-service/nps/v1/api/accounting/issue-payable-order/${nino.value}/${p800Reference.value}"
 }
