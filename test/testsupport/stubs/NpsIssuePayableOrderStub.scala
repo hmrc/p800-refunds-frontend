@@ -44,7 +44,7 @@ object NpsIssuePayableOrderStub {
         """
         {
          "failures" : [
-           {"reason" : "Reference ", "code": "TODO-refund-already-taken"}
+           {"reason" : "Overpayment has already been claimed", "code": "63480"}
          ]
         }
         """.stripMargin,

@@ -14,24 +14,14 @@
  * limitations under the License.
  */
 
-package nps.models
+package nps
 
-import play.api.libs.json.Json
-import testsupport.UnitSpec
-
-class P800ReferenceCheckResultFailuresTest extends UnitSpec {
-
-  val failures = """{"failures":[{"reason":"Overpayment has already been claimed","code":"63480"}]}"""
-
-  val p800ReferenceCheckResultFailures = P800ReferenceCheckResultFailures(failures = List(
-    Failure(
-      reason = "Overpayment has already been claimed",
-      code   = "63480"
-    )
-  ))
-
-  "deserialize" in {
-    Json.parse(failures).as[P800ReferenceCheckResultFailures] shouldBe p800ReferenceCheckResultFailures
-  }
-
+/**
+ * Nps Error codes base on the specs
+ */
+object NpsErrorCodes {
+  val `Account is not Live`: String = "63477"
+  val `Overpayment has already been claimed`: String = "63480"
+  val `Overpayment is suspended`: String = "63481"
+  val `Overpayment is no longer available`: String = "63483"
 }

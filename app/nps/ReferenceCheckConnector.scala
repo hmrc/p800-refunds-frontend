@@ -81,7 +81,7 @@ object ReferenceCheckConnector {
               }
           }.map { (checkResultFailures: P800ReferenceCheckResultFailures) =>
             logger.info(s"UNPROCESSABLE_ENTITY: ${checkResultFailures.toString}")
-            if (checkResultFailures.failures.exists(_.code === "TODO-refund-already-taken")) //TODO: agree with NPS the error code for this case
+            if (checkResultFailures.failures.exists(_.code === NpsErrorCodes.`Overpayment has already been claimed`))
               ReferenceCheckResult.RefundAlreadyTaken: ReferenceCheckResult
             else
               HttpErrorFunctions.handleResponseEither(method, url)(response) match {

@@ -16,24 +16,25 @@
 
 package nps.models
 
-import nps.ReferenceCheckConnector
+import nps.{NpsErrorCodes, ReferenceCheckConnector}
 import testsupport.UnitSpec
 import uk.gov.hmrc.http.{HttpResponse, UpstreamErrorResponse}
 
 class ReferenceCheckConnectorSpec extends UnitSpec {
 
   "read 422 with specific code as RefundAlreadyTaken" in {
-    val codeForRefundAlreadyTaken = """TODO-refund-already-taken"""
-    val response: HttpResponse = HttpResponse(422, s"""{"failures":[{"reason":"Refund already taken","code":"$codeForRefundAlreadyTaken"}]}""")
+    val codeForRefundAlreadyTaken = """63480"""
+    codeForRefundAlreadyTaken shouldBe NpsErrorCodes.`Overpayment has already been claimed`
+    val response: HttpResponse = HttpResponse(422, s"""{"failures":[{"reason":"Overpayment has already been claimed","code":"$codeForRefundAlreadyTaken"}]}""")
     ReferenceCheckConnector.reads.read("GET", "url", response) shouldBe ReferenceCheckResult.RefundAlreadyTaken
   }
 
   "read 422 with other codes as Upstream4xxResponse" in {
-    val response: HttpResponse = HttpResponse(422, s"""{"failures":[{"reason":"insert coin","code":"not-enough-mana"}]}""")
+    val response: HttpResponse = HttpResponse(422, s"""{"failures":[{"reason":"Account is not Live","code":"63477"}]}""")
     val thrown = intercept[UpstreamErrorResponse](
       ReferenceCheckConnector.reads.read("GET", "url", response)
     )
-    thrown.getMessage() shouldBe """GET of 'url' returned 422. Response body: '{"failures":[{"reason":"insert coin","code":"not-enough-mana"}]}'"""
+    thrown.getMessage() shouldBe """GET of 'url' returned 422. Response body: '{"failures":[{"reason":"Account is not Live","code":"63477"}]}'"""
     thrown.statusCode shouldBe 422
     thrown.reportAs shouldBe 500
   }

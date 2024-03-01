@@ -39,13 +39,14 @@ object NpsReferenceCheckStub {
     WireMockHelpers.stubForGetWithResponseBody(
       url             = url(nino, p800Reference),
       responseBody    =
+        //language=JSON
         """
-          |{
-          | "failures" : [
-          |   {"reason" : "Reference ", "code": "TODO-refund-already-taken"}
-          | ]
-          |}
-          |""".stripMargin,
+          {
+           "failures" : [
+             {"reason" : "Reference ", "code": "63480"}
+           ]
+          }
+          """.stripMargin,
       responseStatus  = Status.UNPROCESSABLE_ENTITY,
       requiredHeaders = npsHeaders
     )
