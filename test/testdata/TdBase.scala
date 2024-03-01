@@ -24,6 +24,7 @@ import models.dateofbirth.{DateOfBirth, DayOfMonth, Month, Year}
 import models.ecospend._
 import models.ecospend.account._
 import models.ecospend.consent._
+import _root_.nps.models.ReferenceCheckResult.P800ReferenceChecked
 import testsupport.ItSpec
 
 import java.time.format.DateTimeFormatter
@@ -55,7 +56,7 @@ trait TdBase {
 
   lazy val nino: Nino = Nino("LM001014C")
 
-  lazy val p800ReferenceChecked: ReferenceCheckResult = ReferenceCheckResult.P800ReferenceChecked(
+  lazy val p800ReferenceChecked: P800ReferenceChecked = ReferenceCheckResult.P800ReferenceChecked(
     reconciliationIdentifier = ReconciliationIdentifier("reconid-123"),
     paymentNumber            = p800Reference,
     payeNumber               = PayeNumber("PayeNumber-123"),

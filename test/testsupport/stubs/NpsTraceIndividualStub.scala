@@ -17,11 +17,11 @@
 package testsupport.stubs
 
 import com.github.tomakehurst.wiremock.client.WireMock._
-import com.github.tomakehurst.wiremock.matching.StringValuePattern
 import com.github.tomakehurst.wiremock.stubbing.StubMapping
 import nps.models.{TraceIndividualRequest, TraceIndividualResponse}
 import play.api.http.Status
 import play.api.libs.json.Json
+import testsupport.stubs.NpsHeaders.npsHeaders
 
 object NpsTraceIndividualStub {
 
@@ -40,11 +40,5 @@ object NpsTraceIndividualStub {
     verify(exactly(1), postRequestedFor(urlPathEqualTo(url)))
 
   private val url: String = s"/nps-json-service/nps/v1/api/individual/trace-individual"
-
-  private val npsHeaders: Seq[(String, StringValuePattern)] = Seq(
-    ("CorrelationId", matching(".*")),
-    ("gov-uk-originator-id", matching("DA2_MRA_DIGITAL")),
-    ("Authorization", matching("Basic .*"))
-  )
 
 }
