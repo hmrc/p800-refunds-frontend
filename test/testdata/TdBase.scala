@@ -24,7 +24,7 @@ import models.dateofbirth.{DateOfBirth, DayOfMonth, Month, Year}
 import models.ecospend._
 import models.ecospend.account._
 import models.ecospend.consent._
-import _root_.nps.models.ReferenceCheckResult.P800ReferenceChecked
+import nps.models.ReferenceCheckResult.P800ReferenceChecked
 import testsupport.ItSpec
 
 import java.time.format.DateTimeFormatter
@@ -43,7 +43,7 @@ trait TdBase {
   lazy val instant: Instant = localDateTime.toInstant(ZoneOffset.UTC)
   lazy val newInstant: Instant = instant.plusSeconds(20) //used when a new journey is created from existing one
 
-  lazy val p800Reference: P800Reference = P800Reference("P800REFNO1")
+  lazy val p800Reference: P800Reference = P800Reference("12345678")
 
   lazy val gdsDateTimeFormatter: DateTimeFormatter = DateTimeFormatter.ofPattern("d MMMM Y")
 

@@ -70,13 +70,16 @@ class EnterYourP800ReferencePage(baseUrl: String, pathForJourneyType: String)(im
     )
   }
 
-  def assertPageShowsErrorRequired(journeyType: JourneyType): Unit = withPageClue {
+  val missingInputErrorContent = "Enter your P800 reference"
+  val invalidInputErrorContent = "Your P800 reference must be no more than 10 digits and cannot include letters"
+
+  def assertPageShowsError(journeyType: JourneyType, errorContent: String): Unit = withPageClue {
     val contentExpectations = Seq(ContentExpectation(
       atXpath       = PageUtil.Xpath.mainContent,
       expectedLines =
-        """
+        s"""
             |There is a problem
-            |Enter your P800 reference
+            |$errorContent
             |""".stripMargin
     ))
 

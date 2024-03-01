@@ -29,7 +29,7 @@ object AppDependencies {
     "org.seleniumhq.selenium" %  "selenium-java"              % "4.18.1",
     "org.seleniumhq.selenium" %  "htmlunit-driver"            % "4.13.0",
     "org.wiremock"            %  "wiremock-standalone"        % "3.4.2",
-    "org.scalatestplus.play"  %% "scalatestplus-play"         % "5.1.0"
+    "org.scalatestplus.play"  %% "scalatestplus-play"         % "7.0.1"
   // format: ON
   ).map(_ % Test)
 }

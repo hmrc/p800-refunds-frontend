@@ -58,7 +58,7 @@ class CheckYourAnswersSpec extends ItSpec {
       )
       pages.checkYourAnswersBankTransferPage.clickChangeReference()
       pages.whatIsYourP800ReferenceBankTransferPage.assertPageIsDisplayed(journeyType = JourneyType.BankTransfer)
-      val newReference = P800Reference("newreference")
+      val newReference = P800Reference("123455")
       pages.whatIsYourP800ReferenceBankTransferPage.enterP800Reference(newReference.value)
       pages.whatIsYourP800ReferenceBankTransferPage.clickSubmit()
       pages.checkYourAnswersBankTransferPage.assertPageIsDisplayedForBankTransfer(
@@ -76,7 +76,7 @@ class CheckYourAnswersSpec extends ItSpec {
       pages.checkYourAnswersChequePage.open()
       pages.checkYourAnswersChequePage.clickChangeReference()
       pages.whatIsYourP800ReferenceChequePage.assertPageIsDisplayed(journeyType = JourneyType.Cheque)
-      val newReference = P800Reference("newreference")
+      val newReference = P800Reference("123456")
       pages.whatIsYourP800ReferenceChequePage.enterP800Reference(newReference.value)
       pages.whatIsYourP800ReferenceChequePage.clickSubmit()
       pages.checkYourAnswersChequePage.assertPageIsDisplayedForCheque(
@@ -176,6 +176,29 @@ class CheckYourAnswersSpec extends ItSpec {
       pages.checkYourAnswersChequePage.clickSubmit()
       pages.yourIdentityIsConfirmedChequePage.assertPageIsDisplayed(JourneyType.Cheque)
       NpsReferenceCheckStub.verifyCheckReference(j.nino.value, j.p800Reference.value)
+      getJourneyFromDatabase(tdAll.journeyId) shouldBeLike j
+    }
+
+    "with p800 reference getting sanitised before being sent, if user decides to put leading 0's, or any of the other bizarre 'allowed' characters" in {
+      val p800ReferenceThatShouldBeSent = P800Reference("1234560")
+      val expectedCheckResult = Some(tdAll.p800ReferenceChecked.copy(paymentNumber = p800ReferenceThatShouldBeSent))
+      val journey = tdAll.BankTransfer.journeyEnteredDateOfBirth.copy(p800Reference = Some(P800Reference("00123,- 4560")))
+      upsertJourneyToDatabase(journey)
+      pages.checkYourAnswersBankTransferPage.open()
+      val j = tdAll.BankTransfer.journeyAfterTracedIndividual.copy(
+        p800Reference        = Some(P800Reference("00123,- 4560")),
+        referenceCheckResult = expectedCheckResult
+      )
+      NpsReferenceCheckStub.checkReference(j.nino.value, p800ReferenceThatShouldBeSent, j.getP800ReferenceChecked(request = tdAll.fakeRequest).copy(paymentNumber = p800ReferenceThatShouldBeSent))
+      NpsTraceIndividualStub.traceIndividual(
+        request  = TraceIndividualRequest(j.nino.value, tdAll.`dateOfBirthFormatted YYYY-MM-DD`),
+        response = j.traceIndividualResponse.value
+      )
+
+      pages.checkYourAnswersBankTransferPage.clickSubmit()
+      pages.yourIdentityIsConfirmedBankTransferPage.assertPageIsDisplayed(JourneyType.BankTransfer)
+      NpsReferenceCheckStub.verifyCheckReference(j.nino.value, p800ReferenceThatShouldBeSent)
+      NpsTraceIndividualStub.verifyTraceIndividual()
       getJourneyFromDatabase(tdAll.journeyId) shouldBeLike j
     }
   }
