@@ -18,6 +18,8 @@ package controllers
 
 import action.Actions
 import models.journeymodels._
+import nps.IssuePayableOrderConnector
+import nps.models.IssuePayableOrderRequest
 import play.api.mvc._
 import services.JourneyService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
@@ -31,10 +33,11 @@ import scala.concurrent.ExecutionContext
 
 @Singleton
 class CompleteYourRefundRequestController @Inject() (
-    mcc:            MessagesControllerComponents,
-    views:          Views,
-    actions:        Actions,
-    journeyService: JourneyService
+    mcc:                        MessagesControllerComponents,
+    views:                      Views,
+    actions:                    Actions,
+    journeyService:             JourneyService,
+    issuePayableOrderConnector: IssuePayableOrderConnector
 )(implicit @unused ec: ExecutionContext) extends FrontendController(mcc) {
 
   def get: Action[AnyContent] = actions.journeyInProgress{ implicit request =>
@@ -46,14 +49,20 @@ class CompleteYourRefundRequestController @Inject() (
     val journey: Journey = request.journey
     Errors.require(journey.getJourneyType === JourneyType.Cheque, "This endpoint supports only Cheque journey")
 
-    //TODO: API call
-    journeyService
-      .upsert(
-        //TODO: update journey with results of the API call
-        //TODO: hasFinished=true is for happy an unhappy path
+    for {
+      _ <- issuePayableOrderConnector.issuePayableOrder(
+        nino                     = journey.getNino,
+        p800Reference            = journey.getP800Reference,
+        issuePayableOrderRequest = IssuePayableOrderRequest(
+          customerAccountNumber   = journey.getP800ReferenceChecked.customerAccountNumber,
+          associatedPayableNumber = journey.getP800ReferenceChecked.associatedPayableNumber,
+          currentOptimisticLock   = journey.getP800ReferenceChecked.currentOptimisticLock
+        )
+      )
+      _ <- journeyService.upsert(
         journey.copy(hasFinished = HasFinished.YesSucceeded)
       )
-      .map(_ => Redirect(controllers.routes.RequestReceivedController.getCheque))
+    } yield Redirect(controllers.routes.RequestReceivedController.getCheque)
   }
 
 }

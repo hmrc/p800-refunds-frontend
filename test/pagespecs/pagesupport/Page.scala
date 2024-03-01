@@ -42,13 +42,13 @@ abstract class Page(
     PageUtil.assertPage(
       baseUrl = baseUrl,
       path    = path,
-      h1      = "Sorry, there is a problem with the service",
-      title   = PageUtil.standardTitle("Sorry, there is a problem with the service"),
+      h1      = "Sorry, we’re experiencing technical difficulties",
+      title   = PageUtil.standardTitle("Sorry, we are experiencing technical difficulties - 500"),
       ContentExpectation(
         atXpath       = PageUtil.Xpath.mainContent,
-        expectedLines = """Try again later.
-                          |
-                          |Try again
+        expectedLines = """
+                          |Sorry, we’re experiencing technical difficulties
+                          |Please try again in a few minutes.
                           |""".stripMargin
       )
     )

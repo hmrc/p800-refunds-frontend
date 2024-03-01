@@ -130,6 +130,28 @@ object WireMockHelpers {
     )
   }
 
+  def stubForPut(
+      url:             String,
+      responseBody:    String,
+      responseStatus:  Int                               = Status.OK,
+      requestBodyJson: Option[String]                    = None,
+      queryParams:     Map[String, StringValuePattern]   = Map.empty,
+      requiredHeaders: Seq[(String, StringValuePattern)] = Nil
+  ): StubMapping = {
+    val mb: MappingBuilder = putMappingWithHeaders(url, requiredHeaders)
+
+    stubFor(
+      requestBodyJson.fold(mb)(requestBodyJson => mb.withRequestBody(equalToJson(requestBodyJson, true, true)))
+        .withQueryParams(queryParams.asJava)
+        .willReturn(
+          aResponse()
+            .withStatus(responseStatus)
+            .withHeader("Content-Type", "application/json")
+            .withBody(responseBody)
+        )
+    )
+  }
+
   def stubForPostWithRequestBodyMatching(
       url:                 String,
       requestMatchingPath: String,
@@ -151,6 +173,12 @@ object WireMockHelpers {
       requiredHeaders: Seq[(String, StringValuePattern)]
   ): MappingBuilder =
     requiredHeaders.foldLeft(post(urlPathEqualTo(url)))((acc, c) => acc.withHeader(c._1, c._2))
+
+  private def putMappingWithHeaders(
+      url:             String,
+      requiredHeaders: Seq[(String, StringValuePattern)]
+  ): MappingBuilder =
+    requiredHeaders.foldLeft(put(urlPathEqualTo(url)))((acc, c) => acc.withHeader(c._1, c._2))
 
   def stubForGetWithResponseBody(
       url:             String,

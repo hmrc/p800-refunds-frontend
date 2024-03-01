@@ -16,7 +16,7 @@
 
 package models.ecospend.consent
 
-import org.apache.pekko.http.scaladsl.model.Uri
+import akka.http.scaladsl.model.Uri
 import models.UriFormats.uriJsonFormat
 import models.ecospend.BankId
 import play.api.libs.json._

@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2024 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,24 +14,17 @@
  * limitations under the License.
  */
 
-package models.ecospend
+package testsupport.stubs
 
-import akka.http.scaladsl.model.Uri
-import play.api.libs.json.{Json, OFormat}
-import models.UriFormats.uriJsonFormat
+import com.github.tomakehurst.wiremock.client.WireMock.matching
+import com.github.tomakehurst.wiremock.matching.StringValuePattern
 
-final case class BankDescription(
-    bankId:       BankId,
-    name:         BankName,
-    friendlyName: BankFriendlyName,
-    logoUrl:      Uri,
-    group:        BankGroup,
-    iconUrl:      Uri,
-    hasFdp:       Boolean
-)
+object NpsHeaders {
 
-@SuppressWarnings(Array("org.wartremover.warts.Any"))
-object BankDescription {
-  implicit val format: OFormat[BankDescription] = Json.format[BankDescription]
+  val npsHeaders: Seq[(String, StringValuePattern)] = Seq(
+    ("CorrelationId", matching(".*")),
+    ("gov-uk-originator-id", matching("DA2_MRA_DIGITAL")),
+    ("Authorization", matching("Basic .*"))
+  )
+
 }
-

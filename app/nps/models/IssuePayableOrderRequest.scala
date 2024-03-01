@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2024 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,24 +14,17 @@
  * limitations under the License.
  */
 
-package models.ecospend
+package nps.models
 
-import akka.http.scaladsl.model.Uri
 import play.api.libs.json.{Json, OFormat}
-import models.UriFormats.uriJsonFormat
 
-final case class BankDescription(
-    bankId:       BankId,
-    name:         BankName,
-    friendlyName: BankFriendlyName,
-    logoUrl:      Uri,
-    group:        BankGroup,
-    iconUrl:      Uri,
-    hasFdp:       Boolean
+final case class IssuePayableOrderRequest(
+    customerAccountNumber:   CustomerAccountNumber,
+    associatedPayableNumber: AssociatedPayableNumber,
+    currentOptimisticLock:   CurrentOptimisticLock
 )
 
-@SuppressWarnings(Array("org.wartremover.warts.Any"))
-object BankDescription {
-  implicit val format: OFormat[BankDescription] = Json.format[BankDescription]
+object IssuePayableOrderRequest {
+  @SuppressWarnings(Array("org.wartremover.warts.Any"))
+  implicit val format: OFormat[IssuePayableOrderRequest] = Json.format[IssuePayableOrderRequest]
 }
-
