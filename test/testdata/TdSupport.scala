@@ -37,7 +37,7 @@ object TdSupport {
       HeaderNames.xRequestId -> requestId
     )
 
-    def withTrueClientIp(ip: String = TdAll.tdAll.trueClientIp): FakeRequest[T] = r.withHeaders(
+    def withTrueClientIp(ip: String = TdAll.tdAll.trueClientIpString): FakeRequest[T] = r.withHeaders(
       HeaderNames.trueClientIp -> ip
     )
 

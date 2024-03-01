@@ -16,15 +16,25 @@
 
 package testdata
 
+import models.attemptmodels.{AttemptId, AttemptInfo, NumberOfAttempts}
 import models.journeymodels.HasFinished.hasFinished
 import models.journeymodels._
 import nps.models.ReferenceCheckResult
+
+import java.util.UUID
 
 /**
  * Test Data (Td) Journey. It has journey examples in all possible states.
  */
 trait TdJourney {
-  dependencies: TdBase =>
+  dependencies: TdBase with TdRequest =>
+
+  def attemptInfo(failedAttempts: Int): AttemptInfo = AttemptInfo(
+    _id                    = AttemptId(UUID.fromString("52e31cd7-23ec-42f9-99d6-e159b6242aa3")),
+    createdAt              = instant,
+    ipAddress              = dependencies.trueClientIp,
+    numberOfFailedAttempts = NumberOfAttempts(failedAttempts)
+  )
 
   lazy val journeyId: JourneyId = JourneyId("64886ed616fe8b501cbf0088")
 

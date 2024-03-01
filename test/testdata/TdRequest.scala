@@ -16,6 +16,7 @@
 
 package testdata
 
+import models.attemptmodels.TrueClientIp
 import play.api.mvc.{AnyContentAsEmpty, Request}
 import play.api.test.FakeRequest
 import testdata.TdSupport._
@@ -42,8 +43,10 @@ trait TdRequest {
   lazy val authToken: String = "authorization-value-123"
   lazy val akamaiReputationValue: String = "akamai-reputation-value-123"
   lazy val requestId: String = "request-id-value-123"
-  lazy val trueClientIp: String = "client-ip-123"
+  lazy val trueClientIpString: String = "client-ip-123"
   lazy val trueClientPort: String = "client-port-123"
   lazy val deviceIdInRequest: String = "device-id-123"
+
+  lazy val trueClientIp: TrueClientIp = TrueClientIp.trueClientIp()(fakeRequest)
 
 }
