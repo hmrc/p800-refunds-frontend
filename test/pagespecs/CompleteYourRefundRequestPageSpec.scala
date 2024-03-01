@@ -76,7 +76,7 @@ class CompleteYourRefundRequestPageSpec extends ItSpec {
       )
     )
     pages.completeYourRefundRequestPage.clickSubmitRefundRequest()
-    pages.requestReceivedChequePage.assertPageIsDisplayedWithTechnicalDifficultiesError()
+    pages.completeYourRefundRequestPage.assertPageIsDisplayedWithTechnicalDifficultiesError()
     NpsIssuePayableOrderStub.verifyIssuePayableOrder(journey.nino.value, journey.p800Reference.value)
     getJourneyFromDatabase(journey.journeyId) shouldBeLike journey withClue "journey was not updated"
   }
