@@ -16,6 +16,7 @@
 
 package pagespecs
 
+import models.P800Reference
 import models.journeymodels.JourneyType
 import testsupport.ItSpec
 
@@ -27,77 +28,113 @@ class EnterYourP800ReferencePageSpec extends ItSpec {
   }
 
   "Entering valid p800 reference and clicking Continue redirects to WhatIsYourNationalInsuranceNumberPage" - {
-    "bank transfer" in {
-      upsertJourneyToDatabase(tdAll.BankTransfer.journeySelectedType)
-      test(JourneyType.BankTransfer)
-      getJourneyFromDatabase(tdAll.journeyId) shouldBeLike tdAll.BankTransfer.journeyEnteredP800Reference
-    }
-    "cheque" in {
-      upsertJourneyToDatabase(tdAll.Cheque.journeySelectedType)
-      test(JourneyType.Cheque)
-      getJourneyFromDatabase(tdAll.journeyId) shouldBeLike tdAll.Cheque.journeyEnteredP800Reference
+
+    val testScenarios: List[String] = List(
+      "1",
+      "123",
+      "123456789",
+      "1234567890",
+      "1234567891",
+      "01234567891",
+      "001234567891",
+      "0001234567891",
+      "12-34-56-78-90",
+      "12,34,56,78,90",
+      "12 34 56 78 90",
+      "2,14-16 29"
+    )
+
+    testScenarios.foreach { reference =>
+      s"[$reference] bank transfer" in {
+        upsertJourneyToDatabase(tdAll.BankTransfer.journeySelectedType)
+        test(JourneyType.BankTransfer, reference)
+        getJourneyFromDatabase(tdAll.journeyId) shouldBeLike tdAll.BankTransfer.journeyEnteredP800Reference.copy(p800Reference = Some(P800Reference(reference)))
+      }
+      s"[$reference] cheque" in {
+        upsertJourneyToDatabase(tdAll.Cheque.journeySelectedType)
+        test(JourneyType.Cheque, reference)
+        getJourneyFromDatabase(tdAll.journeyId) shouldBeLike tdAll.Cheque.journeyEnteredP800Reference.copy(p800Reference = Some(P800Reference(reference)))
+      }
     }
 
-      def test(journeyType: JourneyType): Unit = {
+      def test(journeyType: JourneyType, referenceInput: String): Unit = {
         val (startPage, endPage) = journeyType match {
           case JourneyType.BankTransfer => pages.whatIsYourP800ReferenceBankTransferPage -> pages.enterYourNationalInsuranceNumberBankTransferPage
           case JourneyType.Cheque       => pages.whatIsYourP800ReferenceChequePage -> pages.enterYourNationalInsuranceNumberChequePage
         }
         startPage.open()
         startPage.assertPageIsDisplayed(journeyType)
-        startPage.enterP800Reference(tdAll.p800Reference.value)
+        startPage.enterP800Reference(referenceInput)
         startPage.clickSubmit()
         endPage.assertPageIsDisplayed(journeyType)
       }
   }
 
-  "Clicking Continue with empty text input shows error" - {
-    "bank transfer" in {
-      upsertJourneyToDatabase(tdAll.BankTransfer.journeySelectedType)
-      test(JourneyType.BankTransfer)
-      getJourneyFromDatabase(tdAll.journeyId) shouldBeLike tdAll.BankTransfer.journeySelectedType
-    }
-    "cheque" in {
-      upsertJourneyToDatabase(tdAll.Cheque.journeySelectedType)
-      test(JourneyType.Cheque)
-      getJourneyFromDatabase(tdAll.journeyId) shouldBeLike tdAll.Cheque.journeySelectedType
-    }
+  "P800 reference validation" - {
 
-      def test(journeyType: JourneyType): Unit = {
+      def test(journeyType: JourneyType, referenceInput: Option[String], expectedErrorContent: String): Unit = {
         val page = journeyType match {
           case JourneyType.BankTransfer => pages.whatIsYourP800ReferenceBankTransferPage
           case JourneyType.Cheque       => pages.whatIsYourP800ReferenceChequePage
         }
         page.open()
         page.assertPageIsDisplayed(journeyType)
+        referenceInput.fold(())(r => page.enterP800Reference(r))
         page.clickSubmit()
-        page.assertPageShowsErrorRequired(journeyType)
+        page.assertPageShowsError(journeyType, expectedErrorContent)
       }
-  }
 
-  "Clicking Continue with invalid reference shows error" - {
+    "Submitting with an empty text input shows error" - {
+      "bank transfer" in {
+        upsertJourneyToDatabase(tdAll.BankTransfer.journeySelectedType)
+        test(JourneyType.BankTransfer, None, pages.whatIsYourP800ReferenceBankTransferPage.missingInputErrorContent)
+        getJourneyFromDatabase(tdAll.journeyId) shouldBeLike tdAll.BankTransfer.journeySelectedType
+      }
+      "cheque" in {
+        upsertJourneyToDatabase(tdAll.Cheque.journeySelectedType)
+        test(JourneyType.Cheque, None, pages.whatIsYourP800ReferenceChequePage.missingInputErrorContent)
+        getJourneyFromDatabase(tdAll.journeyId) shouldBeLike tdAll.Cheque.journeySelectedType
+      }
+    }
 
-    "bank transfer" in {
-      upsertJourneyToDatabase(tdAll.BankTransfer.journeySelectedType)
-      test(JourneyType.BankTransfer)
-      getJourneyFromDatabase(tdAll.journeyId) shouldBeLike tdAll.BankTransfer.journeySelectedType
+    "Submitting with reference that is too long" - {
+      val referenceThatIsTooLong = Some("12345678912")
+      "bank transfer" in {
+        upsertJourneyToDatabase(tdAll.BankTransfer.journeySelectedType)
+        test(JourneyType.BankTransfer, referenceThatIsTooLong, pages.whatIsYourP800ReferenceBankTransferPage.invalidInputErrorContent)
+        getJourneyFromDatabase(tdAll.journeyId) shouldBeLike tdAll.BankTransfer.journeySelectedType
+      }
+      "cheque" in {
+        upsertJourneyToDatabase(tdAll.Cheque.journeySelectedType)
+        test(JourneyType.Cheque, referenceThatIsTooLong, pages.whatIsYourP800ReferenceChequePage.invalidInputErrorContent)
+        getJourneyFromDatabase(tdAll.journeyId) shouldBeLike tdAll.Cheque.journeySelectedType
+      }
     }
-    "cheque" in {
-      upsertJourneyToDatabase(tdAll.Cheque.journeySelectedType)
-      test(JourneyType.Cheque)
-      getJourneyFromDatabase(tdAll.journeyId) shouldBeLike tdAll.Cheque.journeySelectedType
-    }
-      def test(journeyType: JourneyType): Unit = {
-        val page = journeyType match {
-          case JourneyType.BankTransfer => pages.whatIsYourP800ReferenceBankTransferPage
-          case JourneyType.Cheque       => pages.whatIsYourP800ReferenceChequePage
+
+    "Submitting with reference that contains invalid characters" - {
+      val testScenarios: List[String] = List(
+        "P800123456",
+        "123456A",
+        "123456!",
+        "123456?",
+        "123456O",
+        "123456$",
+        "123456."
+      )
+      testScenarios.foreach { reference =>
+        val referenceContainingInvalidCharacter = Some(reference)
+        s"[$reference] bank transfer" in {
+          upsertJourneyToDatabase(tdAll.BankTransfer.journeySelectedType)
+          test(JourneyType.BankTransfer, referenceContainingInvalidCharacter, pages.whatIsYourP800ReferenceBankTransferPage.invalidInputErrorContent)
+          getJourneyFromDatabase(tdAll.journeyId) shouldBeLike tdAll.BankTransfer.journeySelectedType
         }
-        page.open()
-        page.assertPageIsDisplayed(journeyType)
-        page.enterP800Reference("this is a really long and invalid reference")
-        page.clickSubmit()
-        page.assertPageShowsErrorReferenceFormat(journeyType)
+        s"[$reference] cheque" in {
+          upsertJourneyToDatabase(tdAll.Cheque.journeySelectedType)
+          test(JourneyType.Cheque, referenceContainingInvalidCharacter, pages.whatIsYourP800ReferenceChequePage.invalidInputErrorContent)
+          getJourneyFromDatabase(tdAll.journeyId) shouldBeLike tdAll.Cheque.journeySelectedType
+        }
       }
+    }
   }
 
   "Clicking 'Sign in or create a personal tax account' link opens correctly" - {

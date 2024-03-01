@@ -16,6 +16,7 @@
 
 package pagespecs
 
+import models.P800Reference
 import testsupport.ItSpec
 import testsupport.stubs.EcospendStub
 
@@ -39,6 +40,14 @@ class RequestReceivedPageSpec extends ItSpec {
       pages.requestReceivedChequePage.open()
       pages.requestReceivedChequePage.assertPageIsDisplayedForCheque()
       getJourneyFromDatabase(tdAll.journeyId) shouldBeLike tdAll.Cheque.journeyClaimedOverpayment
+    }
+
+    "bank transfer when user previously entered a p800 ref with non digits in, which should get sanitised" in {
+      val journey = tdAll.BankTransfer.journeyClaimedOverpayment.copy(p800Reference = Some(P800Reference("000123, 45- 678")))
+      upsertJourneyToDatabase(journey)
+      pages.requestReceivedBankTransferPage.open()
+      pages.requestReceivedBankTransferPage.assertPageIsDisplayedForBankTransfer()
+      getJourneyFromDatabase(tdAll.journeyId) shouldBeLike journey
     }
   }
 

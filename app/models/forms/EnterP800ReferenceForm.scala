@@ -21,17 +21,40 @@ import models.P800Reference
 import play.api.data.Forms.mapping
 import play.api.data.format.Formatter
 import play.api.data.{Form, FormError, Forms}
+import util.SafeEquals.EqualsOps
+
+import scala.util.matching.Regex
 
 object EnterP800ReferenceForm {
+
+  val allowedSpecialCharacters: Set[Char] = Set(' ', '-', ',')
+  private val referenceMinLength: Int = 1
+  private val referenceMaxLength: Int = 10
+  private val allowedCharactersRegex: Regex = "^[0-9,-]+$".r
+
+  private def trimLeadingZeros(str: String): String = str.dropWhile(_ === '0')
+  private def isWithinBounds(str: String): Boolean = str.length <= referenceMaxLength && str.length >= referenceMinLength
+
   def form(implicit langauge: Language): Form[P800Reference] = {
     val p800ReferenceMapping = Forms.of(new Formatter[P800Reference]() {
-      override def bind(key: String, data: Map[String, String]): Either[Seq[FormError], P800Reference] =
-        data.get(key) match {
-          case Some(value) if value.trim.length < 1  => Left(Seq(FormError(key, Messages.EnterP800ReferenceMessages.`Enter your P800 reference`.show)))
-          case Some(value) if value.trim.length > 16 => Left(Seq(FormError(key, Messages.EnterP800ReferenceMessages.`Enter your P800 reference in the correct format`.show)))
-          case Some(value)                           => Right(P800Reference(value))
-          case None                                  => Left(Seq(FormError(key, Messages.EnterP800ReferenceMessages.`Enter your P800 reference`.show)))
+      override def bind(key: String, data: Map[String, String]): Either[Seq[FormError], P800Reference] = {
+
+        data.get(key).fold[Either[Seq[FormError], P800Reference]] {
+          Left(Seq(FormError(key, Messages.EnterP800ReferenceMessages.`Enter your P800 reference`.show)))
+        } { referenceEntered: String =>
+
+          val referenceContainsNotAllowedCharacter: Boolean = !referenceEntered.replaceAll(" ", "").matches(allowedCharactersRegex.regex)
+          val attemptAtSanitising: String = trimLeadingZeros(referenceEntered.filter(!allowedSpecialCharacters.contains(_))).filter(_.isDigit)
+
+          if (referenceEntered.trim.isEmpty) {
+            Left(Seq(FormError(key, Messages.EnterP800ReferenceMessages.`Enter your P800 reference`.show)))
+          } else if (referenceContainsNotAllowedCharacter) {
+            Left(Seq(FormError(key, Messages.EnterP800ReferenceMessages.`Your P800 reference must be no more than 10 digits and cannot include letters`.show)))
+          } else if (!isWithinBounds(attemptAtSanitising)) {
+            Left(Seq(FormError(key, Messages.EnterP800ReferenceMessages.`Your P800 reference must be no more than 10 digits and cannot include letters`.show)))
+          } else Right(P800Reference(referenceEntered))
         }
+      }
 
       override def unbind(key: String, value: P800Reference): Map[String, String] = Map(key -> value.value)
     })

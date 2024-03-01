@@ -43,10 +43,11 @@ class ReferenceCheckConnector @Inject() (
     s"/nps-json-service/nps/v1/api/reconciliation/p800/${nino.value}/${p800Reference.value}"
 
   def p800ReferenceCheck(nino: Nino, p800Reference: P800Reference)(implicit requestHeader: RequestHeader): Future[ReferenceCheckResult] = {
+    val sanitisedP800Reference = p800Reference.sanitiseReference
     implicit val reads: HttpReads[ReferenceCheckResult] = ReferenceCheckConnector.reads
     httpClient
       .GET[ReferenceCheckResult](
-        url     = url(nino, p800Reference),
+        url     = url(nino, sanitisedP800Reference),
         headers = npsConfig.makeHeadersForNps()
       )
   }

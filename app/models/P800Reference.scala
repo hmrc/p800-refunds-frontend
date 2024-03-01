@@ -16,9 +16,23 @@
 
 package models
 
+import models.forms.EnterP800ReferenceForm
+import util.SafeEquals.EqualsOps
 import play.api.libs.json.{Format, Json}
 
-final case class P800Reference(value: String)
+final case class P800Reference(value: String) {
+  def sanitiseReference: P800Reference = {
+    val charactersThatAreAllowedFromForm: Set[Char] = EnterP800ReferenceForm.allowedSpecialCharacters
+    P800Reference(
+      value
+        .trim
+        .replaceAll(" ", "")
+        .filter(!charactersThatAreAllowedFromForm.contains(_))
+        .filter(_.isDigit)
+        .dropWhile(_ === '0')
+    )
+  }
+}
 
 object P800Reference {
   implicit val formats: Format[P800Reference] = Json.valueFormat[P800Reference]

@@ -62,7 +62,7 @@ class RequestReceivedController @Inject() (
 
   private def getResultBankTransfer(journey: Journey)(implicit request: JourneyRequest[_]): Result = {
     Ok(views.bankTransferRequestReceivedPage(
-      journey.getP800Reference,
+      journey.getP800Reference.sanitiseReference,
       journey.getAmount,
       "1 December 2524" //TODO: get this from identity verification response
     ))
@@ -72,7 +72,7 @@ class RequestReceivedController @Inject() (
     val dummyDate = LocalDate.of(2524, 1, 16)
 
     Ok(views.chequeRequestReceivedPage(
-      p800Reference       = journey.getP800Reference,
+      p800Reference       = journey.getP800Reference.sanitiseReference,
       refundAmountInPence = journey.getAmount,
       chequeArriveBy      = dummyDate //TODO: unhardcode this
     ))
