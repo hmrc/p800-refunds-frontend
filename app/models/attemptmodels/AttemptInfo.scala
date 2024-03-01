@@ -22,7 +22,7 @@ import uk.gov.hmrc.mongo.play.json.formats.MongoJavatimeFormats
 
 import java.time.{Clock, Instant}
 
-final case class AttemptInfo(_id: AttemptId, createdAt: Instant, ipAddress: IpAddress, numberOfFailedAttempts: NumberOfAttempts) {
+final case class AttemptInfo(_id: AttemptId, createdAt: Instant, ipAddress: TrueClientIp, numberOfFailedAttempts: NumberOfAttempts) {
   val lastUpdated: Instant = Instant.now(Clock.systemUTC())
 
   def incrementAttemptNumberByOne: AttemptInfo = this.copy(numberOfFailedAttempts = numberOfFailedAttempts.plusOne)
@@ -33,7 +33,7 @@ object AttemptInfo {
   def newAttemptInfo(implicit requestHeader: RequestHeader): AttemptInfo = AttemptInfo(
     _id                    = AttemptId.newRandomAttemptId,
     createdAt              = Instant.now(Clock.systemUTC()),
-    ipAddress              = IpAddress(requestHeader.remoteAddress),
+    ipAddress              = TrueClientIp.trueClientIp(),
     numberOfFailedAttempts = NumberOfAttempts(1)
   )
 

@@ -16,21 +16,19 @@
 
 package testdata
 
-import _root_.nps.models.{AssociatedPayableNumber, CurrentOptimisticLock, CustomerAccountNumber, PayeNumber, ReconciliationIdentifier, ReferenceCheckResult, TaxDistrictNumber, TraceIndividualResponse}
-import org.apache.pekko.http.scaladsl.model.Uri
+import _root_.nps.models._
 import models._
-import models.attemptmodels.{AttemptId, AttemptInfo, IpAddress, NumberOfAttempts}
 import models.dateofbirth.{DateOfBirth, DayOfMonth, Month, Year}
 import models.ecospend._
 import models.ecospend.account._
 import models.ecospend.consent._
-import nps.models.ReferenceCheckResult.P800ReferenceChecked
+import _root_.nps.models.ReferenceCheckResult.P800ReferenceChecked
+import org.apache.pekko.http.scaladsl.model.Uri
 import testsupport.ItSpec
 
 import java.time.format.DateTimeFormatter
 import java.time.{Instant, LocalDateTime, ZoneOffset}
-import java.util.UUID
-import java.util.Currency
+import java.util.{Currency, UUID}
 
 trait TdBase {
 
@@ -83,13 +81,6 @@ trait TdBase {
     group        = BankGroup("Barclays"),
     iconUrl      = "https://public.ecospend.com/images/banks/Barclays_icon.svg",
     hasFdp       = false
-  )
-
-  def attemptInfo(failedAttempts: Int): AttemptInfo = AttemptInfo(
-    _id                    = AttemptId(UUID.fromString("52e31cd7-23ec-42f9-99d6-e159b6242aa3")),
-    createdAt              = instant,
-    ipAddress              = IpAddress("127.0.0.1"),
-    numberOfFailedAttempts = NumberOfAttempts(failedAttempts)
   )
 
   lazy val consentId: UUID = UUID.fromString("00000000-0000-0000-0000-000000000000")

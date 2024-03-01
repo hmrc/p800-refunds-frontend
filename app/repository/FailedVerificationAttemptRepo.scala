@@ -17,7 +17,7 @@
 package repository
 
 import config.AppConfig
-import models.attemptmodels.{AttemptId, AttemptInfo, IpAddress}
+import models.attemptmodels.{AttemptId, AttemptInfo, TrueClientIp}
 import org.mongodb.scala.model._
 import repository.FailedVerificationAttemptRepo.{attemptId, attemptIdExtractor}
 import repository.Repo.{Id, IdExtractor}
@@ -37,12 +37,12 @@ final class FailedVerificationAttemptRepo @Inject() (
   extends Repo[AttemptId, AttemptInfo](
     collectionName = "failed-verification-attempts",
     mongoComponent = mongoComponent,
-    indexes        = FailedVerificationAttemptRepo.indexes(config.FailedAttemptRepo.failedAttemptRepoTtl),
+    indexes        = FailedVerificationAttemptRepo.indexes(config.FailedAttemptRepo.failedAttemptRepoTtl), //TODO: make index on ipAddress
     extraCodecs    = Seq(Codecs.playFormatCodec(AttemptInfo.format)),
     replaceIndexes = true
   ) {
 
-  def findByIpAddress(ipAddress: IpAddress): Future[Option[AttemptInfo]] =
+  def findByTrueClientIp(ipAddress: TrueClientIp): Future[Option[AttemptInfo]] =
     collection
       .find(filter = Filters.eq("ipAddress", ipAddress.value))
       .headOption()

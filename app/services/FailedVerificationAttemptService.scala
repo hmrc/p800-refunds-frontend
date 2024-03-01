@@ -18,7 +18,7 @@ package services
 
 import com.google.inject.{Inject, Singleton}
 import config.AppConfig
-import models.attemptmodels.{AttemptInfo, IpAddress}
+import models.attemptmodels.{AttemptInfo, TrueClientIp}
 import play.api.mvc.RequestHeader
 import repository.FailedVerificationAttemptRepo
 
@@ -34,11 +34,11 @@ class FailedVerificationAttemptService @Inject() (
   //TODO: find in action when landing, so we can lock users out straight away - OPS-11736
 
   def find()(implicit requestHeader: RequestHeader): Future[Option[AttemptInfo]] =
-    failedVerificationAttemptRepo.findByIpAddress(IpAddress(requestHeader.remoteAddress))
+    failedVerificationAttemptRepo.findByTrueClientIp(TrueClientIp.trueClientIp())
 
   def shouldBeLockedOut()(implicit requestHeader: RequestHeader): Future[Boolean] = {
     failedVerificationAttemptRepo
-      .findByIpAddress(IpAddress(requestHeader.remoteAddress))
+      .findByTrueClientIp(TrueClientIp.trueClientIp())
       .map{ _.map(AttemptInfo.shouldBeLockedOut(_, appConfig.FailedAttemptRepo.failedAttemptRepoMaxAttempts)) }
       .map(_.getOrElse(false))
   }
@@ -48,7 +48,7 @@ class FailedVerificationAttemptService @Inject() (
    */
   def updateNumberOfFailedAttempts()(implicit requestHeader: RequestHeader): Future[Boolean] = {
     for {
-      maybeAttemptInfo <- failedVerificationAttemptRepo.findByIpAddress(IpAddress(requestHeader.remoteAddress))
+      maybeAttemptInfo <- failedVerificationAttemptRepo.findByTrueClientIp(TrueClientIp.trueClientIp())
       newAttemptInfo: AttemptInfo = maybeAttemptInfo.fold(AttemptInfo.newAttemptInfo)(a => a.incrementAttemptNumberByOne)
       attemptInfoAfterUpsert: AttemptInfo <- failedVerificationAttemptRepo.upsert(newAttemptInfo).map(_ => newAttemptInfo)
     } yield AttemptInfo.shouldBeLockedOut(attemptInfoAfterUpsert, appConfig.FailedAttemptRepo.failedAttemptRepoMaxAttempts)

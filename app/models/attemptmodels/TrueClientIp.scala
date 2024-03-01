@@ -17,9 +17,19 @@
 package models.attemptmodels
 
 import play.api.libs.json.{Format, Json}
+import play.api.mvc.RequestHeader
+import requests.RequestSupport.hc
 
-final case class IpAddress(value: String) extends AnyVal
+final case class TrueClientIp private (value: String) extends AnyVal
 
-object IpAddress {
-  implicit val format: Format[IpAddress] = Json.valueFormat
+object TrueClientIp {
+  implicit val format: Format[TrueClientIp] = Json.valueFormat
+
+  //  private so it's not possible to create it by hand, use dedicated constructor for it
+  private def apply(value: String): TrueClientIp = new TrueClientIp(value)
+
+  def trueClientIp()(implicit requestHeader: RequestHeader): TrueClientIp = hc.trueClientIp.map(apply).getOrElse(
+    throw new RuntimeException("The request comes from unknown destination. Missing 'trueClientIp' header")
+  )
+
 }
