@@ -49,9 +49,9 @@ object EnterP800ReferenceForm {
           if (referenceEntered.trim.isEmpty) {
             Left(Seq(FormError(key, Messages.EnterP800ReferenceMessages.`Enter your P800 reference`.show)))
           } else if (referenceContainsNotAllowedCharacter) {
-            Left(Seq(FormError(key, Messages.EnterP800ReferenceMessages.`Your P800 reference must be no more than 10 digits and cannot include letters`.show)))
+            Left(Seq(FormError(key, Messages.EnterP800ReferenceMessages.`Enter your P800 reference in the correct format`.show)))
           } else if (!isWithinBounds(attemptAtSanitising)) {
-            Left(Seq(FormError(key, Messages.EnterP800ReferenceMessages.`Your P800 reference must be no more than 10 digits and cannot include letters`.show)))
+            Left(Seq(FormError(key, Messages.EnterP800ReferenceMessages.`Enter your P800 reference in the correct format`.show)))
           } else Right(P800Reference(referenceEntered))
         }
       }

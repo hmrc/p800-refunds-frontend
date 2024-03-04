@@ -111,8 +111,8 @@ object Messages {
       english = "Enter your P800 reference"
     )
 
-    val `Your P800 reference must be no more than 10 digits and cannot include letters`: Message = Message(
-      english = "Your P800 reference must be no more than 10 digits and cannot include letters"
+    val `Enter your P800 reference in the correct format`: Message = Message(
+      english = "Enter your P800 reference in the correct format"
     )
   }
 

@@ -71,7 +71,7 @@ class EnterYourP800ReferencePage(baseUrl: String, pathForJourneyType: String)(im
   }
 
   val missingInputErrorContent = "Enter your P800 reference"
-  val invalidInputErrorContent = "Your P800 reference must be no more than 10 digits and cannot include letters"
+  val invalidInputErrorContent = "Enter your P800 reference in the correct format"
 
   def assertPageShowsError(journeyType: JourneyType, errorContent: String): Unit = withPageClue {
     val contentExpectations = Seq(ContentExpectation(
