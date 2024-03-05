@@ -712,19 +712,19 @@ object Messages {
   }
 
   object ClaimYourRefundByBankTransfer {
-    val chequeClaim: Message = Message(
+    val `Claim your refund by bank transfer`: Message = Message(
       english = "Claim your refund by bank transfer"
     )
 
-    val chequeClaimTitle: Message = Message(
-      english = "Cheque - claim your refund by bank transfer"
+    val `claim your refund by bank transfer`: Message = Message(
+      english = "claim your refund by bank transfer"
     )
 
-    val chooseToSignIn: Message = Message(
+    val `Choose to sign in using your Government Gateway user ID to claim your refund and you will have fewer details to enter.`: Message = Message(
       english = "Choose to sign in using your Government Gateway user ID to claim your refund and you will have fewer details to enter."
     )
 
-    val doYouWantToSignIn: Message = Message(
+    val `Do you want to sign in?`: Message = Message(
       english = "Do you want to sign in?"
     )
 

@@ -52,9 +52,9 @@ GET         /bank-transfer/no-more-attempts-left-to-confirm-your-identity  contr
 GET         /cheque/no-more-attempts-left-to-confirm-your-identity         controllers.NoMoreAttemptsLeftToConfirmYourIdentityController.getCheque
 
 GET         /bank-transfer/choose-another-way-to-receive-your-refund       controllers.ChooseAnotherWayToGetYourRefundController.getBankTransfer
-GET         /cheque/choose-another-way-to-receive-your-refund              controllers.ChooseAnotherWayToGetYourRefundController.getCheque
 POST        /bank-transfer/choose-another-way-to-receive-your-refund       controllers.ChooseAnotherWayToGetYourRefundController.postBankTransferViaPtaOrCheque
-POST        /cheque/choose-another-way-to-receive-your-refund              controllers.ChooseAnotherWayToGetYourRefundController.postBankTransferViaPtaOrBankTransferLoggedOut
+GET         /cheque/claim-your-refund-by-bank-transfer                     controllers.ClaimYourRefundByBankTransferController.get
+POST        /cheque/claim-your-refund-by-bank-transfer                     controllers.ClaimYourRefundByBankTransferController.post
 
 GET         /cheque/complete-refund-request                                controllers.CompleteYourRefundRequestController.get
 POST        /cheque/complete-refund-request                                controllers.CompleteYourRefundRequestController.post
@@ -70,7 +70,6 @@ GET         /bank-transfer/verifying-your-bank-account                     contr
 GET         /bank-transfer/request-received                                controllers.RequestReceivedController.getBankTransfer
 GET         /cheque/request-received                                       controllers.RequestReceivedController.getCheque
 
-GET         /cheque/claim-your-refund-by-bank-transfer                     controllers.ClaimYourRefundByBankTransferController.get
 
 GET         /bank-transfer/refund-request-not-submitted                    controllers.RefundRequestNotSubmittedController.get
 POST        /bank-transfer/refund-request-not-submitted                    controllers.RefundRequestNotSubmittedController.post

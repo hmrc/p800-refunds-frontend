@@ -17,7 +17,7 @@
 package testsupport
 
 import com.google.inject.AbstractModule
-import models.attemptmodels.AttemptInfo
+import models.attemptmodels.{AttemptInfo, IpAddress}
 import models.journeymodels.{Journey, JourneyId}
 import org.openqa.selenium.WebDriver
 import org.openqa.selenium.htmlunit.HtmlUnitDriver
@@ -117,6 +117,11 @@ trait ItSpec extends AnyFreeSpecLike
   def upsertFailedAttemptToDatabase(attemptInfo: AttemptInfo): Unit = {
     val attemptRepo: FailedVerificationAttemptRepo = app.injector.instanceOf[FailedVerificationAttemptRepo]
     attemptRepo.upsert(attemptInfo).futureValue
+  }
+
+  def getFailedAttemptCount(ipAddress: IpAddress = IpAddress("127.0.0.1")): Option[Int] = {
+    val attemptRepo: FailedVerificationAttemptRepo = app.injector.instanceOf[FailedVerificationAttemptRepo]
+    attemptRepo.findByIpAddress(ipAddress).futureValue.map(_.numberOfFailedAttempts.value)
   }
 
   def clearDownFailedAttemptDatabase(): Unit = {

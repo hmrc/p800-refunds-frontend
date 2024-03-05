@@ -16,12 +16,54 @@
 
 package pagespecs
 
+import models.journeymodels.JourneyType
 import testsupport.ItSpec
 
 class ClaimYourRefundByBankTransferSpec extends ItSpec {
+  override def beforeEach(): Unit = {
+    super.beforeEach()
+    addJourneyIdToSession(tdAll.journeyId)
+  }
 
-  "navigating to /cheque/claim-your-refund-by-bank-transfer" in {
-    pages.claimYourRefundByBankTransferSpec.open()
-    pages.claimYourRefundByBankTransferSpec.assertPageIsDisplayed()
+  "/cheque/claim-your-refund-by-bank-transfer" - {
+
+    "render page" in {
+      upsertJourneyToDatabase(tdAll.Cheque.AfterReferenceCheck.journeyReferenceDidntMatchNino)
+      pages.claimYourRefundByBankTransferPage.open()
+      pages.claimYourRefundByBankTransferPage.assertPageIsDisplayed()
+      getJourneyFromDatabase(tdAll.journeyId) shouldBeLike tdAll.Cheque.AfterReferenceCheck.journeyReferenceDidntMatchNino
+    }
+
+    "select 'Yes' to sign in via PTA" in {
+      upsertJourneyToDatabase(tdAll.Cheque.AfterReferenceCheck.journeyReferenceDidntMatchNino)
+      pages.claimYourRefundByBankTransferPage.open()
+      pages.claimYourRefundByBankTransferPage.assertPageIsDisplayed()
+      pages.claimYourRefundByBankTransferPage.selectYes()
+      pages.claimYourRefundByBankTransferPage.clickSubmit()
+      pages.ptaSignInPage.assertPageIsDisplayed()
+      getJourneyFromDatabase(tdAll.journeyId) shouldBeLike tdAll.Cheque.AfterReferenceCheck.journeyReferenceDidntMatchNino
+    }
+
+    "select 'No' to do Bank Transfer Logged Out" in {
+      upsertJourneyToDatabase(tdAll.Cheque.AfterReferenceCheck.journeyReferenceDidntMatchNino)
+      pages.claimYourRefundByBankTransferPage.open()
+      pages.claimYourRefundByBankTransferPage.assertPageIsDisplayed()
+      pages.claimYourRefundByBankTransferPage.selectNo()
+      pages.claimYourRefundByBankTransferPage.clickSubmit()
+      pages.weNeedYouToConfirmYourIdentityBankTransferPage.assertPageIsDisplayed(JourneyType.BankTransfer)
+      val expectedJourney = tdAll.Cheque.AfterReferenceCheck.journeyReferenceDidntMatchNino.copy(
+        journeyType = Some(JourneyType.BankTransfer)
+      )
+      getJourneyFromDatabase(tdAll.journeyId) shouldBeLike expectedJourney
+    }
+
+    "empty selection shows error message" in {
+      upsertJourneyToDatabase(tdAll.Cheque.AfterReferenceCheck.journeyReferenceDidntMatchNino)
+      pages.claimYourRefundByBankTransferPage.open()
+      pages.claimYourRefundByBankTransferPage.assertPageIsDisplayed()
+      pages.claimYourRefundByBankTransferPage.clickSubmit()
+      pages.claimYourRefundByBankTransferPage.assertPageDisplayedWithErrorMessage()
+      getJourneyFromDatabase(tdAll.journeyId) shouldBeLike tdAll.Cheque.AfterReferenceCheck.journeyReferenceDidntMatchNino
+    }
   }
 }

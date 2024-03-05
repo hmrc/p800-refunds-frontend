@@ -208,8 +208,8 @@ class CheckYourAnswersSpec extends ItSpec {
     "bank transfer - failed attempts repo is empty" in {
       val j = tdAll.BankTransfer.journeyEnteredDateOfBirth
       upsertJourneyToDatabase(j)
-
       NpsReferenceCheckStub.checkReferenceReferenceDidntMatchNino(j.nino.value, j.p800Reference.value)
+      getFailedAttemptCount() shouldBe None
       //No need for TraceIndividual stub as it won't be called
 
       pages.checkYourAnswersBankTransferPage.open()
@@ -221,22 +221,23 @@ class CheckYourAnswersSpec extends ItSpec {
       pages.checkYourAnswersBankTransferPage.clickSubmit()
       pages.weCannotConfirmYourIdentityBankTransferPage.assertPageIsDisplayed(JourneyType.BankTransfer)
       NpsReferenceCheckStub.verifyCheckReference(j.nino.value, j.p800Reference.value)
-      //TODO: Verify failed attempts increased
       getJourneyFromDatabase(tdAll.journeyId) shouldBeLike tdAll.BankTransfer.AfterReferenceCheck.journeyReferenceDidntMatchNino
+      getFailedAttemptCount() shouldBe Some(1)
     }
 
     "cheque - failed attempts repo is empty" in {
       val j = tdAll.Cheque.journeyEnteredNino
       upsertJourneyToDatabase(j)
       NpsReferenceCheckStub.checkReferenceReferenceDidntMatchNino(j.nino.value, j.p800Reference.value)
+      getFailedAttemptCount() shouldBe None
 
       pages.checkYourAnswersChequePage.open()
       pages.checkYourAnswersChequePage.clickSubmit()
       pages.weCannotConfirmYourIdentityChequePage.assertPageIsDisplayed(JourneyType.Cheque)
 
       NpsReferenceCheckStub.verifyCheckReference(j.nino.value, j.p800Reference.value)
-      //TODO: Verify failed attempts increased
       getJourneyFromDatabase(tdAll.journeyId) shouldBeLike tdAll.Cheque.AfterReferenceCheck.journeyReferenceDidntMatchNino
+      getFailedAttemptCount() shouldBe Some(1)
     }
 
     "bank transfer - user already failed 1 time" in {
@@ -251,14 +252,13 @@ class CheckYourAnswersSpec extends ItSpec {
       pages.weCannotConfirmYourIdentityBankTransferPage.assertPageIsDisplayed(JourneyType.BankTransfer)
 
       NpsReferenceCheckStub.verifyCheckReference(j.nino.value, j.p800Reference.value)
-      //TODO: Verify failed attempts increased
       getJourneyFromDatabase(tdAll.journeyId) shouldBeLike j
+      getFailedAttemptCount() shouldBe Some(2)
     }
 
     "cheque - user already failed 1 time" in {
       val j = tdAll.Cheque.AfterReferenceCheck.journeyReferenceDidntMatchNino
       NpsReferenceCheckStub.checkReferenceReferenceDidntMatchNino(j.nino.value, j.p800Reference.value)
-
       upsertJourneyToDatabase(j)
       upsertFailedAttemptToDatabase(tdAll.attemptInfo(failedAttempts = 1))
 
@@ -267,13 +267,12 @@ class CheckYourAnswersSpec extends ItSpec {
       pages.weCannotConfirmYourIdentityChequePage.assertPageIsDisplayed(JourneyType.Cheque)
 
       NpsReferenceCheckStub.verifyCheckReference(j.nino.value, j.p800Reference.value)
-      //TODO: Verify failed attempts increased
       getJourneyFromDatabase(tdAll.journeyId) shouldBeLike j
+      getFailedAttemptCount() shouldBe Some(2)
     }
   }
 
   "clicking submit, resulting in failing verification too many times, redirects to 'No more attempts left' page" - {
-    //todo test for when user goes from 2 failed attempts to 3, then journey should be hasFinished.LockedOut
 
     "bank transfer - when user has 2 existing failed attempts, 3rd attempt also fails" in {
       val j: Journey = tdAll.BankTransfer.AfterReferenceCheck.journeyReferenceDidntMatchNino
@@ -282,9 +281,11 @@ class CheckYourAnswersSpec extends ItSpec {
       upsertJourneyToDatabase(j)
       upsertFailedAttemptToDatabase(tdAll.attemptInfo(2))
       test(JourneyType.BankTransfer)
+
       pages.noMoreAttemptsLeftToConfirmYourIdentityBankTransferPage.assertPageIsDisplayed(JourneyType.BankTransfer)
       NpsReferenceCheckStub.verifyCheckReference(j.nino.value, j.p800Reference.value)
       getJourneyFromDatabase(tdAll.journeyId) shouldBeLike tdAll.BankTransfer.journeyLockedOutFromFailedAttempts
+      getFailedAttemptCount() shouldBe Some(3)
     }
 
     "cheque - when user has 2 existing failed attempts, 3rd attempt also fails" in {
@@ -294,9 +295,11 @@ class CheckYourAnswersSpec extends ItSpec {
       upsertJourneyToDatabase(j)
       upsertFailedAttemptToDatabase(tdAll.attemptInfo(2))
       test(JourneyType.Cheque)
+
       pages.noMoreAttemptsLeftToConfirmYourIdentityChequePage.assertPageIsDisplayed(JourneyType.Cheque)
       NpsReferenceCheckStub.verifyCheckReference(j.nino.value, j.p800Reference.value)
       getJourneyFromDatabase(tdAll.journeyId) shouldBeLike tdAll.Cheque.journeyLockedOutFromFailedAttempts
+      getFailedAttemptCount() shouldBe Some(3)
     }
 
       def test(journeyType: JourneyType): Unit = {

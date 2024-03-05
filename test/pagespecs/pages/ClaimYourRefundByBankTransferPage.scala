@@ -27,7 +27,6 @@ class ClaimYourRefundByBankTransferPage(baseUrl: String)(implicit webDriver: Web
   override def expectedH1: String = "Claim your refund by bank transfer"
   override def expectedTitleContent: String = "Cheque - claim your refund by bank transfer"
 
-  def staticJourney: String = ""
   override def assertPageIsDisplayed(extraExpectations: ContentExpectation*): Unit = withPageClue {
 
     val contentExpectations: Seq[ContentExpectation] = Seq(ContentExpectation(
@@ -35,6 +34,7 @@ class ClaimYourRefundByBankTransferPage(baseUrl: String)(implicit webDriver: Web
       expectedLines =
         """
           |Claim your refund by bank transfer
+          |
           |Choose to sign in using your Government Gateway user ID to claim your refund and you will have fewer details to enter
           |Do you want to sign in?
           |Yes
@@ -50,6 +50,46 @@ class ClaimYourRefundByBankTransferPage(baseUrl: String)(implicit webDriver: Web
       title               = PageUtil.standardTitle(expectedTitleContent),
       contentExpectations = contentExpectations: _*
     )
+  }
+
+  def assertPageDisplayedWithErrorMessage(): Unit = withPageClue {
+    val contentExpectations: Seq[ContentExpectation] = Seq(
+      ContentExpectation(
+        atXpath       = PageUtil.Xpath.mainContent,
+        expectedLines =
+          """
+            |Claim your refund by bank transfer
+            |
+            |Choose to sign in using your Government Gateway user ID to claim your refund and you will have fewer details to enter
+            |Do you want to sign in?
+            |Yes
+            |No
+            |Continue
+            |""".stripMargin
+      ),
+      ContentExpectation(
+        PageUtil.Xpath.errorSummary,
+        """There is a problem
+          |Select yes if you want to sign in to your tax account
+          |""".stripMargin
+      )
+    )
+
+    PageUtil.assertPage(
+      baseUrl             = baseUrl,
+      path                = path,
+      h1                  = expectedH1,
+      title               = PageUtil.standardErrorTitle(expectedTitleContent),
+      contentExpectations = contentExpectations: _*
+    )
+  }
+
+  def selectYes(): Unit = withPageClue {
+    PageUtil.clickByIdOrName("sign-in")
+  }
+
+  def selectNo(): Unit = withPageClue {
+    PageUtil.clickByIdOrName("sign-in-2")
   }
 
 }
