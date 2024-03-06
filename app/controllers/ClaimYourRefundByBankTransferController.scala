@@ -16,22 +16,57 @@
 
 package controllers
 
-import action.Actions
+import action.{Actions, JourneyRequest}
+import config.AppConfig
+import models.forms.DoYouWantToSignInForm
+import models.forms.enumsforforms.DoYouWantToSignInFormValue
+import models.journeymodels.{Journey, JourneyType}
 import play.api.mvc._
+import requests.RequestSupport
+import services.JourneyService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
+import util.Errors
+import util.SafeEquals.EqualsOps
 import views.Views
 
 import javax.inject.{Inject, Singleton}
+import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class ClaimYourRefundByBankTransferController @Inject() (
-    mcc:     MessagesControllerComponents,
-    views:   Views,
-    actions: Actions
-) extends FrontendController(mcc) {
+    actions:        Actions,
+    appConfig:      AppConfig,
+    journeyService: JourneyService,
+    mcc:            MessagesControllerComponents,
+    requestSupport: RequestSupport,
+    views:          Views
+)(implicit executionContext: ExecutionContext) extends FrontendController(mcc) {
 
-  def get: Action[AnyContent] = actions.default {
-    implicit request: Request[_] => Ok(views.claimYourRefundByBankTransfer())
+  import requestSupport._
+
+  def get: Action[AnyContent] = actions.journeyInProgress { implicit journeyRequest: JourneyRequest[_] =>
+    Ok(views.claimYourRefundByBankTransfer(DoYouWantToSignInForm.form))
+  }
+
+  def post: Action[AnyContent] = actions.journeyInProgress.async { implicit request =>
+    val journey: Journey = request.journey
+    Errors.require(journey.getJourneyType === JourneyType.Cheque, "This endpoint supports only Cheque journey")
+
+    DoYouWantToSignInForm.form.bindFromRequest().fold(
+      formWithErrors => Future.successful(
+        BadRequest(views.claimYourRefundByBankTransfer(form = formWithErrors))
+      ),
+      {
+        case DoYouWantToSignInFormValue.Yes =>
+          Future.successful(
+            Redirect(appConfig.PersonalTaxAccountUrls.personalTaxAccountSignInUrl)
+          )
+        case DoYouWantToSignInFormValue.No =>
+          journeyService
+            .upsert(journey.copy(journeyType = Some(JourneyType.BankTransfer)))
+            .map(updatedJourney => Redirect(WeNeedYouToConfirmYourIdentityController.redirectLocation(updatedJourney)))
+      }
+    )
   }
 
 }

@@ -18,8 +18,8 @@ package controllers
 
 import action.{Actions, JourneyRequest}
 import config.AppConfig
-import models.forms.enumsforforms.{PtaOrBankTransferFormValue, PtaOrChequeFormValue}
-import models.forms.{PtaOrBankTransferForm, PtaOrChequeForm}
+import models.forms.PtaOrChequeForm
+import models.forms.enumsforforms.PtaOrChequeFormValue
 import models.journeymodels._
 import play.api.mvc._
 import requests.RequestSupport
@@ -46,10 +46,6 @@ class ChooseAnotherWayToGetYourRefundController @Inject() (
 
   def getBankTransfer: Action[AnyContent] = actions.journeyInProgress { implicit request: JourneyRequest[AnyContent] =>
     Ok(views.chooseAnotherWayPtaOrChequePage(form = PtaOrChequeForm.form))
-  }
-
-  def getCheque: Action[AnyContent] = actions.journeyInProgress { implicit request: JourneyRequest[AnyContent] =>
-    Ok(views.chooseAnotherWayPtaOrBankTransferLoggedOutPage(form = PtaOrBankTransferForm.form))
   }
 
   def postBankTransferViaPtaOrCheque: Action[AnyContent] = actions.journeyInProgress.async { implicit request =>
@@ -81,33 +77,4 @@ class ChooseAnotherWayToGetYourRefundController @Inject() (
     )
   }
 
-  def postBankTransferViaPtaOrBankTransferLoggedOut: Action[AnyContent] = actions.journeyInProgress.async { implicit request =>
-    val journey: Journey = request.journey
-    Errors.require(journey.getJourneyType === JourneyType.Cheque, "This endpoint supports only Cheque journey")
-
-    PtaOrBankTransferForm.form.bindFromRequest().fold(
-      formWithErrors => Future.successful(
-        BadRequest(views.chooseAnotherWayPtaOrBankTransferLoggedOutPage(form = formWithErrors))
-      ),
-      {
-        case PtaOrBankTransferFormValue.BankTransferViaPta =>
-          Future.successful(
-            Redirect(appConfig.PersonalTaxAccountUrls.personalTaxAccountSignInUrl)
-          )
-        case PtaOrBankTransferFormValue.BankTransferLoggedOut =>
-          journeyService
-            .upsert(journey.copy(journeyType = Some(JourneyType.BankTransfer)))
-            .map(updatedJourney => Redirect(WeNeedYouToConfirmYourIdentityController.redirectLocation(updatedJourney)))
-      }
-    )
-  }
-
-}
-
-object ChooseAnotherWayToGetYourRefundController {
-  def redirectLocation(journey: Journey)(implicit request: Request[_]): Call = Journey.deriveRedirectByJourneyType(
-    journeyType           = journey.getJourneyType,
-    chequeJourneyRedirect = controllers.routes.ChooseAnotherWayToGetYourRefundController.getCheque,
-    bankJourneyRedirect   = controllers.routes.ChooseAnotherWayToGetYourRefundController.getBankTransfer
-  )
 }

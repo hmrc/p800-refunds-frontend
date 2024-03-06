@@ -59,8 +59,10 @@ class Pages(baseUrl: String)(implicit webDriver: WebDriver) {
   val refundRequestNotSubmittedPage = new RefundRequestNotSubmittedPage(baseUrl = baseUrl)
   val verifyBankAccountPage = new VerifyBankAccountPage(baseUrl       = baseUrl, consentStatus = ConsentStatus.Authorised, TdAll.tdAll.consentId, TdAll.tdAll.bankReferenceId)
 
-  val chooseAnotherWayToReceiveYourRefundBankTransferPage = new ChooseAnotherWayToReceiveYourRefundPage(baseUrl            = baseUrl, pathForJourneyType = bankTransferRelativeUrl)
-  val chooseAnotherWayToReceiveYourRefundChequePage = new ChooseAnotherWayToReceiveYourRefundPage(baseUrl            = baseUrl, pathForJourneyType = chequeRelativeUrl)
+  //bank transfer specific page
+  val chooseAnotherWayToReceiveYourRefundPage = new ChooseAnotherWayToReceiveYourRefundPage(baseUrl = baseUrl)
+  //cheque specific page
+  val claimYourRefundByBankTransferPage = new ClaimYourRefundByBankTransferPage(baseUrl = baseUrl)
 
   val giveYourPermissionPage = new GiveYourPermissionPage(baseUrl = baseUrl)
 
@@ -69,8 +71,6 @@ class Pages(baseUrl: String)(implicit webDriver: WebDriver) {
   val youCannotConfirmYourSecurityDetailsYetSpec = new YouCannotConfirmYourSecurityDetailsYetPage(baseUrl = baseUrl)
 
   val updateYourAddressPage = new UpdateYourAddressPage(baseUrl = baseUrl)
-
-  val claimYourRefundByBankTransferSpec = new ClaimYourRefundByBankTransferPage(baseUrl = baseUrl)
 
   val yourRefundRequestHasNotBeenSubmittedSpec = new YourRefundRequestHasNotBeenSubmittedPage(baseUrl = baseUrl)
 

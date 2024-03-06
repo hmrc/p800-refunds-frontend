@@ -32,11 +32,11 @@ class CannotConfirmYourIdentityTryAgainController @Inject() (
 ) extends FrontendController(mcc) {
 
   def getBankTransfer: Action[AnyContent] = actions.journeyInProgress { implicit request =>
-    Ok(views.cannotConfirmYourIdentityTryAgainPage())
+    Ok(views.cannotConfirmYourIdentityTryAgainPage(chooseAnotherMethodCall = routes.ChooseAnotherWayToGetYourRefundController.getBankTransfer))
   }
 
   def getCheque: Action[AnyContent] = actions.journeyInProgress { implicit request =>
-    Ok(views.cannotConfirmYourIdentityTryAgainPage())
+    Ok(views.cannotConfirmYourIdentityTryAgainPage(chooseAnotherMethodCall = routes.ClaimYourRefundByBankTransferController.get))
   }
 
   def tryAgain: Action[AnyContent] = actions.journeyInProgress { implicit journeyRequest =>
@@ -46,7 +46,7 @@ class CannotConfirmYourIdentityTryAgainController @Inject() (
   def choseAnotherMethod: Action[AnyContent] = actions.journeyInProgress { implicit journeyRequest =>
     val journey = journeyRequest.journey
     Redirect(journey.getJourneyType match {
-      case JourneyType.Cheque       => routes.ChooseAnotherWayToGetYourRefundController.getCheque
+      case JourneyType.Cheque       => routes.ClaimYourRefundByBankTransferController.get
       case JourneyType.BankTransfer => routes.ChooseAnotherWayToGetYourRefundController.getBankTransfer
     })
   }

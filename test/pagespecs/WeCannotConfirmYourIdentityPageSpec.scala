@@ -84,17 +84,17 @@ class WeCannotConfirmYourIdentityPageSpec extends ItSpec {
       }
   }
 
-  "clicking 'Choose another method' sends user to 'Choose another way to receive your refund page'" - {
-    "bank transfer" in {
+  "clicking 'Choose another method' sends user to" - {
+    "'Choose another way to receive your refund' for bank transfer" in {
       upsertJourneyToDatabase(tdAll.BankTransfer.AfterReferenceCheck.journeyReferenceDidntMatchNino)
       test(JourneyType.BankTransfer)
-      pages.chooseAnotherWayToReceiveYourRefundBankTransferPage.assertPageIsDisplayedPtaOrCheque()
+      pages.chooseAnotherWayToReceiveYourRefundPage.assertPageIsDisplayed()
       getJourneyFromDatabase(tdAll.journeyId) shouldBeLike tdAll.BankTransfer.AfterReferenceCheck.journeyReferenceDidntMatchNino
     }
-    "cheque" in {
+    "'Claim your refund by bank transfer' for cheque" in {
       upsertJourneyToDatabase(tdAll.Cheque.AfterReferenceCheck.journeyReferenceDidntMatchNino)
       test(JourneyType.Cheque)
-      pages.chooseAnotherWayToReceiveYourRefundChequePage.assertPageIsDisplayedPtaOrBankTransfer()
+      pages.claimYourRefundByBankTransferPage.assertPageIsDisplayed()
       getJourneyFromDatabase(tdAll.journeyId) shouldBeLike tdAll.Cheque.AfterReferenceCheck.journeyReferenceDidntMatchNino
     }
 

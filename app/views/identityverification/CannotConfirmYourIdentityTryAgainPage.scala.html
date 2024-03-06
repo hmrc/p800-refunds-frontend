@@ -25,7 +25,7 @@
         viewsHelpers: ViewsHelpers
 )
 
-@()(implicit request: JourneyRequest[_])
+@(chooseAnotherMethodCall: Call)(implicit request: JourneyRequest[_])
 
 @import viewsHelpers.requestSupport._
 
@@ -44,7 +44,7 @@
             content = Text(Messages.WeCannotConfirmYourIdentity.`Try gain`.show),
             id = Some("try-again")
         ))
-        <a id="choose-another-method-link" class="govuk-link" href=@{controllers.ChooseAnotherWayToGetYourRefundController.redirectLocation(request.journey).url}>
+        <a id="choose-another-method-link" class="govuk-link" href=@{chooseAnotherMethodCall.url}>
             @{Messages.WeCannotConfirmYourIdentity.`Choose another method`.show}
         </a>
     }

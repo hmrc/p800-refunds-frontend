@@ -14,45 +14,46 @@
  * limitations under the License.
  *@
 
+@import action.JourneyRequest
 @import language.Messages
+@import models.forms.enumsforforms.DoYouWantToSignInFormValue
 @import uk.gov.hmrc.govukfrontend.views.html.components._
 @import uk.gov.hmrc.govukfrontend.views.html.components.implicits._
 @import views.html.templates.Layout
-@import models.forms.enumsforforms.PtaOrBankTransferFormValue
-@import action.JourneyRequest
 
 @this(
-    layout: Layout,
-    viewsHelpers: views.ViewsHelpers
+        layout: Layout,
+        viewsHelpers: views.ViewsHelpers
 )
 
-@(form: Form[PtaOrBankTransferFormValue])(implicit request: JourneyRequest[_])
+@(form: Form[DoYouWantToSignInFormValue])(implicit journeyRequest: JourneyRequest[_])
 
 @import viewsHelpers.requestSupport._
 
 @key = @{
-    "way-to-get-refund"
+    "sign-in"
 }
 
-@ptaKey = @{PtaOrBankTransferFormValue.BankTransferViaPta.toString}
-@bankTransferKey = @{PtaOrBankTransferFormValue.BankTransferLoggedOut.toString}
-
 @layout(
-    pageTitle = Some(Messages.ChooseAnotherWayToReceiveYourRefund.`choose another way to receive your refund`.show),
+    pageTitle = Some(Messages.ClaimYourRefundByBankTransfer.`claim your refund by bank transfer`.show),
     hasErrors = form.errors.nonEmpty,
-    maybeJourneyType = Some(request.journey.getJourneyType)
+    maybeJourneyType = Some(journeyRequest.journey.getJourneyType)
 ) {
 
     @if(form.errors.nonEmpty) {
         @viewsHelpers.govukErrorSummary(ErrorSummary(errorList = form.errors.asTextErrorLinks, title = Text(Messages.CommonMessages.`There is a problem`.show)))
     }
 
-    @viewsHelpers.formWithCsrf(action = controllers.routes.ChooseAnotherWayToGetYourRefundController.postBankTransferViaPtaOrBankTransferLoggedOut) {
+    <h1 class="govuk-heading-xl">@{Messages.ClaimYourRefundByBankTransfer.`Claim your refund by bank transfer`.show}</h1>
+
+    <p class="govuk-body">@{Messages.ClaimYourRefundByBankTransfer.`Choose to sign in using your Government Gateway user ID to claim your refund and you will have fewer details to enter.`.show}</p>
+
+    @viewsHelpers.formWithCsrf(action = controllers.routes.ClaimYourRefundByBankTransferController.post) {
         @viewsHelpers.govukRadios(Radios(
             fieldset = Some(Fieldset(
                 legend = Some(Legend(
-                    content = Text(Messages.ChooseAnotherWayToReceiveYourRefund.`Choose another way to receive your refund`.show),
-                    classes = "govuk-fieldset__legend--xl",
+                    content = Text(Messages.ClaimYourRefundByBankTransfer.`Do you want to sign in?`.show),
+                    classes = "govuk-fieldset__legend--m",
                     isPageHeading = true
                 ))
             )),
@@ -60,21 +61,19 @@
             name = key,
             items = Seq(
                 RadioItem(
-                    content = Text(Messages.ChooseAnotherWayToReceiveYourRefund.`Bank transfer using your Government Gateway user ID to sign in`.show),
-                    value = Some(ptaKey),
-                    checked = form.data.values.toList.contains(ptaKey)
+                    content = Text(Messages.ClaimYourRefundByBankTransfer.`Yes`.show),
+                    value = Some(DoYouWantToSignInFormValue.Yes.entryName)
                 ),
                 RadioItem(
-                    content = Text(Messages.ChooseAnotherWayToReceiveYourRefund.`Bank transfer logged out`.show),
-                    value = Some(bankTransferKey),
-                    checked = form.data.values.toList.contains(bankTransferKey)
+                    content = Text(Messages.ClaimYourRefundByBankTransfer.`No`.show),
+                    value = Some(DoYouWantToSignInFormValue.No.entryName)
                 )
             )
         ).withFormField(form(key)))
 
         @viewsHelpers.govukButton(Button(
-            content = Text(Messages.CommonMessages.`continue`.show),
-            id = Some("submit")
+            content = Text(Messages.CommonMessages.continue.show),
+            id      = Some("submit")
         ))
     }
 }
