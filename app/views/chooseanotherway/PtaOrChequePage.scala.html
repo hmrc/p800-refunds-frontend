@@ -47,20 +47,21 @@
         @viewsHelpers.govukErrorSummary(ErrorSummary(errorList = form.errors.asTextErrorLinks, title = Text(Messages.CommonMessages.`There is a problem`.show)))
     }
 
+    <h1 class="govuk-heading-xl">@{Messages.ChooseAnotherWayToReceiveYourRefund.`Choose another way to receive your refund`.show}</h1>
+
+    <p class="govuk-body">@{Messages.ChooseAnotherWayToReceiveYourRefund.`You can claim your refund by bank transfer or cheque...`.show}</p>
+
     @viewsHelpers.formWithCsrf(action = controllers.routes.ChooseAnotherWayToGetYourRefundController.postBankTransferViaPtaOrCheque) {
         @viewsHelpers.govukRadios(Radios(
             fieldset = Some(Fieldset(
                 legend = Some(Legend(
-                    content = Text(Messages.ChooseAnotherWayToReceiveYourRefund.`Choose another way to receive your refund`.show),
-                    classes = "govuk-fieldset__legend--xl",
-                    isPageHeading = true
+                    content = Text(Messages.ChooseAnotherWayToReceiveYourRefund.`Do you want your refund by bank transfer or cheque?`.show),
+                    classes = "govuk-fieldset__legend--m",
+                    isPageHeading = false
                 ))
             )),
             idPrefix = Some(key),
             name = key,
-            hint = Some(Hint(
-                content = Text(Messages.ChooseAnotherWayToReceiveYourRefund.`You will have fewer details to enter if you sign in using your Government Gateway user ID.`.show)
-            )),
             items = Seq(
                 RadioItem(
                     content = Text(Messages.ChooseAnotherWayToReceiveYourRefund.`Bank transfer using your Government Gateway user ID to sign in`.show),

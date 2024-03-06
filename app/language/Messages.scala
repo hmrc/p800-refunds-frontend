@@ -232,6 +232,14 @@ object Messages {
       english = "Choose another way to receive your refund"
     )
 
+    val `You can claim your refund by bank transfer or cheque...`: Message = Message(
+      english = "You can claim your refund by bank transfer or cheque. If you want your refund by bank transfer, you will have fewer details to enter if you sign in using your Government Gateway ID."
+    )
+
+    val `Do you want your refund by bank transfer or cheque?`: Message = Message(
+      english = "Do you want your refund by bank transfer or cheque?"
+    )
+
     val `choose another way to receive your refund`: Message = Message(
       english = "choose another way to receive your refund"
     )
