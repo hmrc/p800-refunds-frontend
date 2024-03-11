@@ -24,7 +24,6 @@ import models.ecospend.verification.{BankVerification, BankVerificationRequest}
 import models.ecospend.{EcospendAccessToken, EcospendGetBanksResponse}
 import requests.RequestSupport
 import uk.gov.hmrc.http.HeaderNames
-import uk.gov.hmrc.http.HttpClient
 import uk.gov.hmrc.http.HttpReads.Implicits._
 import util.JourneyLogger
 
@@ -35,7 +34,7 @@ import scala.concurrent.{ExecutionContext, Future}
 @Singleton
 class EcospendConnector @Inject() (
     appConfig:      AppConfig,
-    httpClient:     HttpClient,
+    httpClient:     ProxyClient,
     requestSupport: RequestSupport
 )(implicit ec: ExecutionContext) {
 
