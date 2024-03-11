@@ -17,7 +17,6 @@
 package connectors
 
 import config.AppConfig
-import uk.gov.hmrc.http.HttpClient
 import uk.gov.hmrc.http.HttpReads.Implicits._
 import models.ecospend.EcospendAccessToken
 import action.JourneyRequest
@@ -31,7 +30,7 @@ import scala.concurrent.{Future, ExecutionContext}
 @Singleton
 class EcospendAuthServerConnector @Inject() (
     appConfig:      AppConfig,
-    httpClient:     HttpClient,
+    httpClient:     ProxyClient,
     requestSupport: RequestSupport
 )(implicit ec: ExecutionContext, clock: Clock) {
 
