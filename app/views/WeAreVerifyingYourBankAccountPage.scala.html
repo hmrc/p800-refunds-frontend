@@ -20,7 +20,7 @@
 @import action.JourneyRequest
 @import models.ecospend.consent.{ConsentStatus, BankReferenceId}
 @import java.util.UUID
-
+@import views.html.helper.CSPNonce
 @this(
     layout: Layout,
     viewsHelpers: views.ViewsHelpers
@@ -30,9 +30,12 @@
 
 @import viewsHelpers.requestSupport._
 
+@additionalScript = { <script src="@{controllers.routes.Assets.versioned("javascripts/verifying-bank-refresh.js")}" @{CSPNonce.attr}></script> }
+
 @layout(
     pageTitle = Some(Messages.VerifyBankAccount.`verifying your bank account`.show),
-    maybeJourneyType = Some(request.journey.getJourneyType)
+    maybeJourneyType = Some(request.journey.getJourneyType),
+    additionalScripts = Some(additionalScript)
 ) {
 
     <h1 class="govuk-heading-xl">@{Messages.VerifyBankAccount.`We are verifying your bank account`.show}</h1>

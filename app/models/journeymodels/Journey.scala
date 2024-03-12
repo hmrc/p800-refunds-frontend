@@ -20,6 +20,7 @@ import models.dateofbirth.DateOfBirth
 import models.ecospend.BankDescription
 import models.ecospend.consent.BankConsentResponse
 import models.ecospend.account.BankAccountSummary
+import models.p800externalapi.EventValue
 import models.{AmountInPence, Nino, P800Reference}
 import nps.models.{ReferenceCheckResult, TraceIndividualResponse}
 import play.api.libs.json.OFormat
@@ -42,7 +43,8 @@ final case class Journey(
     traceIndividualResponse: Option[TraceIndividualResponse], //reset this field upon changes of dependant fields
     bankDescription:         Option[BankDescription],
     bankConsentResponse:     Option[BankConsentResponse],
-    bankAccountSummary:      Option[BankAccountSummary]
+    bankAccountSummary:      Option[BankAccountSummary],
+    isValidEventValue:       Option[EventValue]
 ) {
 
   /*
@@ -110,12 +112,17 @@ final case class Journey(
       //TODO: reset other API responses populated bankAccountSummary
       )
 
+  def update(eventValue: EventValue): Journey = this.copy(isValidEventValue = Some(eventValue))
+
+  def update(hasFinished: HasFinished): Journey = this.copy(hasFinished = hasFinished)
+
   private def resetAllApiResponses(): Journey = this.copy(
     referenceCheckResult    = None,
     traceIndividualResponse = None,
     bankDescription         = None,
     bankConsentResponse     = None,
-    bankAccountSummary      = None
+    bankAccountSummary      = None,
+    isValidEventValue       = None
   )
 
   /* derived stuff: */

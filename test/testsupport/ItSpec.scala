@@ -67,7 +67,8 @@ trait ItSpec extends AnyFreeSpecLike
     "microservice.services.p800-reference-validation.port" -> WireMockSupport.port,
     "microservice.services.nps.port" -> WireMockSupport.port,
     "microservice.services.ecospend-auth.port" -> WireMockSupport.port,
-    "microservice.services.ecospend.port" -> WireMockSupport.port
+    "microservice.services.ecospend.port" -> WireMockSupport.port,
+    "microservice.services.p800-refunds-external-api.port" -> WireMockSupport.port
   )
 
   lazy val overridingsModule: AbstractModule = new AbstractModule {

@@ -16,8 +16,9 @@
 
 package pagespecs
 
+import models.p800externalapi.EventValue
 import testsupport.ItSpec
-import testsupport.stubs.EcospendStub
+import testsupport.stubs.{EcospendStub, P800RefundsExternalApiStub}
 
 class GiveYourPermissionPageSpec extends ItSpec {
 
@@ -51,6 +52,7 @@ class GiveYourPermissionPageSpec extends ItSpec {
     EcospendStub.ConsentStubs.stubConsent2xxSucceeded(tdAll.bankId)
     EcospendStub.AuthStubs.stubEcospendAuth2xxSucceeded
     EcospendStub.AccountStub.stubAccountSummary2xxSucceeded(tdAll.consentId)
+    P800RefundsExternalApiStub.isValid(tdAll.consentId.toString, EventValue.NotReceived)
 
     pages.giveYourPermissionPage.open()
     pages.giveYourPermissionPage.assertPageIsDisplayed()
@@ -60,7 +62,7 @@ class GiveYourPermissionPageSpec extends ItSpec {
     pages.bankStubPage.clickSubmit()
     pages.verifyBankAccountPage.assertPageIsDisplayed()
 
-    getJourneyFromDatabase(tdAll.journeyId) shouldBeLike tdAll.BankTransfer.journeyAccountSummary
+    getJourneyFromDatabase(tdAll.journeyId) shouldBeLike tdAll.BankTransfer.journeyReceivedNotificationFromEcospendNotReceived
   }
 
   "clicking 'Choose another way to get my money' redirects to 'Choose another way to get my refund' page" in {

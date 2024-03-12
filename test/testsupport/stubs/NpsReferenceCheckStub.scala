@@ -27,7 +27,7 @@ import testsupport.stubs.NpsHeaders.npsHeaders
 object NpsReferenceCheckStub {
 
   def checkReference(nino: Nino, p800Reference: P800Reference, response: ReferenceCheckResult.P800ReferenceChecked): StubMapping = {
-    WireMockHelpers.stubForGetWithResponseBody(
+    WireMockHelpers.Get.stubForGetWithResponseBody(
       url             = url(nino, p800Reference),
       responseBody    = Json.prettyPrint(Json.toJson(response)),
       responseStatus  = Status.OK,
@@ -36,7 +36,7 @@ object NpsReferenceCheckStub {
   }
 
   def checkReferenceRefundAlreadyTaken(nino: Nino, p800Reference: P800Reference): StubMapping =
-    WireMockHelpers.stubForGetWithResponseBody(
+    WireMockHelpers.Get.stubForGetWithResponseBody(
       url             = url(nino, p800Reference),
       responseBody    =
         //language=JSON
@@ -52,7 +52,7 @@ object NpsReferenceCheckStub {
     )
 
   def checkReferenceReferenceDidntMatchNino(nino: Nino, p800Reference: P800Reference): StubMapping =
-    WireMockHelpers.stubForGetWithResponseBody(
+    WireMockHelpers.Get.stubForGetWithResponseBody(
       url             = url(nino, p800Reference),
       responseBody    = "",
       responseStatus  = Status.NOT_FOUND,

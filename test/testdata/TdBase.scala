@@ -24,6 +24,7 @@ import models.dateofbirth.{DateOfBirth, DayOfMonth, Month, Year}
 import models.ecospend._
 import models.ecospend.account._
 import models.ecospend.consent._
+import models.p800externalapi.EventValue
 import nps.models.ReferenceCheckResult.P800ReferenceChecked
 import testsupport.ItSpec
 
@@ -138,4 +139,8 @@ trait TdBase {
       fullLegalName = BankPartyFullLegalName("Greg Greggory Greggson")
     ))
   )
+
+  lazy val isValidEventValueValid: EventValue = EventValue.Valid
+  lazy val isValidEventValueNotValid: EventValue = EventValue.NotValid
+  lazy val isValidEventValueNotReceived: EventValue = EventValue.NotReceived
 }

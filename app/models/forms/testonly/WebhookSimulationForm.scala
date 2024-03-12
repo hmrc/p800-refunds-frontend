@@ -17,7 +17,8 @@
 package models.forms.testonly
 
 import enumeratum.Enum
-import models.forms.testonly.WebhookSimulationForm.{EventValue, RecordType}
+import models.forms.testonly.WebhookSimulationForm.RecordType
+import models.p800externalapi.EventValue
 import play.api.data.{FieldMapping, Form, Forms}
 import play.api.data.Forms.mapping
 import util.EnumFormatter
@@ -25,15 +26,6 @@ import util.EnumFormatter
 final case class WebhookSimulationForm(recordType: RecordType, recordId: String, eventValue: EventValue)
 
 object WebhookSimulationForm {
-
-  //todo these should probably live in models directory, but do that when we wire up properly to external api in journey
-  sealed trait EventValue extends enumeratum.EnumEntry
-
-  object EventValue extends Enum[EventValue] {
-    case object Valid extends EventValue
-    case object NotValid extends EventValue
-    override def values: IndexedSeq[EventValue] = findValues
-  }
 
   //todo these should probably live in models directory, but do that when we wire up properly to external api in journey
   sealed trait RecordType extends enumeratum.EnumEntry

@@ -41,7 +41,8 @@ trait TdJourney {
     traceIndividualResponse = None,
     bankDescription         = None,
     bankConsentResponse     = None,
-    bankAccountSummary      = None
+    bankAccountSummary      = None,
+    isValidEventValue       = None
   )
 
   object BankTransfer {
@@ -110,19 +111,27 @@ trait TdJourney {
       bankAccountSummary = Some(dependencies.bankAccountSummary)
     )
 
-    lazy val journeyReceivedNotificationFromEcospend: Journey =
+    lazy val journeyReceivedNotificationFromEcospendValid: Journey =
       //TODO: API responses
-      journeyPermissionGiven
+      journeyAccountSummary.copy(isValidEventValue = Some(dependencies.isValidEventValueValid))
+
+    lazy val journeyReceivedNotificationFromEcospendNotValid: Journey =
+      //TODO: API responses
+      journeyAccountSummary.copy(isValidEventValue = Some(dependencies.isValidEventValueNotValid))
+
+    lazy val journeyReceivedNotificationFromEcospendNotReceived: Journey =
+      //TODO: API responses
+      journeyAccountSummary.copy(isValidEventValue = Some(dependencies.isValidEventValueNotReceived))
 
     lazy val journeyClaimedOverpayment: Journey =
       //TODO: API responses
-      journeyReceivedNotificationFromEcospend.copy(
+      journeyReceivedNotificationFromEcospendValid.copy(
         hasFinished = HasFinished.YesSucceeded
       )
 
     lazy val journeyClaimOverpaymentFailed: Journey =
       //TODO: API responses
-      journeyReceivedNotificationFromEcospend.copy(
+      journeyReceivedNotificationFromEcospendValid.copy(
         hasFinished = HasFinished.YesRefundNotSubmitted
       )
 
