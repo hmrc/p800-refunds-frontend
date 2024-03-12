@@ -58,12 +58,12 @@ object EcospendStub {
       "details": {}
     }""".stripMargin
 
-    def stubEcospendAuth2xxSucceeded: StubMapping = WireMockHelpers.stubForPost(
+    def stubEcospendAuth2xxSucceeded: StubMapping = WireMockHelpers.Post.stubForPost(
       url          = authUrl,
       responseBody = authJsonResponseBody2xx
     )
 
-    def stubEcospendAuth4xxUnauthorized: StubMapping = WireMockHelpers.stubForPost(
+    def stubEcospendAuth4xxUnauthorized: StubMapping = WireMockHelpers.Post.stubForPost(
       url            = authUrl,
       responseBody   = authJsonResponseBodyInvalid4xx,
       responseStatus = Status.UNAUTHORIZED
@@ -75,13 +75,13 @@ object EcospendStub {
 
   object BanksStubs {
 
-    def stubEcospendGetBanks2xx: StubMapping = WireMockHelpers.stubForGetWithResponseBody(
+    def stubEcospendGetBanks2xx: StubMapping = WireMockHelpers.Get.stubForGetWithResponseBody(
       url             = banksUrl,
       responseBody    = banksResponseJson,
       requiredHeaders = ecospendHeaders
     )
 
-    def stubEcospendGetBanks4xx: StubMapping = WireMockHelpers.stubForGetWithResponseBody(
+    def stubEcospendGetBanks4xx: StubMapping = WireMockHelpers.Get.stubForGetWithResponseBody(
       url             = banksUrl,
       responseBody    = """{ "error": "ERROR" }""",
       requiredHeaders = ecospendHeaders
@@ -166,21 +166,21 @@ object EcospendStub {
 
   object ValidateStubs {
 
-    def stubValidateNotValidatedYet: StubMapping = WireMockHelpers.stubForPostNoResponseBody(
+    def stubValidateNotValidatedYet: StubMapping = WireMockHelpers.Post.stubForPostNoResponseBody(
       url             = validateUrl,
       responseStatus  = Status.PAYMENT_REQUIRED,
       requiredHeaders = ecospendHeaders
     )
 
     def stubValidatePaymentSuccessful(identifier: String = "AB123456C"): StubMapping =
-      WireMockHelpers.stubForPost(
+      WireMockHelpers.Post.stubForPost(
         url             = validateUrl,
         responseBody    = validateBankVerificationResponseJson(identifier, VerificationStatus.Successful),
         requiredHeaders = ecospendHeaders
       )
 
     def stubValidatePaymentUnSuccessful(identifier: String = "AB123456C"): StubMapping =
-      WireMockHelpers.stubForPost(
+      WireMockHelpers.Post.stubForPost(
         url             = validateUrl,
         responseBody    = validateBankVerificationResponseJson(identifier, VerificationStatus.UnSuccessful),
         requiredHeaders = ecospendHeaders
@@ -190,13 +190,13 @@ object EcospendStub {
       //language=JSON
       s"""{"identifier":"$identifier", "verificationStatus":"${verificationStatus.entryName}"}"""
 
-    def verifyValidate(numberOfRequests: Int = 1): Unit = WireMockHelpers.verifyExactlyWithBodyParse(validateUrl, numberOfRequests)(BankVerificationRequest.format)
+    def verifyValidate(numberOfRequests: Int = 1): Unit = WireMockHelpers.Post.verifyExactlyWithBodyParse(validateUrl, numberOfRequests)(BankVerificationRequest.format)
   }
 
   object ConsentStubs {
 
     def stubConsent2xxSucceeded(bankId: BankId): StubMapping =
-      WireMockHelpers.stubForPost(
+      WireMockHelpers.Post.stubForPost(
         url             = consentUrl,
         responseBody    = validateBankConsentResponseJson(bankId, ConsentStatus.AwaitingAuthorization),
         requiredHeaders = ecospendHeaders
@@ -225,7 +225,7 @@ object EcospendStub {
         }""".stripMargin
 
     def consentValidate(numberOfRequests: Int = 1): Unit =
-      WireMockHelpers.verifyExactlyWithBodyParse(consentUrl, numberOfRequests)(BankConsentRequest.format)
+      WireMockHelpers.Post.verifyExactlyWithBodyParse(consentUrl, numberOfRequests)(BankConsentRequest.format)
   }
 
   object AccountStub {
@@ -233,7 +233,7 @@ object EcospendStub {
     private val developmentConsentIdHeaderKey: String = "consent-id"
 
     def stubAccountSummary2xxSucceeded(consentId: UUID): StubMapping =
-      WireMockHelpers.stubForGetWithResponseBody(
+      WireMockHelpers.Get.stubForGetWithResponseBody(
         url             = accountSummaryUrl,
         responseBody    = validateBankAccountSummaryResponseJson(consentId),
         requiredHeaders = Seq(
@@ -243,7 +243,7 @@ object EcospendStub {
       )
 
     def accountSummaryValidate(numberOfRequests: Int = 1, consentId: UUID): Unit =
-      WireMockHelpers.verifyGetExactlyWithHeader(
+      WireMockHelpers.Get.verifyGetExactlyWithHeader(
         accountSummaryUrl,
         Seq(
           consentIdHeaderKey -> consentId.toString,

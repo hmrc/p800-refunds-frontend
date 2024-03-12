@@ -29,65 +29,181 @@ import scala.jdk.CollectionConverters.MapHasAsJava
 
 object WireMockHelpers {
 
-  def verifyNone(url: String): Unit = verify(exactly(0), postRequestedFor(urlPathEqualTo(url)))
+  object Get {
 
-  def verifyGetExactlyWithHeader(url: String, requiredHeaders: Seq[(String, String)], count: Int): Unit = {
-    val rpb: RequestPatternBuilder = requiredHeaders.foldLeft(getRequestedFor(urlPathEqualTo(url)))((acc, c) =>
-      acc.andMatching((request: Request) =>
-        customValueMatcherWithHeader(url, c._1, c._2, request)))
+    def verifyGetExactlyWithHeader(url: String, requiredHeaders: Seq[(String, String)], count: Int): Unit = {
+      val rpb: RequestPatternBuilder = requiredHeaders.foldLeft(getRequestedFor(urlPathEqualTo(url)))((acc, c) =>
+        acc.andMatching((request: Request) =>
+          customValueMatcherWithHeader(url, c._1, c._2, request)))
 
-    verify(exactly(count), rpb)
+      verify(exactly(count), rpb)
+    }
+
+    def verifyGetNoHeaders(url: String): Unit = verify(getRequestedFor(urlPathEqualTo(url)))
+
+    def verifyGetNoHeaders(url: String, count: Int): Unit = verify(exactly(count), getRequestedFor(urlPathEqualTo(url)))
+
+    def verifyNone(url: String): Unit = verifyGetNoHeaders(url, 0)
+
+    def stubForGetWithResponseBody(
+        url:             String,
+        responseBody:    String,
+        responseStatus:  Int                               = Status.OK,
+        requiredHeaders: Seq[(String, StringValuePattern)] = Nil
+    ): StubMapping = {
+
+      val mb: MappingBuilder = requiredHeaders.foldLeft(get(urlPathEqualTo(url)))((acc, c) => acc.withHeader(c._1, c._2))
+      stubFor(mb.willReturn(
+        aResponse()
+          .withStatus(responseStatus)
+          .withBody(responseBody)
+      ))
+    }
+  }
+
+  object Post {
+
+    def verifyNone(url: String): Unit = verify(exactly(0), postRequestedFor(urlPathEqualTo(url)))
+
+    /**
+     * Useful wiremock helper to verify that the request body serialises to what we expect.
+     * Hint: If it's not working and you can't work out why, check what A you are passing in... :)
+     *
+     * @param url    : String
+     * @param format : play.api.libs.json.Format as an implicit
+     * @tparam A : Model we want to get format for
+     */
+    def verifyWithBodyParse[A](url: String)(implicit format: Format[A]): Unit = verify(
+      postRequestedFor(urlPathEqualTo(url))
+        .andMatching((value: Request) => customValueMatcher(url, value))
+    )
+
+    def verifyExactlyWithBodyParse[A](url: String, count: Int)(implicit format: Format[A]): Unit = verify(
+      exactly(count),
+      postRequestedFor(urlPathEqualTo(url))
+        .andMatching((value: Request) => customValueMatcher(url, value))
+    )
+
+    /**
+     * Same as above, but it also compares a Json serialised expected A with the wiremock request
+     */
+    def verifyWithBodyParse[A](url: String, expected: A)(implicit format: Format[A]): Unit = verify(
+      postRequestedFor(urlPathEqualTo(url))
+        .andMatching((value: Request) => customValueMatcher(url, value))
+        .withRequestBody(equalToJson(Json.toJson(expected).toString()))
+    )
+
+    /**
+     * Same as above, but overloaded with headers to check
+     */
+    def verifyWithBodyParse[A](url: String, headers: (String, String))(implicit format: Format[A]): Unit = verify(
+      postRequestedFor(urlPathEqualTo(url))
+        .withHeader(headers._1, equalTo(headers._2))
+        .andMatching((value: Request) => customValueMatcher(url, value))
+    )
+
+    /**
+     * Same as above, but overloaded with headers to check and also compares a Json serialised expected A with the wiremock request
+     */
+    def verifyWithBodyParse[A](url: String, headers: (String, String), expected: A)(implicit format: Format[A]): Unit = verify(
+      postRequestedFor(urlPathEqualTo(url))
+        .withHeader(headers._1, equalTo(headers._2))
+        .andMatching((value: Request) => customValueMatcher(url, value))
+        .withRequestBody(equalToJson(Json.toJson(expected).toString()))
+    )
+
+    def stubForPostNoResponseBody(
+        url:             String,
+        responseStatus:  Int                               = Status.OK,
+        requiredHeaders: Seq[(String, StringValuePattern)] = Nil
+    ): StubMapping = stubFor(
+      postMappingWithHeaders(url, requiredHeaders)
+        .willReturn(
+          aResponse()
+            .withStatus(responseStatus)
+        )
+    )
+
+    def stubForPost(
+        url:             String,
+        responseBody:    String,
+        responseStatus:  Int                               = Status.OK,
+        requestBodyJson: Option[String]                    = None,
+        queryParams:     Map[String, StringValuePattern]   = Map.empty,
+        requiredHeaders: Seq[(String, StringValuePattern)] = Nil
+    ): StubMapping = {
+      val mb: MappingBuilder = postMappingWithHeaders(url, requiredHeaders)
+
+      stubFor(
+        requestBodyJson.fold(mb)(requestBodyJson => mb.withRequestBody(equalToJson(requestBodyJson, true, true)))
+          .withQueryParams(queryParams.asJava)
+          .willReturn(
+            aResponse()
+              .withStatus(responseStatus)
+              .withHeader("Content-Type", "application/json")
+              .withBody(responseBody)
+          )
+      )
+    }
+
+    def stubForPostWithRequestBodyMatching(
+        url:                 String,
+        requestMatchingPath: String,
+        jsonBody:            String,
+        responseStatus:      Int                               = Status.OK,
+        requiredHeaders:     Seq[(String, StringValuePattern)] = Nil
+    ): StubMapping = stubFor(
+      postMappingWithHeaders(url, requiredHeaders)
+        .withRequestBody(matchingJsonPath(requestMatchingPath))
+        .willReturn(
+          aResponse()
+            .withStatus(responseStatus)
+            .withBody(jsonBody)
+        )
+    )
+
+    private def postMappingWithHeaders(
+        url:             String,
+        requiredHeaders: Seq[(String, StringValuePattern)]
+    ): MappingBuilder =
+      requiredHeaders.foldLeft(post(urlPathEqualTo(url)))((acc, c) => acc.withHeader(c._1, c._2))
+
+  }
+
+  object Put {
+
+    def stubForPut(
+        url:             String,
+        responseBody:    String,
+        responseStatus:  Int                               = Status.OK,
+        requestBodyJson: Option[String]                    = None,
+        queryParams:     Map[String, StringValuePattern]   = Map.empty,
+        requiredHeaders: Seq[(String, StringValuePattern)] = Nil
+    ): StubMapping = {
+      val mb: MappingBuilder = putMappingWithHeaders(url, requiredHeaders)
+
+      stubFor(
+        requestBodyJson.fold(mb)(requestBodyJson => mb.withRequestBody(equalToJson(requestBodyJson, true, true)))
+          .withQueryParams(queryParams.asJava)
+          .willReturn(
+            aResponse()
+              .withStatus(responseStatus)
+              .withHeader("Content-Type", "application/json")
+              .withBody(responseBody)
+          )
+      )
+    }
+
+    private def putMappingWithHeaders(
+        url:             String,
+        requiredHeaders: Seq[(String, StringValuePattern)]
+    ): MappingBuilder =
+      requiredHeaders.foldLeft(put(urlPathEqualTo(url)))((acc, c) => acc.withHeader(c._1, c._2))
+
   }
 
   private def customValueMatcherWithHeader(url: String, headerKey: String, headerValue: String, request: Request): MatchResult =
     MatchResult.of(request.getUrl === url && request.header(headerKey).containsValue(headerValue))
-
-  /**
-   * Useful wiremock helper to verify that the request body serialises to what we expect.
-   * Hint: If it's not working and you can't work out why, check what A you are passing in... :)
-   *
-   * @param url    : String
-   * @param format : play.api.libs.json.Format as an implicit
-   * @tparam A : Model we want to get format for
-   */
-  def verifyWithBodyParse[A](url: String)(implicit format: Format[A]): Unit = verify(
-    postRequestedFor(urlPathEqualTo(url))
-      .andMatching((value: Request) => customValueMatcher(url, value))
-  )
-
-  def verifyExactlyWithBodyParse[A](url: String, count: Int)(implicit format: Format[A]): Unit = verify(
-    exactly(count),
-    postRequestedFor(urlPathEqualTo(url))
-      .andMatching((value: Request) => customValueMatcher(url, value))
-  )
-
-  /**
-   * Same as above, but it also compares a Json serialised expected A with the wiremock request
-   */
-  def verifyWithBodyParse[A](url: String, expected: A)(implicit format: Format[A]): Unit = verify(
-    postRequestedFor(urlPathEqualTo(url))
-      .andMatching((value: Request) => customValueMatcher(url, value))
-      .withRequestBody(equalToJson(Json.toJson(expected).toString()))
-  )
-
-  /**
-   * Same as above, but overloaded with headers to check
-   */
-  def verifyWithBodyParse[A](url: String, headers: (String, String))(implicit format: Format[A]): Unit = verify(
-    postRequestedFor(urlPathEqualTo(url))
-      .withHeader(headers._1, equalTo(headers._2))
-      .andMatching((value: Request) => customValueMatcher(url, value))
-  )
-
-  /**
-   * Same as above, but overloaded with headers to check and also compares a Json serialised expected A with the wiremock request
-   */
-  def verifyWithBodyParse[A](url: String, headers: (String, String), expected: A)(implicit format: Format[A]): Unit = verify(
-    postRequestedFor(urlPathEqualTo(url))
-      .withHeader(headers._1, equalTo(headers._2))
-      .andMatching((value: Request) => customValueMatcher(url, value))
-      .withRequestBody(equalToJson(Json.toJson(expected).toString()))
-  )
 
   /**
    * Helper method to attempt to parse request body into type, using asOpt.
@@ -95,104 +211,5 @@ object WireMockHelpers {
    */
   private def customValueMatcher[A](url: String, request: Request)(implicit format: Format[A]): MatchResult =
     MatchResult.of(request.getUrl === url && Json.parse(request.getBodyAsString).asOpt[A].nonEmpty)
-
-  def stubForPostNoResponseBody(
-      url:             String,
-      responseStatus:  Int                               = Status.OK,
-      requiredHeaders: Seq[(String, StringValuePattern)] = Nil
-  ): StubMapping = stubFor(
-    postMappingWithHeaders(url, requiredHeaders)
-      .willReturn(
-        aResponse()
-          .withStatus(responseStatus)
-      )
-  )
-
-  def stubForPost(
-      url:             String,
-      responseBody:    String,
-      responseStatus:  Int                               = Status.OK,
-      requestBodyJson: Option[String]                    = None,
-      queryParams:     Map[String, StringValuePattern]   = Map.empty,
-      requiredHeaders: Seq[(String, StringValuePattern)] = Nil
-  ): StubMapping = {
-    val mb: MappingBuilder = postMappingWithHeaders(url, requiredHeaders)
-
-    stubFor(
-      requestBodyJson.fold(mb)(requestBodyJson => mb.withRequestBody(equalToJson(requestBodyJson, true, true)))
-        .withQueryParams(queryParams.asJava)
-        .willReturn(
-          aResponse()
-            .withStatus(responseStatus)
-            .withHeader("Content-Type", "application/json")
-            .withBody(responseBody)
-        )
-    )
-  }
-
-  def stubForPut(
-      url:             String,
-      responseBody:    String,
-      responseStatus:  Int                               = Status.OK,
-      requestBodyJson: Option[String]                    = None,
-      queryParams:     Map[String, StringValuePattern]   = Map.empty,
-      requiredHeaders: Seq[(String, StringValuePattern)] = Nil
-  ): StubMapping = {
-    val mb: MappingBuilder = putMappingWithHeaders(url, requiredHeaders)
-
-    stubFor(
-      requestBodyJson.fold(mb)(requestBodyJson => mb.withRequestBody(equalToJson(requestBodyJson, true, true)))
-        .withQueryParams(queryParams.asJava)
-        .willReturn(
-          aResponse()
-            .withStatus(responseStatus)
-            .withHeader("Content-Type", "application/json")
-            .withBody(responseBody)
-        )
-    )
-  }
-
-  def stubForPostWithRequestBodyMatching(
-      url:                 String,
-      requestMatchingPath: String,
-      jsonBody:            String,
-      responseStatus:      Int                               = Status.OK,
-      requiredHeaders:     Seq[(String, StringValuePattern)] = Nil
-  ): StubMapping = stubFor(
-    postMappingWithHeaders(url, requiredHeaders)
-      .withRequestBody(matchingJsonPath(requestMatchingPath))
-      .willReturn(
-        aResponse()
-          .withStatus(responseStatus)
-          .withBody(jsonBody)
-      )
-  )
-
-  private def postMappingWithHeaders(
-      url:             String,
-      requiredHeaders: Seq[(String, StringValuePattern)]
-  ): MappingBuilder =
-    requiredHeaders.foldLeft(post(urlPathEqualTo(url)))((acc, c) => acc.withHeader(c._1, c._2))
-
-  private def putMappingWithHeaders(
-      url:             String,
-      requiredHeaders: Seq[(String, StringValuePattern)]
-  ): MappingBuilder =
-    requiredHeaders.foldLeft(put(urlPathEqualTo(url)))((acc, c) => acc.withHeader(c._1, c._2))
-
-  def stubForGetWithResponseBody(
-      url:             String,
-      responseBody:    String,
-      responseStatus:  Int                               = Status.OK,
-      requiredHeaders: Seq[(String, StringValuePattern)] = Nil
-  ): StubMapping = {
-
-    val mb: MappingBuilder = requiredHeaders.foldLeft(get(urlPathEqualTo(url)))((acc, c) => acc.withHeader(c._1, c._2))
-    stubFor(mb.willReturn(
-      aResponse()
-        .withStatus(responseStatus)
-        .withBody(responseBody)
-    ))
-  }
 
 }

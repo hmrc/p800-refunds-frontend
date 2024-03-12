@@ -27,7 +27,7 @@ import testsupport.stubs.NpsHeaders.npsHeaders
 object NpsIssuePayableOrderStub {
 
   def issuePayableOrder(nino: Nino, p800Reference: P800Reference, request: IssuePayableOrderRequest, response: JsObject): StubMapping = {
-    WireMockHelpers.stubForPut(
+    WireMockHelpers.Put.stubForPut(
       url             = url(nino, p800Reference),
       responseBody    = Json.prettyPrint(response),
       responseStatus  = Status.OK,
@@ -37,7 +37,7 @@ object NpsIssuePayableOrderStub {
   }
 
   def issuePayableOrderRefundAlreadyTaken(nino: Nino, p800Reference: P800Reference, request: IssuePayableOrderRequest): StubMapping = {
-    WireMockHelpers.stubForPut(
+    WireMockHelpers.Put.stubForPut(
       url             = url(nino, p800Reference),
       responseBody    =
         //language=JSON

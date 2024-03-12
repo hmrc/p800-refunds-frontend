@@ -40,7 +40,8 @@ class JourneyFactory @Inject() (
     traceIndividualResponse = None,
     bankDescription         = None,
     bankConsentResponse     = None,
-    bankAccountSummary      = None
+    bankAccountSummary      = None,
+    isValidEventValue       = None
   )
 
 }

@@ -26,7 +26,7 @@ import testsupport.stubs.NpsHeaders.npsHeaders
 object NpsTraceIndividualStub {
 
   def traceIndividual(request: TraceIndividualRequest, response: TraceIndividualResponse): StubMapping = {
-    WireMockHelpers.stubForPost(
+    WireMockHelpers.Post.stubForPost(
       url             = url,
       responseBody    = Json.prettyPrint(Json.toJson(List(response))),
       responseStatus  = Status.OK,
