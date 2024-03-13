@@ -93,7 +93,7 @@ trait TdBase {
     numberOfFailedAttempts = NumberOfAttempts(failedAttempts)
   )
 
-  lazy val consentId: UUID = UUID.fromString("00000000-0000-0000-0000-000000000000")
+  lazy val consentId: ConsentId = ConsentId("00000000-0000-0000-0000-000000000000")
   lazy val bankReferenceId: BankReferenceId = BankReferenceId("MyBank-129781876126")
   lazy val bankConsentUrl: Uri = Uri(s"http://localhost:${ItSpec.testServerPort.toString}/get-an-income-tax-refund/test-only/bank-page")
   lazy val redirectUrl: Uri = Uri(s"http://localhost:${ItSpec.testServerPort.toString}/get-an-income-tax-refund/bank-transfer/verifying-your-bank-account")

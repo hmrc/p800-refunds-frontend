@@ -20,13 +20,10 @@ import com.github.tomakehurst.wiremock.client.WireMock._
 import com.github.tomakehurst.wiremock.stubbing.StubMapping
 import com.github.tomakehurst.wiremock.matching.StringValuePattern
 import models.ecospend.BankId
-import models.ecospend.consent.BankConsentRequest
-import models.ecospend.consent.ConsentStatus
+import models.ecospend.consent.{BankConsentRequest, ConsentId, ConsentStatus}
 import models.ecospend.verification.{BankVerificationRequest, VerificationStatus}
 import play.api.http.Status
 import testsupport.ItSpec
-
-import java.util.UUID
 
 object EcospendStub {
   val authUrl: String = "/connect/token"
@@ -232,32 +229,32 @@ object EcospendStub {
     private val consentIdHeaderKey: String = "consent_id"
     private val developmentConsentIdHeaderKey: String = "consent-id"
 
-    def stubAccountSummary2xxSucceeded(consentId: UUID): StubMapping =
+    def stubAccountSummary2xxSucceeded(consentId: ConsentId): StubMapping =
       WireMockHelpers.Get.stubForGetWithResponseBody(
         url             = accountSummaryUrl,
         responseBody    = validateBankAccountSummaryResponseJson(consentId),
         requiredHeaders = Seq(
-          consentIdHeaderKey -> matching(consentId.toString),
-          developmentConsentIdHeaderKey -> matching(consentId.toString)
+          consentIdHeaderKey -> matching(consentId.value),
+          developmentConsentIdHeaderKey -> matching(consentId.value)
         ) ++ ecospendHeaders
       )
 
-    def accountSummaryValidate(numberOfRequests: Int = 1, consentId: UUID): Unit =
+    def accountSummaryValidate(numberOfRequests: Int = 1, consentId: ConsentId): Unit =
       WireMockHelpers.Get.verifyGetExactlyWithHeader(
         accountSummaryUrl,
         Seq(
-          consentIdHeaderKey -> consentId.toString,
-          developmentConsentIdHeaderKey -> consentId.toString
+          consentIdHeaderKey -> consentId.value,
+          developmentConsentIdHeaderKey -> consentId.value
         ),
         numberOfRequests
       )
 
-    def validateBankAccountSummaryResponseJson(consentId: UUID): String =
+    def validateBankAccountSummaryResponseJson(consentId: ConsentId): String =
       //language=JSON
       s"""
         [
           {
-            "id": "${consentId.toString}",
+            "id": "${consentId.value}",
             "bank_id": "obie-barclays-personal",
             "type": "Personal",
             "sub_type": "CurrentAccount",
@@ -276,6 +273,6 @@ object EcospendStub {
               }
             ]
           }
-        ]""".stripMargin
+        ]"""
   }
 }
