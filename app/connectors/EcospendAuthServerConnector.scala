@@ -42,8 +42,7 @@ class EcospendAuthServerConnector @Inject() (
     val body: Map[String, Seq[String]] = Map(
       "grant_type" -> "client_credentials",
       "client_id" -> appConfig.ExternalApiCalls.ecospendAuthClientId,
-      "client_secret" -> appConfig.ExternalApiCalls.ecospendAuthClientSecret,
-      "scope" -> appConfig.ExternalApiCalls.ecospendAuthScope
+      "client_secret" -> appConfig.ExternalApiCalls.ecospendAuthClientSecret
     ).view.mapValues(Seq.apply(_)).toMap
 
     httpClient.POSTForm[EcospendAccessToken](accessTokenUrl, body)
