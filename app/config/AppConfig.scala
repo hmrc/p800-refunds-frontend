@@ -58,7 +58,6 @@ class AppConfig @Inject() (servicesConfig: ServicesConfig, configuration: Config
 
     val ecospendAuthClientId: String = configuration.get[String]("ecospend.oauth.clientId")
     val ecospendAuthClientSecret: String = configuration.get[String]("ecospend.oauth.clientSecret")
-    val ecospendAuthScope: String = configuration.get[String]("ecospend.oauth.scope")
   }
 
   object P800RefundsExternalApi {
