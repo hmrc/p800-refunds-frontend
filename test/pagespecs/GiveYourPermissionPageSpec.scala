@@ -52,7 +52,7 @@ class GiveYourPermissionPageSpec extends ItSpec {
     EcospendStub.ConsentStubs.stubConsent2xxSucceeded(tdAll.bankId)
     EcospendStub.AuthStubs.stubEcospendAuth2xxSucceeded
     EcospendStub.AccountStub.stubAccountSummary2xxSucceeded(tdAll.consentId)
-    P800RefundsExternalApiStub.isValid(tdAll.consentId.toString, EventValue.NotReceived)
+    P800RefundsExternalApiStub.isValid(tdAll.consentId, EventValue.NotReceived)
 
     pages.giveYourPermissionPage.open()
     pages.giveYourPermissionPage.assertPageIsDisplayed()

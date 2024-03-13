@@ -22,10 +22,9 @@ import models.ecospend.BankId
 import play.api.libs.json._
 
 import java.time.LocalDateTime
-import java.util.UUID
 
 final case class BankConsentResponse(
-    id:                UUID,
+    id:                ConsentId,
     bankReferenceId:   BankReferenceId,
     bankConsentUrl:    Uri,
     bankId:            BankId,

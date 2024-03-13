@@ -17,23 +17,24 @@
 package testsupport.stubs
 
 import com.github.tomakehurst.wiremock.stubbing.StubMapping
+import models.ecospend.consent.ConsentId
 import models.p800externalapi.EventValue
 import play.api.http.Status
 import play.api.libs.json.Json
 
 object P800RefundsExternalApiStub {
 
-  def isValidUrl(renameMe: String): String = s"/is-valid/$renameMe"
+  def isValidUrl(consentId: ConsentId): String = s"/is-valid/${consentId.value}"
 
-  def isValid(renameMe: String, eventValue: EventValue): StubMapping = {
+  def isValid(consentId: ConsentId, eventValue: EventValue): StubMapping = {
     WireMockHelpers.Get.stubForGetWithResponseBody(
-      url            = isValidUrl(renameMe),
+      url            = isValidUrl(consentId),
       responseBody   = Json.prettyPrint(Json.toJson(eventValue)),
       responseStatus = Status.OK
     )
   }
 
-  def verifyIsValid(renameMe: String, count: Int = 1): Unit = WireMockHelpers.Get.verifyGetNoHeaders(isValidUrl(renameMe), count)
-  def verifyNoneIsValid(renameMe: String): Unit = WireMockHelpers.Get.verifyNone(isValidUrl(renameMe))
+  def verifyIsValid(consentId: ConsentId, count: Int = 1): Unit = WireMockHelpers.Get.verifyGetNoHeaders(isValidUrl(consentId), count)
+  def verifyNoneIsValid(consentId: ConsentId): Unit = WireMockHelpers.Get.verifyNone(isValidUrl(consentId))
 
 }

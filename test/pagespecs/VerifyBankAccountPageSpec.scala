@@ -31,34 +31,34 @@ class VerifyBankAccountPageSpec extends ItSpec {
   "/verifying-bank-account renders the 'We are verifying your bank account' page" in {
     EcospendStub.AuthStubs.stubEcospendAuth2xxSucceeded
     EcospendStub.AccountStub.stubAccountSummary2xxSucceeded(tdAll.consentId)
-    P800RefundsExternalApiStub.isValid(tdAll.consentId.toString, EventValue.NotReceived)
+    P800RefundsExternalApiStub.isValid(tdAll.consentId, EventValue.NotReceived)
 
     pages.verifyBankAccountPage.open()
     pages.verifyBankAccountPage.assertPageIsDisplayed()
-    P800RefundsExternalApiStub.verifyIsValid(tdAll.consentId.toString)
+    P800RefundsExternalApiStub.verifyIsValid(tdAll.consentId)
   }
 
   "clicking 'refresh this page' refreshes the page - showing the same page if bank is not verified yet" in {
     EcospendStub.AuthStubs.stubEcospendAuth2xxSucceeded
     EcospendStub.AccountStub.stubAccountSummary2xxSucceeded(tdAll.consentId)
-    P800RefundsExternalApiStub.isValid(tdAll.consentId.toString, EventValue.NotReceived)
+    P800RefundsExternalApiStub.isValid(tdAll.consentId, EventValue.NotReceived)
 
     pages.verifyBankAccountPage.open()
     pages.verifyBankAccountPage.assertPageIsDisplayed()
     pages.verifyBankAccountPage.clickRefreshThisPageLink()
     pages.verifyBankAccountPage.assertPageIsDisplayed()
-    P800RefundsExternalApiStub.verifyIsValid(tdAll.consentId.toString, 2)
+    P800RefundsExternalApiStub.verifyIsValid(tdAll.consentId, 2)
   }
 
   "redirect to bank transfer 'Request received' page when verification call returns Successful" in {
     EcospendStub.AuthStubs.stubEcospendAuth2xxSucceeded
     EcospendStub.AccountStub.stubAccountSummary2xxSucceeded(tdAll.consentId)
-    P800RefundsExternalApiStub.isValid(tdAll.consentId.toString, EventValue.NotReceived)
+    P800RefundsExternalApiStub.isValid(tdAll.consentId, EventValue.NotReceived)
 
     pages.verifyBankAccountPage.open()
     pages.verifyBankAccountPage.assertPageIsDisplayed()
 
-    P800RefundsExternalApiStub.isValid(tdAll.consentId.toString, EventValue.Valid)
+    P800RefundsExternalApiStub.isValid(tdAll.consentId, EventValue.Valid)
     pages.verifyBankAccountPage.clickRefreshThisPageLink()
     pages.requestReceivedBankTransferPage.assertPageIsDisplayedForBankTransfer()
   }
@@ -67,15 +67,15 @@ class VerifyBankAccountPageSpec extends ItSpec {
     EcospendStub.ValidateStubs.stubValidateNotValidatedYet
     EcospendStub.AuthStubs.stubEcospendAuth2xxSucceeded
     EcospendStub.AccountStub.stubAccountSummary2xxSucceeded(tdAll.consentId)
-    P800RefundsExternalApiStub.isValid(tdAll.consentId.toString, EventValue.NotReceived)
+    P800RefundsExternalApiStub.isValid(tdAll.consentId, EventValue.NotReceived)
 
     pages.verifyBankAccountPage.open()
     pages.verifyBankAccountPage.assertPageIsDisplayed()
-    P800RefundsExternalApiStub.isValid(tdAll.consentId.toString, EventValue.NotValid)
+    P800RefundsExternalApiStub.isValid(tdAll.consentId, EventValue.NotValid)
 
     pages.verifyBankAccountPage.clickRefreshThisPageLink()
     pages.refundRequestNotSubmittedPage.assertPageIsDisplayed()
-    P800RefundsExternalApiStub.verifyIsValid(tdAll.consentId.toString, 2)
+    P800RefundsExternalApiStub.verifyIsValid(tdAll.consentId, 2)
   }
 
   "refreshing the page does not re-send the account summary request" in {
@@ -83,7 +83,7 @@ class VerifyBankAccountPageSpec extends ItSpec {
     EcospendStub.ValidateStubs.stubValidateNotValidatedYet
     EcospendStub.AuthStubs.stubEcospendAuth2xxSucceeded
     EcospendStub.AccountStub.stubAccountSummary2xxSucceeded(tdAll.consentId)
-    P800RefundsExternalApiStub.isValid(tdAll.consentId.toString, EventValue.NotReceived)
+    P800RefundsExternalApiStub.isValid(tdAll.consentId, EventValue.NotReceived)
 
     pages.verifyBankAccountPage.open()
     pages.verifyBankAccountPage.assertPageIsDisplayed()

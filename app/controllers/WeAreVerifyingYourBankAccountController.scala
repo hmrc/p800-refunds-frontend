@@ -19,7 +19,7 @@ package controllers
 import action.{Actions, JourneyRequest}
 import connectors.P800RefundsExternalApiConnector
 import models.ecospend.account.BankAccountSummary
-import models.ecospend.consent.{BankReferenceId, ConsentStatus}
+import models.ecospend.consent.{BankReferenceId, ConsentId, ConsentStatus}
 import models.journeymodels._
 import models.p800externalapi.EventValue
 import play.api.mvc._
@@ -29,7 +29,6 @@ import util.Errors
 import util.SafeEquals.EqualsOps
 import views.Views
 
-import java.util.UUID
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.ExecutionContext
 
@@ -43,14 +42,14 @@ class WeAreVerifyingYourBankAccountController @Inject() (
     views:                           Views
 )(implicit ec: ExecutionContext) extends FrontendController(mcc) {
 
-  def get(status: Option[ConsentStatus], consent_id: Option[UUID], bank_reference_id: Option[BankReferenceId]): Action[AnyContent] = actions.journeyInProgress.async { implicit request: JourneyRequest[_] =>
+  def get(status: Option[ConsentStatus], consent_id: Option[ConsentId], bank_reference_id: Option[BankReferenceId]): Action[AnyContent] = actions.journeyInProgress.async { implicit request: JourneyRequest[_] =>
     val journey: Journey = request.journey
     Errors.require(journey.getJourneyType === JourneyType.BankTransfer, "This endpoint supports only BankTransfer journey")
 
       def missingConsentIdError = Errors.throwBadRequestException("This endpoint requires a valid consent_id query parameter")
 
-    consent_id.fold(missingConsentIdError) { consentId: UUID =>
-      Errors.require(journey.getBankConsent.id === consentId, "The consent_id supplied via the query parameter must match that stored in the journey. This should be investigated")
+    consent_id.fold(missingConsentIdError) { consentId: ConsentId =>
+      Errors.require(journey.getBankConsent.id === consentId, s"The consent_id supplied via the query parameter must match that stored in the journey. This should be investigated: [consentIdFromJourney:${journey.getBankConsent.id.value}] [consentIdFromQueryParam:${consentId.value}]")
     }
 
     bank_reference_id.fold(Errors.throwBadRequestException("This endpoint requires a valid bank_reference_id query parameter")) { bankReferenceId: BankReferenceId =>
@@ -59,7 +58,7 @@ class WeAreVerifyingYourBankAccountController @Inject() (
 
     for {
       // TODO: Assert status, consent_id & bank_reference_id match that contained within the journey
-      isValid <- p800RefundsExternalApiConnector.isValid(consent_id.fold(missingConsentIdError)(consentId => consentId))
+      isValid <- p800RefundsExternalApiConnector.isValid(journey.getBankConsent.id)
       // Call Ecospend - Get account details API to get more info about account
       bankAccountSummary <- ecospendService.getAccountSummary(journey)
 

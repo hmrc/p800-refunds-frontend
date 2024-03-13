@@ -18,15 +18,15 @@
 @import uk.gov.hmrc.govukfrontend.views.html.components._
 @import views.html.templates.Layout
 @import action.JourneyRequest
-@import models.ecospend.consent.{ConsentStatus, BankReferenceId}
-@import java.util.UUID
+@import models.ecospend.consent.{ConsentStatus, BankReferenceId, ConsentId}
 @import views.html.helper.CSPNonce
+
 @this(
     layout: Layout,
     viewsHelpers: views.ViewsHelpers
 )
 
-@(status: Option[ConsentStatus], consentId: Option[UUID], bankReferenceId: Option[BankReferenceId])(implicit request: JourneyRequest[_])
+@(status: Option[ConsentStatus], consentId: Option[ConsentId], bankReferenceId: Option[BankReferenceId])(implicit request: JourneyRequest[_])
 
 @import viewsHelpers.requestSupport._
 

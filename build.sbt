@@ -25,6 +25,7 @@ lazy val microservice = Project("p800-refunds-frontend", file("."))
           "models.journeymodels.JourneyId",
           "models.ecospend.consent.ConsentStatus",
           "models.ecospend.consent.BankReferenceId",
+          "models.ecospend.consent.ConsentId",
           "models.Binders"
       ))
   .settings(resolvers += Resolver.jcenterRepo)

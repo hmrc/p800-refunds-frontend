@@ -19,7 +19,7 @@ package connectors
 import action.JourneyRequest
 import config.AppConfig
 import models.ecospend.account.BankAccountSummaryResponse
-import models.ecospend.consent.{BankConsentRequest, BankConsentResponse}
+import models.ecospend.consent.{BankConsentRequest, BankConsentResponse, ConsentId}
 import models.ecospend.verification.{BankVerification, BankVerificationRequest}
 import models.ecospend.{EcospendAccessToken, EcospendGetBanksResponse}
 import requests.RequestSupport
@@ -27,7 +27,6 @@ import uk.gov.hmrc.http.HeaderNames
 import uk.gov.hmrc.http.HttpReads.Implicits._
 import util.JourneyLogger
 
-import java.util.UUID
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -85,7 +84,7 @@ class EcospendConnector @Inject() (
 
   def getAccountSummary(
       accessToken: EcospendAccessToken,
-      consentId:   UUID
+      consentId:   ConsentId
   )(implicit request: JourneyRequest[_]): Future[BankAccountSummaryResponse] = captureException {
     httpClient.GET[BankAccountSummaryResponse](
       url     = accountSummaryUrl,
@@ -106,10 +105,13 @@ class EcospendConnector @Inject() (
    * As a workaround for testing a duplicate header is sent without an underscore.
    * Outbound requests should not be affected.
    */
-  private def consentIdHeader(consentId: UUID): Seq[(String, String)] = Seq(
-    consentIdHeaderKey -> consentId.toString,
-    developmentConsentIdHeaderKey -> consentId.toString
-  )
+  private def consentIdHeader(consentId: ConsentId): Seq[(String, String)] = {
+    val consentIdValue: String = consentId.value
+    Seq(
+      consentIdHeaderKey -> consentIdValue,
+      developmentConsentIdHeaderKey -> consentIdValue
+    )
+  }
 
   private def captureException[A](future: => Future[A])(implicit request: JourneyRequest[_]): Future[A] =
     future.recover {
