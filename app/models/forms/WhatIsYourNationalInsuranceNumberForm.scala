@@ -21,6 +21,7 @@ import models.Nino
 import play.api.data.Forms.mapping
 import play.api.data.format.Formatter
 import play.api.data.{Form, FormError, Forms}
+
 import java.util.regex.Pattern
 
 object WhatIsYourNationalInsuranceNumberForm {

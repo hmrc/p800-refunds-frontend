@@ -30,12 +30,14 @@ import util.SafeEquals.EqualsOps
 import views.Views
 
 import javax.inject.{Inject, Singleton}
-import scala.concurrent.ExecutionContext
+import scala.concurrent.{ExecutionContext, Future}
+
 
 @Singleton
 class WeAreVerifyingYourBankAccountController @Inject() (
     actions:                         Actions,
     ecospendService:                 EcospendService,
+    edhConnector: EdhConnector,
     journeyService:                  JourneyService,
     mcc:                             MessagesControllerComponents,
     p800RefundsExternalApiConnector: P800RefundsExternalApiConnector,
@@ -44,14 +46,11 @@ class WeAreVerifyingYourBankAccountController @Inject() (
 
   def get(status: Option[ConsentStatus], consent_id: Option[ConsentId], bank_reference_id: Option[BankReferenceId]): Action[AnyContent] = actions.journeyInProgress.async { implicit request: JourneyRequest[_] =>
     val journey: Journey = request.journey
+    //sanity checks
     Errors.require(journey.getJourneyType === JourneyType.BankTransfer, "This endpoint supports only BankTransfer journey")
-
-      def missingConsentIdError = Errors.throwBadRequestException("This endpoint requires a valid consent_id query parameter")
-
-    consent_id.fold(missingConsentIdError) { consentId: ConsentId =>
-      Errors.require(journey.getBankConsent.id === consentId, s"The consent_id supplied via the query parameter must match that stored in the journey. This should be investigated: [consentIdFromJourney:${journey.getBankConsent.id.value}] [consentIdFromQueryParam:${consentId.value}]")
+    consent_id.fold(Errors.throwBadRequestException("This endpoint requires a valid consent_id query parameter")) { consentId: UUID =>
+      Errors.require(journey.getBankConsent.id === consentId, "The consent_id supplied via the query parameter must match that stored in the journey. This should be investigated")
     }
-
     bank_reference_id.fold(Errors.throwBadRequestException("This endpoint requires a valid bank_reference_id query parameter")) { bankReferenceId: BankReferenceId =>
       Errors.require(journey.getBankConsent.bankReferenceId === bankReferenceId, "The bank_reference_id supplied via the query parameter must match that stored in the journey. This should be investigated")
     }
@@ -73,6 +72,26 @@ class WeAreVerifyingYourBankAccountController @Inject() (
       case EventValue.Valid       => Redirect(routes.RequestReceivedController.getBankTransfer)
       case EventValue.NotValid    => Redirect(routes.RefundRequestNotSubmittedController.get)
       case EventValue.NotReceived => Ok(views.weAreVerifyingYourBankAccountPage(status, consent_id, bank_reference_id))
+    }
+  }
+
+  sealed trait Op {
+  }
+
+  case class Next(updatedJourney: Journey) extends Op
+  case class Stop(result: Result, journeyToUpsert: Journey) extends Op
+  case class StopAndUpdateJourney(result: Result, journeyToUpsert: Journey) extends Op
+
+  def processEcospend(journey: Journey): Future[Op] = journey.isValidEventValue match {
+    case Some(isValid) =>  Future.successful(isValid match {
+      case EventValue.Valid       => Redirect(routes.RequestReceivedController.getBankTransfer)
+      case EventValue.NotValid    =>  Stop(Redirect(routes.RefundRequestNotSubmittedController.get))
+      case EventValue.NotReceived => Stop(Ok(views.weAreVerifyingYourBankAccountPage(status, consent_id, bank_reference_id)))
+    })
+    case None =>  for {
+      isValid <- p800RefundsExternalApiConnector.isValid(journey.getBankConsent.)
+      // Call Ecospend - Get account details API to get more info about account
+      bankAccountSummary <- ecospendService.getAccountSummary(journey)
     }
   }
 

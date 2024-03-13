@@ -16,7 +16,7 @@
 
 package models
 
-import play.api.libs.json.{Json, Format}
+import play.api.libs.json.{Format, Json}
 
 /**
  * National Insurance Number (Nino)
