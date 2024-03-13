@@ -105,10 +105,13 @@ class EcospendConnector @Inject() (
    * As a workaround for testing a duplicate header is sent without an underscore.
    * Outbound requests should not be affected.
    */
-  private def consentIdHeader(consentId: ConsentId): Seq[(String, String)] = Seq(
-    consentIdHeaderKey -> consentId.toString,
-    developmentConsentIdHeaderKey -> consentId.value
-  )
+  private def consentIdHeader(consentId: ConsentId): Seq[(String, String)] = {
+    val consentIdValue: String = consentId.value
+    Seq(
+      consentIdHeaderKey -> consentIdValue,
+      developmentConsentIdHeaderKey -> consentIdValue
+    )
+  }
 
   private def captureException[A](future: => Future[A])(implicit request: JourneyRequest[_]): Future[A] =
     future.recover {
