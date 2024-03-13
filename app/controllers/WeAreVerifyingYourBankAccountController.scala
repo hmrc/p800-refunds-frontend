@@ -49,7 +49,7 @@ class WeAreVerifyingYourBankAccountController @Inject() (
       def missingConsentIdError = Errors.throwBadRequestException("This endpoint requires a valid consent_id query parameter")
 
     consent_id.fold(missingConsentIdError) { consentId: ConsentId =>
-      Errors.require(journey.getBankConsent.id === consentId, "The consent_id supplied via the query parameter must match that stored in the journey. This should be investigated")
+      Errors.require(journey.getBankConsent.id === consentId, s"The consent_id supplied via the query parameter must match that stored in the journey. This should be investigated: [consentIdFromJourney:${journey.getBankConsent.id.value}] [consentIdFromQueryParam:${consentId.value}]")
     }
 
     bank_reference_id.fold(Errors.throwBadRequestException("This endpoint requires a valid bank_reference_id query parameter")) { bankReferenceId: BankReferenceId =>

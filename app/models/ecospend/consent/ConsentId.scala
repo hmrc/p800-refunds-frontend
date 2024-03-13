@@ -24,5 +24,5 @@ final case class ConsentId(value: String)
 
 object ConsentId {
   implicit val format: Format[ConsentId] = Json.valueFormat[ConsentId]
-  implicit val queryBindable: QueryStringBindable[ConsentId] = ValueClassBinder.queryStringValueBinder(_.toString)
+  implicit val queryBindable: QueryStringBindable[ConsentId] = ValueClassBinder.queryStringValueBinder(_.value)
 }
