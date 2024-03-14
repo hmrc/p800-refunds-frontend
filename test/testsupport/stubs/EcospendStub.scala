@@ -281,7 +281,7 @@ object EcospendStub {
             "account_identification": "44556610002333",
             "calculated_owner_name": "Greg Greggson",
             "account_owner_name": "Greg Greggson",
-            "display_name": "Greg G Greggson",
+            "display_name": "bank account display name",
             "balance": 123.7,
             "last_update_time": "2059-11-25T16:33:51.880",
             "parties": [

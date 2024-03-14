@@ -18,8 +18,9 @@ package nps.models
 
 import play.api.libs.json.{Format, Json}
 
-final case class ReconciliationIdentifier(value: Int)
+final case class PayeeBankSortCode(value: String)
 
-object ReconciliationIdentifier {
-  implicit val format: Format[ReconciliationIdentifier] = Json.valueFormat[ReconciliationIdentifier]
+@SuppressWarnings(Array("org.wartremover.warts.Any"))
+object PayeeBankSortCode {
+  implicit val format: Format[PayeeBankSortCode] = Json.valueFormat[PayeeBankSortCode]
 }

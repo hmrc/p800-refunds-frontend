@@ -18,7 +18,7 @@ package pagespecs
 
 import models.p800externalapi.EventValue
 import testsupport.ItSpec
-import testsupport.stubs.{DateCalculatorStub, EcospendStub, P800RefundsExternalApiStub}
+import testsupport.stubs.{DateCalculatorStub, EcospendStub, P800RefundsExternalApiStub, NpsClaimOverpaymentStub}
 
 class VerifyBankAccountPageSpec extends ItSpec {
 
@@ -60,6 +60,12 @@ class VerifyBankAccountPageSpec extends ItSpec {
     pages.verifyBankAccountPage.assertPageIsDisplayed()
 
     P800RefundsExternalApiStub.isValid(tdAll.consentId, EventValue.Valid)
+    NpsClaimOverpaymentStub.claimOverpayment(
+      nino          = tdAll.nino,
+      p800Reference = tdAll.p800Reference,
+      request       = tdAll.claimOverpaymentRequest,
+      response      = tdAll.claimOverpaymentResponse
+    )
     pages.verifyBankAccountPage.clickRefreshThisPageLink()
     pages.requestReceivedBankTransferPage.assertPageIsDisplayedForBankTransfer()
     DateCalculatorStub.verifyAddWorkingDays()

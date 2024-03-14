@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 HM Revenue & Customs
+ * Copyright 2023 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,12 +14,22 @@
  * limitations under the License.
  */
 
-package nps.models
+package specs
 
-import play.api.libs.json.{Format, Json}
+import models.ecospend.account.BankAccountIdentification
+import testsupport.UnitSpec
 
-final case class ReconciliationIdentifier(value: Int)
+class BankAccountIdentificationSpec extends UnitSpec {
+  "Extract sort code" in {
+    val accountIdentification = BankAccountIdentification("44556610002333")
 
-object ReconciliationIdentifier {
-  implicit val format: Format[ReconciliationIdentifier] = Json.valueFormat[ReconciliationIdentifier]
+    accountIdentification.sortCode shouldBe "445566"
+  }
+
+  "Extract account number" in {
+    val accountIdentification = BankAccountIdentification("44556610002333")
+
+    accountIdentification.accountNumber shouldBe "10002333"
+  }
 }
+
