@@ -16,8 +16,10 @@
 
 package pagespecs.pages
 
+import models.journeymodels.JourneyType
 import org.openqa.selenium.WebDriver
 import pagespecs.pagesupport.{ContentExpectation, Page, PageUtil}
+import testsupport.RichMatchers.convertToAnyShouldWrapper
 
 class UpdateYourAddressPage(baseUrl: String)(implicit webDriver: WebDriver) extends Page(
   baseUrl,
@@ -25,9 +27,8 @@ class UpdateYourAddressPage(baseUrl: String)(implicit webDriver: WebDriver) exte
 ) {
 
   override def expectedH1: String = "Update your address"
-  override def expectedTitleContent: String = "Cheque - update your address"
+  override def expectedTitleContent: String = "update your address"
 
-  def staticJourney: String = ""
   override def assertPageIsDisplayed(extraExpectations: ContentExpectation*): Unit = withPageClue {
 
     val contentExpectations: Seq[ContentExpectation] = Seq(ContentExpectation(
@@ -46,9 +47,14 @@ class UpdateYourAddressPage(baseUrl: String)(implicit webDriver: WebDriver) exte
       baseUrl             = baseUrl,
       path                = path,
       h1                  = expectedH1,
-      title               = PageUtil.standardTitle(expectedTitleContent),
+      title               = PageUtil.standardTitleWithJourneyType(expectedTitleContent, JourneyType.Cheque),
       contentExpectations = contentExpectations: _*
     )
+
+    contactHmrcHref() shouldBe "https://www.gov.uk/government/organisations/hm-revenue-customs/contact/change-your-personal-details"
+    ()
   }
+
+  private def contactHmrcHref(): String = PageUtil.getHrefById("contact-hmrc-link")
 
 }

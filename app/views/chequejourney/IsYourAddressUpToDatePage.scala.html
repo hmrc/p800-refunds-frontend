@@ -17,55 +17,58 @@
 @import views.html.templates.Layout
 @import language.Messages
 @import uk.gov.hmrc.govukfrontend.views.html.components._
+@import action.JourneyRequest
+@import models.forms.enumsforforms.IsYourAddressUpToDateFormValue
+@import uk.gov.hmrc.govukfrontend.views.html.components.implicits._
 
 @this(
         layout: Layout,
         viewsHelpers: views.ViewsHelpers
 )
 
-@()(implicit request: Request[_])
+@(form: Form[IsYourAddressUpToDateFormValue])(implicit journeyRequest: JourneyRequest[_])
 
-    @import viewsHelpers.requestSupport._
+@import viewsHelpers.requestSupport._
 
-    @heading = @{
-        Messages.IsYourAddressUpToDate.`isYourAddressPageTitle`.show
+@layout(
+    pageTitle        = Some(Messages.IsYourAddressUpToDate.`is your address up to date`.show),
+    maybeJourneyType = Some(journeyRequest.journey.getJourneyType),
+    hasErrors        = form.hasErrors
+) {
+
+    @if(form.errors.nonEmpty) {
+        @viewsHelpers.govukErrorSummary(ErrorSummary(errorList = form.errors.asTextErrorLinks, title = Text(Messages.CommonMessages.`There is a problem`.show)))
     }
 
+    @viewsHelpers.formWithCsrf(action = controllers.routes.IsYourAddressUpToDateController.post) {
 
-    @layout(pageTitle = Some(heading)) {
-
-
-
-    @viewsHelpers.formWithCsrf(action = controllers.routes.DoYouWantYourRefundViaBankTransferController.post) {
         @viewsHelpers.govukRadios(Radios(
             fieldset = Some(Fieldset(
                 legend = Some(Legend(
-                    content = Text(Messages.IsYourAddressUpToDate.`isYourAddress`.show),
+                    content = Text(Messages.IsYourAddressUpToDate.`Is your address up to date?`.show),
                     classes = "govuk-fieldset__legend--xl",
                     isPageHeading = true
                 ))
             )),
             hint = Some(Hint(
-                content = Text(Messages.IsYourAddressUpToDate.`yourCheque`.show)
+                content = Text(Messages.IsYourAddressUpToDate.`Your cheque will be sent to the same address as your tax calculation letter.`.show)
             )),
-            name = "yourAddress",
+            name = "address-up-to-date",
             items = Seq(
                 RadioItem(
                     content = Text(Messages.IsYourAddressUpToDate.`yes`.show),
                     value = Some("Yes")
                 ),
                 RadioItem(
-                    content = Text(Messages.IsYourAddressUpToDate.`noNeedToUpdate`.show),
+                    content = Text(Messages.IsYourAddressUpToDate.`No, I need to update it`.show),
                     value = Some("No")
                 )
             )
-        )
+        ).withFormField(form("address-up-to-date")))
 
-
-        )
         @viewsHelpers.govukButton(Button(
-            content = Text(Messages.IsYourAddressUpToDate.`confirmAndContinue`.show),
+            content = Text(Messages.IsYourAddressUpToDate.`Confirm and continue`.show),
             id      = Some("submit")
         ))
     }
-    }
+}

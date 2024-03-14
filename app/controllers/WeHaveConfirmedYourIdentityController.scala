@@ -47,7 +47,7 @@ class WeHaveConfirmedYourIdentityController @Inject() (
     val journey = request.journey
     val nextCall: Call = journey.getJourneyType match {
       case JourneyType.BankTransfer => controllers.routes.EnterTheNameOfYourBankController.get
-      case JourneyType.Cheque       => controllers.routes.CompleteYourRefundRequestController.get
+      case JourneyType.Cheque       => controllers.routes.IsYourAddressUpToDateController.get
     }
     Redirect(nextCall.url)
   }

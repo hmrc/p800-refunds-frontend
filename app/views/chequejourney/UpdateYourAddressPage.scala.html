@@ -16,33 +16,35 @@
 
 @import views.html.templates.Layout
 @import language.Messages
+@import action.JourneyRequest
+@import config.AppConfig
 
 @this(
         layout: Layout,
+        appConfig: AppConfig,
         viewsHelpers: views.ViewsHelpers
 )
 
-@()(implicit request: Request[_])
+@()(implicit journeyRequest: JourneyRequest[_])
 
-    @import viewsHelpers.requestSupport._
+@import viewsHelpers.requestSupport._
 
-    @heading = @{
-        Messages.UpdateYourAddress.`updateYourAdressPageTitle`.show
-    }
+@layout(
+    pageTitle = Some(Messages.UpdateYourAddress.`update your address`.show),
+    maybeJourneyType = Some(journeyRequest.journey.getJourneyType)
+) {
+    <h1 class="govuk-heading-xl"> @{Messages.UpdateYourAddress.`Update your address`.show}</h1>
+    <p class="govuk-body">@{Messages.UpdateYourAddress.`To update your address you need to:`.show}</p>
 
-
-    @layout(pageTitle = Some(heading)) {
-        <h1 class="govuk-heading-xl"> @{Messages.UpdateYourAddress.`updateYourAdress`.show}</h1>
-        <p class="govuk-body">  @{Messages.UpdateYourAddress.`toUpdateYourAddress`.show}</p>
     <ul class="govuk-list govuk-list--number">
         <li>
-            @{Html(Messages.UpdateYourAddress.`contactHMRC`("#").show)}
+            @{Html(Messages.UpdateYourAddress.`contactHMRC`(appConfig.contactHmrcChangeDetailsUrl).show)}
         </li>
         <li>
-            @{Messages.UpdateYourAddress.`waitTwoDays`.show}
+            @{Messages.UpdateYourAddress.`Wait two days for HMRC to update your details.`.show}
         </li>
         <li>
-            @{Messages.UpdateYourAddress.`restartRequest`.show}
+            @{Messages.UpdateYourAddress.`Restart your refund request.`.show}
         </li>
     </ul>
-    }
+}

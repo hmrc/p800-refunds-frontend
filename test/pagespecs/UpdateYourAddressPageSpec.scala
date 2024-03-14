@@ -18,10 +18,16 @@ package pagespecs
 
 import testsupport.ItSpec
 
-class UpdateYourAddressSpec extends ItSpec {
+class UpdateYourAddressPageSpec extends ItSpec {
 
-  "navigating to /cheque/is-your-address-up-to-date" in {
-    pages.isYourAddressUpToDate.open()
-    pages.isYourAddressUpToDate.assertPageIsDisplayed()
+  override def beforeEach(): Unit = {
+    super.beforeEach()
+    addJourneyIdToSession(tdAll.journeyId)
+    upsertJourneyToDatabase(tdAll.Cheque.AfterReferenceCheck.journeyReferenceChecked)
+  }
+
+  "navigating to /cheque/update-your-address renders 'Update your address' page" in {
+    pages.updateYourAddressPage.open()
+    pages.updateYourAddressPage.assertPageIsDisplayed()
   }
 }
