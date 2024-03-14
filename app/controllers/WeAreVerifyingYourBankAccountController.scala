@@ -18,6 +18,7 @@ package controllers
 
 import action.{Actions, JourneyRequest}
 import connectors.P800RefundsExternalApiConnector
+import edh.{ClaimId, EdhConnector}
 import models.ecospend.account.BankAccountSummary
 import models.ecospend.consent.{BankReferenceId, ConsentId, ConsentStatus}
 import models.journeymodels._
@@ -32,12 +33,11 @@ import views.Views
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
-
 @Singleton
 class WeAreVerifyingYourBankAccountController @Inject() (
     actions:                         Actions,
     ecospendService:                 EcospendService,
-    edhConnector: EdhConnector,
+    edhConnector:                    EdhConnector,
     journeyService:                  JourneyService,
     mcc:                             MessagesControllerComponents,
     p800RefundsExternalApiConnector: P800RefundsExternalApiConnector,
@@ -57,10 +57,9 @@ class WeAreVerifyingYourBankAccountController @Inject() (
 
     for {
       // TODO: Assert status, consent_id & bank_reference_id match that contained within the journey
-      isValid <- p800RefundsExternalApiConnector.isValid(journey.getBankConsent.id)
-      // Call Ecospend - Get account details API to get more info about account
+      isValid <- getIsValid(journey)
       bankAccountSummary <- ecospendService.getAccountSummary(journey)
-
+      x <- getBankDetailsRiskResult(journey)
       // TODO: Call API#1133: Get Bank Details Risk Result (aka EDH Repayment Details Risk)
       // TODO: Call API#JF72745 Claim Overpayment
       // TODO: If API#1133 or API#JF72745 fails, call (JF72755) Suspend Overpayment
@@ -75,24 +74,19 @@ class WeAreVerifyingYourBankAccountController @Inject() (
     }
   }
 
-  sealed trait Op {
+  private def getBankDetailsRiskResult(journey: Journey)(implicit request: Request[_]): Future[EventValue] = {
+    val claimId: ClaimId =
+      journey
+        .getBankDetailsRiskResultResponse
+        .map(Future.successful)
+        .getOrElse(edhConnector.getBankDetailsRiskResult(claimId))
   }
 
-  case class Next(updatedJourney: Journey) extends Op
-  case class Stop(result: Result, journeyToUpsert: Journey) extends Op
-  case class StopAndUpdateJourney(result: Result, journeyToUpsert: Journey) extends Op
-
-  def processEcospend(journey: Journey): Future[Op] = journey.isValidEventValue match {
-    case Some(isValid) =>  Future.successful(isValid match {
-      case EventValue.Valid       => Redirect(routes.RequestReceivedController.getBankTransfer)
-      case EventValue.NotValid    =>  Stop(Redirect(routes.RefundRequestNotSubmittedController.get))
-      case EventValue.NotReceived => Stop(Ok(views.weAreVerifyingYourBankAccountPage(status, consent_id, bank_reference_id)))
-    })
-    case None =>  for {
-      isValid <- p800RefundsExternalApiConnector.isValid(journey.getBankConsent.)
-      // Call Ecospend - Get account details API to get more info about account
-      bankAccountSummary <- ecospendService.getAccountSummary(journey)
-    }
+  private def getIsValid(journey: Journey)(implicit request: Request[_]): Future[EventValue] = {
+    journey
+      .isValidEventValue
+      .map(Future.successful)
+      .getOrElse(p800RefundsExternalApiConnector.isValid(journey.getBankConsent.id))
   }
 
   //TODO: include more API updates when they're ready

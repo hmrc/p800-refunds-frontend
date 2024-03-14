@@ -129,15 +129,21 @@ trait TdBase {
     currency              = Currency.getInstance("GBP"),
     accountFormat         = BankAccountFormat.SortCode,
     accountIdentification = BankAccountIdentification("44556610002333"),
-    calculatedOwnerName   = CalculatedOwnerName("Greg Greggson"),
-    accountOwnerName      = BankAccountOwnerName("Greg Greggson"),
-    displayName           = BankAccountDisplayName("Greg G Greggson"),
+    calculatedOwnerName   = CalculatedOwnerName("Mr Greg Greggson"),
+    accountOwnerName      = BankAccountOwnerName("Greggson Gregory "),
+    displayName           = BankAccountDisplayName("MR G Greggson"),
     balance               = 123.7,
     lastUpdateTime        = localDateTime,
-    parties               = List(BankAccountParty(
-      name          = BankPartyName("Greg Greggson"),
-      fullLegalName = BankPartyFullLegalName("Greg Greggory Greggson")
-    ))
+    parties               = List(
+      BankAccountParty(
+        name          = BankPartyName("Greg Greggson"),
+        fullLegalName = BankPartyFullLegalName("Greg Greggory Greggson")
+      ),
+      BankAccountParty(
+        name          = BankPartyName("Margaret Greggson"),
+        fullLegalName = BankPartyFullLegalName("Margaretta Greggson")
+      )
+    )
   )
 
   lazy val isValidEventValueValid: EventValue = EventValue.Valid

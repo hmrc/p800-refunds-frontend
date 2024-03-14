@@ -16,6 +16,7 @@
 
 package models.journeymodels
 
+import edh.GetBankDetailsRiskResultResponse
 import models.dateofbirth.DateOfBirth
 import models.ecospend.BankDescription
 import models.ecospend.consent.BankConsentResponse
@@ -39,12 +40,13 @@ final case class Journey(
     isChanging:    IsChanging,
     dateOfBirth:   Option[DateOfBirth],
     // below, API Responses only
-    referenceCheckResult:    Option[ReferenceCheckResult], //reset this field upon changes of dependant fields
-    traceIndividualResponse: Option[TraceIndividualResponse], //reset this field upon changes of dependant fields
-    bankDescription:         Option[BankDescription],
-    bankConsentResponse:     Option[BankConsentResponse],
-    bankAccountSummary:      Option[BankAccountSummary],
-    isValidEventValue:       Option[EventValue]
+    referenceCheckResult:             Option[ReferenceCheckResult], //reset this field upon changes of dependant fields
+    traceIndividualResponse:          Option[TraceIndividualResponse], //reset this field upon changes of dependant fields
+    bankDescription:                  Option[BankDescription],
+    bankConsentResponse:              Option[BankConsentResponse],
+    bankAccountSummary:               Option[BankAccountSummary],
+    isValidEventValue:                Option[EventValue],
+    getBankDetailsRiskResultResponse: Option[GetBankDetailsRiskResultResponse]
 ) {
 
   /*
