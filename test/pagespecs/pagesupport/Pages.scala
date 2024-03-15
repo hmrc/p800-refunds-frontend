@@ -66,11 +66,7 @@ class Pages(baseUrl: String)(implicit webDriver: WebDriver) {
 
   val giveYourPermissionPage = new GiveYourPermissionPage(baseUrl = baseUrl)
 
-  val completeYourRefundRequestPage = new CompleteYourRefundRequestPage(baseUrl = baseUrl)
-
   val youCannotConfirmYourSecurityDetailsYetSpec = new YouCannotConfirmYourSecurityDetailsYetPage(baseUrl = baseUrl)
-
-  val updateYourAddressPage = new UpdateYourAddressPage(baseUrl = baseUrl)
 
   // for when techinical error occurs?
   val yourRefundRequestHasNotBeenSubmittedSpec = new YourRefundRequestHasNotBeenSubmittedPage(baseUrl = baseUrl)
@@ -78,6 +74,7 @@ class Pages(baseUrl: String)(implicit webDriver: WebDriver) {
   val thereIsAProblemPage = new ThereIsAProblemPage(baseUrl = baseUrl)
 
   val isYourAddressUpToDate = new IsYourAddressUpToDatePage(baseUrl = baseUrl)
+  val updateYourAddressPage = new UpdateYourAddressPage(baseUrl = baseUrl)
 
   val enterTheNameOfYourBankAccountPage = new EnterTheNameOfYourBankAccountPage(baseUrl = baseUrl)
 

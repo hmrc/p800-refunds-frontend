@@ -16,22 +16,69 @@
 
 package controllers
 
-import action.Actions
+import action.{Actions, JourneyRequest}
+import models.forms.IsYourAddressUpToDateForm
+import models.forms.enumsforforms.IsYourAddressUpToDateFormValue
+import models.journeymodels.{HasFinished, Journey, JourneyType}
+import nps.IssuePayableOrderConnector
+import nps.models.IssuePayableOrderRequest
 import play.api.mvc._
+import requests.RequestSupport
+import services.JourneyService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
+import util.Errors
+import util.SafeEquals.EqualsOps
 import views.Views
 
 import javax.inject.{Inject, Singleton}
+import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class IsYourAddressUpToDateController @Inject() (
-    mcc:     MessagesControllerComponents,
-    views:   Views,
-    actions: Actions
-) extends FrontendController(mcc) {
+    actions:                    Actions,
+    issuePayableOrderConnector: IssuePayableOrderConnector,
+    journeyService:             JourneyService,
+    mcc:                        MessagesControllerComponents,
+    views:                      Views,
+    requestSupport:             RequestSupport
+)(implicit executionContext: ExecutionContext) extends FrontendController(mcc) {
 
-  def get: Action[AnyContent] = actions.default {
-    implicit request: Request[_] => Ok(views.isYourAddressUpToDate())
+  import requestSupport._
+
+  def get: Action[AnyContent] = actions.journeyInProgress { implicit journeyRequest: JourneyRequest[_] =>
+    Ok(views.isYourAddressUpToDatePage(IsYourAddressUpToDateForm.form))
+  }
+
+  def post: Action[AnyContent] = actions.journeyInProgress.async { implicit journeyRequest: JourneyRequest[_] =>
+    val journey: Journey = journeyRequest.journey
+    Errors.require(journey.getJourneyType === JourneyType.Cheque, "This endpoint supports only Cheque journey")
+
+    IsYourAddressUpToDateForm.form.bindFromRequest().fold(
+      formWithErrors => Future.successful(BadRequest(views.isYourAddressUpToDatePage(
+        form = formWithErrors
+      ))), {
+
+        case IsYourAddressUpToDateFormValue.Yes =>
+          for {
+            _ <- issuePayableOrderConnector.issuePayableOrder(
+              nino                     = journey.getNino,
+              p800Reference            = journey.getP800Reference,
+              issuePayableOrderRequest = IssuePayableOrderRequest(
+                customerAccountNumber   = journey.getP800ReferenceChecked.customerAccountNumber,
+                associatedPayableNumber = journey.getP800ReferenceChecked.associatedPayableNumber,
+                currentOptimisticLock   = journey.getP800ReferenceChecked.currentOptimisticLock
+              )
+            )
+            _ <- journeyService.upsert(
+              journey.copy(hasFinished = HasFinished.YesSucceeded)
+            )
+          } yield Redirect(controllers.routes.RequestReceivedController.getCheque)
+
+        case IsYourAddressUpToDateFormValue.No =>
+          Future.successful(Redirect(controllers.routes.UpdateYourAddressController.get))
+
+      }
+    )
   }
 
 }

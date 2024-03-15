@@ -16,6 +16,7 @@
 
 package pagespecs.pages
 
+import models.journeymodels.JourneyType
 import org.openqa.selenium.WebDriver
 import pagespecs.pagesupport.{ContentExpectation, Page, PageUtil}
 
@@ -25,9 +26,8 @@ class IsYourAddressUpToDatePage(baseUrl: String)(implicit webDriver: WebDriver) 
 ) {
 
   override def expectedH1: String = "Is your address up to date?"
-  override def expectedTitleContent: String = "Cheque - is your address up to date"
+  override def expectedTitleContent: String = "is your address up to date"
 
-  def staticJourney: String = ""
   override def assertPageIsDisplayed(extraExpectations: ContentExpectation*): Unit = withPageClue {
 
     val contentExpectations: Seq[ContentExpectation] = Seq(ContentExpectation(
@@ -46,9 +46,54 @@ class IsYourAddressUpToDatePage(baseUrl: String)(implicit webDriver: WebDriver) 
       baseUrl             = baseUrl,
       path                = path,
       h1                  = expectedH1,
-      title               = PageUtil.standardTitle(expectedTitleContent),
+      title               = PageUtil.standardTitleWithJourneyType(expectedTitleContent, JourneyType.Cheque),
       contentExpectations = contentExpectations: _*
     )
+  }
+
+  def assertPageIsDisplayedWithError(): Unit = withPageClue {
+
+    val contentExpectations: Seq[ContentExpectation] = Seq(
+      ContentExpectation(
+        atXpath       = PageUtil.Xpath.mainContent,
+        expectedLines =
+          """
+            |Is your address up to date?
+            |Your cheque will be sent to the same address as your tax calculation letter.
+            |Yes
+            |No, I need to update it
+            |Confirm and continue
+            |""".stripMargin
+      ),
+      ContentExpectation(
+        atXpath       = PageUtil.Xpath.errorSummary,
+        expectedLines =
+          """
+            |There is a problem
+            |Select if your address is up to date
+            |""".stripMargin
+      ),
+      ContentExpectation(
+        atXpath       = PageUtil.Xpath.errorMessage,
+        expectedLines = """Error: Select if your address is up to date"""
+      )
+    )
+
+    PageUtil.assertPage(
+      baseUrl             = baseUrl,
+      path                = path,
+      h1                  = expectedH1,
+      title               = PageUtil.standardErrorTitle(expectedTitleContent, JourneyType.Cheque),
+      contentExpectations = contentExpectations: _*
+    )
+  }
+
+  def selectYes(): Unit = withPageClue {
+    PageUtil.clickByIdOrName("address-up-to-date")
+  }
+
+  def selectNo(): Unit = withPageClue {
+    PageUtil.clickByIdOrName("address-up-to-date-2")
   }
 
 }

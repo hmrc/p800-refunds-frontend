@@ -16,7 +16,7 @@
 
 package controllers
 
-import action.Actions
+import action.{Actions, JourneyRequest}
 import play.api.mvc._
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import views.Views
@@ -30,8 +30,8 @@ class UpdateYourAddressController @Inject() (
     actions: Actions
 ) extends FrontendController(mcc) {
 
-  def get: Action[AnyContent] = actions.default {
-    implicit request: Request[_] => Ok(views.updateYourAddress())
+  def get: Action[AnyContent] = actions.journeyInProgress { implicit request: JourneyRequest[_] =>
+    Ok(views.updateYourAddressPage())
   }
 
 }
