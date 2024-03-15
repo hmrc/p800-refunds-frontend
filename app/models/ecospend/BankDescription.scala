@@ -25,9 +25,8 @@ final case class BankDescription(
     name:         BankName,
     friendlyName: BankFriendlyName,
     logoUrl:      Uri,
-    group:        BankGroup,
     iconUrl:      Uri,
-    hasFdp:       Boolean
+    group:        BankGroup
 )
 
 @SuppressWarnings(Array("org.wartremover.warts.Any"))

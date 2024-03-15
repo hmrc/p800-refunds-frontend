@@ -23,12 +23,15 @@ import testsupport.UnitSpec
 class EcospendBankAbilitiesSpec extends UnitSpec {
   "Survive round-trip JSON serialisation" in {
     val testBankAbilities = EcospendBankAbilities(
-      domestic                   = true,
-      domesticScheduled          = false,
-      domesticStandingOrder      = true,
-      international              = false,
-      internationalScheduled     = true,
-      internationalStandingOrder = false
+      account           = true,
+      balance           = false,
+      transactions      = true,
+      directDebits      = false,
+      standingOrders    = true,
+      parties           = false,
+      scheduledPayments = true,
+      statements        = false,
+      offers            = true
     )
 
     val json = Json.toJson(testBankAbilities)
@@ -38,25 +41,32 @@ class EcospendBankAbilitiesSpec extends UnitSpec {
 
   "Deserialise from Ecospend example JSON" in {
     val testJson = Json.parse(
+      //language=JSON
       """
-        |{
-        |  "domestic_payment": true,
-        |  "domestic_scheduled_payment": true,
-        |  "domestic_standing_order": true,
-        |  "international_payment": true,
-        |  "international_scheduled_payment": true,
-        |  "international_standing_order": true
-        |}
+        {
+          "account": true,
+          "balance": true,
+          "transactions": true,
+          "direct_debits": true,
+          "standing_orders": true,
+          "parties": true,
+          "scheduled_payments": true,
+          "statements": true,
+          "offers": true
+        }
       """.stripMargin
     )
 
     val expectedBankAbilities = EcospendBankAbilities(
-      domestic                   = true,
-      domesticScheduled          = true,
-      domesticStandingOrder      = true,
-      international              = true,
-      internationalScheduled     = true,
-      internationalStandingOrder = true
+      account           = true,
+      balance           = true,
+      transactions      = true,
+      directDebits      = true,
+      standingOrders    = true,
+      parties           = true,
+      scheduledPayments = true,
+      statements        = true,
+      offers            = true
     )
 
     implicitly[Reads[EcospendBankAbilities]].reads(testJson) shouldBe JsSuccess(expectedBankAbilities)

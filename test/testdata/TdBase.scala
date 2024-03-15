@@ -81,9 +81,8 @@ trait TdBase {
     name         = BankName("Barclays Personal"),
     friendlyName = BankFriendlyName("Barclays Personal"),
     logoUrl      = Uri("https://logo.com"),
-    group        = BankGroup("Barclays"),
-    iconUrl      = "https://public.ecospend.com/images/banks/Barclays_icon.svg",
-    hasFdp       = false
+    iconUrl      = Uri("https://public.ecospend.com/images/banks/Barclays_icon.svg"),
+    group        = BankGroup("Barclays")
   )
 
   def attemptInfo(failedAttempts: Int): AttemptInfo = AttemptInfo(

@@ -16,40 +16,26 @@
 
 package models.ecospend
 
-import play.api.libs.functional.syntax._
 import play.api.libs.json._
 
 final case class EcospendBankAbilities(
-    domestic:                   Boolean,
-    domesticScheduled:          Boolean,
-    domesticStandingOrder:      Boolean,
-    international:              Boolean,
-    internationalScheduled:     Boolean,
-    internationalStandingOrder: Boolean
+    account:           Boolean,
+    balance:           Boolean,
+    transactions:      Boolean,
+    directDebits:      Boolean,
+    standingOrders:    Boolean,
+    parties:           Boolean,
+    scheduledPayments: Boolean,
+    statements:        Boolean,
+    offers:            Boolean
 )
 
 @SuppressWarnings(Array("org.wartremover.warts.Any"))
 object EcospendBankAbilities {
+  implicit val format: OFormat[EcospendBankAbilities] = {
+    implicit val config: JsonConfiguration = JsonConfiguration(JsonNaming.SnakeCase)
 
-  private val reads: Reads[EcospendBankAbilities] = (
-    (__ \ "domestic_payment").read[Boolean].orElse(Reads(_ => JsError("Could not parse domestic_payment value"))) and
-    (__ \ "domestic_scheduled_payment").read[Boolean].orElse(Reads(_ => JsError("Could not parse domestic_scheduled_payment value"))) and
-    (__ \ "domestic_standing_order").read[Boolean].orElse(Reads(_ => JsError("Could not parse domestic_standing_order value"))) and
-    (__ \ "international_payment").read[Boolean].orElse(Reads(_ => JsError("Could not parse international_payment value"))) and
-    (__ \ "international_scheduled_payment").read[Boolean].orElse(Reads(_ => JsError("Could not parse international_scheduled_payment value"))) and
-    (__ \ "international_standing_order").read[Boolean].orElse(Reads(_ => JsError("Could not parse international_standing_order value")))
-  ) ((domestic, domesticScheduled, domesticStanding, international, internationalScheduled, internationalStanding) =>
-      EcospendBankAbilities(domestic, domesticScheduled, domesticStanding, international, internationalScheduled, internationalStanding))
-
-  private val writes: OWrites[EcospendBankAbilities] = (ecospendBankDescription: EcospendBankAbilities) => Json.obj(
-    "domestic_payment" -> ecospendBankDescription.domestic,
-    "domestic_scheduled_payment" -> ecospendBankDescription.domesticScheduled,
-    "domestic_standing_order" -> ecospendBankDescription.domesticStandingOrder,
-    "international_payment" -> ecospendBankDescription.international,
-    "international_scheduled_payment" -> ecospendBankDescription.internationalScheduled,
-    "international_standing_order" -> ecospendBankDescription.internationalStandingOrder
-  )
-
-  implicit val format: OFormat[EcospendBankAbilities] = OFormat(reads, writes)
+    Json.format[EcospendBankAbilities]
+  }
 }
 

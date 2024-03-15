@@ -104,12 +104,15 @@ object EcospendStub {
               "group": "Barclays",
               "order": 0,
               "abilities": {
-                "domestic_payment": true,
-                "domestic_scheduled_payment": true,
-                "domestic_standing_order": true,
-                "international_payment": true,
-                "international_scheduled_payment": true,
-                "international_standing_order": true
+                "account": true,
+                "balance": true,
+                "transactions": true,
+                "direct_debits": true,
+                "standing_orders": true,
+                "parties": true,
+                "scheduled_payments": true,
+                "statements": true,
+                "offers": true
               },
               "service_status": true
             },
@@ -126,12 +129,15 @@ object EcospendStub {
               "group": "Barclays",
               "order": 0,
               "abilities": {
-                "domestic_payment": true,
-                "domestic_scheduled_payment": true,
-                "domestic_standing_order": true,
-                "international_payment": true,
-                "international_scheduled_payment": true,
-                "international_standing_order": true
+                "account": true,
+                "balance": true,
+                "transactions": true,
+                "direct_debits": true,
+                "standing_orders": true,
+                "parties": true,
+                "scheduled_payments": true,
+                "statements": true,
+                "offers": true
               },
               "service_status": true
             },
@@ -148,12 +154,15 @@ object EcospendStub {
               "group": "Lloyds",
               "order": 0,
               "abilities": {
-                "domestic_payment": true,
-                "domestic_scheduled_payment": true,
-                "domestic_standing_order": true,
-                "international_payment": true,
-                "international_scheduled_payment": true,
-                "international_standing_order": true
+                "account": true,
+                "balance": true,
+                "transactions": true,
+                "direct_debits": true,
+                "standing_orders": true,
+                "parties": true,
+                "scheduled_payments": true,
+                "statements": true,
+                "offers": true
               },
               "service_status": true
             }
