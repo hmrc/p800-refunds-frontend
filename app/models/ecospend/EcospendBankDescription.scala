@@ -18,7 +18,6 @@ package models.ecospend
 
 import org.apache.pekko.http.scaladsl.model.Uri
 import models.UriFormats.uriJsonFormat
-import play.api.libs.functional.syntax._
 import play.api.libs.json._
 
 final case class EcospendBankDescription(
@@ -26,55 +25,25 @@ final case class EcospendBankDescription(
     name:           BankName,
     friendlyName:   BankFriendlyName,
     isSandbox:      Boolean,
-    logoUrl:        Uri,
+    logo:           Uri,
+    icon:           Uri,
     standard:       Option[String],
     countryIsoCode: Option[String],
     division:       Option[String],
     group:          BankGroup,
     order:          Int,
-    abilities:      EcospendBankAbilities,
     serviceStatus:  Boolean,
-    iconUrl:        Uri
+    abilities:      EcospendBankAbilities
 ) {
-  def toFrontendBankDescription: BankDescription = BankDescription(bankId, name, friendlyName, logoUrl, group, iconUrl, abilities.domesticScheduled)
+  def toFrontendBankDescription: BankDescription = BankDescription(bankId, name, friendlyName, logo, icon, group)
 }
 
 @SuppressWarnings(Array("org.wartremover.warts.Any"))
 object EcospendBankDescription {
+  implicit val format: OFormat[EcospendBankDescription] = {
+    implicit val config: JsonConfiguration = JsonConfiguration(JsonNaming.SnakeCase)
 
-  private val reads: Reads[EcospendBankDescription] = (
-    (__ \ "bank_id").read[BankId].orElse(Reads(_ => JsError("Could not parse bank_id value"))) and
-    (__ \ "name").read[BankName].orElse(Reads(_ => JsError("Could not parse name value"))) and
-    (__ \ "friendly_name").read[BankFriendlyName].orElse(Reads(_ => JsError("Could not parse friendly_name value"))) and
-    (__ \ "is_sandbox").read[Boolean].orElse(Reads(_ => JsError("Could not parse is_sandbox value"))) and
-    (__ \ "logo").read[String].orElse(Reads(_ => JsError("Could not parse logo value"))) and
-    (__ \ "standard").readNullable[String].orElse(Reads(_ => JsError("Could not parse standard value"))) and
-    (__ \ "country_iso_code").readNullable[String].orElse(Reads(_ => JsError("Could not parse country_iso_code value"))) and
-    (__ \ "division").readNullable[String].orElse(Reads(_ => JsError("Could not parse division value"))) and
-    (__ \ "group").read[BankGroup].orElse(Reads(_ => JsError("Could not parse group value"))) and
-    (__ \ "order").read[Int].orElse(Reads(_ => JsError("Could not parse order value"))) and
-    (__ \ "abilities").read[EcospendBankAbilities].orElse(Reads(_ => JsError("Could not parse abilities value"))) and
-    (__ \ "service_status").read[Boolean].orElse(Reads(_ => JsError("Could not parse service_status value"))) and
-    (__ \ "icon").read[String].orElse(Reads(_ => JsError("Could not parse icon value")))
-  ) ((bankId, name, friendlyName, isSandbox, logo, standard, countryIsoCode, division, group, order, abilities, serviceStatus, icon) =>
-      EcospendBankDescription(bankId, name, friendlyName, isSandbox, logo, standard, countryIsoCode, division, group, order, abilities, serviceStatus, icon))
-
-  private val writes: OWrites[EcospendBankDescription] = (ecospendBankDescription: EcospendBankDescription) => Json.obj(
-    "bank_id" -> ecospendBankDescription.bankId,
-    "name" -> ecospendBankDescription.name,
-    "friendly_name" -> ecospendBankDescription.friendlyName,
-    "is_sandbox" -> ecospendBankDescription.isSandbox,
-    "logo" -> ecospendBankDescription.logoUrl,
-    "standard" -> ecospendBankDescription.standard,
-    "country_iso_code" -> ecospendBankDescription.countryIsoCode,
-    "division" -> ecospendBankDescription.division,
-    "group" -> ecospendBankDescription.group,
-    "order" -> ecospendBankDescription.order,
-    "abilities" -> ecospendBankDescription.abilities,
-    "service_status" -> ecospendBankDescription.serviceStatus,
-    "icon" -> ecospendBankDescription.iconUrl,
-  )
-
-  implicit val format: OFormat[EcospendBankDescription] = OFormat(reads, writes)
+    Json.format[EcospendBankDescription]
+  }
 }
 
