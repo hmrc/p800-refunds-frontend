@@ -29,13 +29,11 @@ import services.{FailedVerificationAttemptService, JourneyService}
 import uk.gov.hmrc.govukfrontend.views.Aliases.{HtmlContent, Key, SummaryListRow, Value}
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryList
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
-import util.JourneyLogger
 import views.Views
 
 import java.time.format.DateTimeFormatter
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
-import scala.util.{Failure, Success, Try}
 
 @Singleton
 class CheckYourAnswersController @Inject() (
@@ -91,8 +89,6 @@ class CheckYourAnswersController @Inject() (
       .map(_ => Redirect(EnterYourP800ReferenceController.redirectLocation(journey)))
   }
 
-  private val `YYYY-MM-DD` = DateTimeFormatter.ISO_LOCAL_DATE
-
   @SuppressWarnings(Array("org.wartremover.warts.Any"))
   def post: Action[AnyContent] = actions
     .journeyInProgress
@@ -105,7 +101,7 @@ class CheckYourAnswersController @Inject() (
           case JourneyType.BankTransfer => traceIndividualConnector
             .traceIndividual(traceIndividualRequest = TraceIndividualRequest(
               journey.getNino,
-              formatDateOfBirth(journey.getDateOfBirth, `YYYY-MM-DD`)
+              journey.getDateOfBirth.`formatYYYY-MM-DD`
             )).map(Some(_))
           case JourneyType.Cheque => Future.successful(None)
         }
@@ -188,7 +184,7 @@ class CheckYourAnswersController @Inject() (
     buildSummaryListRow(
       Messages.CheckYourAnswersMessages.`Date of birth`.show,
       id    = "date-of-birth",
-      value = formatDateOfBirth(dateOfBirth, `dd MMMM yyyy`),
+      value = dateOfBirth.format(`dd MMMM yyyy`),
       call  = controllers.routes.CheckYourAnswersController.changeDateOfBirth
     )
   }
@@ -218,16 +214,6 @@ class CheckYourAnswersController @Inject() (
     )),
     classes = ""
   )
-
-  private def formatDateOfBirth(dateOfBirth: DateOfBirth, formatter: DateTimeFormatter)(implicit request: Request[_]): String = {
-    Try(DateOfBirth.asLocalDate(dateOfBirth)) match {
-      case Success(date) =>
-        date.format(formatter)
-      case Failure(ex) =>
-        JourneyLogger.error(s"Error formatting date, investigate (the journey was not interrupted)", ex)
-        s"${dateOfBirth.dayOfMonth.value} ${dateOfBirth.month.value} ${dateOfBirth.year.value} "
-    }
-  }
 
 }
 

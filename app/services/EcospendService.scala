@@ -17,13 +17,13 @@
 package services
 
 import action.JourneyRequest
-import org.apache.pekko.http.scaladsl.model.Uri
 import connectors.{EcospendAuthServerConnector, EcospendConnector}
 import models.ecospend.BankDescription
 import models.ecospend.account.BankAccountSummary
-import models.ecospend.consent.{BankConsentRequest, BankConsentResponse, ConsentPermission, ConsentReferrerChannel, ConsentCreationReason}
-import models.ecospend.verification.{BankVerification, BankVerificationRequest}
+import models.ecospend.consent._
 import models.journeymodels.Journey
+import org.apache.pekko.http.scaladsl.model.Uri
+import play.api.mvc.RequestHeader
 import util.Errors
 
 import java.time.LocalDateTime
@@ -43,12 +43,6 @@ class EcospendService @Inject() (
 
     banks = getBanksResponse.data.filter(_.serviceStatus).map(_.toFrontendBankDescription)
   } yield banks
-
-  //TODO: remove it and call backend to get the validation result from webhook
-  def validate(journey: Journey)(implicit request: JourneyRequest[_]): Future[BankVerification] = for {
-    accessToken <- ecospendAuthServerConnector.accessToken
-    bankVerificationResponse <- ecospendConnector.validate(accessToken, BankVerificationRequest(journey.getNino.value))
-  } yield bankVerificationResponse
 
   def createConsent(journey: Journey)(implicit request: JourneyRequest[_]): Future[BankConsentResponse] = for {
     accessToken <- ecospendAuthServerConnector.accessToken
@@ -75,16 +69,11 @@ class EcospendService @Inject() (
       creationReason   = ConsentCreationReason.Algorithm
     )
 
-  def getAccountSummary(journey: Journey)(implicit request: JourneyRequest[_]): Future[BankAccountSummary] =
-    journey.bankAccountSummary match {
-      case None =>
-        for {
-          accessToken <- ecospendAuthServerConnector.accessToken
-          consentId = journey.getBankConsent.id
-          bankAccountSummaryResponse <- ecospendConnector.getAccountSummary(accessToken, consentId)
-        } yield bankAccountSummaryResponse.value.headOption.getOrElse(Errors.throwServerErrorException("Failed to get BankAccountSummary from BankAccountSummaryResponse"))
-      case Some(bankAccountSummary) =>
-        Future.successful(bankAccountSummary)
-    }
+  def getAccountSummary(journey: Journey)(implicit r: RequestHeader): Future[BankAccountSummary] =
+    for {
+      accessToken <- ecospendAuthServerConnector.accessToken
+      consentId = journey.getBankConsent.id
+      bankAccountSummaryResponse <- ecospendConnector.getAccountSummary(accessToken, consentId)
+    } yield bankAccountSummaryResponse.value.headOption.getOrElse(Errors.throwServerErrorException("Failed to get BankAccountSummary from BankAccountSummaryResponse"))
 
 }

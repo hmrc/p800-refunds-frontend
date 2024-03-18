@@ -16,14 +16,13 @@
 
 package models.ecospend.account
 
-import play.api.libs.json.{Json, Format}
+import testsupport.UnitSpec
 
-final case class BankAccountIdentification(value: String) extends AnyVal {
-  private def asSortCodeAndAccountNumber: (String, String) = value.splitAt(6)
-  def sortCode: String = asSortCodeAndAccountNumber._1
-  def bankAccountNumber: String = asSortCodeAndAccountNumber._2
-}
+class BankAccountIdentificationSpec extends UnitSpec {
 
-object BankAccountIdentification {
-  implicit val format: Format[BankAccountIdentification] = Json.valueFormat[BankAccountIdentification]
+  "split into sort code and bank account number" in {
+    BankAccountIdentification("12345688888888").sortCode shouldBe "123456"
+    BankAccountIdentification("12345688888888").bankAccountNumber shouldBe "88888888"
+  }
+
 }

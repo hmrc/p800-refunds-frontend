@@ -43,7 +43,7 @@ class RequestSupport @Inject() (i18nSupport: I18nSupport) {
     i18nSupport.request2Messages(requestHeader)
   }
 
-  implicit def hc(implicit request: Request[_]): HeaderCarrier = RequestSupport.hc
+  implicit def hc(implicit request: RequestHeader): HeaderCarrier = RequestSupport.hc
 }
 
 object RequestSupport {

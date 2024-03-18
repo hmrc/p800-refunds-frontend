@@ -17,15 +17,15 @@
 package connectors
 
 import config.AppConfig
-import uk.gov.hmrc.http.HttpReads.Implicits._
 import models.ecospend.EcospendAccessToken
-import action.JourneyRequest
+import play.api.mvc.RequestHeader
 import requests.RequestSupport
+import uk.gov.hmrc.http.HttpReads.Implicits._
 import util.JourneyLogger
 
 import java.time.Clock
 import javax.inject.{Inject, Singleton}
-import scala.concurrent.{Future, ExecutionContext}
+import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class EcospendAuthServerConnector @Inject() (
@@ -34,11 +34,11 @@ class EcospendAuthServerConnector @Inject() (
     requestSupport: RequestSupport
 )(implicit ec: ExecutionContext, clock: Clock) {
 
-  import requestSupport.hc
+  import requestSupport._
 
   private val accessTokenUrl = appConfig.ExternalApiCalls.ecospendAuthServerUrl + "/connect/token"
 
-  def accessToken(implicit request: JourneyRequest[_]): Future[EcospendAccessToken] = captureException {
+  def accessToken(implicit request: RequestHeader): Future[EcospendAccessToken] = captureException {
     val body: Map[String, Seq[String]] = Map(
       "grant_type" -> "client_credentials",
       "client_id" -> appConfig.ExternalApiCalls.ecospendAuthClientId,
@@ -48,7 +48,7 @@ class EcospendAuthServerConnector @Inject() (
     httpClient.POSTForm[EcospendAccessToken](accessTokenUrl, body)
   }
 
-  private def captureException[A](future: => Future[A])(implicit request: JourneyRequest[_]): Future[A] =
+  private def captureException[A](future: => Future[A])(implicit request: RequestHeader): Future[A] =
     future.recover {
       case ex =>
         JourneyLogger.warn(s"EcospendAuth call failed with exception: ${ex.toString}")

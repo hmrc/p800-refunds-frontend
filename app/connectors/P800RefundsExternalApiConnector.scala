@@ -16,7 +16,6 @@
 
 package connectors
 
-import action.JourneyRequest
 import com.google.inject.{Inject, Singleton}
 import config.AppConfig
 import models.ecospend.consent.ConsentId

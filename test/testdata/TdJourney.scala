@@ -29,20 +29,21 @@ trait TdJourney {
   lazy val journeyId: JourneyId = JourneyId("64886ed616fe8b501cbf0088")
 
   lazy val journeyStarted: Journey = Journey(
-    _id                     = journeyId,
-    createdAt               = dependencies.instant,
-    hasFinished             = HasFinished.No,
-    journeyType             = None,
-    p800Reference           = None,
-    nino                    = None,
-    isChanging              = IsChanging.No,
-    dateOfBirth             = None,
-    referenceCheckResult    = None,
-    traceIndividualResponse = None,
-    bankDescription         = None,
-    bankConsentResponse     = None,
-    bankAccountSummary      = None,
-    isValidEventValue       = None
+    _id                              = journeyId,
+    createdAt                        = dependencies.instant,
+    hasFinished                      = HasFinished.No,
+    journeyType                      = None,
+    p800Reference                    = None,
+    nino                             = None,
+    isChanging                       = IsChanging.No,
+    dateOfBirth                      = None,
+    referenceCheckResult             = None,
+    traceIndividualResponse          = None,
+    bankDescription                  = None,
+    bankConsentResponse              = None,
+    bankAccountSummary               = None,
+    isValidEventValue                = None,
+    getBankDetailsRiskResultResponse = None
   )
 
   object BankTransfer {

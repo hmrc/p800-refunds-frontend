@@ -19,10 +19,12 @@ package edh
 import models.Nino
 import play.api.libs.json._
 
+import java.util.UUID
 import scala.util.matching.Regex
 
 final case class ClaimId(value: String) {
   def validate: Option[String] = if (ClaimId.regex.matches(value)) None else Some("Invalid 'ClaimId'")
+  def asTransactionId: TransactionID = TransactionID(value)
 }
 
 object ClaimId {
@@ -31,6 +33,7 @@ object ClaimId {
 
   private val regex: Regex = """^[A-Za-z0-9\- ]{1,255}$""".r
 
+  def next(): ClaimId = ClaimId(UUID.randomUUID().toString)
 }
 
 final case class Header(
@@ -318,11 +321,10 @@ object Currency {
 
 sealed trait PersonType
 
-case object Customer extends PersonType
-
-case object Designate extends PersonType
-
 object PersonType {
+  case object Customer extends PersonType
+  case object Designate extends PersonType
+
   @SuppressWarnings(Array("org.wartremover.warts.Any"))
   implicit val format: Format[PersonType] = new Format[PersonType] {
     def reads(json: JsValue): JsResult[PersonType] = json match {

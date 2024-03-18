@@ -25,7 +25,7 @@ import models.p800externalapi.EventValue
 import models.{AmountInPence, Nino, P800Reference}
 import nps.models.{ReferenceCheckResult, TraceIndividualResponse}
 import play.api.libs.json.OFormat
-import play.api.mvc.Request
+import play.api.mvc.{Request, RequestHeader}
 import util.Errors
 
 import java.time.{Clock, Instant}
@@ -107,14 +107,15 @@ final case class Journey(
       //TODO: reset other API responses populated bankConsentResponse
       )
 
-  def update(bankAccountSummary: BankAccountSummary): Journey =
-    this
-      .copy(
-        bankAccountSummary = Some(bankAccountSummary)
-      //TODO: reset other API responses populated bankAccountSummary
-      )
-
-  def update(eventValue: EventValue): Journey = this.copy(isValidEventValue = Some(eventValue))
+  def update(
+      eventValue:                       EventValue,
+      bankAccountSummary:               BankAccountSummary,
+      getBankDetailsRiskResultResponse: GetBankDetailsRiskResultResponse
+  ): Journey = copy(
+    bankAccountSummary               = Some(bankAccountSummary),
+    getBankDetailsRiskResultResponse = Some(getBankDetailsRiskResultResponse),
+    isValidEventValue                = Some(eventValue)
+  )
 
   def update(hasFinished: HasFinished): Journey = this.copy(hasFinished = hasFinished)
 
@@ -142,18 +143,20 @@ final case class Journey(
 
   def getBankDescription(implicit request: Request[_]): BankDescription = bankDescription.getOrElse(Errors.throwServerErrorException(s"Expected 'bankDescription' to be defined but it was None [${journeyId.toString}] "))
 
-  def getBankConsent(implicit request: Request[_]): BankConsentResponse = bankConsentResponse.getOrElse(Errors.throwBadRequestException("Expected 'bankConsent' to be defined but it was None [${journeyId.toString}] "))
+  def getBankConsent(implicit request: RequestHeader): BankConsentResponse = bankConsentResponse.getOrElse(Errors.throwBadRequestException("Expected 'bankConsent' to be defined but it was None [${journeyId.toString}] "))
 
-  def getBankAccountSummary(implicit request: Request[_]): BankAccountSummary = bankAccountSummary.getOrElse(Errors.throwBadRequestException("Expected 'bankAccountSummary' to be defined but it was None [${journeyId.toString}] "))
+  def getBankAccountSummary(implicit request: RequestHeader): BankAccountSummary = bankAccountSummary.getOrElse(Errors.throwBadRequestException("Expected 'bankAccountSummary' to be defined but it was None [${journeyId.toString}] "))
 
-  def getReferenceCheckResult(implicit request: Request[_]): ReferenceCheckResult = referenceCheckResult.getOrElse(Errors.throwServerErrorException(s"Expected 'referenceCheckResult' to be defined but it was None [${journeyId.toString}] "))
+  def getTraceIndividualResponse(implicit request: RequestHeader): TraceIndividualResponse = traceIndividualResponse.getOrElse(Errors.throwServerErrorException(s"Expected 'traceIndividualResponse' to be defined but it was None [${journeyId.toString}] "))
 
-  def getP800ReferenceChecked(implicit request: Request[_]): ReferenceCheckResult.P800ReferenceChecked = getReferenceCheckResult match {
+  def getReferenceCheckResult(implicit request: RequestHeader): ReferenceCheckResult = referenceCheckResult.getOrElse(Errors.throwServerErrorException(s"Expected 'referenceCheckResult' to be defined but it was None [${journeyId.toString}] "))
+
+  def getP800ReferenceChecked(implicit request: RequestHeader): ReferenceCheckResult.P800ReferenceChecked = getReferenceCheckResult match {
     case r: ReferenceCheckResult.P800ReferenceChecked => r
     case r => Errors.throwServerErrorException(s"Expected 'referenceCheckResult' to be 'P800ReferenceChecked' to be defined but it was '${r.toString}' [${journeyId.toString}] ")
   }
 
-  def getAmount(implicit request: Request[_]): AmountInPence = AmountInPence(getP800ReferenceChecked.paymentAmount)
+  def getAmount(implicit request: RequestHeader): AmountInPence = AmountInPence(getP800ReferenceChecked.paymentAmount)
 
   def isIdentityVerified: Boolean = referenceCheckResult.exists {
     case _: ReferenceCheckResult.P800ReferenceChecked => true
