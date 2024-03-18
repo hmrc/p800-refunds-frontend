@@ -57,9 +57,6 @@ POST        /bank-transfer/choose-another-way-to-receive-your-refund       contr
 GET         /cheque/claim-your-refund-by-bank-transfer                     controllers.ClaimYourRefundByBankTransferController.get
 POST        /cheque/claim-your-refund-by-bank-transfer                     controllers.ClaimYourRefundByBankTransferController.post
 
-GET         /cheque/complete-refund-request                                controllers.CompleteYourRefundRequestController.get
-POST        /cheque/complete-refund-request                                controllers.CompleteYourRefundRequestController.post
-
 GET         /bank-transfer/enter-name-of-your-bank                         controllers.EnterTheNameOfYourBankController.get
 POST        /bank-transfer/enter-name-of-your-bank                         controllers.EnterTheNameOfYourBankController.post
 
@@ -76,7 +73,7 @@ GET         /bank-transfer/refund-request-not-submitted                    contr
 POST        /bank-transfer/refund-request-not-submitted                    controllers.RefundRequestNotSubmittedController.post
 
 GET         /cheque/is-your-address-up-to-date                             controllers.IsYourAddressUpToDateController.get
-
+POST        /cheque/is-your-address-up-to-date                             controllers.IsYourAddressUpToDateController.post
 GET         /cheque/update-your-address                                    controllers.UpdateYourAddressController.get
 
 GET         /there-is-a-problem                                            controllers.ThereIsAProblemController.get

@@ -42,8 +42,8 @@ class WeHaveConfirmedYourIdentityPageSpec extends ItSpec {
     }
   }
 
-  "clicking submit navigates to What Is The Name Of Your Bank Account page" - {
-    "bank transfer" in {
+  "clicking submit navigates to " - {
+    "'What Is The Name Of Your Bank Account page' for bank transfer" in {
       upsertJourneyToDatabase(tdAll.BankTransfer.journeyAfterTracedIndividual)
       EcospendStub.AuthStubs.stubEcospendAuth2xxSucceeded
       EcospendStub.BanksStubs.stubEcospendGetBanks2xx
@@ -55,12 +55,12 @@ class WeHaveConfirmedYourIdentityPageSpec extends ItSpec {
       EcospendStub.BanksStubs.verifyEcospendGetBanks()
       getJourneyFromDatabase(tdAll.journeyId) shouldBeLike tdAll.BankTransfer.journeyAfterTracedIndividual
     }
-    "cheque" in {
+    "'Is your address up to date' page for cheque" in {
       upsertJourneyToDatabase(tdAll.Cheque.AfterReferenceCheck.journeyReferenceChecked)
       pages.yourIdentityIsConfirmedChequePage.open()
       pages.yourIdentityIsConfirmedChequePage.assertPageIsDisplayed(JourneyType.Cheque)
       pages.yourIdentityIsConfirmedChequePage.clickSubmit()
-      pages.completeYourRefundRequestPage.assertPageIsDisplayed()
+      pages.isYourAddressUpToDate.assertPageIsDisplayed()
       getJourneyFromDatabase(tdAll.journeyId) shouldBeLike tdAll.Cheque.AfterReferenceCheck.journeyReferenceChecked
     }
   }

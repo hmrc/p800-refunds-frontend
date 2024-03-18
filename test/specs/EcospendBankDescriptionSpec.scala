@@ -28,22 +28,25 @@ class EcospendBankDescriptionSpec extends UnitSpec {
       name           = BankName("Natwest"),
       friendlyName   = BankFriendlyName("Friendly Natwest"),
       isSandbox      = false,
-      logoUrl        = Uri("http://example.com"),
+      logo           = Uri("http://example.com"),
+      icon           = Uri("https://icon.com"),
       standard       = Some("obie"),
       countryIsoCode = Some(""),
       division       = Some("personal"),
       group          = BankGroup("Natwest"),
       order          = 1,
-      abilities      = EcospendBankAbilities(
-        domestic                   = true,
-        domesticScheduled          = false,
-        domesticStandingOrder      = true,
-        international              = false,
-        internationalScheduled     = true,
-        internationalStandingOrder = false
-      ),
       serviceStatus  = true,
-      iconUrl        = Uri("https://icon.com")
+      abilities      = EcospendBankAbilities(
+        account           = true,
+        balance           = true,
+        transactions      = true,
+        directDebits      = true,
+        standingOrders    = true,
+        parties           = true,
+        scheduledPayments = true,
+        statements        = true,
+        offers            = true
+      )
     )
 
     val json = Json.toJson(testBankDescription)
@@ -53,42 +56,62 @@ class EcospendBankDescriptionSpec extends UnitSpec {
 
   "Deserialise from Ecospend example JSON" in {
     val testJson = Json.parse(
+      //language=JSON
       """
-        |{
-        |  "bank_id": "obie-barclays-production",
-        |  "name": "Barclays Personal",
-        |  "friendly_name": "Barclays",
-        |  "is_sandbox": false,
-        |  "logo": "https://uri",
-        |  "standard": "obie",
-        |  "country_iso_code": "",
-        |  "division": "GB",
-        |  "group": "Barclays",
-        |  "order": 0,
-        |  "abilities": {
-        |      "domestic_payment": true,
-        |      "domestic_scheduled_payment": true,
-        |      "domestic_standing_order": true,
-        |      "international_payment": true,
-        |      "international_scheduled_payment": true,
-        |      "international_standing_order": true
-        |  },
-        |  "service_status": true,
-        |  "icon": "https://icon.com"
-        |}
+        {
+          "bank_id": "obie-barclays-production",
+          "name": "Barclays Personal",
+          "friendly_name": "Barclays",
+          "is_sandbox": false,
+          "logo": "https://uri",
+          "standard": "obie",
+          "country_iso_code": "",
+          "division": "GB",
+          "group": "Barclays",
+          "order": 0,
+          "abilities": {
+              "account": true,
+              "balance": true,
+              "transactions": true,
+              "direct_debits": true,
+              "standing_orders": true,
+              "parties": true,
+              "scheduled_payments": true,
+              "statements": true,
+              "offers": true
+          },
+          "service_status": true,
+          "icon": "https://icon.com"
+        }
       """.stripMargin
     )
 
     val expectedBankAbilities = EcospendBankAbilities(
-      domestic                   = true, domesticScheduled = true, domesticStandingOrder = true,
-      international              = true, internationalScheduled = true, internationalStandingOrder = true
+      account           = true,
+      balance           = true,
+      transactions      = true,
+      directDebits      = true,
+      standingOrders    = true,
+      parties           = true,
+      scheduledPayments = true,
+      statements        = true,
+      offers            = true
     )
 
     val expectedCaseClass = EcospendBankDescription(
-      bankId         = BankId("obie-barclays-production"), name = BankName("Barclays Personal"), friendlyName = BankFriendlyName("Barclays"),
-      isSandbox      = false, logoUrl = Uri("https://uri"), standard = Some("obie"), countryIsoCode = Some(""),
-      division       = Some("GB"), group = BankGroup("Barclays"), order = 0, abilities = expectedBankAbilities, serviceStatus = true,
-      iconUrl        = "https://icon.com"
+      bankId         = BankId("obie-barclays-production"),
+      name           = BankName("Barclays Personal"),
+      friendlyName   = BankFriendlyName("Barclays"),
+      isSandbox      = false,
+      logo           = Uri("https://uri"),
+      icon           = Uri("https://icon.com"),
+      standard       = Some("obie"),
+      countryIsoCode = Some(""),
+      division       = Some("GB"),
+      group          = BankGroup("Barclays"),
+      order          = 0,
+      serviceStatus  = true,
+      abilities      = expectedBankAbilities
     )
 
     implicitly[Reads[EcospendBankDescription]].reads(testJson) shouldBe JsSuccess(expectedCaseClass)

@@ -24,7 +24,6 @@ class Views @Inject() (
     val doYouWantToSignInPage:                       views.html.DoYouWantToSignInPage,
     val enterP800ReferencePage:                      views.html.EnterP800ReferencePage,
     val checkYourAnswersPage:                        views.html.identityverification.CheckYourAnswersPage,
-    val completeYourRefundRequestPage:               views.html.chequejourney.CompleteYourRefundRequestPage,
     val chequeRequestReceivedPage:                   views.html.chequejourney.ChequeRequestReceivedPage,
     val weNeedYouToConfirmYourIdentityPage:          views.html.identityverification.WeNeedYouToConfirmYourIdentityPage,
     val enterYourDateOfBirthPage:                    views.html.identityverification.EnterYourDateOfBirthPage,
@@ -42,8 +41,8 @@ class Views @Inject() (
     val bankTransferRequestReceivedPage:             views.html.BankTransferRequestReceivedPage,
     val youCannotConfirmSecurityDetailsYet:          views.html.YouCannotConfirmSecurityDetailsYet,
     val yourRefundRequestHasNotBeenSubmitted:        views.html.YourRefundRequestHasNotBeenSubmitted,
-    val isYourAddressUpToDate:                       views.html.IsYourAddressUpToDate,
-    val updateYourAddress:                           views.html.UpdateYourAddress,
+    val isYourAddressUpToDatePage:                   views.html.chequejourney.IsYourAddressUpToDatePage,
+    val updateYourAddressPage:                       views.html.chequejourney.UpdateYourAddressPage,
     val thereIsAProblem:                             views.html.ThereIsAProblem
 )
 

@@ -68,7 +68,7 @@ class ChooseAnotherWayToGetYourRefundController @Inject() (
             )
             .map { updatedJourney =>
               if (journey.isIdentityVerified) {
-                Redirect(controllers.routes.CompleteYourRefundRequestController.get)
+                Redirect(controllers.routes.IsYourAddressUpToDateController.get)
               } else {
                 Redirect(WeNeedYouToConfirmYourIdentityController.redirectLocation(updatedJourney))
               }

@@ -14,14 +14,15 @@
  * limitations under the License.
  */
 
-package pagespecs
+package models.forms.enumsforforms
 
-import testsupport.ItSpec
+import enumeratum.Enum
+import scala.collection.immutable.IndexedSeq
 
-class IsYourAddressUpToDateSpec extends ItSpec {
+sealed trait IsYourAddressUpToDateFormValue extends enumeratum.EnumEntry
 
-  "navigating to /cheque/is-your-address-up-to-date" in {
-    pages.isYourAddressUpToDate.open()
-    pages.isYourAddressUpToDate.assertPageIsDisplayed()
-  }
+object IsYourAddressUpToDateFormValue extends Enum[IsYourAddressUpToDateFormValue] {
+  case object Yes extends IsYourAddressUpToDateFormValue
+  case object No extends IsYourAddressUpToDateFormValue
+  override def values: IndexedSeq[IsYourAddressUpToDateFormValue] = findValues
 }

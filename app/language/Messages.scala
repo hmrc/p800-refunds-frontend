@@ -758,55 +758,59 @@ object Messages {
   }
 
   object UpdateYourAddress {
-    val updateYourAdress: Message = Message(
+    val `Update your address`: Message = Message(
       english = "Update your address"
     )
 
-    val updateYourAdressPageTitle: Message = Message(
-      english = "Cheque - update your address"
+    val `update your address`: Message = Message(
+      english = "update your address"
     )
 
-    val toUpdateYourAddress: Message = Message(
+    val `To update your address you need to:`: Message = Message(
       english = "To update your address you need to:"
     )
 
     def contactHMRC(contactLink: String): Message = Message(
-      english = s"""<a class="govuk-link" href="$contactLink">Contact HMRC </a> to tell us that you have changed address.""".stripMargin
+      english = s"""<a class="govuk-link" id="contact-hmrc-link" href="$contactLink">Contact HMRC</a> to tell us that you have changed address.""".stripMargin
     )
 
-    val waitTwoDays: Message = Message(
+    val `Wait two days for HMRC to update your details.`: Message = Message(
       english = "Wait two days for HMRC to update your details."
     )
 
-    val restartRequest: Message = Message(
+    val `Restart your refund request.`: Message = Message(
       english = "Restart your refund request."
     )
 
   }
 
   object IsYourAddressUpToDate {
-    val isYourAddress: Message = Message(
+    val `Is your address up to date?`: Message = Message(
       english = "Is your address up to date?"
     )
 
-    val isYourAddressPageTitle: Message = Message(
-      english = "Cheque - is your address up to date"
+    val `is your address up to date`: Message = Message(
+      english = "is your address up to date"
     )
 
-    def yourCheque: Message = Message(
+    val `Your cheque will be sent to the same address as your tax calculation letter.`: Message = Message(
       english = "Your cheque will be sent to the same address as your tax calculation letter."
     )
 
-    def confirmAndContinue: Message = Message(
+    val `Confirm and continue`: Message = Message(
       english = "Confirm and continue"
     )
 
-    def yes: Message = Message(
+    val yes: Message = Message(
       english = "Yes"
     )
 
-    def noNeedToUpdate: Message = Message(
+    val `No, I need to update it`: Message = Message(
       english = "No, I need to update it"
+    )
+
+    val `Select if your address is up to date`: Message = Message(
+      english = "Select if your address is up to date"
     )
 
   }
