@@ -17,14 +17,14 @@
 package services
 
 import action.JourneyRequest
-import org.apache.pekko.http.scaladsl.model.Uri
 import connectors.{EcospendAuthServerConnector, EcospendConnector}
 import models.ecospend.BankDescription
 import models.ecospend.account.BankAccountSummary
 import models.ecospend.consent.{BankConsentRequest, BankConsentResponse, ConsentPermission, ConsentReferrerChannel, ConsentCreationReason}
 import models.ecospend.verification.{BankVerification, BankVerificationRequest}
 import models.journeymodels.Journey
-import util.Errors
+import org.apache.pekko.http.scaladsl.model.Uri
+import util.{Errors, JourneyLogger}
 
 import java.time.LocalDateTime
 import javax.inject.{Inject, Singleton}
@@ -55,10 +55,14 @@ class EcospendService @Inject() (
     bankConsentResponse <- ecospendConnector.createConsent(accessToken, bankConsentRequestFromJourney(journey))
   } yield bankConsentResponse
 
-  private def bankConsentRequestFromJourney(journey: Journey)(implicit request: JourneyRequest[_]): BankConsentRequest =
+  private def bankConsentRequestFromJourney(journey: Journey)(implicit request: JourneyRequest[_]): BankConsentRequest = {
+    val redirectUrl: Uri = Uri(controllers.routes.WeAreVerifyingYourBankAccountController.get(None, None, None).absoluteURL())
+
+    JourneyLogger.info(s"Creating consent with [redirectUrl: ${redirectUrl.toString}]")
+
     BankConsentRequest(
       bankId           = journey.getBankDescription.bankId,
-      redirectUrl      = Uri(controllers.routes.WeAreVerifyingYourBankAccountController.get(None, None, None).absoluteURL()),
+      redirectUrl      = redirectUrl,
       merchantId       = None,
       merchantUserId   = None,
       consentEndDate   = LocalDateTime.now().plusSeconds(30.minutes.toSeconds),
@@ -74,6 +78,7 @@ class EcospendService @Inject() (
       additionalParams = None,
       creationReason   = ConsentCreationReason.Algorithm
     )
+  }
 
   def getAccountSummary(journey: Journey)(implicit request: JourneyRequest[_]): Future[BankAccountSummary] =
     journey.bankAccountSummary match {
