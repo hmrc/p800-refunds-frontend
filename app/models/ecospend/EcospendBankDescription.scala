@@ -30,12 +30,12 @@ final case class EcospendBankDescription(
     standard:       Option[String],
     countryIsoCode: Option[String],
     division:       Option[String],
-    group:          BankGroup,
+    group:          Option[BankGroup],
     order:          Int,
     serviceStatus:  Boolean,
     abilities:      EcospendBankAbilities
 ) {
-  def toFrontendBankDescription: BankDescription = BankDescription(bankId, name, friendlyName, logo, icon, group)
+  def toFrontendBankDescription: BankDescription = BankDescription(bankId, name, friendlyName, logo, icon)
 }
 
 @SuppressWarnings(Array("org.wartremover.warts.Any"))
