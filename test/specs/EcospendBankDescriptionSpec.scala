@@ -33,7 +33,39 @@ class EcospendBankDescriptionSpec extends UnitSpec {
       standard       = Some("obie"),
       countryIsoCode = Some(""),
       division       = Some("personal"),
-      group          = BankGroup("Natwest"),
+      group          = Some(BankGroup("Natwest")),
+      order          = 1,
+      serviceStatus  = true,
+      abilities      = EcospendBankAbilities(
+        account           = true,
+        balance           = true,
+        transactions      = true,
+        directDebits      = true,
+        standingOrders    = true,
+        parties           = true,
+        scheduledPayments = true,
+        statements        = true,
+        offers            = true
+      )
+    )
+
+    val json = Json.toJson(testBankDescription)
+
+    implicitly[Format[EcospendBankDescription]].reads(json) shouldBe JsSuccess(testBankDescription)
+  }
+
+  "Survive round-trip JSON serialisation with minimal fields" in {
+    val testBankDescription = EcospendBankDescription(
+      bankId         = BankId("1234567890"),
+      name           = BankName("Natwest"),
+      friendlyName   = BankFriendlyName("Friendly Natwest"),
+      isSandbox      = false,
+      logo           = Uri("http://example.com"),
+      icon           = Uri("https://icon.com"),
+      standard       = None,
+      countryIsoCode = None,
+      division       = None,
+      group          = None,
       order          = 1,
       serviceStatus  = true,
       abilities      = EcospendBankAbilities(
@@ -108,7 +140,7 @@ class EcospendBankDescriptionSpec extends UnitSpec {
       standard       = Some("obie"),
       countryIsoCode = Some(""),
       division       = Some("GB"),
-      group          = BankGroup("Barclays"),
+      group          = Some(BankGroup("Barclays")),
       order          = 0,
       serviceStatus  = true,
       abilities      = expectedBankAbilities
