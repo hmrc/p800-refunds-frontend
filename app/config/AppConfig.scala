@@ -36,6 +36,8 @@ class AppConfig @Inject() (servicesConfig: ServicesConfig, configuration: Config
     val failedAttemptRepoMaxAttempts: Int = configuration.get[Int]("mongodb.failed-attempts.failed-attempt-repo-max-attempts")
   }
 
+  val platformFrontendHost: String = readConfigAsValidUrlString("platform.frontend.host")
+
   val govUkRouteIn: String = readConfigAsValidUrlString("urls.gov-uk.govuk-route-in")
 
   val incomeTaxGeneralEnquiriesUrl: String = readConfigAsValidUrlString("urls.gov-uk.income-tax-general-enquiries")
