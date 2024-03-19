@@ -48,11 +48,11 @@ class EdhConnector @Inject() (
     )
   }
 
-  private val bearerToken: String = servicesConfig.getString("microservice.services.edh.bearerToken.bearerToken")
-  private val environment: String = servicesConfig.getString("microservice.services.edh.bearerToken.environment")
+  private val bearerToken: String = servicesConfig.getString("microservice.services.edh.bearerToken")
+  private val environment: String = servicesConfig.getString("microservice.services.edh.environment")
 
   private def makeHeaders(): Seq[(String, String)] = Seq(
-    "Authorisation" -> s"Bearer $bearerToken",
+    "Authorization" -> s"Bearer $bearerToken",
     "CorrelationId" -> UUID.randomUUID().toString,
     "Environment" -> environment,
     "RequesterId" -> "Repayment Service"

@@ -57,11 +57,16 @@ class WeAreVerifyingYourBankAccountController @Inject() (
 
       def next(journey: Journey, isValidEventValue: EventValue, getBankDetailsRiskResultResponse: GetBankDetailsRiskResultResponse): Future[(Result, Journey)] = isValidEventValue match {
         case EventValue.NotReceived => Future.successful((Ok(views.weAreVerifyingYourBankAccountPage(status, consent_id, bank_reference_id)), journey))
-        case EventValue.NotValid    => Future.successful((Redirect(routes.RefundRequestNotSubmittedController.get), journey.update(HasFinished.YesRefundNotSubmitted)))
-        case EventValue.Valid => getBankDetailsRiskResultResponse.overallRiskResult.nextAction match {
-          case NextAction.DoNotPay => handleDoNotPay(journey)
-          case NextAction.Pay      => handlePay(journey)
+        case EventValue.NotValid => Future.successful {
+          JourneyLogger.info(s"Account assessment failed.")
+          (Redirect(routes.RefundRequestNotSubmittedController.get), journey.update(HasFinished.YesRefundNotSubmitted))
         }
+        case EventValue.Valid =>
+          JourneyLogger.info(s"Account assessment succeeded.")
+          getBankDetailsRiskResultResponse.overallRiskResult.nextAction match {
+            case NextAction.DoNotPay => handleDoNotPay(journey)
+            case NextAction.Pay      => handlePay(journey)
+          }
       }
 
       def handleDoNotPay(journey: Journey): Future[(Result, Journey)] = Future.successful {
@@ -84,7 +89,7 @@ class WeAreVerifyingYourBankAccountController @Inject() (
     for {
       isValidEventValue: EventValue <- obtainIsValid(journey)
       bankAccountSummary: BankAccountSummary <- obtainBankAccountSummary(journey)
-      getBankDetailsRiskResultResponse: GetBankDetailsRiskResultResponse <- obtainGetBankDetailsRiskResultResponse(journey)
+      getBankDetailsRiskResultResponse: GetBankDetailsRiskResultResponse <- obtainGetBankDetailsRiskResultResponse(journey, bankAccountSummary)
       //TODO: Fuzzy Name Matching
       newJourney = journey.update(isValidEventValue, bankAccountSummary, getBankDetailsRiskResultResponse)
       (result, newJourney) <- next(newJourney, isValidEventValue, getBankDetailsRiskResultResponse)
@@ -93,13 +98,22 @@ class WeAreVerifyingYourBankAccountController @Inject() (
   }
 
   private def obtainIsValid(journey: Journey)(implicit request: Request[_]): Future[EventValue] = {
-    journey
-      .isValidEventValue
-      .map(Future.successful)
-      .getOrElse(p800RefundsExternalApiConnector.isValid(journey.getBankConsent.id))
+    JourneyLogger.debug("Obtaining EventValue ...")
+    journey.isValidEventValue match {
+      case None | Some(EventValue.NotReceived) =>
+        p800RefundsExternalApiConnector.isValid(journey.getBankConsent.id).map { ev =>
+          JourneyLogger.info(s"Received EventValue from backend: [${ev.toString}]")
+          ev
+        }
+      case Some(ev) => Future.successful {
+        JourneyLogger.info(s"Got EventValue from journey: [${ev.toString}]")
+        ev
+      }
+    }
   }
 
   private def obtainBankAccountSummary(journey: Journey)(implicit request: RequestHeader): Future[BankAccountSummary] = {
+    JourneyLogger.debug("Obtaining BankAccountSummary ...")
     journey
       .bankAccountSummary
       .map(Future.successful)
@@ -107,7 +121,7 @@ class WeAreVerifyingYourBankAccountController @Inject() (
   }
 
   //See https://confluence.tools.tax.service.gov.uk/pages/viewpage.action?pageId=770835142 for data mapping
-  private def obtainGetBankDetailsRiskResultResponse(journey: Journey)(implicit request: Request[_]): Future[GetBankDetailsRiskResultResponse] = {
+  private def obtainGetBankDetailsRiskResultResponse(journey: Journey, bankAccountSummary: BankAccountSummary)(implicit request: Request[_]): Future[GetBankDetailsRiskResultResponse] = {
 
     lazy val claimId: ClaimId = ClaimId.next()
     lazy val getBankDetailsRiskResultRequest: GetBankDetailsRiskResultRequest = {
@@ -137,9 +151,9 @@ class WeAreVerifyingYourBankAccountController @Inject() (
             address                 = None
           )),
           bankDetails = Some(BankDetails(
-            bankAccountNumber     = Some(BankAccountNumber(journey.getBankAccountSummary.accountIdentification.sortCode)),
-            bankSortCode          = Some(BankSortCode(journey.getBankAccountSummary.accountIdentification.bankAccountNumber)),
-            bankAccountName       = Some(BankAccountName(journey.getBankAccountSummary.displayName.value)),
+            bankAccountNumber     = Some(BankAccountNumber(bankAccountSummary.accountIdentification.sortCode)),
+            bankSortCode          = Some(BankSortCode(bankAccountSummary.accountIdentification.bankAccountNumber)),
+            bankAccountName       = Some(BankAccountName(bankAccountSummary.displayName.value)),
             buildingSocietyRef    = None, //TODO: this has not been analysed
             designatedAccountFlag = None, //TODO: according to the analysis: confirm this is not needed, Collected from user Journey, Is the same value as personType
             currency              = None //TODO: according to the analysis: confirm this is not needed, Always "GBP"
