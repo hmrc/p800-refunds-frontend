@@ -19,13 +19,13 @@ package services
 import action.JourneyRequest
 import connectors.{EcospendAuthServerConnector, EcospendConnector}
 import models.ecospend.BankDescription
-import models.ecospend.account.{BankAccountFormat, BankAccountSummary, BankAccountSummaryResponse}
+import models.ecospend.account.{BankAccountFormat, BankAccountSummary}
 import models.ecospend.consent._
 import models.journeymodels.Journey
 import org.apache.pekko.http.scaladsl.model.Uri
-import util.{Errors, JourneyLogger}
-import util.SafeEquals.EqualsOps
 import play.api.mvc.RequestHeader
+import util.SafeEquals.EqualsOps
+import util.{Errors, JourneyLogger}
 
 import java.time.LocalDateTime
 import javax.inject.{Inject, Singleton}
@@ -79,10 +79,10 @@ class EcospendService @Inject() (
     for {
       accessToken <- ecospendAuthServerConnector.accessToken
       consentId = journey.getBankConsent.id
-      bankAccountSummaryResponse: BankAccountSummaryResponse <- ecospendConnector.getAccountSummary(accessToken, consentId)
+      bankAccountSummaryResponse <- ecospendConnector.getAccountSummary(accessToken, consentId)
       summary = bankAccountSummaryResponse.value.headOption.getOrElse(Errors.throwServerErrorException("Failed to get BankAccountSummary from BankAccountSummaryResponse"))
-      _ = Errors.require(bankAccountSummaryResponse.value.size === 1, s"More then 1 accounts in bankAccountSummaryResponse: [${bankAccountSummaryResponse.value.size}]")
-      _ = Errors.require(summary.accountFormat === BankAccountFormat.SortCode, s"Unexpected AccountFormat: [${summary.accountFormat}]")
+      _ = Errors.require(bankAccountSummaryResponse.value.size === 1, s"More then 1 accounts in bankAccountSummaryResponse: [${bankAccountSummaryResponse.value.size.toString}]")
+      _ = Errors.require(summary.accountFormat === BankAccountFormat.SortCode, s"Unexpected AccountFormat: [${summary.accountFormat.toString}]")
     } yield summary
 
 }

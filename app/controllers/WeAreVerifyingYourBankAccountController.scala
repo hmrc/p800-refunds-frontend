@@ -56,10 +56,18 @@ class WeAreVerifyingYourBankAccountController @Inject() (
     }
 
       def next(journey: Journey, isValidEventValue: EventValue, getBankDetailsRiskResultResponse: GetBankDetailsRiskResultResponse): Future[(Result, Journey)] = isValidEventValue match {
-        case EventValue.NotReceived => Future.successful((Ok(views.weAreVerifyingYourBankAccountPage(status, consent_id, bank_reference_id)), journey))
+        case EventValue.NotReceived => Future.successful(
+          (
+            Ok(views.weAreVerifyingYourBankAccountPage(status, consent_id, bank_reference_id)),
+            journey
+          )
+        )
         case EventValue.NotValid => Future.successful {
           JourneyLogger.info(s"Account assessment failed.")
-          (Redirect(routes.RefundRequestNotSubmittedController.get), journey.update(HasFinished.YesRefundNotSubmitted))
+          (
+            Redirect(routes.RefundRequestNotSubmittedController.get),
+            journey.update(HasFinished.YesRefundNotSubmitted)
+          )
         }
         case EventValue.Valid =>
           JourneyLogger.info(s"Account assessment succeeded.")

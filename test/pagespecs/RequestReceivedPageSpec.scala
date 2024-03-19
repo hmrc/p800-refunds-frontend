@@ -53,8 +53,8 @@ class RequestReceivedPageSpec extends ItSpec {
 
   //TODO: unignore this when we have the callbacks/fetching of the bank verification statuses from ecospend along with other API calls, rewrite in style above
   "[bank transfer ]user is kept in the final page if clicked browser's back button" ignore {
-    upsertJourneyToDatabase(tdAll.BankTransfer.journeyPermissionGiven)
-    getJourneyFromDatabase(tdAll.journeyId) shouldBeLike tdAll.BankTransfer.journeyPermissionGiven
+    upsertJourneyToDatabase(tdAll.BankTransfer.journeyBankConsent)
+    getJourneyFromDatabase(tdAll.journeyId) shouldBeLike tdAll.BankTransfer.journeyBankConsent
     EcospendStub.AuthStubs.stubEcospendAuth2xxSucceeded
     EcospendStub.ValidateStubs.stubValidateNotValidatedYet
     //setup the history in the browser:

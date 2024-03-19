@@ -104,11 +104,11 @@ trait TdJourney {
       bankDescription = Some(dependencies.bankDescription)
     )
 
-    lazy val journeyPermissionGiven: Journey = journeySelectedBank.copy(
+    lazy val journeyBankConsent: Journey = journeySelectedBank.copy(
       bankConsentResponse = Some(dependencies.bankConsent)
     )
 
-    lazy val journeyAccountSummary: Journey = journeyPermissionGiven.copy(
+    lazy val journeyAccountSummary: Journey = journeyBankConsent.copy(
       bankAccountSummary = Some(dependencies.bankAccountSummary)
     )
 

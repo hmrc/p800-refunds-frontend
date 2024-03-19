@@ -120,12 +120,13 @@ final case class Journey(
   def update(hasFinished: HasFinished): Journey = this.copy(hasFinished = hasFinished)
 
   private def resetAllApiResponses(): Journey = this.copy(
-    referenceCheckResult    = None,
-    traceIndividualResponse = None,
-    bankDescription         = None,
-    bankConsentResponse     = None,
-    bankAccountSummary      = None,
-    isValidEventValue       = None
+    referenceCheckResult             = None,
+    traceIndividualResponse          = None,
+    bankDescription                  = None,
+    bankConsentResponse              = None,
+    bankAccountSummary               = None,
+    isValidEventValue                = None,
+    getBankDetailsRiskResultResponse = None
   )
 
   /* derived stuff: */
