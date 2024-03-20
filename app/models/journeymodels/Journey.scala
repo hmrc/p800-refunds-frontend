@@ -140,9 +140,9 @@ final case class Journey(
 
   def getBankDescription(implicit request: Request[_]): BankDescription = bankDescription.getOrElse(Errors.throwServerErrorException(s"Expected 'bankDescription' to be defined but it was None [${journeyId.toString}] "))
 
-  def getBankConsent(implicit request: Request[_]): BankConsentResponse = bankConsentResponse.getOrElse(Errors.throwBadRequestException("Expected 'bankConsent' to be defined but it was None [${journeyId.toString}] "))
+  def getBankConsent(implicit request: Request[_]): BankConsentResponse = bankConsentResponse.getOrElse(Errors.throwBadRequestException(s"Expected 'bankConsent' to be defined but it was None [${journeyId.toString}] "))
 
-  def getBankAccountSummary(implicit request: Request[_]): BankAccountSummary = bankAccountSummary.getOrElse(Errors.throwBadRequestException("Expected 'bankAccountSummary' to be defined but it was None [${journeyId.toString}] "))
+  def getBankAccountSummary(implicit request: Request[_]): BankAccountSummary = bankAccountSummary.getOrElse(Errors.throwBadRequestException(s"Expected 'bankAccountSummary' to be defined but it was None [${journeyId.toString}] "))
 
   def getReferenceCheckResult(implicit request: Request[_]): ReferenceCheckResult = referenceCheckResult.getOrElse(Errors.throwServerErrorException(s"Expected 'referenceCheckResult' to be defined but it was None [${journeyId.toString}] "))
 

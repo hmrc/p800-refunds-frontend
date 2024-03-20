@@ -26,6 +26,14 @@ object P800ReferenceCheckResultFailures {
   implicit val format: OFormat[P800ReferenceCheckResultFailures] = Json.format[P800ReferenceCheckResultFailures]
 }
 
+final case class ClaimOverpaymentResultFailures(
+    failures: List[Failure]
+)
+
+object ClaimOverpaymentResultFailures {
+  implicit val format: OFormat[ClaimOverpaymentResultFailures] = Json.format[ClaimOverpaymentResultFailures]
+}
+
 final case class Failure(reason: String, code: String)
 
 object Failure {

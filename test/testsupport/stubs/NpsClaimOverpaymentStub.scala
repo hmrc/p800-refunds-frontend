@@ -19,14 +19,14 @@ package testsupport.stubs
 import com.github.tomakehurst.wiremock.client.WireMock._
 import com.github.tomakehurst.wiremock.stubbing.StubMapping
 import models.{Nino, P800Reference}
-import nps.models.{ClaimOverpaymentRequest, ClaimOverpaymentResponse}
+import nps.models.{ClaimOverpaymentRequest, ClaimOverpaymentResult}
 import play.api.http.Status
 import play.api.libs.json.Json
 import testsupport.stubs.NpsHeaders.npsHeaders
 
 object NpsClaimOverpaymentStub {
 
-  def claimOverpayment(nino: Nino, p800Reference: P800Reference, request: ClaimOverpaymentRequest, response: ClaimOverpaymentResponse): StubMapping = {
+  def claimOverpayment(nino: Nino, p800Reference: P800Reference, request: ClaimOverpaymentRequest, response: ClaimOverpaymentResult.ClaimOverpaymentResponse): StubMapping = {
     WireMockHelpers.Put.stubForPut(
       url             = url(nino, p800Reference),
       responseBody    = Json.prettyPrint(Json.toJson(response)),
@@ -35,6 +35,46 @@ object NpsClaimOverpaymentStub {
       requiredHeaders = npsHeaders
     )
   }
+
+  def claimOverpaymentRefundAlreadyTaken(nino: Nino, p800Reference: P800Reference): StubMapping =
+    WireMockHelpers.Put.stubForPut(
+      url             = url(nino, p800Reference),
+      responseBody    =
+        //language=JSON
+        """
+          {
+           "failures" : [
+             {"reason" : "Reference ", "code": "63480"}
+           ]
+          }
+          """.stripMargin,
+      responseStatus  = Status.UNPROCESSABLE_ENTITY,
+      requiredHeaders = npsHeaders
+    )
+
+  def claimOverpaymentRefundSuspended(nino: Nino, p800Reference: P800Reference): StubMapping =
+    WireMockHelpers.Put.stubForPut(
+      url             = url(nino, p800Reference),
+      responseBody    =
+        //language=JSON
+        """
+          {
+           "failures" : [
+             {"reason" : "Reference ", "code": "63480"}
+           ]
+          }
+          """.stripMargin,
+      responseStatus  = Status.UNPROCESSABLE_ENTITY,
+      requiredHeaders = npsHeaders
+    )
+
+  def claimOverpaymentInternalServerError(nino: Nino, p800Reference: P800Reference): StubMapping =
+    WireMockHelpers.Put.stubForPut(
+      url             = url(nino, p800Reference),
+      responseBody    = "",
+      responseStatus  = Status.INTERNAL_SERVER_ERROR,
+      requiredHeaders = npsHeaders
+    )
 
   def verifyClaimOverpayment(nino: Nino, p800Reference: P800Reference): Unit =
     verify(exactly(1), putRequestedFor(urlPathEqualTo(url(nino, p800Reference))))

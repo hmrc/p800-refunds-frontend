@@ -71,6 +71,57 @@ class VerifyBankAccountPageSpec extends ItSpec {
     DateCalculatorStub.verifyAddWorkingDays()
   }
 
+  "redirect to bank transfer 'Request received' page when claim overpayment call returns 'Suspended'" in {
+    EcospendStub.AuthStubs.stubEcospendAuth2xxSucceeded
+    EcospendStub.AccountStub.stubAccountSummary2xxSucceeded(tdAll.consentId)
+    P800RefundsExternalApiStub.isValid(tdAll.consentId, EventValue.NotReceived)
+
+    pages.verifyBankAccountPage.open()
+    pages.verifyBankAccountPage.assertPageIsDisplayed()
+
+    P800RefundsExternalApiStub.isValid(tdAll.consentId, EventValue.Valid)
+    NpsClaimOverpaymentStub.claimOverpaymentRefundSuspended(
+      nino          = tdAll.nino,
+      p800Reference = tdAll.p800Reference
+    )
+    pages.verifyBankAccountPage.clickRefreshThisPageLink()
+    pages.thereIsAProblemPage.assertPageIsDisplayed() // IS THIS RIGHT?
+  }
+
+  "redirect to bank transfer 'Request received' page when claim overpayment call returns ''" in {
+    EcospendStub.AuthStubs.stubEcospendAuth2xxSucceeded
+    EcospendStub.AccountStub.stubAccountSummary2xxSucceeded(tdAll.consentId)
+    P800RefundsExternalApiStub.isValid(tdAll.consentId, EventValue.NotReceived)
+
+    pages.verifyBankAccountPage.open()
+    pages.verifyBankAccountPage.assertPageIsDisplayed()
+
+    P800RefundsExternalApiStub.isValid(tdAll.consentId, EventValue.Valid)
+    NpsClaimOverpaymentStub.claimOverpaymentRefundAlreadyTaken(
+      nino          = tdAll.nino,
+      p800Reference = tdAll.p800Reference
+    )
+    pages.verifyBankAccountPage.clickRefreshThisPageLink()
+    pages.thereIsAProblemPage.assertPageIsDisplayed() // IS THIS RIGHT?
+  }
+
+  "handle OTHER ERROR" in {
+    EcospendStub.AuthStubs.stubEcospendAuth2xxSucceeded
+    EcospendStub.AccountStub.stubAccountSummary2xxSucceeded(tdAll.consentId)
+    P800RefundsExternalApiStub.isValid(tdAll.consentId, EventValue.NotReceived)
+
+    pages.verifyBankAccountPage.open()
+    pages.verifyBankAccountPage.assertPageIsDisplayed()
+
+    P800RefundsExternalApiStub.isValid(tdAll.consentId, EventValue.Valid)
+    NpsClaimOverpaymentStub.claimOverpaymentInternalServerError(
+      nino          = tdAll.nino,
+      p800Reference = tdAll.p800Reference
+    )
+    pages.verifyBankAccountPage.clickRefreshThisPageLink()
+    pages.verifyBankAccountPage.assertPageIsDisplayedWithTechnicalDifficultiesError()
+  }
+
   "redirect to 'Request not submitted' page when verification call returns NotValid" in {
     EcospendStub.ValidateStubs.stubValidateNotValidatedYet
     EcospendStub.AuthStubs.stubEcospendAuth2xxSucceeded
