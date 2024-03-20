@@ -18,7 +18,7 @@ package pagespecs
 
 import models.p800externalapi.EventValue
 import testsupport.ItSpec
-import testsupport.stubs.{EcospendStub, P800RefundsExternalApiStub}
+import testsupport.stubs.{DateCalculatorStub, EcospendStub, P800RefundsExternalApiStub}
 
 class VerifyBankAccountPageSpec extends ItSpec {
 
@@ -54,6 +54,7 @@ class VerifyBankAccountPageSpec extends ItSpec {
     EcospendStub.AuthStubs.stubEcospendAuth2xxSucceeded
     EcospendStub.AccountStub.stubAccountSummary2xxSucceeded(tdAll.consentId)
     P800RefundsExternalApiStub.isValid(tdAll.consentId, EventValue.NotReceived)
+    DateCalculatorStub.addWorkingDays()
 
     pages.verifyBankAccountPage.open()
     pages.verifyBankAccountPage.assertPageIsDisplayed()
@@ -61,6 +62,7 @@ class VerifyBankAccountPageSpec extends ItSpec {
     P800RefundsExternalApiStub.isValid(tdAll.consentId, EventValue.Valid)
     pages.verifyBankAccountPage.clickRefreshThisPageLink()
     pages.requestReceivedBankTransferPage.assertPageIsDisplayedForBankTransfer()
+    DateCalculatorStub.verifyAddWorkingDays()
   }
 
   "redirect to 'Request not submitted' page when verification call returns NotValid" in {
