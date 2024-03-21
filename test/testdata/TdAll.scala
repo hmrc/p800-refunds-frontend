@@ -34,6 +34,7 @@ object TdAll {
 trait TdAll
   extends AnyRef
   with TdBase
+  with TdEdh
   with TdRequest
   with TdJourney
 

@@ -24,7 +24,7 @@ import nps.models.ReferenceCheckResult
  * Test Data (Td) Journey. It has journey examples in all possible states.
  */
 trait TdJourney {
-  dependencies: TdBase =>
+  dependencies: TdBase with TdEdh =>
 
   lazy val journeyId: JourneyId = JourneyId("64886ed616fe8b501cbf0088")
 
@@ -123,6 +123,10 @@ trait TdJourney {
     lazy val journeyReceivedNotificationFromEcospendNotReceived: Journey =
       //TODO: API responses
       journeyAccountSummary.copy(isValidEventValue = Some(dependencies.isValidEventValueNotReceived))
+
+    lazy val journeyEdhCalledNextActionIsPay: Journey = journeyReceivedNotificationFromEcospendValid.copy(
+      getBankDetailsRiskResultResponse = Some(dependencies.getBankDetailsRiskResultResponse)
+    )
 
     lazy val journeyClaimedOverpayment: Journey =
       //TODO: API responses

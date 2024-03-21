@@ -355,17 +355,13 @@ object RiskDataObject {
 
 sealed trait ValidationResult
 
-case object Yes extends ValidationResult
-
-case object No extends ValidationResult
-
-case object Indeterminate extends ValidationResult
-
-case object Inapplicable extends ValidationResult
-
-case object Error extends ValidationResult
-
 object ValidationResult {
+  case object Yes extends ValidationResult
+  case object No extends ValidationResult
+  case object Indeterminate extends ValidationResult
+  case object Inapplicable extends ValidationResult
+  case object Error extends ValidationResult
+
   @SuppressWarnings(Array("org.wartremover.warts.Any"))
   implicit val format: Format[ValidationResult] = new Format[ValidationResult] {
     def reads(json: JsValue): JsResult[ValidationResult] = json match {

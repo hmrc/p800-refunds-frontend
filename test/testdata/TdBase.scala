@@ -44,7 +44,9 @@ trait TdBase {
   lazy val instant: Instant = localDateTime.toInstant(ZoneOffset.UTC)
   lazy val newInstant: Instant = instant.plusSeconds(20) //used when a new journey is created from existing one
 
-  lazy val p800Reference: P800Reference = P800Reference("12345678")
+  lazy val p800ReferenceSanitised: P800Reference = P800Reference("12345678")
+
+  lazy val p800Reference: P800Reference = P800Reference(" 12-3 4.5.6 78") //It might contain non digits see OPS-11141
 
   lazy val gdsDateTimeFormatter: DateTimeFormatter = DateTimeFormatter.ofPattern("d MMMM Y")
 
@@ -57,22 +59,28 @@ trait TdBase {
 
   lazy val nino: Nino = Nino("LM001014C")
 
+  lazy val paymentAmount: BigDecimal = BigDecimal("12.34")
+
   lazy val p800ReferenceChecked: P800ReferenceChecked = ReferenceCheckResult.P800ReferenceChecked(
     reconciliationIdentifier = ReconciliationIdentifier("reconid-123"),
     paymentNumber            = p800Reference,
     payeNumber               = PayeNumber("PayeNumber-123"),
     taxDistrictNumber        = TaxDistrictNumber("EAST LONDON AREA (SERVICE) (717)"),
-    paymentAmount            = BigDecimal("12.34"),
+    paymentAmount            = paymentAmount,
     associatedPayableNumber  = AssociatedPayableNumber("associatedPayableNumber-1234"),
     customerAccountNumber    = CustomerAccountNumber("customerAccountNumber-1234"),
     currentOptimisticLock    = CurrentOptimisticLock(15)
   )
 
+  lazy val title: String = "Sir"
+  lazy val firstForename: String = "Accolon"
+  lazy val surname: String = "of Gaul"
+
   lazy val traceIndividualResponse = TraceIndividualResponse(
-    title          = Some("Sir"),
-    firstForename  = Some("Accolon"),
+    title          = Some(title),
+    firstForename  = Some(firstForename),
     secondForename = None,
-    surname        = "of Gaul"
+    surname        = surname
   )
 
   lazy val bankId: BankId = BankId("obie-barclays-personal")
@@ -117,6 +125,9 @@ trait TdBase {
   )
 
   lazy val accountId: UUID = UUID.fromString("00000000-0000-0000-0000-000000000000")
+  lazy val sortCode: String = "445566"
+  lazy val bankAccountNumber: String = "10002333"
+
   lazy val bankAccountSummary: BankAccountSummary = BankAccountSummary(
     id                    = accountId,
     bankId                = bankId,
@@ -126,7 +137,7 @@ trait TdBase {
     subType               = BankAccountSubType.CurrentAccount,
     currency              = Currency.getInstance("GBP"),
     accountFormat         = BankAccountFormat.SortCode,
-    accountIdentification = BankAccountIdentification("44556610002333"),
+    accountIdentification = BankAccountIdentification(sortCode + bankAccountNumber),
     calculatedOwnerName   = CalculatedOwnerName("Mr Greg Greggson"),
     accountOwnerName      = BankAccountOwnerName("Greggson Gregory "),
     displayName           = BankAccountDisplayName("MR G Greggson"),
