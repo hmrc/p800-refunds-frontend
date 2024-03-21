@@ -18,7 +18,7 @@ package nps.models
 
 import play.api.libs.json.{Format, Json}
 
-final case class AssociatedPayableNumber(value: String)
+final case class AssociatedPayableNumber(value: Int)
 object AssociatedPayableNumber {
   implicit val format: Format[AssociatedPayableNumber] = Json.valueFormat[AssociatedPayableNumber]
 }

@@ -18,7 +18,11 @@ package models.ecospend.account
 
 import play.api.libs.json.{Json, Format}
 
-final case class BankAccountIdentification(value: String) extends AnyVal
+final case class BankAccountIdentification(value: String) extends AnyVal {
+  def accountNumber: String = value.takeRight(8)
+  def sortCode: String = value.take(6)
+}
+
 object BankAccountIdentification {
   implicit val format: Format[BankAccountIdentification] = Json.valueFormat[BankAccountIdentification]
 }

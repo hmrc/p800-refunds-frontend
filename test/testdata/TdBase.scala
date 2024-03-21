@@ -16,7 +16,7 @@
 
 package testdata
 
-import _root_.nps.models.{AssociatedPayableNumber, CurrentOptimisticLock, CustomerAccountNumber, PayeNumber, ReconciliationIdentifier, ReferenceCheckResult, TaxDistrictNumber, TraceIndividualResponse}
+import _root_.nps.models._
 import org.apache.pekko.http.scaladsl.model.Uri
 import models._
 import models.attemptmodels.{AttemptId, AttemptInfo, IpAddress, NumberOfAttempts}
@@ -58,12 +58,12 @@ trait TdBase {
   lazy val nino: Nino = Nino("LM001014C")
 
   lazy val p800ReferenceChecked: P800ReferenceChecked = ReferenceCheckResult.P800ReferenceChecked(
-    reconciliationIdentifier = ReconciliationIdentifier("reconid-123"),
+    reconciliationIdentifier = ReconciliationIdentifier(123),
     paymentNumber            = p800Reference,
     payeNumber               = PayeNumber("PayeNumber-123"),
     taxDistrictNumber        = TaxDistrictNumber("EAST LONDON AREA (SERVICE) (717)"),
     paymentAmount            = BigDecimal("12.34"),
-    associatedPayableNumber  = AssociatedPayableNumber("associatedPayableNumber-1234"),
+    associatedPayableNumber  = AssociatedPayableNumber(1234),
     customerAccountNumber    = CustomerAccountNumber("customerAccountNumber-1234"),
     currentOptimisticLock    = CurrentOptimisticLock(15)
   )
@@ -129,7 +129,7 @@ trait TdBase {
     accountIdentification = BankAccountIdentification("44556610002333"),
     calculatedOwnerName   = CalculatedOwnerName("Greg Greggson"),
     accountOwnerName      = BankAccountOwnerName("Greg Greggson"),
-    displayName           = BankAccountDisplayName("Greg G Greggson"),
+    displayName           = BankAccountDisplayName("bank account display name"),
     balance               = 123.7,
     lastUpdateTime        = localDateTime,
     parties               = List(BankAccountParty(
@@ -141,4 +141,18 @@ trait TdBase {
   lazy val isValidEventValueValid: EventValue = EventValue.Valid
   lazy val isValidEventValueNotValid: EventValue = EventValue.NotValid
   lazy val isValidEventValueNotReceived: EventValue = EventValue.NotReceived
+
+  lazy val claimOverpaymentRequest: ClaimOverpaymentRequest = ClaimOverpaymentRequest(
+    currentOptimisticLock    = CurrentOptimisticLock(15),
+    reconciliationIdentifier = ReconciliationIdentifier(123),
+    associatedPayableNumber  = AssociatedPayableNumber(1234),
+    payeeBankAccountNumber   = PayeeBankAccountNumber("10002333"),
+    payeeBankSortCode        = PayeeBankSortCode("445566"),
+    payeeBankAccountName     = PayeeBankAccountName("bank account display name"),
+    designatedPayeeAccount   = DesignatedPayeeAccount(true)
+  )
+  lazy val claimOverpaymentResponse: ClaimOverpaymentResponse = ClaimOverpaymentResponse(
+    identifer             = nino,
+    currentOptimisticLock = CurrentOptimisticLock(15)
+  )
 }
