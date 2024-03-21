@@ -35,15 +35,16 @@ class RequestReceivedPage(baseUrl: String, pathForJourneyType: String)(implicit 
   override def assertPageIsDisplayed(extraExpectations: ContentExpectation*): Unit =
     sys.error("Use 'assertPageIsDisplayedForCheque' or 'assertPageIsDisplayedForBankTransfer' or other variants")
 
-  def assertPageIsDisplayedForBankTransfer(): Unit = {
+  def assertPageIsDisplayedForBankTransfer(failedDateCalculatorScenario: Boolean = false): Unit = {
+    val dateToDisplay = if (failedDateCalculatorScenario) "2 December 2059" else "30 November 2059"
     val contentExpectation: ContentExpectation = ContentExpectation(
       atXpath       = PageUtil.Xpath.mainContent,
       expectedLines =
-        """
+        s"""
           |Bank transfer request received
           |Your P800 reference:
           |12345678
-          |Your refund of £12.34 will now be paid by 1 December 2524.
+          |Your refund of £12.34 will now be paid by $dateToDisplay.
           |
           |Print this page
           |
@@ -75,7 +76,7 @@ class RequestReceivedPage(baseUrl: String, pathForJourneyType: String)(implicit 
           |Cheque request received
           |Your P800 reference:
           |12345678
-          |Your refund of £12.34 will arrive in the post by 16 January 2524.
+          |Your refund of £12.34 will arrive in the post by 6 January 2060.
           |
           |Print this page
           |

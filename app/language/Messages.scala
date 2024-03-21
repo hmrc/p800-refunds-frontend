@@ -630,9 +630,10 @@ object Messages {
       english = "Your P800 reference:"
     )
 
-    def `Your refund of £x.xx will now be processed and paid by...`(amountInPence: AmountInPence, date: String): Message = Message(
+    private val formatter = DateTimeFormatter.ofPattern("d MMMM yyyy", Locale.UK)
+    def `Your refund of £x.xx will now be processed and paid by...`(amountInPence: AmountInPence, date: LocalDate): Message = Message(
       //language=html
-      english = s"Your refund of <strong>${amountInPence.gdsFormatInPounds}</strong> will now be paid by <strong>$date</strong>."
+      english = s"Your refund of <strong>${amountInPence.gdsFormatInPounds}</strong> will now be paid by <strong>${date.format(formatter)}</strong>."
     )
 
     val `Print this page`: Message = Message(

@@ -66,6 +66,15 @@ class AppConfig @Inject() (servicesConfig: ServicesConfig, configuration: Config
     val p800RefundsExternalApiBaseUrl: String = servicesConfig.baseUrl("p800-refunds-external-api")
   }
 
+  object DateCalculator {
+    val dateCalculatorBaseUrl: String = servicesConfig.baseUrl("date-calculator")
+  }
+
+  object JourneyVariables {
+    val bankTransferWorkingDaysToAdd: Int = configuration.get[Int]("journey-variables.bank-transfer-working-days-to-add")
+    val chequeFutureDateAddition: Int = configuration.get[Int]("journey-variables.cheque-weeks-to-add")
+  }
+
   /**
    * The application loads the configuration from the provided `configPath` and checks if it's a valid URL.
    * If it's not a valid URL, an exception is thrown.

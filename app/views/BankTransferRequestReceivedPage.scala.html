@@ -20,6 +20,7 @@
 @import config.AppConfig
 @import views.html.helper.CSPNonce
 @import action.JourneyRequest
+@import java.time.LocalDate
 
 @this(
     layout: Layout,
@@ -30,7 +31,7 @@
 @(
     p800Reference: P800Reference,
     refundAmountInPence: AmountInPence,
-    date: String
+    date: LocalDate
 )(implicit request: JourneyRequest[_])
 
 @import viewsHelpers.requestSupport._
