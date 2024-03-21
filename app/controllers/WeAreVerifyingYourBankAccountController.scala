@@ -68,7 +68,7 @@ class WeAreVerifyingYourBankAccountController @Inject() (
 
       // TODO: Call API#1133: Get Bank Details Risk Result (aka EDH Repayment Details Risk)
       // Call API#JF72745 Claim Overpayment
-      claimOverpaymentResult <- claimOverpayment(journey, isValid)
+      _ <- claimOverpayment(journey, bankAccountSummary)
 
       // TODO: If API#1133 or API#JF72745 fails, call (JF72755) Suspend Overpayment
       // TODO: If API#1133 or API#JF72745 fails, call API#1132 (EPID0771) Case Management Notified
@@ -76,46 +76,33 @@ class WeAreVerifyingYourBankAccountController @Inject() (
       newJourney = updateJourneyWithApiCalls(journey, isValid, bankAccountSummary)
       _ <- journeyService.upsert(newJourney)
     } yield isValid match {
-      case EventValue.Valid => {
-        claimOverpaymentResult match {
-          case _: ClaimOverpaymentResult.ClaimOverpaymentResponse =>
-            Redirect(routes.RequestReceivedController.getBankTransfer)
-          case ClaimOverpaymentResult.RefundSuspended =>
-            Redirect(routes.ThereIsAProblemController.get) // TODO: Discuss & agree what to do here
-          case ClaimOverpaymentResult.RefundAlreadyTaken =>
-            Redirect(routes.ThereIsAProblemController.get)
-          case otherResult =>
-            Errors.throwServerErrorException(s"Unexpected claim overpayment result. This should be investigated. [otherResult: ${otherResult.toString}]")
-        }
-      }
+      case EventValue.Valid       => Redirect(routes.RequestReceivedController.getBankTransfer)
       case EventValue.NotValid    => Redirect(routes.RefundRequestNotSubmittedController.get)
       case EventValue.NotReceived => Ok(views.weAreVerifyingYourBankAccountPage(status, consent_id, bank_reference_id))
     }
   }
 
-  private def claimOverpayment(journey: Journey, isValid: EventValue)(implicit request: JourneyRequest[_]): Future[_] = isValid match {
-    case EventValue.Valid => {
-      val p800ReferenceCheckResult: P800ReferenceChecked = journey.getP800ReferenceChecked
-      val bankAccountSummary: BankAccountSummary = journey.getBankAccountSummary
+  private def claimOverpayment(journey: Journey, bankAccountSummary: BankAccountSummary)(implicit request: JourneyRequest[_]): Future[Unit] = {
+    val p800ReferenceCheckResult: P800ReferenceChecked = journey.getP800ReferenceChecked
 
-      val accountNumber: PayeeBankAccountNumber =
-        PayeeBankAccountNumber(bankAccountSummary.accountIdentification.accountNumber)
-      val sortCode: PayeeBankSortCode =
-        PayeeBankSortCode(bankAccountSummary.accountIdentification.sortCode)
+    val accountNumber: PayeeBankAccountNumber =
+      PayeeBankAccountNumber(bankAccountSummary.accountIdentification.accountNumber)
+    val sortCode: PayeeBankSortCode =
+      PayeeBankSortCode(bankAccountSummary.accountIdentification.sortCode)
 
-      val claimOverpaymentRequest: ClaimOverpaymentRequest = ClaimOverpaymentRequest(
-        currentOptimisticLock    = p800ReferenceCheckResult.currentOptimisticLock,
-        reconciliationIdentifier = p800ReferenceCheckResult.reconciliationIdentifier,
-        associatedPayableNumber  = p800ReferenceCheckResult.associatedPayableNumber,
-        payeeBankAccountNumber   = accountNumber,
-        payeeBankSortCode        = sortCode,
-        payeeBankAccountName     = PayeeBankAccountName(bankAccountSummary.displayName.value),
-        designatedPayeeAccount   = DesignatedPayeeAccount(true)
-      )
+    val claimOverpaymentRequest: ClaimOverpaymentRequest = ClaimOverpaymentRequest(
+      currentOptimisticLock    = p800ReferenceCheckResult.currentOptimisticLock,
+      reconciliationIdentifier = p800ReferenceCheckResult.reconciliationIdentifier,
+      associatedPayableNumber  = p800ReferenceCheckResult.associatedPayableNumber,
+      payeeBankAccountNumber   = accountNumber,
+      payeeBankSortCode        = sortCode,
+      payeeBankAccountName     = PayeeBankAccountName(bankAccountSummary.displayName.value),
+      designatedPayeeAccount   = DesignatedPayeeAccount(true)
+    )
 
-      claimOverpaymentConnector.claimOverpayment(journey.getNino, journey.getP800Reference, claimOverpaymentRequest)
-    }
-    case _ => Future.unit
+    claimOverpaymentConnector
+      .claimOverpayment(journey.getNino, journey.getP800Reference, claimOverpaymentRequest)
+      .map(_ => ())
   }
 
   //TODO: include more API updates when they're ready

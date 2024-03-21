@@ -19,14 +19,14 @@ package testsupport.stubs
 import com.github.tomakehurst.wiremock.client.WireMock._
 import com.github.tomakehurst.wiremock.stubbing.StubMapping
 import models.{Nino, P800Reference}
-import nps.models.{ClaimOverpaymentRequest, ClaimOverpaymentResult}
+import nps.models.{ClaimOverpaymentRequest, ClaimOverpaymentResponse}
 import play.api.http.Status
 import play.api.libs.json.Json
 import testsupport.stubs.NpsHeaders.npsHeaders
 
 object NpsClaimOverpaymentStub {
 
-  def claimOverpayment(nino: Nino, p800Reference: P800Reference, request: ClaimOverpaymentRequest, response: ClaimOverpaymentResult.ClaimOverpaymentResponse): StubMapping = {
+  def claimOverpayment(nino: Nino, p800Reference: P800Reference, request: ClaimOverpaymentRequest, response: ClaimOverpaymentResponse): StubMapping = {
     WireMockHelpers.Put.stubForPut(
       url             = url(nino, p800Reference),
       responseBody    = Json.prettyPrint(Json.toJson(response)),

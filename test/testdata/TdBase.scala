@@ -151,7 +151,7 @@ trait TdBase {
     payeeBankAccountName     = PayeeBankAccountName("bank account display name"),
     designatedPayeeAccount   = DesignatedPayeeAccount(true)
   )
-  lazy val claimOverpaymentResponse: ClaimOverpaymentResult.ClaimOverpaymentResponse = ClaimOverpaymentResult.ClaimOverpaymentResponse(
+  lazy val claimOverpaymentResponse: ClaimOverpaymentResponse = ClaimOverpaymentResponse(
     identifer             = nino,
     currentOptimisticLock = CurrentOptimisticLock(15)
   )

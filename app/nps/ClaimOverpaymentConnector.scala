@@ -17,16 +17,12 @@
 package nps
 
 import _root_.models.{Nino, P800Reference}
-import nps.models.{ClaimOverpaymentRequest, ClaimOverpaymentResult, ClaimOverpaymentResultFailures}
-import play.api.Logger
-import play.api.http.Status
-import play.api.libs.json.{JsError, JsResult, JsSuccess}
+import nps.models.{ClaimOverpaymentRequest, ClaimOverpaymentResponse}
 import play.api.mvc.RequestHeader
 import requests.RequestSupport._
 import uk.gov.hmrc.http.HttpReads.Implicits._
-import uk.gov.hmrc.http.{HttpClient, HttpErrorFunctions, HttpReads, HttpResponse, JsValidationException, UpstreamErrorResponse}
+import uk.gov.hmrc.http.HttpClient
 import util.JourneyLogger
-import util.SafeEquals._
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
@@ -44,82 +40,17 @@ class ClaimOverpaymentConnector @Inject() (
       nino:                    Nino,
       p800Reference:           P800Reference,
       claimOverpaymentRequest: ClaimOverpaymentRequest
-  )(implicit requestHeader: RequestHeader): Future[ClaimOverpaymentResult] = {
+  )(implicit requestHeader: RequestHeader): Future[ClaimOverpaymentResponse] = {
 
     JourneyLogger.info("Claiming overpayment")
 
     val sanitisedP800Reference = p800Reference.sanitiseReference
-    implicit val reads: HttpReads[ClaimOverpaymentResult] = ClaimOverpaymentConnector.reads
 
     httpClient
-      .PUT[ClaimOverpaymentRequest, ClaimOverpaymentResult](
+      .PUT[ClaimOverpaymentRequest, ClaimOverpaymentResponse](
         url     = url(nino, sanitisedP800Reference),
         body    = claimOverpaymentRequest,
         headers = npsConfig.makeHeadersForNps()
-      ).map {
-          case claimOverpaymentResult: ClaimOverpaymentResult => claimOverpaymentResult
-        }
+      )
   }
-}
-
-object ClaimOverpaymentConnector {
-
-  /**
-   * Reads handles one of four possible Scenarios
-   *
-   * 1. 200 status code with happy path JSON ClaimOverpaymentResponse
-   * 2. 422 status code, with a JSON failure code mapping to 'Overpayment already taken'
-   * 3. 422 status code, with a JSON failure code mapping to 'Overpayment suspended'
-   * 4. Any other error code status.
-   *
-   * Cases 2, 3 should be handled gracefully.
-   * Case 4 results in 'Technical difficulties' page.
-   */
-  val reads: HttpReads[ClaimOverpaymentResult] = HttpReads.ask.flatMap {
-    case (method, url, response) => response.status match {
-      case Status.OK => HttpReads[ClaimOverpaymentResult.ClaimOverpaymentResponse].map((x: ClaimOverpaymentResult.ClaimOverpaymentResponse) => x: ClaimOverpaymentResult)
-      case Status.UNPROCESSABLE_ENTITY =>
-        logger.info(s"UNPROCESSABLE_ENTITY: ${response.body}")
-        HttpReads[JsResult[ClaimOverpaymentResultFailures]]
-          .flatMap {
-            case JsSuccess(value: ClaimOverpaymentResultFailures, _) => HttpReads.pure(value)
-            case JsError(errors) =>
-              HttpReads.ask.map[ClaimOverpaymentResultFailures] {
-                case (method, url, _) =>
-                  throw new JsValidationException(method, url, this.getClass, errors.toString)
-              }
-          }.map { (claimOverpaymentResultFailures: ClaimOverpaymentResultFailures) =>
-            logger.info(s"UNPROCESSABLE_ENTITY: ${claimOverpaymentResultFailures.toString}")
-            if (claimOverpaymentResultFailures.failures.exists(_.code === NpsErrorCodes.`Overpayment has already been claimed`))
-              ClaimOverpaymentResult.RefundAlreadyTaken
-            else if (claimOverpaymentResultFailures.failures.exists(_.code === NpsErrorCodes.`Overpayment is suspended`))
-              ClaimOverpaymentResult.RefundSuspended
-            else
-              HttpErrorFunctions.handleResponseEither(method, url)(response) match {
-                case Left(err: UpstreamErrorResponse) => throw err
-                // This case should not happen as we already know that the status is 4xx
-                case Right(response: HttpResponse) =>
-
-                  throw UpstreamErrorResponse(
-                    message    = HttpErrorFunctions.upstreamResponseMessage(method, url, response.status, response.body),
-                    statusCode = response.status,
-                    reportAs   = Status.INTERNAL_SERVER_ERROR,
-                    headers    = response.headers
-                  )
-              }
-          }
-      case otherStatus => HttpErrorFunctions.handleResponseEither(method, url)(response) match {
-        case Left(err: UpstreamErrorResponse) => throw err
-        case Right(response: HttpResponse) =>
-          throw UpstreamErrorResponse(
-            message    = HttpErrorFunctions.upstreamResponseMessage(method, url, otherStatus, response.body),
-            statusCode = otherStatus,
-            reportAs   = Status.INTERNAL_SERVER_ERROR,
-            headers    = response.headers
-          )
-      }
-    }
-  }
-
-  private lazy val logger = Logger(this.getClass)
 }
