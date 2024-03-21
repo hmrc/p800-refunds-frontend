@@ -20,6 +20,9 @@ import testsupport.UnitSpec
 
 class BankAccountIdentificationSpec extends UnitSpec {
 
+  //TODO: The length of an account number can vary depending on the bank,
+  // but it's typically between 6 to 10 digits long.
+
   "split into sort code and bank account number" in {
     BankAccountIdentification("12345688888888").sortCode shouldBe "123456"
     BankAccountIdentification("12345688888888").bankAccountNumber shouldBe "88888888"

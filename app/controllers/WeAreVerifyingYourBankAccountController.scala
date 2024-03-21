@@ -191,7 +191,7 @@ class WeAreVerifyingYourBankAccountController @Inject() (
     val p800ReferenceCheckResult: P800ReferenceChecked = journey.getP800ReferenceChecked
 
     val accountNumber: PayeeBankAccountNumber =
-      PayeeBankAccountNumber(bankAccountSummary.accountIdentification.accountNumber)
+      PayeeBankAccountNumber(bankAccountSummary.accountIdentification.bankAccountNumber)
     val sortCode: PayeeBankSortCode =
       PayeeBankSortCode(bankAccountSummary.accountIdentification.sortCode)
 

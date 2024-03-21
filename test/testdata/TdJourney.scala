@@ -124,20 +124,17 @@ trait TdJourney {
       //TODO: API responses
       journeyAccountSummary.copy(isValidEventValue = Some(dependencies.isValidEventValueNotReceived))
 
-    lazy val journeyEdhCalledNextActionIsPay: Journey = journeyReceivedNotificationFromEcospendValid.copy(
-      getBankDetailsRiskResultResponse = Some(dependencies.getBankDetailsRiskResultResponse)
-    )
-
     lazy val journeyClaimedOverpayment: Journey =
-      //TODO: API responses
       journeyReceivedNotificationFromEcospendValid.copy(
-        hasFinished = HasFinished.YesSucceeded
+        getBankDetailsRiskResultResponse = Some(dependencies.getBankDetailsRiskResultResponse),
+        hasFinished                      = HasFinished.YesSucceeded
       )
 
     lazy val journeyClaimOverpaymentFailed: Journey =
-      //TODO: API responses
+
       journeyReceivedNotificationFromEcospendValid.copy(
-        hasFinished = HasFinished.YesRefundNotSubmitted
+        getBankDetailsRiskResultResponse = Some(dependencies.getBankDetailsRiskResultResponseDoNotPay),
+        hasFinished                      = HasFinished.YesRefundNotSubmitted
       )
 
     /**

@@ -91,4 +91,11 @@ trait TdEdh { dependencies: TdBase =>
       )
     ))
   )
+
+  lazy val getBankDetailsRiskResultResponseDoNotPay: GetBankDetailsRiskResultResponse = getBankDetailsRiskResultResponse.copy(
+    overallRiskResult = OverallRiskResult(
+      ruleScore  = 45,
+      nextAction = NextAction.DoNotPay
+    )
+  )
 }

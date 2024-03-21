@@ -19,13 +19,13 @@ package models.journeymodels
 import edh.GetBankDetailsRiskResultResponse
 import models.dateofbirth.DateOfBirth
 import models.ecospend.BankDescription
-import models.ecospend.consent.BankConsentResponse
 import models.ecospend.account.BankAccountSummary
+import models.ecospend.consent.BankConsentResponse
 import models.p800externalapi.EventValue
 import models.{AmountInPence, Nino, P800Reference}
 import nps.models.{ReferenceCheckResult, TraceIndividualResponse}
 import play.api.libs.json.OFormat
-import play.api.mvc.{Request, RequestHeader}
+import play.api.mvc.RequestHeader
 import util.Errors
 
 import java.time.{Clock, Instant}
@@ -134,19 +134,19 @@ final case class Journey(
 
   def journeyId: JourneyId = _id
 
-  def getJourneyType(implicit request: Request[_]): JourneyType = journeyType.getOrElse(Errors.throwServerErrorException(s"Expected 'journeyType' to be defined but it was None [${journeyId.toString}] "))
+  def getJourneyType(implicit request: RequestHeader): JourneyType = journeyType.getOrElse(Errors.throwServerErrorException(s"Expected 'journeyType' to be defined but it was None [${journeyId.toString}] "))
 
-  def getP800Reference(implicit request: Request[_]): P800Reference = p800Reference.getOrElse(Errors.throwServerErrorException(s"Expected 'p800Reference' to be defined but it was None [${journeyId.toString}] "))
+  def getP800Reference(implicit request: RequestHeader): P800Reference = p800Reference.getOrElse(Errors.throwServerErrorException(s"Expected 'p800Reference' to be defined but it was None [${journeyId.toString}] "))
 
-  def getDateOfBirth(implicit request: Request[_]): DateOfBirth = dateOfBirth.getOrElse(Errors.throwServerErrorException(s"Expected 'dateOfBirth' to be defined but it was None [${journeyId.toString}] "))
+  def getDateOfBirth(implicit request: RequestHeader): DateOfBirth = dateOfBirth.getOrElse(Errors.throwServerErrorException(s"Expected 'dateOfBirth' to be defined but it was None [${journeyId.toString}] "))
 
-  def getNino(implicit request: Request[_]): Nino = nino.getOrElse(Errors.throwServerErrorException(s"Expected 'nationalInsuranceNumber' to be defined but it was None [${journeyId.toString}] "))
+  def getNino(implicit request: RequestHeader): Nino = nino.getOrElse(Errors.throwServerErrorException(s"Expected 'nationalInsuranceNumber' to be defined but it was None [${journeyId.toString}] "))
 
-  def getBankDescription(implicit request: Request[_]): BankDescription = bankDescription.getOrElse(Errors.throwServerErrorException(s"Expected 'bankDescription' to be defined but it was None [${journeyId.toString}] "))
+  def getBankDescription(implicit request: RequestHeader): BankDescription = bankDescription.getOrElse(Errors.throwServerErrorException(s"Expected 'bankDescription' to be defined but it was None [${journeyId.toString}] "))
 
-  def getBankConsent(implicit request: Request[_]): BankConsentResponse = bankConsentResponse.getOrElse(Errors.throwBadRequestException(s"Expected 'bankConsent' to be defined but it was None [${journeyId.toString}] "))
+  def getBankConsent(implicit request: RequestHeader): BankConsentResponse = bankConsentResponse.getOrElse(Errors.throwBadRequestException(s"Expected 'bankConsent' to be defined but it was None [${journeyId.toString}] "))
 
-  def getBankAccountSummary(implicit request: Request[_]): BankAccountSummary = bankAccountSummary.getOrElse(Errors.throwBadRequestException(s"Expected 'bankAccountSummary' to be defined but it was None [${journeyId.toString}] "))
+  def getBankAccountSummary(implicit request: RequestHeader): BankAccountSummary = bankAccountSummary.getOrElse(Errors.throwBadRequestException(s"Expected 'bankAccountSummary' to be defined but it was None [${journeyId.toString}] "))
 
   def getTraceIndividualResponse(implicit request: RequestHeader): TraceIndividualResponse = traceIndividualResponse.getOrElse(Errors.throwServerErrorException(s"Expected 'traceIndividualResponse' to be defined but it was None [${journeyId.toString}] "))
 

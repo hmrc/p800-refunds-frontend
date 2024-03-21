@@ -40,7 +40,7 @@ class JourneySpec extends UnitSpec {
      * Example journey with all Api Responses defined in it.
      * With ALL API responses - otherwise it will fail
      */
-    val journey = TdAll.tdAll.BankTransfer.journeyReceivedNotificationFromEcospendValid
+    val journey = TdAll.tdAll.BankTransfer.journeyClaimOverpaymentFailed
 
       /**
        * A heuristic to collect all API responses which should be defined after referenceCheckResult (inclusive)
