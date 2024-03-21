@@ -55,7 +55,7 @@ class GiveYourPermissionPageSpec extends ItSpec {
     P800RefundsExternalApiStub.isValid(tdAll.consentId, EventValue.NotReceived)
     NpsClaimOverpaymentStub.claimOverpayment(
       nino          = tdAll.nino,
-      p800Reference = tdAll.p800Reference,
+      p800Reference = tdAll.p800ReferenceSanitised,
       request       = tdAll.claimOverpaymentRequest,
       response      = tdAll.claimOverpaymentResponse,
     )
@@ -68,6 +68,7 @@ class GiveYourPermissionPageSpec extends ItSpec {
     pages.bankStubPage.clickSubmit()
     pages.verifyBankAccountPage.assertPageIsDisplayed()
 
+    NpsClaimOverpaymentStub.verifyClaimOverpayment(tdAll.nino, tdAll.p800ReferenceSanitised)
     getJourneyFromDatabase(tdAll.journeyId) shouldBeLike tdAll.BankTransfer.journeyReceivedNotificationFromEcospendNotReceived
   }
 

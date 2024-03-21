@@ -43,7 +43,7 @@ class IsYourAddressUpToDatePageSpec extends ItSpec {
       "'Cheque Request received' page when API calls succeed" in {
         NpsIssuePayableOrderStub.issuePayableOrder(
           journey.nino.value,
-          journey.p800Reference.value,
+          tdAll.p800ReferenceSanitised,
           IssuePayableOrderRequest(
             customerAccountNumber   = tdAll.p800ReferenceChecked.customerAccountNumber,
             associatedPayableNumber = tdAll.p800ReferenceChecked.associatedPayableNumber,
@@ -58,13 +58,13 @@ class IsYourAddressUpToDatePageSpec extends ItSpec {
         pages.isYourAddressUpToDate.clickSubmit()
 
         pages.requestReceivedChequePage.assertPageIsDisplayedForCheque()
-        NpsIssuePayableOrderStub.verifyIssuePayableOrder(journey.nino.value, journey.p800Reference.value)
+        NpsIssuePayableOrderStub.verifyIssuePayableOrder(journey.nino.value, tdAll.p800ReferenceSanitised)
         getJourneyFromDatabase(journey.journeyId) shouldBeLike tdAll.Cheque.journeyClaimedOverpayment
       }
       "'Technical difficulties' when API call fails we don't update the journey state" in {
         NpsIssuePayableOrderStub.issuePayableOrderRefundAlreadyTaken(
           journey.nino.value,
-          journey.p800Reference.value,
+          tdAll.p800ReferenceSanitised,
           IssuePayableOrderRequest(
             customerAccountNumber   = tdAll.p800ReferenceChecked.customerAccountNumber,
             associatedPayableNumber = tdAll.p800ReferenceChecked.associatedPayableNumber,
@@ -78,7 +78,7 @@ class IsYourAddressUpToDatePageSpec extends ItSpec {
         pages.isYourAddressUpToDate.clickSubmit()
 
         pages.isYourAddressUpToDate.assertPageIsDisplayedWithTechnicalDifficultiesError()
-        NpsIssuePayableOrderStub.verifyIssuePayableOrder(journey.nino.value, journey.p800Reference.value)
+        NpsIssuePayableOrderStub.verifyIssuePayableOrder(journey.nino.value, tdAll.p800ReferenceSanitised)
         getJourneyFromDatabase(journey.journeyId) shouldBeLike journey withClue "journey was not updated"
       }
     }
