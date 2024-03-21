@@ -23,6 +23,9 @@ import models.ecospend.account.BankAccountSummary
 import models.ecospend.consent.{BankReferenceId, ConsentId, ConsentStatus}
 import models.journeymodels._
 import models.p800externalapi.EventValue
+import nps.ClaimOverpaymentConnector
+import nps.models.ReferenceCheckResult.P800ReferenceChecked
+import nps.models._
 import play.api.mvc._
 import services.{EcospendService, JourneyService}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
@@ -39,6 +42,7 @@ class WeAreVerifyingYourBankAccountController @Inject() (
     ecospendService:                 EcospendService,
     edhConnector:                    EdhConnector,
     journeyService:                  JourneyService,
+    claimOverpaymentConnector:       ClaimOverpaymentConnector,
     mcc:                             MessagesControllerComponents,
     p800RefundsExternalApiConnector: P800RefundsExternalApiConnector,
     views:                           Views
@@ -51,11 +55,12 @@ class WeAreVerifyingYourBankAccountController @Inject() (
     consent_id.fold(Errors.throwBadRequestException("This endpoint requires a valid consent_id query parameter")) { consentId: ConsentId =>
       Errors.require(journey.getBankConsent.id === consentId, "The consent_id supplied via the query parameter must match that stored in the journey. This should be investigated")
     }
+
     bank_reference_id.fold(Errors.throwBadRequestException("This endpoint requires a valid bank_reference_id query parameter")) { bankReferenceId: BankReferenceId =>
       Errors.require(journey.getBankConsent.bankReferenceId === bankReferenceId, "The bank_reference_id supplied via the query parameter must match that stored in the journey. This should be investigated")
     }
 
-      def next(journey: Journey, isValidEventValue: EventValue, getBankDetailsRiskResultResponse: GetBankDetailsRiskResultResponse): Future[(Result, Journey)] = isValidEventValue match {
+      def next(journey: Journey, isValidEventValue: EventValue, getBankDetailsRiskResultResponse: GetBankDetailsRiskResultResponse, bankAccountSummary: BankAccountSummary): Future[(Result, Journey)] = isValidEventValue match {
         case EventValue.NotReceived => Future.successful(
           (
             Ok(views.weAreVerifyingYourBankAccountPage(status, consent_id, bank_reference_id)),
@@ -73,7 +78,7 @@ class WeAreVerifyingYourBankAccountController @Inject() (
           JourneyLogger.info(s"Account assessment succeeded.")
           getBankDetailsRiskResultResponse.overallRiskResult.nextAction match {
             case NextAction.DoNotPay => handleDoNotPay(journey)
-            case NextAction.Pay      => handlePay(journey)
+            case NextAction.Pay      => handlePay(journey, bankAccountSummary)
           }
       }
 
@@ -86,12 +91,13 @@ class WeAreVerifyingYourBankAccountController @Inject() (
         )
       }
 
-      def handlePay(journey: Journey): Future[(Result, Journey)] = {
-        // TODO: (Myles) Call API#JF72745 Claim Overpayment
-        Future.successful((
-          Redirect(routes.RequestReceivedController.getBankTransfer),
-          journey.update(hasFinished = HasFinished.YesSucceeded)
-        ))
+      def handlePay(journey: Journey, bankAccountSummary: BankAccountSummary): Future[(Result, Journey)] = {
+        claimOverpayment(journey, bankAccountSummary).map{ _ =>
+          (
+            Redirect(routes.RequestReceivedController.getBankTransfer),
+            journey.update(hasFinished = HasFinished.YesSucceeded)
+          )
+        }
       }
 
     for {
@@ -100,7 +106,7 @@ class WeAreVerifyingYourBankAccountController @Inject() (
       getBankDetailsRiskResultResponse: GetBankDetailsRiskResultResponse <- obtainGetBankDetailsRiskResultResponse(journey, bankAccountSummary)
       //TODO: Fuzzy Name Matching
       newJourney = journey.update(isValidEventValue, bankAccountSummary, getBankDetailsRiskResultResponse)
-      (result, newJourney) <- next(newJourney, isValidEventValue, getBankDetailsRiskResultResponse)
+      (result, newJourney) <- next(newJourney, isValidEventValue, getBankDetailsRiskResultResponse, bankAccountSummary)
       _ <- journeyService.upsert(newJourney)
     } yield result
   }
@@ -179,6 +185,29 @@ class WeAreVerifyingYourBankAccountController @Inject() (
       .getBankDetailsRiskResultResponse
       .map(Future.successful)
       .getOrElse(edhConnector.getBankDetailsRiskResult(claimId, getBankDetailsRiskResultRequest))
+  }
+
+  private def claimOverpayment(journey: Journey, bankAccountSummary: BankAccountSummary)(implicit request: RequestHeader): Future[Unit] = {
+    val p800ReferenceCheckResult: P800ReferenceChecked = journey.getP800ReferenceChecked
+
+    val accountNumber: PayeeBankAccountNumber =
+      PayeeBankAccountNumber(bankAccountSummary.accountIdentification.accountNumber)
+    val sortCode: PayeeBankSortCode =
+      PayeeBankSortCode(bankAccountSummary.accountIdentification.sortCode)
+
+    val claimOverpaymentRequest: ClaimOverpaymentRequest = ClaimOverpaymentRequest(
+      currentOptimisticLock    = p800ReferenceCheckResult.currentOptimisticLock,
+      reconciliationIdentifier = p800ReferenceCheckResult.reconciliationIdentifier,
+      associatedPayableNumber  = p800ReferenceCheckResult.associatedPayableNumber,
+      payeeBankAccountNumber   = accountNumber,
+      payeeBankSortCode        = sortCode,
+      payeeBankAccountName     = PayeeBankAccountName(bankAccountSummary.displayName.value),
+      designatedPayeeAccount   = DesignatedPayeeAccount(true)
+    )
+
+    claimOverpaymentConnector
+      .claimOverpayment(journey.getNino, journey.getP800Reference, claimOverpaymentRequest)
+      .map(_ => ())
   }
 
 }

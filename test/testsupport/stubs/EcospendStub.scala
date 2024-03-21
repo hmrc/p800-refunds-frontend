@@ -202,10 +202,19 @@ object EcospendStub {
   object ConsentStubs {
 
     def stubConsent2xxSucceeded(bankId: BankId): StubMapping =
-      WireMockHelpers.Post.stubForPost(
-        url             = consentUrl,
-        responseBody    = validateBankConsentResponseJson(bankId, ConsentStatus.AwaitingAuthorization),
-        requiredHeaders = ecospendHeaders
+      stubFor(
+        WireMockHelpers.Post
+          .postMappingWithHeaders(consentUrl, ecospendHeaders)
+          .withRequestBody(matchingJsonPath(
+            "redirect_url",
+            containing("http://localhost:10150/get-an-income-tax-refund/bank-transfer/verifying-your-bank-account")
+          ))
+          .willReturn(
+            aResponse()
+              .withStatus(Status.OK)
+              .withHeader("Content-Type", "application/json")
+              .withBody(validateBankConsentResponseJson(bankId, ConsentStatus.AwaitingAuthorization))
+          )
       )
 
     def validateBankConsentResponseJson(bankId: BankId, consentStatus: ConsentStatus): String =
@@ -272,7 +281,7 @@ object EcospendStub {
             "account_identification": "44556610002333",
             "calculated_owner_name": "Greg Greggson",
             "account_owner_name": "Greg Greggson",
-            "display_name": "Greg G Greggson",
+            "display_name": "bank account display name",
             "balance": 123.7,
             "last_update_time": "2059-11-25T16:33:51.880",
             "parties": [

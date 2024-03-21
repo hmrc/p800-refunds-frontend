@@ -14,18 +14,13 @@
  * limitations under the License.
  */
 
-package models.ecospend.account
+package nps.models
 
-import play.api.libs.json.{Json, Format}
+import play.api.libs.json.{Format, Json}
 
-final case class BankAccountIdentification(value: String) extends AnyVal {
-  private def asSortCodeAndAccountNumber: (String, String) = value.splitAt(6)
-  def sortCode: String = asSortCodeAndAccountNumber._1
+final case class DesignatedPayeeAccount(value: Boolean)
 
-  //TODO: The length of an account number can vary depending on the bank, but it's typically between 6 to 10 digits long.
-  def bankAccountNumber: String = asSortCodeAndAccountNumber._2
-}
-
-object BankAccountIdentification {
-  implicit val format: Format[BankAccountIdentification] = Json.valueFormat[BankAccountIdentification]
+@SuppressWarnings(Array("org.wartremover.warts.Any"))
+object DesignatedPayeeAccount {
+  implicit val format: Format[DesignatedPayeeAccount] = Json.valueFormat[DesignatedPayeeAccount]
 }

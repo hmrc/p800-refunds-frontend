@@ -36,6 +36,8 @@ class AppConfig @Inject() (servicesConfig: ServicesConfig, configuration: Config
     val failedAttemptRepoMaxAttempts: Int = configuration.get[Int]("mongodb.failed-attempts.failed-attempt-repo-max-attempts")
   }
 
+  val platformFrontendHost: String = readConfigAsValidUrlString("platform.frontend.host")
+
   val govUkRouteIn: String = readConfigAsValidUrlString("urls.gov-uk.govuk-route-in")
 
   val incomeTaxGeneralEnquiriesUrl: String = readConfigAsValidUrlString("urls.gov-uk.income-tax-general-enquiries")
@@ -62,6 +64,15 @@ class AppConfig @Inject() (servicesConfig: ServicesConfig, configuration: Config
 
   object P800RefundsExternalApi {
     val p800RefundsExternalApiBaseUrl: String = servicesConfig.baseUrl("p800-refunds-external-api")
+  }
+
+  object DateCalculator {
+    val dateCalculatorBaseUrl: String = servicesConfig.baseUrl("date-calculator")
+  }
+
+  object JourneyVariables {
+    val bankTransferWorkingDaysToAdd: Int = configuration.get[Int]("journey-variables.bank-transfer-working-days-to-add")
+    val chequeFutureDateAddition: Int = configuration.get[Int]("journey-variables.cheque-weeks-to-add")
   }
 
   /**

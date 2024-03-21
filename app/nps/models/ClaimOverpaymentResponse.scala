@@ -16,10 +16,15 @@
 
 package nps.models
 
-import play.api.libs.json.{Format, Json}
+import _root_.models.Nino
+import play.api.libs.json.{OFormat, Json}
 
-final case class ReconciliationIdentifier(value: Int)
+final case class ClaimOverpaymentResponse(
+    identifer:             Nino,
+    currentOptimisticLock: CurrentOptimisticLock
+)
 
-object ReconciliationIdentifier {
-  implicit val format: Format[ReconciliationIdentifier] = Json.valueFormat[ReconciliationIdentifier]
+@SuppressWarnings(Array("org.wartremover.warts.Any"))
+object ClaimOverpaymentResponse {
+  implicit val format: OFormat[ClaimOverpaymentResponse] = Json.format[ClaimOverpaymentResponse]
 }

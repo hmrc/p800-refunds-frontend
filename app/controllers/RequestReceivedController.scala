@@ -17,27 +17,33 @@
 package controllers
 
 import action.{Actions, JourneyRequest}
+import config.AppConfig
 import models.journeymodels._
 import play.api.mvc._
+import services.DateCalculatorService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import util.SafeEquals.EqualsOps
 import views.Views
 
-import java.time.LocalDate
+import java.time.{Clock, LocalDate}
 import javax.inject.{Inject, Singleton}
+import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class RequestReceivedController @Inject() (
-    mcc:     MessagesControllerComponents,
-    views:   Views,
-    actions: Actions
-) extends FrontendController(mcc) {
+    actions:               Actions,
+    appConfig:             AppConfig,
+    clock:                 Clock,
+    dateCalculatorService: DateCalculatorService,
+    mcc:                   MessagesControllerComponents,
+    views:                 Views
+)(implicit executionContext: ExecutionContext) extends FrontendController(mcc) {
 
-  def getBankTransfer: Action[AnyContent] = actions.journeyFinished { implicit request =>
+  def getBankTransfer: Action[AnyContent] = actions.journeyFinished.async { implicit request =>
     val journey: Journey = request.journey
 
     if (journey.hasFinished === HasFinished.YesRefundNotSubmitted) {
-      Redirect(controllers.routes.RefundRequestNotSubmittedController.get)
+      Future.successful(Redirect(controllers.routes.RefundRequestNotSubmittedController.get))
     } else {
 
       journey.getJourneyType match {
@@ -46,11 +52,11 @@ class RequestReceivedController @Inject() (
       }
     }
   }
-  def getCheque: Action[AnyContent] = actions.journeyFinished { implicit request =>
+  def getCheque: Action[AnyContent] = actions.journeyFinished.async { implicit request =>
     val journey: Journey = request.journey
 
     if (journey.hasFinished === HasFinished.YesRefundNotSubmitted) {
-      Redirect(controllers.routes.RefundRequestNotSubmittedController.get)
+      Future.successful(Redirect(controllers.routes.RefundRequestNotSubmittedController.get))
     } else {
 
       journey.getJourneyType match {
@@ -60,21 +66,22 @@ class RequestReceivedController @Inject() (
     }
   }
 
-  private def getResultBankTransfer(journey: Journey)(implicit request: JourneyRequest[_]): Result = {
-    Ok(views.bankTransferRequestReceivedPage(
-      journey.getP800Reference.sanitiseReference,
-      journey.getAmount,
-      "1 December 2524" //TODO: get this from identity verification response
-    ))
+  private def getResultBankTransfer(journey: Journey)(implicit request: JourneyRequest[_]): Future[Result] = {
+    dateCalculatorService.getFutureDate().map { futureDate =>
+      Ok(views.bankTransferRequestReceivedPage(
+        journey.getP800Reference.sanitiseReference,
+        journey.getAmount,
+        futureDate
+      ))
+    }
   }
 
-  private def getResultCheque(journey: Journey)(implicit request: JourneyRequest[_]): Result = {
-    val dummyDate = LocalDate.of(2524, 1, 16)
-
-    Ok(views.chequeRequestReceivedPage(
+  private def getResultCheque(journey: Journey)(implicit request: JourneyRequest[_]): Future[Result] = {
+    val chequeArrivalByDate: LocalDate = LocalDate.now(clock).plusWeeks(appConfig.JourneyVariables.chequeFutureDateAddition)
+    Future.successful(Ok(views.chequeRequestReceivedPage(
       p800Reference       = journey.getP800Reference.sanitiseReference,
       refundAmountInPence = journey.getAmount,
-      chequeArriveBy      = dummyDate //TODO: unhardcode this
-    ))
+      chequeArriveBy      = chequeArrivalByDate
+    )))
   }
 }

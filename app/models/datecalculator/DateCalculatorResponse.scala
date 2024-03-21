@@ -14,18 +14,14 @@
  * limitations under the License.
  */
 
-package models.ecospend.account
+package models.datecalculator
 
-import play.api.libs.json.{Json, Format}
+import play.api.libs.json.{Format, Json}
 
-final case class BankAccountIdentification(value: String) extends AnyVal {
-  private def asSortCodeAndAccountNumber: (String, String) = value.splitAt(6)
-  def sortCode: String = asSortCodeAndAccountNumber._1
+import java.time.LocalDate
 
-  //TODO: The length of an account number can vary depending on the bank, but it's typically between 6 to 10 digits long.
-  def bankAccountNumber: String = asSortCodeAndAccountNumber._2
-}
+final case class DateCalculatorResponse(result: LocalDate)
 
-object BankAccountIdentification {
-  implicit val format: Format[BankAccountIdentification] = Json.valueFormat[BankAccountIdentification]
+object DateCalculatorResponse {
+  implicit val format: Format[DateCalculatorResponse] = Json.format[DateCalculatorResponse]
 }

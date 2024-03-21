@@ -162,7 +162,7 @@ object WireMockHelpers {
         )
     )
 
-    private def postMappingWithHeaders(
+    def postMappingWithHeaders(
         url:             String,
         requiredHeaders: Seq[(String, StringValuePattern)]
     ): MappingBuilder =

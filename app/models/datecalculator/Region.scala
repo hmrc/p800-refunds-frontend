@@ -14,18 +14,16 @@
  * limitations under the License.
  */
 
-package models.ecospend.account
+package models.datecalculator
 
-import play.api.libs.json.{Json, Format}
+import enumeratum._
 
-final case class BankAccountIdentification(value: String) extends AnyVal {
-  private def asSortCodeAndAccountNumber: (String, String) = value.splitAt(6)
-  def sortCode: String = asSortCodeAndAccountNumber._1
+sealed trait Region extends EnumEntry
 
-  //TODO: The length of an account number can vary depending on the bank, but it's typically between 6 to 10 digits long.
-  def bankAccountNumber: String = asSortCodeAndAccountNumber._2
-}
+object Region extends Enum[Region] with PlayJsonEnum[Region] {
 
-object BankAccountIdentification {
-  implicit val format: Format[BankAccountIdentification] = Json.valueFormat[BankAccountIdentification]
+  val values: IndexedSeq[Region] = findValues
+  //TODO: we need to check if we should just use this, or cater for different regions also (i.e. "SC" (Scotland), "NI" (Northern Ireland))
+  //England and Wales.
+  case object EW extends Region
 }

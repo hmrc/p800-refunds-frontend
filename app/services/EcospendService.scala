@@ -17,6 +17,7 @@
 package services
 
 import action.JourneyRequest
+import config.AppConfig
 import connectors.{EcospendAuthServerConnector, EcospendConnector}
 import models.ecospend.BankDescription
 import models.ecospend.account.{BankAccountFormat, BankAccountSummary}
@@ -34,6 +35,7 @@ import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton()
 class EcospendService @Inject() (
+    appConfig:                   AppConfig,
     ecospendConnector:           EcospendConnector,
     ecospendAuthServerConnector: EcospendAuthServerConnector
 )(implicit ec: ExecutionContext) {
@@ -51,7 +53,8 @@ class EcospendService @Inject() (
   } yield bankConsentResponse
 
   private def bankConsentRequestFromJourney(journey: Journey)(implicit request: JourneyRequest[_]): BankConsentRequest = {
-    val redirectUrl: Uri = Uri(controllers.routes.WeAreVerifyingYourBankAccountController.get(None, None, None).absoluteURL())
+    val redirectUrl: Uri = Uri(appConfig.platformFrontendHost +
+      controllers.routes.WeAreVerifyingYourBankAccountController.get(None, None, None).toString)
 
     JourneyLogger.info(s"Creating consent with [redirectUrl: ${redirectUrl.toString}]")
 

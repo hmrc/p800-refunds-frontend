@@ -18,7 +18,7 @@ package pagespecs
 
 import models.p800externalapi.EventValue
 import testsupport.ItSpec
-import testsupport.stubs.{EcospendStub, P800RefundsExternalApiStub}
+import testsupport.stubs.{EcospendStub, P800RefundsExternalApiStub, NpsClaimOverpaymentStub}
 
 class GiveYourPermissionPageSpec extends ItSpec {
 
@@ -53,6 +53,12 @@ class GiveYourPermissionPageSpec extends ItSpec {
     EcospendStub.AuthStubs.stubEcospendAuth2xxSucceeded
     EcospendStub.AccountStub.stubAccountSummary2xxSucceeded(tdAll.consentId)
     P800RefundsExternalApiStub.isValid(tdAll.consentId, EventValue.NotReceived)
+    NpsClaimOverpaymentStub.claimOverpayment(
+      nino          = tdAll.nino,
+      p800Reference = tdAll.p800Reference,
+      request       = tdAll.claimOverpaymentRequest,
+      response      = tdAll.claimOverpaymentResponse,
+    )
 
     pages.giveYourPermissionPage.open()
     pages.giveYourPermissionPage.assertPageIsDisplayed()

@@ -18,7 +18,7 @@ package pagespecs
 
 import models.P800Reference
 import testsupport.ItSpec
-import testsupport.stubs.EcospendStub
+import testsupport.stubs.{DateCalculatorStub, EcospendStub}
 
 class RequestReceivedPageSpec extends ItSpec {
 
@@ -28,11 +28,43 @@ class RequestReceivedPageSpec extends ItSpec {
   }
 
   "/request-received should render the relevant page for" - {
-    "bank transfer" in {
+
+    "bank transfer with date of payment to be received 5 working days in the future when DateCalculator service responds successfully" in {
       upsertJourneyToDatabase(tdAll.BankTransfer.journeyClaimedOverpayment)
+      DateCalculatorStub.addWorkingDays()
+
       pages.requestReceivedBankTransferPage.open()
       pages.requestReceivedBankTransferPage.assertPageIsDisplayedForBankTransfer()
+
       getJourneyFromDatabase(tdAll.journeyId) shouldBeLike tdAll.BankTransfer.journeyClaimedOverpayment
+      DateCalculatorStub.verifyAddWorkingDays()
+    }
+
+    "bank transfer with date of payment to be received 7 days in the future when DateCalculator service responds with" - {
+      "BadRequest (400)" in {
+        upsertJourneyToDatabase(tdAll.BankTransfer.journeyClaimedOverpayment)
+        DateCalculatorStub.addWorkingDaysBadRequest()
+        pages.requestReceivedBankTransferPage.open()
+        pages.requestReceivedBankTransferPage.assertPageIsDisplayedForBankTransfer(failedDateCalculatorScenario = true)
+        getJourneyFromDatabase(tdAll.journeyId) shouldBeLike tdAll.BankTransfer.journeyClaimedOverpayment
+        DateCalculatorStub.verifyAddWorkingDays()
+      }
+      "UnprocessableEntity (422)" in {
+        upsertJourneyToDatabase(tdAll.BankTransfer.journeyClaimedOverpayment)
+        DateCalculatorStub.addWorkingDaysUnprocessableEntity()
+        pages.requestReceivedBankTransferPage.open()
+        pages.requestReceivedBankTransferPage.assertPageIsDisplayedForBankTransfer(failedDateCalculatorScenario = true)
+        getJourneyFromDatabase(tdAll.journeyId) shouldBeLike tdAll.BankTransfer.journeyClaimedOverpayment
+        DateCalculatorStub.verifyAddWorkingDays()
+      }
+      "ServerError (" in {
+        upsertJourneyToDatabase(tdAll.BankTransfer.journeyClaimedOverpayment)
+        DateCalculatorStub.addWorkingDaysServerError()
+        pages.requestReceivedBankTransferPage.open()
+        pages.requestReceivedBankTransferPage.assertPageIsDisplayedForBankTransfer(failedDateCalculatorScenario = true)
+        getJourneyFromDatabase(tdAll.journeyId) shouldBeLike tdAll.BankTransfer.journeyClaimedOverpayment
+        DateCalculatorStub.verifyAddWorkingDays()
+      }
     }
 
     "cheque" in {
@@ -45,9 +77,13 @@ class RequestReceivedPageSpec extends ItSpec {
     "bank transfer when user previously entered a p800 ref with non digits in, which should get sanitised" in {
       val journey = tdAll.BankTransfer.journeyClaimedOverpayment.copy(p800Reference = Some(P800Reference("000123, 45- 678")))
       upsertJourneyToDatabase(journey)
+      DateCalculatorStub.addWorkingDays()
+
       pages.requestReceivedBankTransferPage.open()
       pages.requestReceivedBankTransferPage.assertPageIsDisplayedForBankTransfer()
+
       getJourneyFromDatabase(tdAll.journeyId) shouldBeLike journey
+      DateCalculatorStub.verifyAddWorkingDays()
     }
   }
 
