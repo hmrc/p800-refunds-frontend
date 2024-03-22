@@ -52,7 +52,7 @@
     maybeJourneyType: Option[JourneyType] = None
 )(
     contentBlock: Html)(
-    implicit request: Request[_]
+    implicit request: RequestHeader
 )
 
 @import viewsHelpers.requestSupport._

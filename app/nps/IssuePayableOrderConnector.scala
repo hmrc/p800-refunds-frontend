@@ -37,7 +37,7 @@ class IssuePayableOrderConnector @Inject() (
 )(implicit ec: ExecutionContext) {
 
   private def url(nino: Nino, p800Reference: P800Reference): String = npsConfig.baseUrl +
-    s"/nps-json-service/nps/v1/api/accounting/issue-payable-order/${nino.value}/${p800Reference.value}"
+    s"/nps-json-service/nps/v1/api/accounting/issue-payable-order/${nino.value}/${p800Reference.sanitiseReference.value}"
 
   def issuePayableOrder(nino: Nino, p800Reference: P800Reference, issuePayableOrderRequest: IssuePayableOrderRequest)(implicit requestHeader: RequestHeader): Future[Unit] = {
     JourneyLogger.info("Issuing payable order")

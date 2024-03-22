@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2024 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,22 +14,18 @@
  * limitations under the License.
  */
 
-package specs
+package models.ecospend.account
 
-import models.ecospend.account.BankAccountIdentification
 import testsupport.UnitSpec
 
 class BankAccountIdentificationSpec extends UnitSpec {
-  "Extract sort code" in {
-    val accountIdentification = BankAccountIdentification("44556610002333")
 
-    accountIdentification.sortCode shouldBe "445566"
+  //TODO: The length of an account number can vary depending on the bank,
+  // but it's typically between 6 to 10 digits long.
+
+  "split into sort code and bank account number" in {
+    BankAccountIdentification("12345688888888").sortCode shouldBe "123456"
+    BankAccountIdentification("12345688888888").bankAccountNumber shouldBe "88888888"
   }
 
-  "Extract account number" in {
-    val accountIdentification = BankAccountIdentification("44556610002333")
-
-    accountIdentification.accountNumber shouldBe "10002333"
-  }
 }
-

@@ -20,15 +20,20 @@ import play.api.libs.json.{Json, OFormat}
 import util.SafeEquals.EqualsOps
 
 import java.time.LocalDate
+import java.time.format.DateTimeFormatter
 import java.util.{Calendar, Locale}
 import scala.jdk.CollectionConverters.MapHasAsScala
 import scala.util.{Failure, Success, Try}
 
-final case class DateOfBirth(dayOfMonth: DayOfMonth, month: Month, year: Year)
+final case class DateOfBirth(dayOfMonth: DayOfMonth, month: Month, year: Year) {
+  def `formatYYYY-MM-DD`: String = DateOfBirth.asLocalDate(this).format(DateOfBirth.`YYYY-MM-DD`)
+  def format(formatter: DateTimeFormatter): String = DateOfBirth.asLocalDate(this).format(formatter)
+}
 
 object DateOfBirth {
   @SuppressWarnings(Array("org.wartremover.warts.Any"))
   implicit val format: OFormat[DateOfBirth] = Json.format[DateOfBirth]
+  private val `YYYY-MM-DD`: DateTimeFormatter = DateTimeFormatter.ISO_LOCAL_DATE
 
   /**
    * It creates a list of month strings tupled with int value, i.e. ("January", 0), ("Jan",0)

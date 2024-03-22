@@ -16,14 +16,15 @@
 
 package connectors
 
-import action.JourneyRequest
 import com.google.inject.{Inject, Singleton}
 import config.AppConfig
 import models.ecospend.consent.ConsentId
 import models.p800externalapi.EventValue
+import play.api.mvc.RequestHeader
 import requests.RequestSupport
 import uk.gov.hmrc.http.HttpClient
 import uk.gov.hmrc.http.HttpReads.Implicits._
+import util.JourneyLogger
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -38,7 +39,9 @@ class P800RefundsExternalApiConnector @Inject() (
   private def isValidUrl(consentId: ConsentId): String =
     appConfig.P800RefundsExternalApi.p800RefundsExternalApiBaseUrl + s"/is-valid/${consentId.value}"
 
-  def isValid(consentId: ConsentId)(implicit request: JourneyRequest[_]): Future[EventValue] =
+  def isValid(consentId: ConsentId)(implicit request: RequestHeader): Future[EventValue] = {
+    JourneyLogger.debug(s"checking if isValid ... [url:${isValidUrl(consentId)}]")
     httpClient.GET[EventValue](isValidUrl(consentId))
+  }
 
 }

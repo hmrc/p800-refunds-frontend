@@ -20,13 +20,20 @@
 @import action.JourneyRequest
 @import models.ecospend.consent.{ConsentStatus, BankReferenceId, ConsentId}
 @import views.html.helper.CSPNonce
+@import models.journeymodels.Journey
 
 @this(
     layout: Layout,
     viewsHelpers: views.ViewsHelpers
 )
 
-@(status: Option[ConsentStatus], consentId: Option[ConsentId], bankReferenceId: Option[BankReferenceId])(implicit request: JourneyRequest[_])
+@(
+    journey: Journey,
+    status: Option[ConsentStatus],
+    consentId: Option[ConsentId],
+    bankReferenceId: Option[BankReferenceId])(implicit
+    request: RequestHeader
+)
 
 @import viewsHelpers.requestSupport._
 
@@ -34,7 +41,7 @@
 
 @layout(
     pageTitle = Some(Messages.VerifyBankAccount.`verifying your bank account`.show),
-    maybeJourneyType = Some(request.journey.getJourneyType),
+    maybeJourneyType = Some(journey.getJourneyType),
     additionalScripts = Some(additionalScript)
 ) {
 

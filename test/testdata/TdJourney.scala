@@ -24,25 +24,26 @@ import nps.models.ReferenceCheckResult
  * Test Data (Td) Journey. It has journey examples in all possible states.
  */
 trait TdJourney {
-  dependencies: TdBase =>
+  dependencies: TdBase with TdEdh =>
 
   lazy val journeyId: JourneyId = JourneyId("64886ed616fe8b501cbf0088")
 
   lazy val journeyStarted: Journey = Journey(
-    _id                     = journeyId,
-    createdAt               = dependencies.instant,
-    hasFinished             = HasFinished.No,
-    journeyType             = None,
-    p800Reference           = None,
-    nino                    = None,
-    isChanging              = IsChanging.No,
-    dateOfBirth             = None,
-    referenceCheckResult    = None,
-    traceIndividualResponse = None,
-    bankDescription         = None,
-    bankConsentResponse     = None,
-    bankAccountSummary      = None,
-    isValidEventValue       = None
+    _id                              = journeyId,
+    createdAt                        = dependencies.instant,
+    hasFinished                      = HasFinished.No,
+    journeyType                      = None,
+    p800Reference                    = None,
+    nino                             = None,
+    isChanging                       = IsChanging.No,
+    dateOfBirth                      = None,
+    referenceCheckResult             = None,
+    traceIndividualResponse          = None,
+    bankDescription                  = None,
+    bankConsentResponse              = None,
+    bankAccountSummary               = None,
+    isValidEventValue                = None,
+    getBankDetailsRiskResultResponse = None
   )
 
   object BankTransfer {
@@ -103,36 +104,40 @@ trait TdJourney {
       bankDescription = Some(dependencies.bankDescription)
     )
 
-    lazy val journeyPermissionGiven: Journey = journeySelectedBank.copy(
+    lazy val journeyBankConsent: Journey = journeySelectedBank.copy(
       bankConsentResponse = Some(dependencies.bankConsent)
     )
 
-    lazy val journeyAccountSummary: Journey = journeyPermissionGiven.copy(
-      bankAccountSummary = Some(dependencies.bankAccountSummary)
-    )
+    lazy val journeyReceivedNotificationFromEcospendNotReceived: Journey =
+      journeyBankConsent.copy(
+        isValidEventValue = Some(dependencies.isValidEventValueNotReceived),
+        //Even if the notification was not received,
+        // in the same controller call
+        // other APIs were made
+        // and their responses were stored in the journey:
+        getBankDetailsRiskResultResponse = Some(dependencies.getBankDetailsRiskResultResponse),
+        bankAccountSummary               = Some(dependencies.bankAccountSummary)
+      )
 
     lazy val journeyReceivedNotificationFromEcospendValid: Journey =
-      //TODO: API responses
-      journeyAccountSummary.copy(isValidEventValue = Some(dependencies.isValidEventValueValid))
+      journeyReceivedNotificationFromEcospendNotReceived.copy(
+        isValidEventValue = Some(dependencies.isValidEventValueValid)
+      )
 
     lazy val journeyReceivedNotificationFromEcospendNotValid: Journey =
-      //TODO: API responses
-      journeyAccountSummary.copy(isValidEventValue = Some(dependencies.isValidEventValueNotValid))
-
-    lazy val journeyReceivedNotificationFromEcospendNotReceived: Journey =
-      //TODO: API responses
-      journeyAccountSummary.copy(isValidEventValue = Some(dependencies.isValidEventValueNotReceived))
+      journeyReceivedNotificationFromEcospendNotReceived.copy(
+        isValidEventValue = Some(dependencies.isValidEventValueNotValid)
+      )
 
     lazy val journeyClaimedOverpayment: Journey =
-      //TODO: API responses
       journeyReceivedNotificationFromEcospendValid.copy(
         hasFinished = HasFinished.YesSucceeded
       )
 
     lazy val journeyClaimOverpaymentFailed: Journey =
-      //TODO: API responses
       journeyReceivedNotificationFromEcospendValid.copy(
-        hasFinished = HasFinished.YesRefundNotSubmitted
+        getBankDetailsRiskResultResponse = Some(dependencies.getBankDetailsRiskResultResponseDoNotPay),
+        hasFinished                      = HasFinished.YesRefundNotSubmitted
       )
 
     /**

@@ -23,15 +23,24 @@ import testsupport.UnitSpec
 class JourneySpec extends UnitSpec {
 
   "changing dependent fields reset API responses" in {
+
     /*
+     * What is the purpose of this test?
+     * The Journey class stores and manages user-entered data and API responses throughout the user's journey.
+     * It is important to invalidate certain API responses when the user-entered data they depend on is changed.
+     * For example, if the user's nino is updated, all API responses should be set to None because they depend on the nino.
+     * The update methods in the Journey class handle this invalidation to ensure data consistency and prevent the use of stale data.
+     *
+     * How the test works?
      * This test operates on assumption that all API
      * responses are defined in journey after all other fields starting with 'referenceCheckResult'
      */
 
     /**
-     * Example journey with all Api Responses defiend in it
+     * Example journey with all Api Responses defined in it.
+     * With ALL API responses - otherwise it will fail
      */
-    val journey = TdAll.tdAll.BankTransfer.journeyReceivedNotificationFromEcospendValid
+    val journey = TdAll.tdAll.BankTransfer.journeyClaimOverpaymentFailed
 
       /**
        * A heuristic to collect all API responses which should be defined after referenceCheckResult (inclusive)

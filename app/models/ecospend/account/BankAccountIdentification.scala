@@ -19,8 +19,11 @@ package models.ecospend.account
 import play.api.libs.json.{Json, Format}
 
 final case class BankAccountIdentification(value: String) extends AnyVal {
-  def accountNumber: String = value.takeRight(8)
-  def sortCode: String = value.take(6)
+  private def asSortCodeAndAccountNumber: (String, String) = value.splitAt(6)
+  def sortCode: String = asSortCodeAndAccountNumber._1
+
+  //TODO: The length of an account number can vary depending on the bank, but it's typically between 6 to 10 digits long.
+  def bankAccountNumber: String = asSortCodeAndAccountNumber._2
 }
 
 object BankAccountIdentification {

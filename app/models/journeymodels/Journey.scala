@@ -16,15 +16,16 @@
 
 package models.journeymodels
 
+import edh.GetBankDetailsRiskResultResponse
 import models.dateofbirth.DateOfBirth
 import models.ecospend.BankDescription
-import models.ecospend.consent.BankConsentResponse
 import models.ecospend.account.BankAccountSummary
+import models.ecospend.consent.BankConsentResponse
 import models.p800externalapi.EventValue
 import models.{AmountInPence, Nino, P800Reference}
 import nps.models.{ReferenceCheckResult, TraceIndividualResponse}
 import play.api.libs.json.OFormat
-import play.api.mvc.Request
+import play.api.mvc.RequestHeader
 import util.Errors
 
 import java.time.{Clock, Instant}
@@ -39,12 +40,13 @@ final case class Journey(
     isChanging:    IsChanging,
     dateOfBirth:   Option[DateOfBirth],
     // below, API Responses only
-    referenceCheckResult:    Option[ReferenceCheckResult], //reset this field upon changes of dependant fields
-    traceIndividualResponse: Option[TraceIndividualResponse], //reset this field upon changes of dependant fields
-    bankDescription:         Option[BankDescription],
-    bankConsentResponse:     Option[BankConsentResponse],
-    bankAccountSummary:      Option[BankAccountSummary],
-    isValidEventValue:       Option[EventValue]
+    referenceCheckResult:             Option[ReferenceCheckResult], //reset this field upon changes of dependant fields
+    traceIndividualResponse:          Option[TraceIndividualResponse], //reset this field upon changes of dependant fields
+    bankDescription:                  Option[BankDescription],
+    bankConsentResponse:              Option[BankConsentResponse],
+    bankAccountSummary:               Option[BankAccountSummary],
+    isValidEventValue:                Option[EventValue],
+    getBankDetailsRiskResultResponse: Option[GetBankDetailsRiskResultResponse]
 ) {
 
   /*
@@ -105,24 +107,26 @@ final case class Journey(
       //TODO: reset other API responses populated bankConsentResponse
       )
 
-  def update(bankAccountSummary: BankAccountSummary): Journey =
-    this
-      .copy(
-        bankAccountSummary = Some(bankAccountSummary)
-      //TODO: reset other API responses populated bankAccountSummary
-      )
-
-  def update(eventValue: EventValue): Journey = this.copy(isValidEventValue = Some(eventValue))
+  def update(
+      eventValue:                       EventValue,
+      bankAccountSummary:               BankAccountSummary,
+      getBankDetailsRiskResultResponse: GetBankDetailsRiskResultResponse
+  ): Journey = copy(
+    bankAccountSummary               = Some(bankAccountSummary),
+    getBankDetailsRiskResultResponse = Some(getBankDetailsRiskResultResponse),
+    isValidEventValue                = Some(eventValue)
+  )
 
   def update(hasFinished: HasFinished): Journey = this.copy(hasFinished = hasFinished)
 
   private def resetAllApiResponses(): Journey = this.copy(
-    referenceCheckResult    = None,
-    traceIndividualResponse = None,
-    bankDescription         = None,
-    bankConsentResponse     = None,
-    bankAccountSummary      = None,
-    isValidEventValue       = None
+    referenceCheckResult             = None,
+    traceIndividualResponse          = None,
+    bankDescription                  = None,
+    bankConsentResponse              = None,
+    bankAccountSummary               = None,
+    isValidEventValue                = None,
+    getBankDetailsRiskResultResponse = None
   )
 
   /* derived stuff: */
@@ -130,28 +134,30 @@ final case class Journey(
 
   def journeyId: JourneyId = _id
 
-  def getJourneyType(implicit request: Request[_]): JourneyType = journeyType.getOrElse(Errors.throwServerErrorException(s"Expected 'journeyType' to be defined but it was None [${journeyId.toString}] "))
+  def getJourneyType(implicit request: RequestHeader): JourneyType = journeyType.getOrElse(Errors.throwServerErrorException(s"Expected 'journeyType' to be defined but it was None [${journeyId.toString}] "))
 
-  def getP800Reference(implicit request: Request[_]): P800Reference = p800Reference.getOrElse(Errors.throwServerErrorException(s"Expected 'p800Reference' to be defined but it was None [${journeyId.toString}] "))
+  def getP800Reference(implicit request: RequestHeader): P800Reference = p800Reference.getOrElse(Errors.throwServerErrorException(s"Expected 'p800Reference' to be defined but it was None [${journeyId.toString}] "))
 
-  def getDateOfBirth(implicit request: Request[_]): DateOfBirth = dateOfBirth.getOrElse(Errors.throwServerErrorException(s"Expected 'dateOfBirth' to be defined but it was None [${journeyId.toString}] "))
+  def getDateOfBirth(implicit request: RequestHeader): DateOfBirth = dateOfBirth.getOrElse(Errors.throwServerErrorException(s"Expected 'dateOfBirth' to be defined but it was None [${journeyId.toString}] "))
 
-  def getNino(implicit request: Request[_]): Nino = nino.getOrElse(Errors.throwServerErrorException(s"Expected 'nationalInsuranceNumber' to be defined but it was None [${journeyId.toString}] "))
+  def getNino(implicit request: RequestHeader): Nino = nino.getOrElse(Errors.throwServerErrorException(s"Expected 'nationalInsuranceNumber' to be defined but it was None [${journeyId.toString}] "))
 
-  def getBankDescription(implicit request: Request[_]): BankDescription = bankDescription.getOrElse(Errors.throwServerErrorException(s"Expected 'bankDescription' to be defined but it was None [${journeyId.toString}] "))
+  def getBankDescription(implicit request: RequestHeader): BankDescription = bankDescription.getOrElse(Errors.throwServerErrorException(s"Expected 'bankDescription' to be defined but it was None [${journeyId.toString}] "))
 
-  def getBankConsent(implicit request: Request[_]): BankConsentResponse = bankConsentResponse.getOrElse(Errors.throwBadRequestException(s"Expected 'bankConsent' to be defined but it was None [${journeyId.toString}] "))
+  def getBankConsent(implicit request: RequestHeader): BankConsentResponse = bankConsentResponse.getOrElse(Errors.throwBadRequestException(s"Expected 'bankConsent' to be defined but it was None [${journeyId.toString}] "))
 
-  def getBankAccountSummary(implicit request: Request[_]): BankAccountSummary = bankAccountSummary.getOrElse(Errors.throwBadRequestException(s"Expected 'bankAccountSummary' to be defined but it was None [${journeyId.toString}] "))
+  def getBankAccountSummary(implicit request: RequestHeader): BankAccountSummary = bankAccountSummary.getOrElse(Errors.throwBadRequestException(s"Expected 'bankAccountSummary' to be defined but it was None [${journeyId.toString}] "))
 
-  def getReferenceCheckResult(implicit request: Request[_]): ReferenceCheckResult = referenceCheckResult.getOrElse(Errors.throwServerErrorException(s"Expected 'referenceCheckResult' to be defined but it was None [${journeyId.toString}] "))
+  def getTraceIndividualResponse(implicit request: RequestHeader): TraceIndividualResponse = traceIndividualResponse.getOrElse(Errors.throwServerErrorException(s"Expected 'traceIndividualResponse' to be defined but it was None [${journeyId.toString}] "))
 
-  def getP800ReferenceChecked(implicit request: Request[_]): ReferenceCheckResult.P800ReferenceChecked = getReferenceCheckResult match {
+  def getReferenceCheckResult(implicit request: RequestHeader): ReferenceCheckResult = referenceCheckResult.getOrElse(Errors.throwServerErrorException(s"Expected 'referenceCheckResult' to be defined but it was None [${journeyId.toString}] "))
+
+  def getP800ReferenceChecked(implicit request: RequestHeader): ReferenceCheckResult.P800ReferenceChecked = getReferenceCheckResult match {
     case r: ReferenceCheckResult.P800ReferenceChecked => r
     case r => Errors.throwServerErrorException(s"Expected 'referenceCheckResult' to be 'P800ReferenceChecked' to be defined but it was '${r.toString}' [${journeyId.toString}] ")
   }
 
-  def getAmount(implicit request: Request[_]): AmountInPence = AmountInPence(getP800ReferenceChecked.paymentAmount)
+  def getAmount(implicit request: RequestHeader): AmountInPence = AmountInPence(getP800ReferenceChecked.paymentAmount)
 
   def isIdentityVerified: Boolean = referenceCheckResult.exists {
     case _: ReferenceCheckResult.P800ReferenceChecked => true

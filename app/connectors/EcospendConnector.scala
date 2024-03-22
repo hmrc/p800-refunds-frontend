@@ -22,6 +22,7 @@ import models.ecospend.account.BankAccountSummaryResponse
 import models.ecospend.consent.{BankConsentRequest, BankConsentResponse, ConsentId}
 import models.ecospend.verification.{BankVerification, BankVerificationRequest}
 import models.ecospend.{EcospendAccessToken, EcospendGetBanksResponse}
+import play.api.mvc.RequestHeader
 import requests.RequestSupport
 import uk.gov.hmrc.http.HeaderNames
 import uk.gov.hmrc.http.HttpReads.Implicits._
@@ -85,7 +86,7 @@ class EcospendConnector @Inject() (
   def getAccountSummary(
       accessToken: EcospendAccessToken,
       consentId:   ConsentId
-  )(implicit request: JourneyRequest[_]): Future[BankAccountSummaryResponse] = captureException {
+  )(implicit request: RequestHeader): Future[BankAccountSummaryResponse] = captureException {
     httpClient.GET[BankAccountSummaryResponse](
       url     = accountSummaryUrl,
       headers = Seq(
@@ -113,7 +114,7 @@ class EcospendConnector @Inject() (
     )
   }
 
-  private def captureException[A](future: => Future[A])(implicit request: JourneyRequest[_]): Future[A] =
+  private def captureException[A](future: => Future[A])(implicit request: RequestHeader): Future[A] =
     future.recover {
       case ex =>
         JourneyLogger.warn(s"Ecospend call failed with exception: ${ex.toString}")
