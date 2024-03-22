@@ -18,7 +18,7 @@ package requests
 
 import language.Language
 import play.api.i18n._
-import play.api.mvc.{Request, RequestHeader}
+import play.api.mvc.RequestHeader
 import uk.gov.hmrc.http.{HeaderCarrier, SessionKeys}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendHeaderCarrierProvider
 
@@ -54,7 +54,7 @@ object RequestSupport {
    * Naive way of checking if user is logged in. Use it in views only.
    * For more real check see auth.AuthService
    */
-  def isLoggedIn(implicit request: Request[_]): Boolean = request.session.get(SessionKeys.authToken).isDefined
+  def isLoggedIn(implicit request: RequestHeader): Boolean = request.session.get(SessionKeys.authToken).isDefined
 
   /**
    * This is because we want to give responsibility of creation of HeaderCarrier to the platform code.

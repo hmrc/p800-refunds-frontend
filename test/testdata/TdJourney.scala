@@ -108,30 +108,33 @@ trait TdJourney {
       bankConsentResponse = Some(dependencies.bankConsent)
     )
 
-    lazy val journeyAccountSummary: Journey = journeyBankConsent.copy(
-      bankAccountSummary = Some(dependencies.bankAccountSummary)
-    )
+    lazy val journeyReceivedNotificationFromEcospendNotReceived: Journey =
+      journeyBankConsent.copy(
+        isValidEventValue = Some(dependencies.isValidEventValueNotReceived),
+        //Even if the notification was not received,
+        // in the same controller call
+        // other APIs were made
+        // and their responses were stored in the journey:
+        getBankDetailsRiskResultResponse = Some(dependencies.getBankDetailsRiskResultResponse),
+        bankAccountSummary               = Some(dependencies.bankAccountSummary)
+      )
 
     lazy val journeyReceivedNotificationFromEcospendValid: Journey =
-      //TODO: API responses
-      journeyAccountSummary.copy(isValidEventValue = Some(dependencies.isValidEventValueValid))
+      journeyReceivedNotificationFromEcospendNotReceived.copy(
+        isValidEventValue = Some(dependencies.isValidEventValueValid)
+      )
 
     lazy val journeyReceivedNotificationFromEcospendNotValid: Journey =
-      //TODO: API responses
-      journeyAccountSummary.copy(isValidEventValue = Some(dependencies.isValidEventValueNotValid))
-
-    lazy val journeyReceivedNotificationFromEcospendNotReceived: Journey =
-      //TODO: API responses
-      journeyAccountSummary.copy(isValidEventValue = Some(dependencies.isValidEventValueNotReceived))
+      journeyReceivedNotificationFromEcospendNotReceived.copy(
+        isValidEventValue = Some(dependencies.isValidEventValueNotValid)
+      )
 
     lazy val journeyClaimedOverpayment: Journey =
       journeyReceivedNotificationFromEcospendValid.copy(
-        getBankDetailsRiskResultResponse = Some(dependencies.getBankDetailsRiskResultResponse),
-        hasFinished                      = HasFinished.YesSucceeded
+        hasFinished = HasFinished.YesSucceeded
       )
 
     lazy val journeyClaimOverpaymentFailed: Journey =
-
       journeyReceivedNotificationFromEcospendValid.copy(
         getBankDetailsRiskResultResponse = Some(dependencies.getBankDetailsRiskResultResponseDoNotPay),
         hasFinished                      = HasFinished.YesRefundNotSubmitted

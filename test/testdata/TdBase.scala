@@ -140,7 +140,7 @@ trait TdBase {
     accountIdentification = BankAccountIdentification(sortCode + bankAccountNumber),
     calculatedOwnerName   = CalculatedOwnerName("Mr Greg Greggson"),
     accountOwnerName      = BankAccountOwnerName("Greggson Gregory "),
-    displayName           = BankAccountDisplayName("MR G Greggson"),
+    displayName           = BankAccountDisplayName("bank account display name"),
     balance               = 123.7,
     lastUpdateTime        = localDateTime,
     parties               = List(

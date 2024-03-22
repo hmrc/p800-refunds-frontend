@@ -45,60 +45,13 @@ class WeAreVerifyingYourBankAccountController @Inject() (
     claimOverpaymentConnector:       ClaimOverpaymentConnector,
     mcc:                             MessagesControllerComponents,
     p800RefundsExternalApiConnector: P800RefundsExternalApiConnector,
-    views:                           Views
+    views:                           Views,
+    claimIdGenerator:                ClaimIdGenerator
 )(implicit ec: ExecutionContext) extends FrontendController(mcc) {
 
   def get(status: Option[ConsentStatus], consent_id: Option[ConsentId], bank_reference_id: Option[BankReferenceId]): Action[AnyContent] = actions.journeyInProgress.async { implicit request: JourneyRequest[_] =>
     val journey: Journey = request.journey
-    //sanity checks
-    Errors.require(journey.getJourneyType === JourneyType.BankTransfer, "This endpoint supports only BankTransfer journey")
-    consent_id.fold(Errors.throwBadRequestException("This endpoint requires a valid consent_id query parameter")) { consentId: ConsentId =>
-      Errors.require(journey.getBankConsent.id === consentId, "The consent_id supplied via the query parameter must match that stored in the journey. This should be investigated")
-    }
-
-    bank_reference_id.fold(Errors.throwBadRequestException("This endpoint requires a valid bank_reference_id query parameter")) { bankReferenceId: BankReferenceId =>
-      Errors.require(journey.getBankConsent.bankReferenceId === bankReferenceId, "The bank_reference_id supplied via the query parameter must match that stored in the journey. This should be investigated")
-    }
-
-      def next(journey: Journey, isValidEventValue: EventValue, getBankDetailsRiskResultResponse: GetBankDetailsRiskResultResponse, bankAccountSummary: BankAccountSummary): Future[(Result, Journey)] = isValidEventValue match {
-        case EventValue.NotReceived => Future.successful(
-          (
-            Ok(views.weAreVerifyingYourBankAccountPage(status, consent_id, bank_reference_id)),
-            journey
-          )
-        )
-        case EventValue.NotValid => Future.successful {
-          JourneyLogger.info(s"Account assessment failed.")
-          (
-            Redirect(routes.RefundRequestNotSubmittedController.get),
-            journey.update(HasFinished.YesRefundNotSubmitted)
-          )
-        }
-        case EventValue.Valid =>
-          JourneyLogger.info(s"Account assessment succeeded.")
-          getBankDetailsRiskResultResponse.overallRiskResult.nextAction match {
-            case NextAction.DoNotPay => handleDoNotPay(journey)
-            case NextAction.Pay      => handlePay(journey, bankAccountSummary)
-          }
-      }
-
-      def handleDoNotPay(journey: Journey): Future[(Result, Journey)] = Future.successful {
-        // TODO: If API#1133 or API#JF72745 fails, call (JF72755) Suspend Overpayment
-        // TODO: If API#1133 or API#JF72745 fails, call API#1132 (EPID0771) Case Management Notified
-        (
-          Redirect(routes.RefundRequestNotSubmittedController.get),
-          journey.update(hasFinished = HasFinished.YesRefundNotSubmitted)
-        )
-      }
-
-      def handlePay(journey: Journey, bankAccountSummary: BankAccountSummary): Future[(Result, Journey)] = {
-        claimOverpayment(journey, bankAccountSummary).map{ _ =>
-          (
-            Redirect(routes.RequestReceivedController.getBankTransfer),
-            journey.update(hasFinished = HasFinished.YesSucceeded)
-          )
-        }
-      }
+    sanityChecks(consent_id, bank_reference_id, journey)
 
     for {
       isValidEventValue: EventValue <- obtainIsValid(journey)
@@ -106,9 +59,55 @@ class WeAreVerifyingYourBankAccountController @Inject() (
       getBankDetailsRiskResultResponse: GetBankDetailsRiskResultResponse <- obtainGetBankDetailsRiskResultResponse(journey, bankAccountSummary)
       //TODO: Fuzzy Name Matching
       newJourney = journey.update(isValidEventValue, bankAccountSummary, getBankDetailsRiskResultResponse)
-      (result, newJourney) <- next(newJourney, isValidEventValue, getBankDetailsRiskResultResponse, bankAccountSummary)
+      (result, newJourney) <- next(newJourney, isValidEventValue, getBankDetailsRiskResultResponse, bankAccountSummary, status)
       _ <- journeyService.upsert(newJourney)
     } yield result
+  }
+
+  private def next(
+      journey:                          Journey,
+      isValidEventValue:                EventValue,
+      getBankDetailsRiskResultResponse: GetBankDetailsRiskResultResponse,
+      bankAccountSummary:               BankAccountSummary,
+      consentStatus:                    Option[ConsentStatus]
+  )(implicit request: RequestHeader): Future[(Result, Journey)] = isValidEventValue match {
+    case EventValue.NotReceived => Future.successful(
+      (
+        Ok(views.weAreVerifyingYourBankAccountPage(journey, consentStatus, Some(journey.getBankConsent.id), Some(journey.getBankConsent.bankReferenceId))),
+        journey
+      )
+    )
+    case EventValue.NotValid => Future.successful {
+      JourneyLogger.info(s"Account assessment failed.")
+      (
+        Redirect(routes.RefundRequestNotSubmittedController.get),
+        journey.update(HasFinished.YesRefundNotSubmitted)
+      )
+    }
+    case EventValue.Valid =>
+      JourneyLogger.info(s"Account assessment succeeded.")
+      getBankDetailsRiskResultResponse.overallRiskResult.nextAction match {
+        case NextAction.DoNotPay => handleDoNotPay(journey)
+        case NextAction.Pay      => handlePay(journey, bankAccountSummary)
+      }
+  }
+
+  private def handleDoNotPay(journey: Journey): Future[(Result, Journey)] = Future.successful {
+    // TODO: If API#1133 or API#JF72745 fails, call (JF72755) Suspend Overpayment
+    // TODO: If API#1133 or API#JF72745 fails, call API#1132 (EPID0771) Case Management Notified
+    (
+      Redirect(routes.RefundRequestNotSubmittedController.get),
+      journey.update(hasFinished = HasFinished.YesRefundNotSubmitted)
+    )
+  }
+
+  private def handlePay(journey: Journey, bankAccountSummary: BankAccountSummary)(implicit request: RequestHeader): Future[(Result, Journey)] = {
+    claimOverpayment(journey, bankAccountSummary).map{ _ =>
+      (
+        Redirect(routes.RequestReceivedController.getBankTransfer),
+        journey.update(hasFinished = HasFinished.YesSucceeded)
+      )
+    }
   }
 
   private def obtainIsValid(journey: Journey)(implicit request: Request[_]): Future[EventValue] = {
@@ -137,7 +136,7 @@ class WeAreVerifyingYourBankAccountController @Inject() (
   //See https://confluence.tools.tax.service.gov.uk/pages/viewpage.action?pageId=770835142 for data mapping
   private def obtainGetBankDetailsRiskResultResponse(journey: Journey, bankAccountSummary: BankAccountSummary)(implicit request: Request[_]): Future[GetBankDetailsRiskResultResponse] = {
 
-    lazy val claimId: ClaimId = ClaimId.next()
+    lazy val claimId: ClaimId = claimIdGenerator.nextClaimId()
     lazy val getBankDetailsRiskResultRequest: GetBankDetailsRiskResultRequest = {
 
       val r = GetBankDetailsRiskResultRequest(
@@ -208,6 +207,32 @@ class WeAreVerifyingYourBankAccountController @Inject() (
     claimOverpaymentConnector
       .claimOverpayment(journey.getNino, journey.getP800Reference, claimOverpaymentRequest)
       .map(_ => ())
+  }
+
+  @inline private def sanityChecks(consent_id: Option[ConsentId], bank_reference_id: Option[BankReferenceId], journey: Journey)(implicit request: RequestHeader): Unit = {
+    Errors.require(
+      journey.getJourneyType === JourneyType.BankTransfer,
+      "This endpoint supports only BankTransfer journey"
+    )
+
+    consent_id.fold(
+      Errors.throwBadRequestException("This endpoint requires a valid 'consent_id' query parameter")
+    ){ consentId: ConsentId =>
+        Errors.require(
+          journey.getBankConsent.id === consentId,
+          "The 'consent_id' supplied via the query parameter must match that stored in the journey. This should be investigated"
+        )
+      }
+
+    bank_reference_id.fold(
+      Errors.throwBadRequestException("This endpoint requires a valid 'bank_reference_id' query parameter")
+    ) { bankReferenceId: BankReferenceId =>
+        Errors.require(
+          journey.getBankConsent.bankReferenceId === bankReferenceId,
+          "The 'bank_reference_id' supplied via the query parameter must match that stored in the journey. This should be investigated"
+        )
+      }
+
   }
 
 }

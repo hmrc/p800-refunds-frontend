@@ -17,18 +17,16 @@
 package testsupport.stubs
 
 import com.github.tomakehurst.wiremock.client.WireMock._
-import com.github.tomakehurst.wiremock.stubbing.StubMapping
 import com.github.tomakehurst.wiremock.matching.StringValuePattern
+import com.github.tomakehurst.wiremock.stubbing.StubMapping
 import models.ecospend.BankId
 import models.ecospend.consent.{BankConsentRequest, ConsentId, ConsentStatus}
-import models.ecospend.verification.{BankVerificationRequest, VerificationStatus}
 import play.api.http.Status
 import testsupport.ItSpec
 
 object EcospendStub {
   val authUrl: String = "/connect/token"
   val banksUrl: String = "/api/v2.0/banks"
-  val validateUrl: String = "/api/v2.0/validate"
   val consentUrl: String = "/api/v2.0/consents"
   val accountSummaryUrl: String = "/api/v2.0/accounts/summary"
 
@@ -170,35 +168,6 @@ object EcospendStub {
         }""".stripMargin
   }
 
-  object ValidateStubs {
-
-    def stubValidateNotValidatedYet: StubMapping = WireMockHelpers.Post.stubForPostNoResponseBody(
-      url             = validateUrl,
-      responseStatus  = Status.PAYMENT_REQUIRED,
-      requiredHeaders = ecospendHeaders
-    )
-
-    def stubValidatePaymentSuccessful(identifier: String = "AB123456C"): StubMapping =
-      WireMockHelpers.Post.stubForPost(
-        url             = validateUrl,
-        responseBody    = validateBankVerificationResponseJson(identifier, VerificationStatus.Successful),
-        requiredHeaders = ecospendHeaders
-      )
-
-    def stubValidatePaymentUnSuccessful(identifier: String = "AB123456C"): StubMapping =
-      WireMockHelpers.Post.stubForPost(
-        url             = validateUrl,
-        responseBody    = validateBankVerificationResponseJson(identifier, VerificationStatus.UnSuccessful),
-        requiredHeaders = ecospendHeaders
-      )
-
-    def validateBankVerificationResponseJson(identifier: String, verificationStatus: VerificationStatus): String =
-      //language=JSON
-      s"""{"identifier":"$identifier", "verificationStatus":"${verificationStatus.entryName}"}"""
-
-    def verifyValidate(numberOfRequests: Int = 1): Unit = WireMockHelpers.Post.verifyExactlyWithBodyParse(validateUrl, numberOfRequests)(BankVerificationRequest.format)
-  }
-
   object ConsentStubs {
 
     def stubConsent2xxSucceeded(bankId: BankId): StubMapping =
@@ -269,28 +238,26 @@ object EcospendStub {
 
     def validateBankAccountSummaryResponseJson(consentId: ConsentId): String =
       //language=JSON
-      s"""
-        [
-          {
-            "id": "${consentId.value}",
-            "bank_id": "obie-barclays-personal",
-            "type": "Personal",
-            "sub_type": "CurrentAccount",
-            "currency": "GBP",
-            "account_format": "SortCode",
-            "account_identification": "44556610002333",
-            "calculated_owner_name": "Greg Greggson",
-            "account_owner_name": "Greg Greggson",
-            "display_name": "bank account display name",
-            "balance": 123.7,
-            "last_update_time": "2059-11-25T16:33:51.880",
-            "parties": [
-              {
-                "name": "Greg Greggson",
-                "full_legal_name": "Greg Greggory Greggson"
-              }
-            ]
-          }
-        ]"""
+      s"""[{
+          "id" : "${consentId.value}",
+          "bank_id" : "obie-barclays-personal",
+          "type" : "Personal",
+          "sub_type" : "CurrentAccount",
+          "currency" : "GBP",
+          "account_format" : "SortCode",
+          "account_identification" : "44556610002333",
+          "calculated_owner_name" : "Mr Greg Greggson",
+          "account_owner_name" : "Greggson Gregory ",
+          "display_name" : "bank account display name",
+          "balance" : 123.7,
+          "last_update_time" : "2059-11-25T16:33:51.88",
+          "parties" : [ {
+            "name" : "Greg Greggson",
+            "full_legal_name" : "Greg Greggory Greggson"
+          }, {
+            "name" : "Margaret Greggson",
+            "full_legal_name" : "Margaretta Greggson"
+          } ]
+        }]""".stripMargin
   }
 }

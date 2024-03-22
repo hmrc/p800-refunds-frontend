@@ -18,7 +18,7 @@ package pagespecs
 
 import models.p800externalapi.EventValue
 import testsupport.ItSpec
-import testsupport.stubs.{EcospendStub, P800RefundsExternalApiStub, NpsClaimOverpaymentStub}
+import testsupport.stubs.{EcospendStub, EdhStub, P800RefundsExternalApiStub}
 
 class GiveYourPermissionPageSpec extends ItSpec {
 
@@ -47,18 +47,10 @@ class GiveYourPermissionPageSpec extends ItSpec {
 
   "clicking 'Approve this refund' redirects to 'Verifying bank account' via 'Bank Stub Page'" in {
     EcospendStub.AuthStubs.stubEcospendAuth2xxSucceeded
-    EcospendStub.ValidateStubs.stubValidateNotValidatedYet
-    EcospendStub.AuthStubs.stubEcospendAuth2xxSucceeded
     EcospendStub.ConsentStubs.stubConsent2xxSucceeded(tdAll.bankId)
-    EcospendStub.AuthStubs.stubEcospendAuth2xxSucceeded
     EcospendStub.AccountStub.stubAccountSummary2xxSucceeded(tdAll.consentId)
     P800RefundsExternalApiStub.isValid(tdAll.consentId, EventValue.NotReceived)
-    NpsClaimOverpaymentStub.claimOverpayment(
-      nino          = tdAll.nino,
-      p800Reference = tdAll.p800ReferenceSanitised,
-      request       = tdAll.claimOverpaymentRequest,
-      response      = tdAll.claimOverpaymentResponse,
-    )
+    EdhStub.getBankDetailsRiskResult(tdAll.getBankDetailsRiskResultRequest, tdAll.getBankDetailsRiskResultResponse)
 
     pages.giveYourPermissionPage.open()
     pages.giveYourPermissionPage.assertPageIsDisplayed()
@@ -68,7 +60,7 @@ class GiveYourPermissionPageSpec extends ItSpec {
     pages.bankStubPage.clickSubmit()
     pages.verifyBankAccountPage.assertPageIsDisplayed()
 
-    NpsClaimOverpaymentStub.verifyClaimOverpayment(tdAll.nino, tdAll.p800ReferenceSanitised)
+    EdhStub.verifyGetBankDetailsRiskResult(tdAll.claimId)
     getJourneyFromDatabase(tdAll.journeyId) shouldBeLike tdAll.BankTransfer.journeyReceivedNotificationFromEcospendNotReceived
   }
 

@@ -39,13 +39,17 @@ class EdhConnector @Inject() (
     s"/risking/claims/${claimId.value}/bank-details"
 
   def getBankDetailsRiskResult(claimId: ClaimId, request: GetBankDetailsRiskResultRequest)(implicit requestHeader: RequestHeader): Future[GetBankDetailsRiskResultResponse] = {
-    JourneyLogger.info("calling EDH...")
-
+    JourneyLogger.info(s"calling EDH ${claimId.toString}...")
     httpClient.POST[GetBankDetailsRiskResultRequest, GetBankDetailsRiskResultResponse](
       url     = url(claimId),
       body    = request,
       headers = makeHeaders()
-    )
+
+    ).map { response: GetBankDetailsRiskResultResponse =>
+        JourneyLogger.info(s"calling EDH ${claimId.toString} succeeded: [NextAction=${response.overallRiskResult.nextAction.toString}]")
+        response
+      }
+
   }
 
   private val bearerToken: String = servicesConfig.getString("microservice.services.edh.bearerToken")

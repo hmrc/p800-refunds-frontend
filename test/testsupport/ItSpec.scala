@@ -17,6 +17,7 @@
 package testsupport
 
 import com.google.inject.AbstractModule
+import edh.{ClaimId, ClaimIdGenerator}
 import models.attemptmodels.{AttemptInfo, IpAddress}
 import models.journeymodels.{Journey, JourneyId}
 import org.openqa.selenium.WebDriver
@@ -70,11 +71,17 @@ trait ItSpec extends AnyFreeSpecLike
     "microservice.services.ecospend-auth.port" -> WireMockSupport.port,
     "microservice.services.ecospend.port" -> WireMockSupport.port,
     "microservice.services.p800-refunds-external-api.port" -> WireMockSupport.port,
-    "microservice.services.date-calculator.port" -> WireMockSupport.port
+    "microservice.services.date-calculator.port" -> WireMockSupport.port,
+    "microservice.services.edh.port" -> WireMockSupport.port
   )
 
   lazy val overridingsModule: AbstractModule = new AbstractModule {
-    override def configure(): Unit = bind(classOf[Clock]).toInstance(clock)
+    override def configure(): Unit = {
+      bind(classOf[Clock]).toInstance(clock)
+      bind(classOf[ClaimIdGenerator]).toInstance(new ClaimIdGenerator {
+        override def nextClaimId(): ClaimId = tdAll.claimId
+      })
+    }
   }
 
   override def fakeApplication(): Application = new GuiceApplicationBuilder()

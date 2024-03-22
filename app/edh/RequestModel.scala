@@ -19,7 +19,6 @@ package edh
 import models.Nino
 import play.api.libs.json._
 
-import java.util.UUID
 import scala.util.matching.Regex
 
 final case class ClaimId(value: String) {
@@ -32,8 +31,6 @@ object ClaimId {
   implicit val format: Format[ClaimId] = Json.valueFormat[ClaimId]
 
   private val regex: Regex = """^[A-Za-z0-9\- ]{1,255}$""".r
-
-  def next(): ClaimId = ClaimId(UUID.randomUUID().toString)
 }
 
 final case class Header(
