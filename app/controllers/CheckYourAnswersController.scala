@@ -206,7 +206,7 @@ class CheckYourAnswersController @Inject() (
           <div class="govuk-grid-row">
               <div id="$id" class="govuk-grid-column-one-half">$value</div>
               <div class="govuk-grid-column-one-half govuk-!-text-align-right">
-                  <a href="${call.url}" id="change-$id">${Messages.CheckYourAnswersMessages.`Change`.show}
+                  <a class="govuk-link" href="${call.url}" id="change-$id">${Messages.CheckYourAnswersMessages.`Change`.show}
                   <span class="govuk-visually-hidden">$key</span></a>
               </div>
           </div>
