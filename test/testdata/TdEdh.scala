@@ -47,8 +47,8 @@ trait TdEdh { dependencies: TdBase =>
         address                 = None
       )),
       bankDetails = Some(BankDetails(
-        bankAccountNumber     = Some(BankAccountNumber(dependencies.sortCode)),
-        bankSortCode          = Some(BankSortCode(dependencies.bankAccountNumber)),
+        bankAccountNumber     = Some(BankAccountNumber(dependencies.bankAccountNumber)),
+        bankSortCode          = Some(BankSortCode(dependencies.sortCode)),
         bankAccountName       = Some(BankAccountName(dependencies.bankAccountSummary.displayName.value)),
         buildingSocietyRef    = None, //TODO: this has not been analysed
         designatedAccountFlag = None, //TODO: according to the analysis: confirm this is not needed, Collected from user Journey, Is the same value as personType

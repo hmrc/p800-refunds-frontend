@@ -28,7 +28,7 @@ import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 /**
- * This connector will call Nps' Check P800 Reference API endpoint.
+ * This connector will call Nps' Issue Payable Order API endpoint.
  */
 @Singleton
 class IssuePayableOrderConnector @Inject() (

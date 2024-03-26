@@ -164,8 +164,8 @@ class WeAreVerifyingYourBankAccountController @Inject() (
             address                 = None
           )),
           bankDetails = Some(BankDetails(
-            bankAccountNumber     = Some(BankAccountNumber(bankAccountSummary.accountIdentification.sortCode)),
-            bankSortCode          = Some(BankSortCode(bankAccountSummary.accountIdentification.bankAccountNumber)),
+            bankAccountNumber     = Some(bankAccountSummary.accountIdentification.asBankAccountNumber),
+            bankSortCode          = Some(bankAccountSummary.accountIdentification.asBankSortCode),
             bankAccountName       = Some(BankAccountName(bankAccountSummary.displayName.value)),
             buildingSocietyRef    = None, //TODO: this has not been analysed
             designatedAccountFlag = None, //TODO: according to the analysis: confirm this is not needed, Collected from user Journey, Is the same value as personType
@@ -189,17 +189,12 @@ class WeAreVerifyingYourBankAccountController @Inject() (
   private def claimOverpayment(journey: Journey, bankAccountSummary: BankAccountSummary)(implicit request: RequestHeader): Future[Unit] = {
     val p800ReferenceCheckResult: P800ReferenceChecked = journey.getP800ReferenceChecked
 
-    val accountNumber: PayeeBankAccountNumber =
-      PayeeBankAccountNumber(bankAccountSummary.accountIdentification.bankAccountNumber)
-    val sortCode: PayeeBankSortCode =
-      PayeeBankSortCode(bankAccountSummary.accountIdentification.sortCode)
-
     val claimOverpaymentRequest: ClaimOverpaymentRequest = ClaimOverpaymentRequest(
       currentOptimisticLock    = p800ReferenceCheckResult.currentOptimisticLock,
       reconciliationIdentifier = p800ReferenceCheckResult.reconciliationIdentifier,
       associatedPayableNumber  = p800ReferenceCheckResult.associatedPayableNumber,
-      payeeBankAccountNumber   = accountNumber,
-      payeeBankSortCode        = sortCode,
+      payeeBankAccountNumber   = bankAccountSummary.accountIdentification.asPayeeBankAccountNumber,
+      payeeBankSortCode        = bankAccountSummary.accountIdentification.asPayeeBankSortCode,
       payeeBankAccountName     = PayeeBankAccountName(bankAccountSummary.displayName.value),
       designatedPayeeAccount   = DesignatedPayeeAccount(true)
     )
