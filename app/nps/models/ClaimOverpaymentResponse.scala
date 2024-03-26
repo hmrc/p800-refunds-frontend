@@ -20,7 +20,7 @@ import _root_.models.Nino
 import play.api.libs.json.{OFormat, Json}
 
 final case class ClaimOverpaymentResponse(
-    identifer:             Nino,
+    identifier:            Nino,
     currentOptimisticLock: CurrentOptimisticLock
 )
 

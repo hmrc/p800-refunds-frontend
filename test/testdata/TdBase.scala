@@ -169,7 +169,7 @@ trait TdBase {
     designatedPayeeAccount   = DesignatedPayeeAccount(true)
   )
   lazy val claimOverpaymentResponse: ClaimOverpaymentResponse = ClaimOverpaymentResponse(
-    identifer             = nino,
+    identifier            = nino,
     currentOptimisticLock = CurrentOptimisticLock(15)
   )
 }
