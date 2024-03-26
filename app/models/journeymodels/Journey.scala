@@ -40,13 +40,13 @@ final case class Journey(
     isChanging:    IsChanging,
     dateOfBirth:   Option[DateOfBirth],
     // below, API Responses only
-    referenceCheckResult:             Option[ReferenceCheckResult], //reset this field upon changes of dependant fields
-    traceIndividualResponse:          Option[TraceIndividualResponse], //reset this field upon changes of dependant fields
-    bankDescription:                  Option[BankDescription],
-    bankConsentResponse:              Option[BankConsentResponse],
-    bankAccountSummary:               Option[BankAccountSummary],
-    isValidEventValue:                Option[EventValue],
-    getBankDetailsRiskResultResponse: Option[GetBankDetailsRiskResultResponse]
+    referenceCheckResult:          Option[ReferenceCheckResult], //reset this field upon changes of dependant fields
+    traceIndividualResponse:       Option[TraceIndividualResponse], //reset this field upon changes of dependant fields
+    bankDescription:               Option[BankDescription],
+    bankConsentResponse:           Option[BankConsentResponse],
+    bankAccountSummary:            Option[BankAccountSummary],
+    isValidEventValue:             Option[EventValue],
+    bankDetailsRiskResultResponse: Option[GetBankDetailsRiskResultResponse]
 ) {
 
   /*
@@ -108,25 +108,25 @@ final case class Journey(
       )
 
   def update(
-      eventValue:                       EventValue,
-      bankAccountSummary:               BankAccountSummary,
-      getBankDetailsRiskResultResponse: GetBankDetailsRiskResultResponse
+      eventValue:                    EventValue,
+      bankAccountSummary:            BankAccountSummary,
+      bankDetailsRiskResultResponse: GetBankDetailsRiskResultResponse
   ): Journey = copy(
-    bankAccountSummary               = Some(bankAccountSummary),
-    getBankDetailsRiskResultResponse = Some(getBankDetailsRiskResultResponse),
-    isValidEventValue                = Some(eventValue)
+    bankAccountSummary            = Some(bankAccountSummary),
+    bankDetailsRiskResultResponse = Some(bankDetailsRiskResultResponse),
+    isValidEventValue             = Some(eventValue)
   )
 
   def update(hasFinished: HasFinished): Journey = this.copy(hasFinished = hasFinished)
 
   private def resetAllApiResponses(): Journey = this.copy(
-    referenceCheckResult             = None,
-    traceIndividualResponse          = None,
-    bankDescription                  = None,
-    bankConsentResponse              = None,
-    bankAccountSummary               = None,
-    isValidEventValue                = None,
-    getBankDetailsRiskResultResponse = None
+    referenceCheckResult          = None,
+    traceIndividualResponse       = None,
+    bankDescription               = None,
+    bankConsentResponse           = None,
+    bankAccountSummary            = None,
+    isValidEventValue             = None,
+    bankDetailsRiskResultResponse = None
   )
 
   /* derived stuff: */
@@ -156,6 +156,8 @@ final case class Journey(
     case r: ReferenceCheckResult.P800ReferenceChecked => r
     case r => Errors.throwServerErrorException(s"Expected 'referenceCheckResult' to be 'P800ReferenceChecked' to be defined but it was '${r.toString}' [${journeyId.toString}] ")
   }
+
+  def getBankDetailsRiskResultResponse(implicit request: RequestHeader): GetBankDetailsRiskResultResponse = bankDetailsRiskResultResponse.getOrElse(Errors.throwServerErrorException(s"Expected 'getBankDetailsRiskResultResponse' to be defined but it was None [${journeyId.toString}]"))
 
   def getAmount(implicit request: RequestHeader): AmountInPence = AmountInPence(getP800ReferenceChecked.paymentAmount)
 

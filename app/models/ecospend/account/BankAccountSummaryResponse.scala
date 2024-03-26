@@ -16,9 +16,10 @@
 
 package models.ecospend.account
 
-import play.api.libs.json.{Json, Format, OFormat, Reads, Writes, JsonConfiguration, JsonNaming, JsSuccess, JsError, JsString}
-import models.ecospend.BankId
 import _root_.util.SafeEquals.EqualsOps
+import models.ecospend.BankId
+import play.api.libs.json.{Json, Format, OFormat, JsonConfiguration, JsonNaming}
+import util.CurrencyFormat
 
 import java.util.{UUID, Currency}
 import java.time.LocalDateTime
@@ -49,14 +50,7 @@ final case class BankAccountSummary(
 
 @SuppressWarnings(Array("org.wartremover.warts.Any"))
 object BankAccountSummary {
-  private val currencyReads: Reads[Currency] = Reads[Currency] {
-    case JsString(s) => JsSuccess(Currency.getInstance(s))
-    case _           => JsError("Unable to parser currency")
-  }
-  private val currencyWrites: Writes[Currency] = Writes[Currency] { c =>
-    JsString(c.toString)
-  }
-  implicit val currencyFormat: Format[Currency] = Format[Currency](currencyReads, currencyWrites)
+  implicit val currencyFormat: Format[Currency] = CurrencyFormat.format
 
   // Converts the name "ttype" to the string "type" for JSON without needing to do custom Reads, Writes & Format
   // As "type" is a keyword we are unable to use it in the case class directly.

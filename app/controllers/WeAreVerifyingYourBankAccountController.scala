@@ -56,20 +56,20 @@ class WeAreVerifyingYourBankAccountController @Inject() (
     for {
       isValidEventValue: EventValue <- obtainIsValid(journey)
       bankAccountSummary: BankAccountSummary <- obtainBankAccountSummary(journey)
-      getBankDetailsRiskResultResponse: GetBankDetailsRiskResultResponse <- obtainGetBankDetailsRiskResultResponse(journey, bankAccountSummary)
+      bankDetailsRiskResultResponse: GetBankDetailsRiskResultResponse <- obtainGetBankDetailsRiskResultResponse(journey, bankAccountSummary)
       //TODO: Fuzzy Name Matching
-      newJourney = journey.update(isValidEventValue, bankAccountSummary, getBankDetailsRiskResultResponse)
-      (result, newJourney) <- next(newJourney, isValidEventValue, getBankDetailsRiskResultResponse, bankAccountSummary, status)
+      newJourney = journey.update(isValidEventValue, bankAccountSummary, bankDetailsRiskResultResponse)
+      (result, newJourney) <- next(newJourney, isValidEventValue, bankDetailsRiskResultResponse, bankAccountSummary, status)
       _ <- journeyService.upsert(newJourney)
     } yield result
   }
 
   private def next(
-      journey:                          Journey,
-      isValidEventValue:                EventValue,
-      getBankDetailsRiskResultResponse: GetBankDetailsRiskResultResponse,
-      bankAccountSummary:               BankAccountSummary,
-      consentStatus:                    Option[ConsentStatus]
+      journey:                       Journey,
+      isValidEventValue:             EventValue,
+      bankDetailsRiskResultResponse: GetBankDetailsRiskResultResponse,
+      bankAccountSummary:            BankAccountSummary,
+      consentStatus:                 Option[ConsentStatus]
   )(implicit request: RequestHeader): Future[(Result, Journey)] = isValidEventValue match {
     case EventValue.NotReceived => Future.successful(
       (
@@ -86,20 +86,21 @@ class WeAreVerifyingYourBankAccountController @Inject() (
     }
     case EventValue.Valid =>
       JourneyLogger.info(s"Account assessment succeeded.")
-      getBankDetailsRiskResultResponse.overallRiskResult.nextAction match {
+      bankDetailsRiskResultResponse.overallRiskResult.nextAction match {
         case NextAction.DoNotPay => handleDoNotPay(journey)
         case NextAction.Pay      => handlePay(journey, bankAccountSummary)
       }
   }
 
-  private def handleDoNotPay(journey: Journey): Future[(Result, Journey)] = Future.successful {
-    // TODO: If API#1133 or API#JF72745 fails, call (JF72755) Suspend Overpayment
-    // TODO: If API#1133 or API#JF72745 fails, call API#1132 (EPID0771) Case Management Notified
-    (
+  private def handleDoNotPay(journey: Journey)(implicit request: RequestHeader): Future[(Result, Journey)] =
+    for {
+      // TODO: If API#1133 or API#JF72745 fails, call (JF72755) Suspend Overpayment
+      // If API#1133 or API#JF72745 fails, call API#1132 (EPID0771) Case Management Notified
+      _ <- notifyCaseManagement(journey)
+    } yield (
       Redirect(routes.RefundRequestNotSubmittedController.get),
       journey.update(hasFinished = HasFinished.YesRefundNotSubmitted)
     )
-  }
 
   private def handlePay(journey: Journey, bankAccountSummary: BankAccountSummary)(implicit request: RequestHeader): Future[(Result, Journey)] = {
     claimOverpayment(journey, bankAccountSummary).map{ _ =>
@@ -137,7 +138,7 @@ class WeAreVerifyingYourBankAccountController @Inject() (
   private def obtainGetBankDetailsRiskResultResponse(journey: Journey, bankAccountSummary: BankAccountSummary)(implicit request: Request[_]): Future[GetBankDetailsRiskResultResponse] = {
 
     lazy val claimId: ClaimId = claimIdGenerator.nextClaimId()
-    lazy val getBankDetailsRiskResultRequest: GetBankDetailsRiskResultRequest = {
+    lazy val bankDetailsRiskResultRequest: GetBankDetailsRiskResultRequest = {
 
       val r = GetBankDetailsRiskResultRequest(
         header       = Header(
@@ -181,9 +182,66 @@ class WeAreVerifyingYourBankAccountController @Inject() (
     }
 
     journey
-      .getBankDetailsRiskResultResponse
+      .bankDetailsRiskResultResponse
       .map(Future.successful)
-      .getOrElse(edhConnector.getBankDetailsRiskResult(claimId, getBankDetailsRiskResultRequest))
+      .getOrElse(edhConnector.getBankDetailsRiskResult(claimId, bankDetailsRiskResultRequest))
+  }
+
+  private def notifyCaseManagement(journey: Journey)(implicit requestHeader: RequestHeader): Future[Unit] = {
+
+    val bankAccountSummary: BankAccountSummary = journey.getBankAccountSummary
+    val accountNumber: BankAccountNumber = bankAccountSummary.accountIdentification.asBankAccountNumber
+    val sortCode: BankSortCode = bankAccountSummary.accountIdentification.asBankSortCode
+    val bankAccountName: BankAccountName = BankAccountName(bankAccountSummary.displayName.value)
+
+    val bankDetailsRiskResult: GetBankDetailsRiskResultResponse = journey.getBankDetailsRiskResultResponse
+    val clientUId: ClientUId = ClientUId(bankDetailsRiskResult.header.transactionID.value)
+
+    val request: CaseManagementRequest = {
+      val r: CaseManagementRequest = CaseManagementRequest(
+        clientUId             = clientUId,
+        clientSystemId        = ClientSystemId("MDTP"),
+        nino                  = journey.getNino,
+        bankSortCode          = sortCode,
+        bankAccountNumber     = accountNumber,
+        bankAccountName       = bankAccountName,
+        designatedAccountFlag = 1, // TODO: Confirm what this should be
+        contact               = List(
+          CaseManagementContact(
+            `type`    = PersonType.Customer,
+            firstName = journey.getTraceIndividualResponse.firstForename.getOrElse(""),
+            surname   = journey.getTraceIndividualResponse.surname,
+            address   = List() // TODO: Confirm what this should be
+          )
+        ),
+        currency              = bankAccountSummary.currency,
+        paymentAmount         = journey.getAmount.inPounds,
+        overallRiskResult     = bankDetailsRiskResult.overallRiskResult.ruleScore,
+        ruleResults           = Some(
+          bankDetailsRiskResult.riskResults.getOrElse(List.empty).map(risk =>
+            CaseManagementRuleResult(
+              ruleId          = Some(risk.ruleId),
+              ruleInformation = risk.ruleInformation,
+              ruleScore       = Some(risk.ruleScore)
+            ))
+        ),
+        nameMatches           = None,
+        addressMatches        = None,
+        accountExists         = None,
+        subjectHasDeceased    = None,
+        nonConsented          = None,
+        reconciliationId      = None,
+        taxDistrictNumber     = None,
+        payeNumber            = None
+      )
+
+      r.validate.fold(())(validationProblem =>
+        JourneyLogger.warn(s"Internal validation of CaseManagementRequest failed: [$validationProblem]"))
+      r
+    }
+
+    edhConnector.notifyCaseManagement(clientUId, request)
+      .map(_ => ())
   }
 
   private def claimOverpayment(journey: Journey, bankAccountSummary: BankAccountSummary)(implicit request: RequestHeader): Future[Unit] = {

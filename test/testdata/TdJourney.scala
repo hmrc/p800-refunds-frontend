@@ -29,21 +29,21 @@ trait TdJourney {
   lazy val journeyId: JourneyId = JourneyId("64886ed616fe8b501cbf0088")
 
   lazy val journeyStarted: Journey = Journey(
-    _id                              = journeyId,
-    createdAt                        = dependencies.instant,
-    hasFinished                      = HasFinished.No,
-    journeyType                      = None,
-    p800Reference                    = None,
-    nino                             = None,
-    isChanging                       = IsChanging.No,
-    dateOfBirth                      = None,
-    referenceCheckResult             = None,
-    traceIndividualResponse          = None,
-    bankDescription                  = None,
-    bankConsentResponse              = None,
-    bankAccountSummary               = None,
-    isValidEventValue                = None,
-    getBankDetailsRiskResultResponse = None
+    _id                           = journeyId,
+    createdAt                     = dependencies.instant,
+    hasFinished                   = HasFinished.No,
+    journeyType                   = None,
+    p800Reference                 = None,
+    nino                          = None,
+    isChanging                    = IsChanging.No,
+    dateOfBirth                   = None,
+    referenceCheckResult          = None,
+    traceIndividualResponse       = None,
+    bankDescription               = None,
+    bankConsentResponse           = None,
+    bankAccountSummary            = None,
+    isValidEventValue             = None,
+    bankDetailsRiskResultResponse = None
   )
 
   object BankTransfer {
@@ -115,8 +115,8 @@ trait TdJourney {
         // in the same controller call
         // other APIs were made
         // and their responses were stored in the journey:
-        getBankDetailsRiskResultResponse = Some(dependencies.getBankDetailsRiskResultResponse),
-        bankAccountSummary               = Some(dependencies.bankAccountSummary)
+        bankDetailsRiskResultResponse = Some(dependencies.getBankDetailsRiskResultResponse),
+        bankAccountSummary            = Some(dependencies.bankAccountSummary)
       )
 
     lazy val journeyReceivedNotificationFromEcospendValid: Journey =
@@ -136,8 +136,8 @@ trait TdJourney {
 
     lazy val journeyClaimOverpaymentFailed: Journey =
       journeyReceivedNotificationFromEcospendValid.copy(
-        getBankDetailsRiskResultResponse = Some(dependencies.getBankDetailsRiskResultResponseDoNotPay),
-        hasFinished                      = HasFinished.YesRefundNotSubmitted
+        bankDetailsRiskResultResponse = Some(dependencies.getBankDetailsRiskResultResponseDoNotPay),
+        hasFinished                   = HasFinished.YesRefundNotSubmitted
       )
 
     /**
