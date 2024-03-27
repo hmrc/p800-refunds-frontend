@@ -20,16 +20,16 @@ import com.github.tomakehurst.wiremock.client.WireMock._
 import com.github.tomakehurst.wiremock.stubbing.StubMapping
 import models.{Nino, P800Reference}
 import nps.models.ReferenceCheckResult
-import play.api.http.Status
 import play.api.libs.json.Json
+import play.api.http.Status
 import testsupport.stubs.NpsHeaders.npsHeaders
 
 object NpsReferenceCheckStub {
 
-  def checkReference(nino: Nino, p800Reference: P800Reference, response: ReferenceCheckResult.P800ReferenceChecked): StubMapping = {
+  def checkReference(nino: Nino, p800Reference: P800Reference, response: ReferenceCheckResult): StubMapping = {
     WireMockHelpers.Get.stubForGetWithResponseBody(
       url             = url(nino, p800Reference),
-      responseBody    = Json.prettyPrint(Json.toJson(response)),
+      responseBody    = Json.toJson(response).toString(),
       responseStatus  = Status.OK,
       requiredHeaders = npsHeaders
     )
@@ -38,30 +38,22 @@ object NpsReferenceCheckStub {
   def checkReferenceRefundAlreadyTaken(nino: Nino, p800Reference: P800Reference): StubMapping =
     WireMockHelpers.Get.stubForGetWithResponseBody(
       url             = url(nino, p800Reference),
-      responseBody    =
-        //language=JSON
-        """
-          {
-           "failures" : [
-             {"reason" : "Reference ", "code": "63480"}
-           ]
-          }
-          """.stripMargin,
-      responseStatus  = Status.UNPROCESSABLE_ENTITY,
+      responseBody    = Json.toJson(ReferenceCheckResult.RefundAlreadyTaken)(ReferenceCheckResult.format.writes(_)).toString(),
+      responseStatus  = Status.OK,
       requiredHeaders = npsHeaders
     )
 
   def checkReferenceReferenceDidntMatchNino(nino: Nino, p800Reference: P800Reference): StubMapping =
     WireMockHelpers.Get.stubForGetWithResponseBody(
       url             = url(nino, p800Reference),
-      responseBody    = "",
-      responseStatus  = Status.NOT_FOUND,
+      responseBody    = Json.toJson(ReferenceCheckResult.ReferenceDidntMatchNino)(ReferenceCheckResult.format.writes(_)).toString(),
+      responseStatus  = Status.OK,
       requiredHeaders = npsHeaders
     )
 
   def verifyCheckReference(nino: Nino, p800Reference: P800Reference): Unit =
     verify(exactly(1), getRequestedFor(urlPathEqualTo(url(nino, p800Reference))))
 
-  private def url(nino: Nino, p800Reference: P800Reference) = s"/nps-json-service/nps/v1/api/reconciliation/p800/${nino.value}/${p800Reference.value}"
+  private def url(nino: Nino, p800Reference: P800Reference) = s"/p800-refunds-backend/nps-json-service/nps/v1/api/reconciliation/p800/${nino.value}/${p800Reference.value}"
 
 }

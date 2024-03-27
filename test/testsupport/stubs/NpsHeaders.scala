@@ -22,9 +22,7 @@ import com.github.tomakehurst.wiremock.matching.StringValuePattern
 object NpsHeaders {
 
   val npsHeaders: Seq[(String, StringValuePattern)] = Seq(
-    ("CorrelationId", matching(".*")),
-    ("gov-uk-originator-id", matching("DA2_MRA_DIGITAL")),
-    ("Authorization", matching("Basic .*"))
+    ("CorrelationId", matching(".*"))
   )
 
 }

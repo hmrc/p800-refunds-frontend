@@ -66,6 +66,10 @@ class AppConfig @Inject() (servicesConfig: ServicesConfig, configuration: Config
     val p800RefundsExternalApiBaseUrl: String = servicesConfig.baseUrl("p800-refunds-external-api")
   }
 
+  object P800RefundsBackend {
+    val p800RefundsBackendBaseUrl: String = servicesConfig.baseUrl("p800-refunds-backend") + "/p800-refunds-backend"
+  }
+
   object DateCalculator {
     val dateCalculatorBaseUrl: String = servicesConfig.baseUrl("date-calculator")
   }

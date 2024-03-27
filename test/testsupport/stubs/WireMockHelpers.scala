@@ -51,7 +51,6 @@ object WireMockHelpers {
         responseStatus:  Int                               = Status.OK,
         requiredHeaders: Seq[(String, StringValuePattern)] = Nil
     ): StubMapping = {
-
       val mb: MappingBuilder = requiredHeaders.foldLeft(get(urlPathEqualTo(url)))((acc, c) => acc.withHeader(c._1, c._2))
       stubFor(mb.willReturn(
         aResponse()
