@@ -14,16 +14,39 @@
  * limitations under the License.
  */
 
-package nps
+package connectors
 
-import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
+import com.google.inject.{Inject, Singleton}
+import config.AppConfig
+import models.{Nino, P800Reference}
+import nps.models.ReferenceCheckResult
+import play.api.mvc.RequestHeader
+import requests.RequestSupport
+import uk.gov.hmrc.http.HttpClient
+import uk.gov.hmrc.http.HttpReads.Implicits._
 
 import java.util.{Base64, UUID}
-import javax.inject.Inject
+import scala.concurrent.{ExecutionContext, Future}
 
-class NpsConfig @Inject() (servicesConfig: ServicesConfig) {
+@Singleton
+class P800RefundsBackendConnector @Inject() (
+    appConfig:  AppConfig,
+    httpClient: HttpClient
+)(implicit executionContext: ExecutionContext) {
 
-  val baseUrl: String = servicesConfig.baseUrl("nps")
+  import RequestSupport.hc
+
+  private def url(nino: Nino, p800Reference: P800Reference): String = appConfig.P800RefundsBackend.p800RefundsBackendBaseUrl +
+    s"/nps-json-service/nps/v1/api/reconciliation/p800/${nino.value}/${p800Reference.value}"
+
+  def p800ReferenceCheck(nino: Nino, p800Reference: P800Reference)(implicit requestHeader: RequestHeader): Future[ReferenceCheckResult] = {
+    val sanitisedP800Reference = p800Reference.sanitiseReference
+    httpClient
+      .GET[ReferenceCheckResult](
+        url     = url(nino, sanitisedP800Reference),
+        headers = makeHeadersForNps()
+      )
+  }
 
   //TODO: we should probably just move all of this into backend once all NPS APIs migrated
   def makeHeadersForNps(): Seq[(String, String)] = Seq(
@@ -32,16 +55,14 @@ class NpsConfig @Inject() (servicesConfig: ServicesConfig) {
     makeOriginatorIdHeader()
   )
 
-  private val username: String = servicesConfig.getString("microservice.services.nps.username")
-  private val password: String = servicesConfig.getString("microservice.services.nps.password")
-
+  //this should probably just live in backend, we don't really need it here TODO move it/delete soon
   private val authorisationHeader: (String, String) = {
       def encodeString(input: String): String = {
         val encoder: Base64.Encoder = Base64.getEncoder
         val encodedBytes = encoder.encode(input.getBytes("UTF-8"))
         new String(encodedBytes, "UTF-8")
       }
-    val credentials = s"${username}:${password}"
+    val credentials = s"${appConfig.P800RefundsBackend.npsUsername}:${appConfig.P800RefundsBackend.npsPassword}"
     val credentialsEncoded = encodeString(credentials)
     "Authorization" -> s"Basic $credentialsEncoded"
   }
@@ -51,6 +72,7 @@ class NpsConfig @Inject() (servicesConfig: ServicesConfig) {
     "CorrelationId" -> UUID.randomUUID().toString
   }
 
+  //this should probably just live in backend, we don't really need it here TODO move it/delete soon
   private def makeOriginatorIdHeader(): (String, String) = {
     "gov-uk-originator-id" -> "DA2_MRA_DIGITAL"
   }
