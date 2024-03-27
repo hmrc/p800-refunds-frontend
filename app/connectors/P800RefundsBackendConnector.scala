@@ -25,7 +25,7 @@ import requests.RequestSupport
 import uk.gov.hmrc.http.HttpClient
 import uk.gov.hmrc.http.HttpReads.Implicits._
 
-import java.util.{Base64, UUID}
+import java.util.UUID
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
@@ -44,37 +44,13 @@ class P800RefundsBackendConnector @Inject() (
     httpClient
       .GET[ReferenceCheckResult](
         url     = url(nino, sanitisedP800Reference),
-        headers = makeHeadersForNps()
+        headers = Seq(makeCorrelationIdHeader())
       )
-  }
-
-  //TODO: we should probably just move all of this into backend once all NPS APIs migrated
-  def makeHeadersForNps(): Seq[(String, String)] = Seq(
-    authorisationHeader,
-    makeCorrelationIdHeader(),
-    makeOriginatorIdHeader()
-  )
-
-  //this should probably just live in backend, we don't really need it here TODO move it/delete soon
-  private val authorisationHeader: (String, String) = {
-      def encodeString(input: String): String = {
-        val encoder: Base64.Encoder = Base64.getEncoder
-        val encodedBytes = encoder.encode(input.getBytes("UTF-8"))
-        new String(encodedBytes, "UTF-8")
-      }
-    val credentials = s"${appConfig.P800RefundsBackend.npsUsername}:${appConfig.P800RefundsBackend.npsPassword}"
-    val credentialsEncoded = encodeString(credentials)
-    "Authorization" -> s"Basic $credentialsEncoded"
   }
 
   //TODO: update this to use correlationId from journey object when we've done that ticket (OPS-11777)
   private def makeCorrelationIdHeader(): (String, String) = {
     "CorrelationId" -> UUID.randomUUID().toString
-  }
-
-  //this should probably just live in backend, we don't really need it here TODO move it/delete soon
-  private def makeOriginatorIdHeader(): (String, String) = {
-    "gov-uk-originator-id" -> "DA2_MRA_DIGITAL"
   }
 
 }
