@@ -14,17 +14,17 @@
  * limitations under the License.
  */
 
-package nps.models
+package edh
 
-import _root_.models.Nino
-import play.api.libs.json.{OFormat, Json}
+import play.api.libs.json.{Format, Json}
 
-final case class ClaimOverpaymentResponse(
-    identifier:            Nino,
-    currentOptimisticLock: CurrentOptimisticLock
-)
+import scala.util.matching.Regex
 
-@SuppressWarnings(Array("org.wartremover.warts.Any"))
-object ClaimOverpaymentResponse {
-  implicit val format: OFormat[ClaimOverpaymentResponse] = Json.format[ClaimOverpaymentResponse]
+final case class ClientUId(value: String) {
+  def validate: Option[String] = if (ClientUId.regex.matches(value) && value.length <= 36) None else Some("Invalid 'ClientUId'")
+}
+
+object ClientUId {
+  implicit val format: Format[ClientUId] = Json.valueFormat[ClientUId]
+  val regex: Regex = """^[A-Za-z0-9\- ]*$""".r
 }

@@ -108,7 +108,7 @@ class VerifyBankAccountPageSpec extends ItSpec {
     EdhStub.getBankDetailsRiskResult(tdAll.getBankDetailsRiskResultRequest, tdAll.getBankDetailsRiskResultResponse)
     NpsClaimOverpaymentStub.claimOverpaymentRefundSuspended(
       nino          = tdAll.nino,
-      p800Reference = tdAll.p800Reference
+      p800Reference = tdAll.p800ReferenceSanitised
     )
 
     pages.verifyBankAccountPage.open()
@@ -124,7 +124,7 @@ class VerifyBankAccountPageSpec extends ItSpec {
     EdhStub.getBankDetailsRiskResult(tdAll.getBankDetailsRiskResultRequest, tdAll.getBankDetailsRiskResultResponse)
     NpsClaimOverpaymentStub.claimOverpaymentRefundAlreadyTaken(
       nino          = tdAll.nino,
-      p800Reference = tdAll.p800Reference
+      p800Reference = tdAll.p800ReferenceSanitised
     )
     pages.verifyBankAccountPage.open()
     pages.verifyBankAccountPage.assertPageIsDisplayedWithTechnicalDifficultiesError()
@@ -139,7 +139,7 @@ class VerifyBankAccountPageSpec extends ItSpec {
     EdhStub.getBankDetailsRiskResult(tdAll.getBankDetailsRiskResultRequest, tdAll.getBankDetailsRiskResultResponse)
     NpsClaimOverpaymentStub.claimOverpaymentInternalServerError(
       nino          = tdAll.nino,
-      p800Reference = tdAll.p800Reference
+      p800Reference = tdAll.p800ReferenceSanitised
     )
 
     pages.verifyBankAccountPage.open()
@@ -183,12 +183,6 @@ class VerifyBankAccountPageSpec extends ItSpec {
     EcospendStub.AccountStub.stubAccountSummary2xxSucceeded(tdAll.consentId)
     P800RefundsExternalApiStub.isValid(tdAll.consentId, EventValue.NotReceived)
     EdhStub.getBankDetailsRiskResult(tdAll.getBankDetailsRiskResultRequest, tdAll.getBankDetailsRiskResultResponse)
-    NpsClaimOverpaymentStub.claimOverpayment(
-      nino          = tdAll.nino,
-      p800Reference = tdAll.p800ReferenceSanitised,
-      request       = tdAll.claimOverpaymentRequest,
-      response      = tdAll.claimOverpaymentResponse
-    )
 
     pages.verifyBankAccountPage.open()
     pages.verifyBankAccountPage.assertPageIsDisplayed()
@@ -216,11 +210,34 @@ class VerifyBankAccountPageSpec extends ItSpec {
     EcospendStub.AuthStubs.stubEcospendAuth2xxSucceeded
     EcospendStub.AccountStub.stubAccountSummary2xxSucceeded(tdAll.consentId)
     P800RefundsExternalApiStub.isValid(tdAll.consentId, EventValue.Valid)
+
     val doNotPay: GetBankDetailsRiskResultResponse = tdAll.getBankDetailsRiskResultResponseDoNotPay
     EdhStub.getBankDetailsRiskResult(tdAll.getBankDetailsRiskResultRequest, doNotPay)
+    EdhStub.CaseManagement.notifyCaseManagement2xx(tdAll.clientUId, tdAll.caseManagementRequest)
+
     pages.verifyBankAccountPage.open()
     pages.refundRequestNotSubmittedPage.assertPageIsDisplayed()
+
     EdhStub.verifyGetBankDetailsRiskResult(tdAll.claimId)
+    EdhStub.CaseManagement.verifyNotifyCaseManagement(tdAll.clientUId)
+    P800RefundsExternalApiStub.verifyIsValid(tdAll.consentId)
+    NpsClaimOverpaymentStub.verifyNoneClaimOverpayment(tdAll.nino, tdAll.p800ReferenceSanitised)
+  }
+
+  "Show technical difficulties page when 'Notify case management' call fails" in {
+    EcospendStub.AuthStubs.stubEcospendAuth2xxSucceeded
+    EcospendStub.AccountStub.stubAccountSummary2xxSucceeded(tdAll.consentId)
+    P800RefundsExternalApiStub.isValid(tdAll.consentId, EventValue.Valid)
+
+    val doNotPay: GetBankDetailsRiskResultResponse = tdAll.getBankDetailsRiskResultResponseDoNotPay
+    EdhStub.getBankDetailsRiskResult(tdAll.getBankDetailsRiskResultRequest, doNotPay)
+    EdhStub.CaseManagement.notifyCaseManagement4xx(tdAll.clientUId, tdAll.caseManagementRequest)
+
+    pages.verifyBankAccountPage.open()
+    pages.verifyBankAccountPage.assertPageIsDisplayedWithTechnicalDifficultiesError()
+
+    EdhStub.verifyGetBankDetailsRiskResult(tdAll.claimId)
+    EdhStub.CaseManagement.verifyNotifyCaseManagement(tdAll.clientUId)
     P800RefundsExternalApiStub.verifyIsValid(tdAll.consentId)
     NpsClaimOverpaymentStub.verifyNoneClaimOverpayment(tdAll.nino, tdAll.p800ReferenceSanitised)
   }

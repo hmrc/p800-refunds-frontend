@@ -17,8 +17,9 @@
 package testsupport.stubs
 
 import com.github.tomakehurst.wiremock.client.WireMock._
+import com.github.tomakehurst.wiremock.matching.StringValuePattern;
 import com.github.tomakehurst.wiremock.stubbing.StubMapping
-import edh.{ClaimId, GetBankDetailsRiskResultRequest, GetBankDetailsRiskResultResponse}
+import edh.{ClaimId, ClientUId, CaseManagementRequest, GetBankDetailsRiskResultRequest, GetBankDetailsRiskResultResponse}
 import play.api.http.Status
 import play.api.libs.json.Json
 
@@ -30,12 +31,7 @@ object EdhStub {
       responseBody    = Json.prettyPrint(Json.toJson(response)),
       responseStatus  = Status.OK,
       requestBodyJson = Some(Json.prettyPrint(Json.toJson(request))),
-      requiredHeaders = Seq(
-        ("RequesterId", matching("Repayment Service")),
-        ("CorrelationId", matching(".*")),
-        ("Environment", matching(".*")),
-        ("Authorization", matching("Bearer .*"))
-      )
+      requiredHeaders = requiredEdhHeaders
     )
   }
 
@@ -45,12 +41,7 @@ object EdhStub {
       responseBody    = """{"reason" : "Dependent systems are currently not responding"}""",
       responseStatus  = Status.SERVICE_UNAVAILABLE,
       requestBodyJson = Some(Json.prettyPrint(Json.toJson(request))),
-      requiredHeaders = Seq(
-        ("RequesterId", matching("Repayment Service")),
-        ("CorrelationId", matching(".*")),
-        ("Environment", matching(".*")),
-        ("Authorization", matching("Bearer .*"))
-      )
+      requiredHeaders = requiredEdhHeaders
     )
   }
 
@@ -58,4 +49,49 @@ object EdhStub {
     verify(exactly(numberOfRequests), postRequestedFor(urlPathEqualTo(url(claimId))))
 
   private def url(claimId: ClaimId) = s"/risking/claims/${claimId.value}/bank-details"
+
+  object CaseManagement {
+
+    def notifyCaseManagement2xx(clientUId: ClientUId, request: CaseManagementRequest): StubMapping = {
+      WireMockHelpers.Post.stubForPost(
+        url             = caseManagementUrl(clientUId),
+        responseBody    = "",
+        responseStatus  = Status.OK,
+        requestBodyJson = Some(Json.prettyPrint(Json.toJson(request))),
+        requiredHeaders = EdhStub.requiredEdhHeaders
+      )
+    }
+
+    def notifyCaseManagement4xx(clientUId: ClientUId, request: CaseManagementRequest): StubMapping = {
+      WireMockHelpers.Post.stubForPost(
+        url             = caseManagementUrl(clientUId),
+        responseBody    = """{"reason": "Invalid JSON"}""",
+        responseStatus  = Status.BAD_REQUEST,
+        requestBodyJson = Some(Json.prettyPrint(Json.toJson(request))),
+        requiredHeaders = EdhStub.requiredEdhHeaders
+      )
+    }
+
+    def notifyCaseManagement5xx(clientUId: ClientUId, request: CaseManagementRequest): StubMapping = {
+      WireMockHelpers.Post.stubForPost(
+        url             = caseManagementUrl(clientUId),
+        responseBody    = "",
+        responseStatus  = Status.INTERNAL_SERVER_ERROR,
+        requestBodyJson = Some(Json.prettyPrint(Json.toJson(request))),
+        requiredHeaders = EdhStub.requiredEdhHeaders
+      )
+    }
+
+    def verifyNotifyCaseManagement(clientUId: ClientUId, numberOfRequests: Int = 1): Unit =
+      verify(exactly(numberOfRequests), postRequestedFor(urlPathEqualTo(caseManagementUrl(clientUId))))
+
+    private def caseManagementUrl(clientUId: ClientUId): String = s"/risking/exceptions/${clientUId.value}"
+  }
+
+  private val requiredEdhHeaders: Seq[(String, StringValuePattern)] = Seq(
+    ("RequesterId", matching("Repayment Service")),
+    ("CorrelationId", matching(".*")),
+    ("Environment", matching(".*")),
+    ("Authorization", matching("Bearer .*"))
+  )
 }
