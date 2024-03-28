@@ -61,15 +61,20 @@ trait TdBase {
 
   lazy val paymentAmount: BigDecimal = BigDecimal("12.34")
 
+  lazy val currentOptimisticLock: CurrentOptimisticLock = CurrentOptimisticLock(15)
+
+  lazy val reconciliationIdentifier: ReconciliationIdentifier = ReconciliationIdentifier(123)
+
+  lazy val associatedPayableNumber: AssociatedPayableNumber = AssociatedPayableNumber(1234)
   lazy val p800ReferenceChecked: P800ReferenceChecked = ReferenceCheckResult.P800ReferenceChecked(
-    reconciliationIdentifier = ReconciliationIdentifier(123),
+    reconciliationIdentifier = reconciliationIdentifier,
     paymentNumber            = p800Reference,
     payeNumber               = PayeNumber("PayeNumber-123"),
     taxDistrictNumber        = TaxDistrictNumber("EAST LONDON AREA (SERVICE) (717)"),
     paymentAmount            = paymentAmount,
-    associatedPayableNumber  = AssociatedPayableNumber(1234),
+    associatedPayableNumber  = associatedPayableNumber,
     customerAccountNumber    = CustomerAccountNumber("customerAccountNumber-1234"),
-    currentOptimisticLock    = CurrentOptimisticLock(15)
+    currentOptimisticLock    = currentOptimisticLock
   )
 
   lazy val title: String = "Sir"
@@ -128,6 +133,9 @@ trait TdBase {
   lazy val sortCode: String = "445566"
   lazy val bankAccountNumber: String = "10002333"
 
+  lazy val payeeBankAccountNumber: PayeeBankAccountNumber = PayeeBankAccountNumber(bankAccountNumber)
+  lazy val payeeBankSortCode: PayeeBankSortCode = PayeeBankSortCode(sortCode)
+
   lazy val bankAccountSummary: BankAccountSummary = BankAccountSummary(
     id                    = accountId,
     bankId                = bankId,
@@ -159,17 +167,34 @@ trait TdBase {
   lazy val isValidEventValueNotValid: EventValue = EventValue.NotValid
   lazy val isValidEventValueNotReceived: EventValue = EventValue.NotReceived
 
+  lazy val suspendOverpaymentRequest: SuspendOverpaymentRequest = SuspendOverpaymentRequest(
+    currentOptimisticLock    = currentOptimisticLock,
+    reconciliationIdentifier = reconciliationIdentifier,
+    associatedPayableNumber  = associatedPayableNumber,
+    payeeBankAccountNumber   = payeeBankAccountNumber,
+    payeeBankSortCode        = payeeBankSortCode,
+    payeeBankAccountName     = PayeeBankAccountName("bank account display name"),
+    designatedPayeeAccount   = DesignatedPayeeAccount(false)
+  )
+
+  lazy val suspendOverpaymentResponse: SuspendOverpaymentResponse = SuspendOverpaymentResponse(
+    identifier            = nino,
+    currentOptimisticLock = currentOptimisticLock
+  )
+
   lazy val claimOverpaymentRequest: ClaimOverpaymentRequest = ClaimOverpaymentRequest(
-    currentOptimisticLock    = CurrentOptimisticLock(15),
-    reconciliationIdentifier = ReconciliationIdentifier(123),
-    associatedPayableNumber  = AssociatedPayableNumber(1234),
-    payeeBankAccountNumber   = PayeeBankAccountNumber("10002333"),
-    payeeBankSortCode        = PayeeBankSortCode("445566"),
+    currentOptimisticLock    = currentOptimisticLock,
+    reconciliationIdentifier = reconciliationIdentifier,
+    associatedPayableNumber  = associatedPayableNumber,
+    payeeBankAccountNumber   = payeeBankAccountNumber,
+    payeeBankSortCode        = payeeBankSortCode,
     payeeBankAccountName     = PayeeBankAccountName("bank account display name"),
     designatedPayeeAccount   = DesignatedPayeeAccount(true)
   )
+
   lazy val claimOverpaymentResponse: ClaimOverpaymentResponse = ClaimOverpaymentResponse(
     identifier            = nino,
-    currentOptimisticLock = CurrentOptimisticLock(15)
+    currentOptimisticLock = currentOptimisticLock
   )
+
 }
