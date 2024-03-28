@@ -71,6 +71,7 @@ trait ItSpec extends AnyFreeSpecLike
     "microservice.services.ecospend-auth.port" -> WireMockSupport.port,
     "microservice.services.ecospend.port" -> WireMockSupport.port,
     "microservice.services.p800-refunds-external-api.port" -> WireMockSupport.port,
+    "microservice.services.p800-refunds-backend.port" -> WireMockSupport.port,
     "microservice.services.date-calculator.port" -> WireMockSupport.port,
     "microservice.services.edh.port" -> WireMockSupport.port
   )

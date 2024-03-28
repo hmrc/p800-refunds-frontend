@@ -17,12 +17,13 @@
 package controllers
 
 import action.{Actions, JourneyRequest}
+import connectors.P800RefundsBackendConnector
 import language.Messages
 import models.dateofbirth.DateOfBirth
 import models.journeymodels._
 import models.{Nino, P800Reference}
+import nps.TraceIndividualConnector
 import nps.models.{ReferenceCheckResult, TraceIndividualRequest, TraceIndividualResponse}
-import nps.{ReferenceCheckConnector, TraceIndividualConnector}
 import play.api.mvc._
 import requests.RequestSupport
 import services.{FailedVerificationAttemptService, JourneyService}
@@ -43,7 +44,7 @@ class CheckYourAnswersController @Inject() (
     views:                            Views,
     actions:                          Actions,
     failedVerificationAttemptService: FailedVerificationAttemptService,
-    referenceCheckConnector:          ReferenceCheckConnector,
+    p800RefundsBackendConnector:      P800RefundsBackendConnector,
     traceIndividualConnector:         TraceIndividualConnector
 )(implicit ec: ExecutionContext) extends FrontendController(mcc) {
 
@@ -114,7 +115,7 @@ class CheckYourAnswersController @Inject() (
   private val checkP800Reference: ActionRefiner[JourneyRequest, JourneyRequest] = new ActionRefiner[JourneyRequest, JourneyRequest] {
     override protected def refine[A](request: JourneyRequest[A]): Future[Either[Result, JourneyRequest[A]]] = {
       implicit val r: JourneyRequest[A] = request
-      referenceCheckConnector.p800ReferenceCheck(r.journey.getNino, r.journey.getP800Reference).map { referenceCheckResult =>
+      p800RefundsBackendConnector.p800ReferenceCheck(r.journey.getNino, r.journey.getP800Reference).map { referenceCheckResult =>
         Right(new JourneyRequest[A](journey = r.journey.update(referenceCheckResult), request = r.request))
       }
     }
