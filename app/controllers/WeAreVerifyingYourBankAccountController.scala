@@ -23,7 +23,7 @@ import models.ecospend.account.BankAccountSummary
 import models.ecospend.consent.{BankReferenceId, ConsentId, ConsentStatus}
 import models.journeymodels._
 import models.p800externalapi.EventValue
-import nps.ClaimOverpaymentConnector
+import nps.{ClaimOverpaymentConnector, SuspendOverpaymentConnector}
 import nps.models.ReferenceCheckResult.P800ReferenceChecked
 import nps.models._
 import play.api.mvc._
@@ -43,6 +43,7 @@ class WeAreVerifyingYourBankAccountController @Inject() (
     edhConnector:                    EdhConnector,
     journeyService:                  JourneyService,
     claimOverpaymentConnector:       ClaimOverpaymentConnector,
+    suspendOverpaymentConnector:     SuspendOverpaymentConnector,
     mcc:                             MessagesControllerComponents,
     p800RefundsExternalApiConnector: P800RefundsExternalApiConnector,
     views:                           Views,
@@ -92,15 +93,26 @@ class WeAreVerifyingYourBankAccountController @Inject() (
       }
   }
 
-  private def handleDoNotPay(journey: Journey)(implicit request: RequestHeader): Future[(Result, Journey)] =
+  private def handleDoNotPay(journey: Journey)(implicit request: RequestHeader): Future[(Result, Journey)] = {
+
+    val suspendOverpaymentRequest = SuspendOverpaymentRequest(
+      currentOptimisticLock    = journey.getP800ReferenceChecked.currentOptimisticLock,
+      reconciliationIdentifier = journey.getP800ReferenceChecked.reconciliationIdentifier,
+      associatedPayableNumber  = journey.getP800ReferenceChecked.associatedPayableNumber,
+      payeeBankAccountNumber   = journey.getBankAccountSummary.accountIdentification.asPayeeBankAccountNumber,
+      payeeBankSortCode        = journey.getBankAccountSummary.accountIdentification.asPayeeBankSortCode,
+      payeeBankAccountName     = PayeeBankAccountName(journey.getBankAccountSummary.displayName.value),
+      designatedPayeeAccount   = DesignatedPayeeAccount(false)
+    )
+
     for {
-      // TODO: If API#1133 or API#JF72745 fails, call (JF72755) Suspend Overpayment
-      // If API#1133 or API#JF72745 fails, call API#1132 (EPID0771) Case Management Notified
       _ <- notifyCaseManagement(journey)
+      _ <- suspendOverpaymentConnector.suspendOverpayment(journey.getNino, journey.getP800Reference, suspendOverpaymentRequest)
     } yield (
       Redirect(routes.RefundRequestNotSubmittedController.get),
       journey.update(hasFinished = HasFinished.YesRefundNotSubmitted)
     )
+  }
 
   private def handlePay(journey: Journey, bankAccountSummary: BankAccountSummary)(implicit request: RequestHeader): Future[(Result, Journey)] = {
     claimOverpayment(journey, bankAccountSummary).map{ _ =>
