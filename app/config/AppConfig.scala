@@ -40,8 +40,6 @@ class AppConfig @Inject() (servicesConfig: ServicesConfig, configuration: Config
 
   val govUkRouteIn: String = readConfigAsValidUrlString("urls.gov-uk.govuk-route-in")
 
-  val incomeTaxGeneralEnquiriesUrl: String = readConfigAsValidUrlString("urls.gov-uk.income-tax-general-enquiries")
-
   val contactHmrcChangeDetailsUrl: String = readConfigAsValidUrlString("urls.gov-uk.contact-hmrc-change-details")
 
   val generalEnquiriesUrl: String = readConfigAsValidUrlString("urls.gov-uk.general-enquiries")

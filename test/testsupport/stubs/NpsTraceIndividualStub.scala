@@ -28,7 +28,7 @@ object NpsTraceIndividualStub {
   def traceIndividual(request: TraceIndividualRequest, response: TraceIndividualResponse): StubMapping = {
     WireMockHelpers.Post.stubForPost(
       url             = url,
-      responseBody    = Json.prettyPrint(Json.toJson(List(response))),
+      responseBody    = Json.prettyPrint(Json.toJson(response)),
       responseStatus  = Status.OK,
       requestBodyJson = Some(Json.prettyPrint(Json.toJson(request))),
       queryParams     = Map("exactMatch" -> matching("true"), "returnRealName" -> matching("true")),
@@ -39,6 +39,6 @@ object NpsTraceIndividualStub {
   def verifyTraceIndividual(): Unit =
     verify(exactly(1), postRequestedFor(urlPathEqualTo(url)))
 
-  private val url: String = s"/nps-json-service/nps/v1/api/individual/trace-individual"
+  private val url: String = s"/p800-refunds-backend/nps-json-service/nps/v1/api/individual/trace-individual"
 
 }
