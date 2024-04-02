@@ -22,7 +22,6 @@ import language.Messages
 import models.dateofbirth.DateOfBirth
 import models.journeymodels._
 import models.{Nino, P800Reference}
-import nps.TraceIndividualConnector
 import nps.models.{ReferenceCheckResult, TraceIndividualRequest, TraceIndividualResponse}
 import play.api.mvc._
 import requests.RequestSupport
@@ -44,8 +43,7 @@ class CheckYourAnswersController @Inject() (
     views:                            Views,
     actions:                          Actions,
     failedVerificationAttemptService: FailedVerificationAttemptService,
-    p800RefundsBackendConnector:      P800RefundsBackendConnector,
-    traceIndividualConnector:         TraceIndividualConnector
+    p800RefundsBackendConnector:      P800RefundsBackendConnector
 )(implicit ec: ExecutionContext) extends FrontendController(mcc) {
 
   import requestSupport._
@@ -99,7 +97,7 @@ class CheckYourAnswersController @Inject() (
       val journey: Journey = request.journey
       for {
         maybeTraceIndividualResponse: Option[TraceIndividualResponse] <- journey.getJourneyType match {
-          case JourneyType.BankTransfer => traceIndividualConnector
+          case JourneyType.BankTransfer => p800RefundsBackendConnector
             .traceIndividual(traceIndividualRequest = TraceIndividualRequest(
               journey.getNino,
               journey.getDateOfBirth.`formatYYYY-MM-DD`
