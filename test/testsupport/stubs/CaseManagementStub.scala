@@ -16,44 +16,53 @@
 
 package testsupport.stubs
 
+import casemanagement.{ClientUId, CaseManagementRequest}
 import com.github.tomakehurst.wiremock.client.WireMock._
 import com.github.tomakehurst.wiremock.matching.StringValuePattern;
 import com.github.tomakehurst.wiremock.stubbing.StubMapping
-import edh.{ClaimId, GetBankDetailsRiskResultRequest, GetBankDetailsRiskResultResponse}
 import play.api.http.Status
 import play.api.libs.json.Json
 
-object EdhStub {
+object CaseManagementStub {
 
-  def getBankDetailsRiskResult(request: GetBankDetailsRiskResultRequest, response: GetBankDetailsRiskResultResponse): StubMapping = {
+  def notifyCaseManagement2xx(clientUId: ClientUId, request: CaseManagementRequest): StubMapping = {
     WireMockHelpers.Post.stubForPost(
-      url             = url(ClaimId(request.header.transactionID.value)), //HINT: ClaimId is the same as TransactionID according to spec for this API
-      responseBody    = Json.prettyPrint(Json.toJson(response)),
+      url             = url(clientUId),
+      responseBody    = "",
       responseStatus  = Status.OK,
       requestBodyJson = Some(Json.prettyPrint(Json.toJson(request))),
       requiredHeaders = requiredHeaders
     )
   }
 
-  def getBankDetailsRiskResult5xx(request: GetBankDetailsRiskResultRequest): StubMapping = {
+  def notifyCaseManagement4xx(clientUId: ClientUId, request: CaseManagementRequest): StubMapping = {
     WireMockHelpers.Post.stubForPost(
-      url             = url(ClaimId(request.header.transactionID.value)), //HINT: ClaimId is the same as TransactionID according to spec for this API
-      responseBody    = """{"reason" : "Dependent systems are currently not responding"}""",
-      responseStatus  = Status.SERVICE_UNAVAILABLE,
+      url             = url(clientUId),
+      responseBody    = """{"reason": "Invalid JSON"}""",
+      responseStatus  = Status.BAD_REQUEST,
       requestBodyJson = Some(Json.prettyPrint(Json.toJson(request))),
       requiredHeaders = requiredHeaders
     )
   }
 
-  def verifyGetBankDetailsRiskResult(claimId: ClaimId, numberOfRequests: Int = 1): Unit =
-    verify(exactly(numberOfRequests), postRequestedFor(urlPathEqualTo(url(claimId))))
+  def notifyCaseManagement5xx(clientUId: ClientUId, request: CaseManagementRequest): StubMapping = {
+    WireMockHelpers.Post.stubForPost(
+      url             = url(clientUId),
+      responseBody    = "",
+      responseStatus  = Status.INTERNAL_SERVER_ERROR,
+      requestBodyJson = Some(Json.prettyPrint(Json.toJson(request))),
+      requiredHeaders = requiredHeaders
+    )
+  }
 
-  private def url(claimId: ClaimId) = s"/risking/claims/${claimId.value}/bank-details"
+  def verifyNotifyCaseManagement(clientUId: ClientUId, numberOfRequests: Int = 1): Unit =
+    verify(exactly(numberOfRequests), postRequestedFor(urlPathEqualTo(url(clientUId))))
+
+  private def url(clientUId: ClientUId): String = s"/risking/exceptions/${clientUId.value}"
 
   private val requiredHeaders: Seq[(String, StringValuePattern)] = Seq(
-    ("RequesterId", matching("Repayment Service")),
     ("CorrelationId", matching(".*")),
     ("Environment", matching(".*")),
-    ("Authorization", matching("Bearer .*"))
+    ("Authorization", matching("Basic .*"))
   )
 }
