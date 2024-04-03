@@ -17,15 +17,16 @@
 package controllers
 
 import action.{Actions, JourneyRequest}
+import casemanagement._
 import connectors.P800RefundsExternalApiConnector
 import edh._
 import models.ecospend.account.BankAccountSummary
 import models.ecospend.consent.{BankReferenceId, ConsentId, ConsentStatus}
 import models.journeymodels._
 import models.p800externalapi.EventValue
-import nps.{ClaimOverpaymentConnector, SuspendOverpaymentConnector}
 import nps.models.ReferenceCheckResult.P800ReferenceChecked
 import nps.models._
+import nps.{ClaimOverpaymentConnector, SuspendOverpaymentConnector}
 import play.api.mvc._
 import services.{EcospendService, JourneyService}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
@@ -41,6 +42,7 @@ class WeAreVerifyingYourBankAccountController @Inject() (
     actions:                         Actions,
     ecospendService:                 EcospendService,
     edhConnector:                    EdhConnector,
+    caseManagementConnector:         CaseManagementConnector,
     journeyService:                  JourneyService,
     claimOverpaymentConnector:       ClaimOverpaymentConnector,
     suspendOverpaymentConnector:     SuspendOverpaymentConnector,
@@ -252,7 +254,7 @@ class WeAreVerifyingYourBankAccountController @Inject() (
       r
     }
 
-    edhConnector.notifyCaseManagement(clientUId, request)
+    caseManagementConnector.notifyCaseManagement(clientUId, request)
       .map(_ => ())
   }
 

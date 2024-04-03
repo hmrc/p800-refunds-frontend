@@ -19,7 +19,7 @@ package edh
 import play.api.mvc.RequestHeader
 import requests.RequestSupport._
 import uk.gov.hmrc.http.HttpReads.Implicits._
-import uk.gov.hmrc.http.{HttpClient, HttpResponse, UpstreamErrorResponse}
+import uk.gov.hmrc.http.HttpClient
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 import util.JourneyLogger
 
@@ -50,27 +50,6 @@ class EdhConnector @Inject() (
         response
       }
 
-  }
-
-  private def notifyCaseManagementUrl(clientUId: ClientUId): String = baseUrl +
-    s"/risking/exceptions/${clientUId.value}"
-
-  def notifyCaseManagement(
-      clientUId: ClientUId,
-      request:   CaseManagementRequest
-  )(implicit requestHeader: RequestHeader): Future[Unit] = {
-
-    JourneyLogger.info(s"Notifying case management: ${clientUId.value}")
-
-    httpClient
-      .POST[CaseManagementRequest, Either[UpstreamErrorResponse, HttpResponse]](
-        url     = notifyCaseManagementUrl(clientUId),
-        body    = request,
-        headers = makeHeaders()
-      ).map {
-          case Right(_)    => ()
-          case Left(error) => throw error
-        }
   }
 
   private val bearerToken: String = servicesConfig.getString("microservice.services.edh.bearerToken")
