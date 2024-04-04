@@ -82,5 +82,5 @@ object NpsClaimOverpaymentStub {
   def verifyNoneClaimOverpayment(nino: Nino, p800Reference: P800Reference): Unit =
     verify(exactly(0), putRequestedFor(urlPathEqualTo(url(nino, p800Reference))))
 
-  private def url(nino: Nino, p800Reference: P800Reference) = s"/nps-json-service/nps/v1/api/accounting/claim-overpayment/${nino.value}/${p800Reference.value}"
+  private def url(nino: Nino, p800Reference: P800Reference) = s"/p800-refunds-backend/nps-json-service/nps/v1/api/accounting/claim-overpayment/${nino.value}/${p800Reference.value}"
 }

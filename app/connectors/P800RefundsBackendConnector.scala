@@ -19,11 +19,12 @@ package connectors
 import com.google.inject.{Inject, Singleton}
 import config.AppConfig
 import models.{Nino, P800Reference}
-import nps.models.{ReferenceCheckResult, TraceIndividualRequest, TraceIndividualResponse}
+import nps.models.{ClaimOverpaymentRequest, ClaimOverpaymentResponse, ReferenceCheckResult, TraceIndividualRequest, TraceIndividualResponse}
 import play.api.mvc.RequestHeader
 import requests.RequestSupport.hc
 import uk.gov.hmrc.http.HttpClient
 import uk.gov.hmrc.http.HttpReads.Implicits._
+import util.JourneyLogger
 
 import java.util.UUID
 import scala.concurrent.{ExecutionContext, Future}
@@ -54,6 +55,25 @@ class P800RefundsBackendConnector @Inject() (
       .POST[TraceIndividualRequest, TraceIndividualResponse](
         url     = traceIndividualUrl,
         body    = traceIndividualRequest,
+        headers = Seq(P800RefundsBackendConnector.makeCorrelationIdHeader())
+      )
+  }
+
+  private def url(nino: Nino, p800Reference: P800Reference): String = appConfig.P800RefundsBackend.p800RefundsBackendBaseUrl +
+    s"/nps-json-service/nps/v1/api/accounting/claim-overpayment/${nino.value}/${p800Reference.sanitiseReference.value}"
+
+  def claimOverpayment(
+      nino:                    Nino,
+      p800Reference:           P800Reference,
+      claimOverpaymentRequest: ClaimOverpaymentRequest
+  )(implicit requestHeader: RequestHeader): Future[ClaimOverpaymentResponse] = {
+
+    JourneyLogger.info("Claiming overpayment")
+    val sanitisedP800Reference = p800Reference.sanitiseReference
+    httpClient
+      .PUT[ClaimOverpaymentRequest, ClaimOverpaymentResponse](
+        url     = url(nino, sanitisedP800Reference),
+        body    = claimOverpaymentRequest,
         headers = Seq(P800RefundsBackendConnector.makeCorrelationIdHeader())
       )
   }

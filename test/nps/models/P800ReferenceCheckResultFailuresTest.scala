@@ -19,7 +19,6 @@ package nps.models
 import play.api.libs.json.Json
 import testsupport.UnitSpec
 
-//TODO: Jake, next time in backend move this over (next ticket)
 class P800ReferenceCheckResultFailuresTest extends UnitSpec {
 
   val failures = """{"failures":[{"reason":"Overpayment has already been claimed","code":"63480"}]}"""
