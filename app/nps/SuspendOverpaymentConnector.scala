@@ -16,8 +16,8 @@
 
 package nps
 
-import _root_.models.{Nino, P800Reference}
-import nps.models.SuspendOverpaymentRequest
+import _root_.models.{CorrelationId, Nino, P800Reference}
+import models.SuspendOverpaymentRequest
 import play.api.http.Status.{BAD_GATEWAY, INTERNAL_SERVER_ERROR}
 import play.api.mvc.RequestHeader
 import requests.RequestSupport._
@@ -39,7 +39,12 @@ class SuspendOverpaymentConnector @Inject() (
   private def url(nino: Nino, p800Reference: P800Reference): String = npsConfig.baseUrl +
     s"/nps-json-service/nps/v1/api/accounting/suspend-overpayment/${nino.value}/${p800Reference.sanitiseReference.value}"
 
-  def suspendOverpayment(nino: Nino, p800Reference: P800Reference, suspendOverpaymentRequest: SuspendOverpaymentRequest)(implicit requestHeader: RequestHeader): Future[Unit] = {
+  def suspendOverpayment(
+      nino:                      Nino,
+      p800Reference:             P800Reference,
+      suspendOverpaymentRequest: SuspendOverpaymentRequest,
+      correlationId:             CorrelationId
+  )(implicit requestHeader: RequestHeader): Future[Unit] = {
     JourneyLogger.info("Suspending Overpayment...")
 
     implicit val readUnit: HttpReads[Unit] = HttpReads.ask.map {
@@ -57,7 +62,7 @@ class SuspendOverpaymentConnector @Inject() (
     httpClient.PUT[SuspendOverpaymentRequest, Unit](
       url     = url(nino, p800Reference),
       body    = suspendOverpaymentRequest,
-      headers = npsConfig.makeHeadersForNps()
+      headers = npsConfig.makeHeadersForNps(correlationId)
     )
   }
 }

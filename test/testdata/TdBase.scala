@@ -46,6 +46,8 @@ trait TdBase {
   lazy val instant: Instant = localDateTime.toInstant(ZoneOffset.UTC)
   lazy val newInstant: Instant = instant.plusSeconds(20) //used when a new journey is created from existing one
 
+  lazy val correlationId: CorrelationId = CorrelationId(UUID.fromString("5eda7a62-7b15-4960-927c-41a67be208e8"))
+
   lazy val p800ReferenceSanitised: P800Reference = P800Reference("12345678")
 
   lazy val p800Reference: P800Reference = P800Reference(" 12-3 4.5.6 78") //It might contain non digits see OPS-11141

@@ -45,7 +45,7 @@ class VerifyBankAccountPageSpec extends ItSpec {
     EdhStub.getBankDetailsRiskResult(tdAll.getBankDetailsRiskResultRequest, tdAll.getBankDetailsRiskResultResponse)
     pages.verifyBankAccountPage.open()
     pages.verifyBankAccountPage.assertPageIsDisplayed()
-    EdhStub.verifyGetBankDetailsRiskResult(tdAll.claimId)
+    EdhStub.verifyGetBankDetailsRiskResult(tdAll.claimId, tdAll.correlationId)
     P800RefundsExternalApiStub.verifyIsValid(tdAll.consentId)
     NpsClaimOverpaymentStub.verifyNoneClaimOverpayment(tdAll.nino, tdAll.p800ReferenceSanitised)
   }
@@ -66,7 +66,7 @@ class VerifyBankAccountPageSpec extends ItSpec {
     pages.verifyBankAccountPage.assertPageIsDisplayed()
     pages.verifyBankAccountPage.clickRefreshThisPageLink()
     pages.verifyBankAccountPage.assertPageIsDisplayed()
-    EdhStub.verifyGetBankDetailsRiskResult(tdAll.claimId)
+    EdhStub.verifyGetBankDetailsRiskResult(tdAll.claimId, tdAll.correlationId)
     P800RefundsExternalApiStub.verifyIsValid(tdAll.consentId, 2)
     NpsClaimOverpaymentStub.verifyNoneClaimOverpayment(tdAll.nino, tdAll.p800ReferenceSanitised)
   }
@@ -86,7 +86,7 @@ class VerifyBankAccountPageSpec extends ItSpec {
 
     pages.verifyBankAccountPage.open()
     pages.verifyBankAccountPage.assertPageIsDisplayed()
-    EdhStub.verifyGetBankDetailsRiskResult(tdAll.claimId)
+    EdhStub.verifyGetBankDetailsRiskResult(tdAll.claimId, tdAll.correlationId)
     NpsClaimOverpaymentStub.verifyNoneClaimOverpayment(tdAll.nino, tdAll.p800ReferenceSanitised)
     P800RefundsExternalApiStub.isValid(tdAll.consentId, EventValue.Valid)
     NpsClaimOverpaymentStub.claimOverpayment(
@@ -98,7 +98,7 @@ class VerifyBankAccountPageSpec extends ItSpec {
     pages.verifyBankAccountPage.clickRefreshThisPageLink()
     pages.requestReceivedBankTransferPage.assertPageIsDisplayedForBankTransfer()
     DateCalculatorStub.verifyAddWorkingDays()
-    NpsClaimOverpaymentStub.verifyClaimOverpayment(tdAll.nino, tdAll.p800ReferenceSanitised)
+    NpsClaimOverpaymentStub.verifyClaimOverpayment(tdAll.nino, tdAll.p800ReferenceSanitised, tdAll.correlationId)
   }
 
   "Show technical difficulties error page when claim overpayment call returns 'Suspended'" in {
@@ -113,8 +113,8 @@ class VerifyBankAccountPageSpec extends ItSpec {
 
     pages.verifyBankAccountPage.open()
     pages.verifyBankAccountPage.assertPageIsDisplayedWithTechnicalDifficultiesError()
-    EdhStub.verifyGetBankDetailsRiskResult(tdAll.claimId)
-    NpsClaimOverpaymentStub.verifyClaimOverpayment(tdAll.nino, tdAll.p800ReferenceSanitised)
+    EdhStub.verifyGetBankDetailsRiskResult(tdAll.claimId, tdAll.correlationId)
+    NpsClaimOverpaymentStub.verifyClaimOverpayment(tdAll.nino, tdAll.p800ReferenceSanitised, tdAll.correlationId)
   }
 
   "Show technical difficulties error page when claim overpayment call returns 'Already Taken'" in {
@@ -128,8 +128,8 @@ class VerifyBankAccountPageSpec extends ItSpec {
     )
     pages.verifyBankAccountPage.open()
     pages.verifyBankAccountPage.assertPageIsDisplayedWithTechnicalDifficultiesError()
-    EdhStub.verifyGetBankDetailsRiskResult(tdAll.claimId)
-    NpsClaimOverpaymentStub.verifyClaimOverpayment(tdAll.nino, tdAll.p800ReferenceSanitised)
+    EdhStub.verifyGetBankDetailsRiskResult(tdAll.claimId, tdAll.correlationId)
+    NpsClaimOverpaymentStub.verifyClaimOverpayment(tdAll.nino, tdAll.p800ReferenceSanitised, tdAll.correlationId)
   }
 
   "Show technical difficulties error page when claim overpayments call returns 500 error" in {
@@ -144,8 +144,8 @@ class VerifyBankAccountPageSpec extends ItSpec {
 
     pages.verifyBankAccountPage.open()
     pages.verifyBankAccountPage.assertPageIsDisplayedWithTechnicalDifficultiesError()
-    EdhStub.verifyGetBankDetailsRiskResult(tdAll.claimId)
-    NpsClaimOverpaymentStub.verifyClaimOverpayment(tdAll.nino, tdAll.p800ReferenceSanitised)
+    EdhStub.verifyGetBankDetailsRiskResult(tdAll.claimId, tdAll.correlationId)
+    NpsClaimOverpaymentStub.verifyClaimOverpayment(tdAll.nino, tdAll.p800ReferenceSanitised, tdAll.correlationId)
   }
 
   "redirect to 'Request not submitted' page when verification call returns NotValid" in {
@@ -162,7 +162,7 @@ class VerifyBankAccountPageSpec extends ItSpec {
 
     pages.verifyBankAccountPage.open()
     pages.verifyBankAccountPage.assertPageIsDisplayed()
-    EdhStub.verifyGetBankDetailsRiskResult(tdAll.claimId)
+    EdhStub.verifyGetBankDetailsRiskResult(tdAll.claimId, tdAll.correlationId)
 
     P800RefundsExternalApiStub.isValid(tdAll.consentId, EventValue.NotValid)
     NpsClaimOverpaymentStub.claimOverpayment(
@@ -191,7 +191,7 @@ class VerifyBankAccountPageSpec extends ItSpec {
     pages.verifyBankAccountPage.clickRefreshThisPageLink()
     pages.verifyBankAccountPage.assertPageIsDisplayed()
     EcospendStub.AccountStub.accountSummaryValidate(numberOfRequests = 1, tdAll.consentId)
-    EdhStub.verifyGetBankDetailsRiskResult(tdAll.claimId, numberOfRequests = 1)
+    EdhStub.verifyGetBankDetailsRiskResult(tdAll.claimId, tdAll.correlationId, numberOfRequests = 1)
   }
 
   "Show technical difficulties error page when EDH endpoint fails" in {
@@ -202,7 +202,7 @@ class VerifyBankAccountPageSpec extends ItSpec {
 
     pages.verifyBankAccountPage.open()
     pages.verifyBankAccountPage.assertPageIsDisplayedWithTechnicalDifficultiesError()
-    EdhStub.verifyGetBankDetailsRiskResult(tdAll.claimId)
+    EdhStub.verifyGetBankDetailsRiskResult(tdAll.claimId, tdAll.correlationId)
     NpsClaimOverpaymentStub.verifyNoneClaimOverpayment(tdAll.nino, tdAll.p800ReferenceSanitised)
   }
 
@@ -219,9 +219,9 @@ class VerifyBankAccountPageSpec extends ItSpec {
     pages.verifyBankAccountPage.open()
     pages.refundRequestNotSubmittedPage.assertPageIsDisplayed()
 
-    EdhStub.verifyGetBankDetailsRiskResult(tdAll.claimId)
-    CaseManagementStub.verifyNotifyCaseManagement(tdAll.clientUId)
-    NpsSuspendOverpaymentStub.verifySuspendOverpayment(tdAll.nino, tdAll.p800ReferenceSanitised)
+    EdhStub.verifyGetBankDetailsRiskResult(tdAll.claimId, tdAll.correlationId)
+    CaseManagementStub.verifyNotifyCaseManagement(tdAll.clientUId, tdAll.correlationId)
+    NpsSuspendOverpaymentStub.verifySuspendOverpayment(tdAll.nino, tdAll.p800ReferenceSanitised, tdAll.correlationId)
     P800RefundsExternalApiStub.verifyIsValid(tdAll.consentId)
     NpsClaimOverpaymentStub.verifyNoneClaimOverpayment(tdAll.nino, tdAll.p800ReferenceSanitised)
 
@@ -239,8 +239,8 @@ class VerifyBankAccountPageSpec extends ItSpec {
     pages.verifyBankAccountPage.open()
     pages.verifyBankAccountPage.assertPageIsDisplayedWithTechnicalDifficultiesError()
 
-    EdhStub.verifyGetBankDetailsRiskResult(tdAll.claimId)
-    CaseManagementStub.verifyNotifyCaseManagement(tdAll.clientUId)
+    EdhStub.verifyGetBankDetailsRiskResult(tdAll.claimId, tdAll.correlationId)
+    CaseManagementStub.verifyNotifyCaseManagement(tdAll.clientUId, tdAll.correlationId)
     P800RefundsExternalApiStub.verifyIsValid(tdAll.consentId)
     NpsClaimOverpaymentStub.verifyNoneClaimOverpayment(tdAll.nino, tdAll.p800ReferenceSanitised)
   }

@@ -97,11 +97,14 @@ class CheckYourAnswersController @Inject() (
       val journey: Journey = request.journey
       for {
         maybeTraceIndividualResponse: Option[TraceIndividualResponse] <- journey.getJourneyType match {
-          case JourneyType.BankTransfer => p800RefundsBackendConnector
-            .traceIndividual(traceIndividualRequest = TraceIndividualRequest(
-              journey.getNino,
-              journey.getDateOfBirth.`formatYYYY-MM-DD`
-            )).map(Some(_))
+          case JourneyType.BankTransfer =>
+            p800RefundsBackendConnector.traceIndividual(
+              traceIndividualRequest = TraceIndividualRequest(
+                identifier  = journey.getNino,
+                dateOfBirth = journey.getDateOfBirth.`formatYYYY-MM-DD`
+              ),
+              correlationId          = journey.correlationId
+            ).map(Some(_))
           case JourneyType.Cheque => Future.successful(None)
         }
         journey <- journeyService.upsert(journey.update(maybeTraceIndividualResponse = maybeTraceIndividualResponse))
@@ -113,9 +116,11 @@ class CheckYourAnswersController @Inject() (
   private val checkP800Reference: ActionRefiner[JourneyRequest, JourneyRequest] = new ActionRefiner[JourneyRequest, JourneyRequest] {
     override protected def refine[A](request: JourneyRequest[A]): Future[Either[Result, JourneyRequest[A]]] = {
       implicit val r: JourneyRequest[A] = request
-      p800RefundsBackendConnector.p800ReferenceCheck(r.journey.getNino, r.journey.getP800Reference).map { referenceCheckResult =>
-        Right(new JourneyRequest[A](journey = r.journey.update(referenceCheckResult), request = r.request))
-      }
+      p800RefundsBackendConnector
+        .p800ReferenceCheck(r.journey.getNino, r.journey.getP800Reference, r.journey.correlationId)
+        .map { referenceCheckResult =>
+          Right(new JourneyRequest[A](journey = r.journey.update(referenceCheckResult), request = r.request))
+        }
     }
 
     override protected def executionContext: ExecutionContext = ec

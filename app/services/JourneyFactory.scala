@@ -23,13 +23,15 @@ import javax.inject.{Inject, Singleton}
 
 @Singleton
 class JourneyFactory @Inject() (
-    journeyIdGenerator: JourneyIdGenerator,
-    clock:              Clock
+    correlationIdGenerator: CorrelationIdGenerator,
+    clock:                  Clock,
+    journeyIdGenerator:     JourneyIdGenerator
 ) {
 
   def makeNewJourney(): Journey = Journey(
     _id                           = journeyIdGenerator.nextJourneyId(),
     createdAt                     = Instant.now(clock),
+    correlationId                 = correlationIdGenerator.nextCorrelationId(),
     hasFinished                   = HasFinished.No,
     journeyType                   = None,
     p800Reference                 = None,

@@ -18,7 +18,7 @@ package testsupport.stubs
 
 import com.github.tomakehurst.wiremock.client.WireMock._
 import com.github.tomakehurst.wiremock.stubbing.StubMapping
-import models.{Nino, P800Reference}
+import models.{CorrelationId, Nino, P800Reference}
 import nps.models.ReferenceCheckResult
 import play.api.libs.json.Json
 import play.api.http.Status
@@ -51,8 +51,12 @@ object NpsReferenceCheckStub {
       requiredHeaders = npsHeaders
     )
 
-  def verifyCheckReference(nino: Nino, p800Reference: P800Reference): Unit =
-    verify(exactly(1), getRequestedFor(urlPathEqualTo(url(nino, p800Reference))))
+  def verifyCheckReference(nino: Nino, p800Reference: P800Reference, correlationId: CorrelationId): Unit =
+    verify(
+      exactly(1),
+      getRequestedFor(urlPathEqualTo(url(nino, p800Reference)))
+        .withHeader("correlationid", matching(correlationId.value.toString))
+    )
 
   private def url(nino: Nino, p800Reference: P800Reference) = s"/p800-refunds-backend/nps-json-service/nps/v1/api/reconciliation/p800/${nino.value}/${p800Reference.value}"
 

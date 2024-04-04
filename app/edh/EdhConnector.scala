@@ -16,14 +16,14 @@
 
 package edh
 
+import models.CorrelationId
 import play.api.mvc.RequestHeader
 import requests.RequestSupport._
-import uk.gov.hmrc.http.HttpReads.Implicits._
 import uk.gov.hmrc.http.HttpClient
+import uk.gov.hmrc.http.HttpReads.Implicits._
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 import util.JourneyLogger
 
-import java.util.UUID
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -38,12 +38,12 @@ class EdhConnector @Inject() (
   private def url(claimId: ClaimId): String = baseUrl +
     s"/risking/claims/${claimId.value}/bank-details"
 
-  def getBankDetailsRiskResult(claimId: ClaimId, request: GetBankDetailsRiskResultRequest)(implicit requestHeader: RequestHeader): Future[GetBankDetailsRiskResultResponse] = {
+  def getBankDetailsRiskResult(claimId: ClaimId, request: GetBankDetailsRiskResultRequest, correlationId: CorrelationId)(implicit requestHeader: RequestHeader): Future[GetBankDetailsRiskResultResponse] = {
     JourneyLogger.info(s"calling EDH ${claimId.toString}...")
     httpClient.POST[GetBankDetailsRiskResultRequest, GetBankDetailsRiskResultResponse](
       url     = url(claimId),
       body    = request,
-      headers = makeHeaders()
+      headers = makeHeaders(correlationId)
 
     ).map { response: GetBankDetailsRiskResultResponse =>
         JourneyLogger.info(s"calling EDH ${claimId.toString} succeeded: [NextAction=${response.overallRiskResult.nextAction.toString}]")
@@ -55,9 +55,9 @@ class EdhConnector @Inject() (
   private val bearerToken: String = servicesConfig.getString("microservice.services.edh.bearerToken")
   private val environment: String = servicesConfig.getString("microservice.services.edh.environment")
 
-  private def makeHeaders(): Seq[(String, String)] = Seq(
+  private def makeHeaders(correlationId: CorrelationId): Seq[(String, String)] = Seq(
     "Authorization" -> s"Bearer $bearerToken",
-    "CorrelationId" -> UUID.randomUUID().toString,
+    "CorrelationId" -> correlationId.value.toString,
     "Environment" -> environment,
     "RequesterId" -> "Repayment Service"
   )

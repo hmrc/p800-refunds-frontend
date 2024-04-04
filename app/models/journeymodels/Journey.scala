@@ -22,7 +22,7 @@ import models.ecospend.BankDescription
 import models.ecospend.account.BankAccountSummary
 import models.ecospend.consent.BankConsentResponse
 import models.p800externalapi.EventValue
-import models.{AmountInPence, Nino, P800Reference}
+import models.{AmountInPence, CorrelationId, Nino, P800Reference}
 import nps.models.{ReferenceCheckResult, TraceIndividualResponse}
 import play.api.libs.json.OFormat
 import play.api.mvc.RequestHeader
@@ -33,6 +33,7 @@ import java.time.{Clock, Instant}
 final case class Journey(
     _id:           JourneyId,
     createdAt:     Instant,
+    correlationId: CorrelationId,
     hasFinished:   HasFinished,
     journeyType:   Option[JourneyType],
     p800Reference: Option[P800Reference],

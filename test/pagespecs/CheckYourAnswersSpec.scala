@@ -164,8 +164,8 @@ class CheckYourAnswersSpec extends ItSpec {
 
       pages.checkYourAnswersBankTransferPage.clickSubmit()
       pages.yourIdentityIsConfirmedBankTransferPage.assertPageIsDisplayed(JourneyType.BankTransfer)
-      NpsReferenceCheckStub.verifyCheckReference(j.nino.value, tdAll.p800ReferenceSanitised)
-      NpsTraceIndividualStub.verifyTraceIndividual()
+      NpsReferenceCheckStub.verifyCheckReference(j.nino.value, tdAll.p800ReferenceSanitised, tdAll.correlationId)
+      NpsTraceIndividualStub.verifyTraceIndividual(tdAll.correlationId)
       getJourneyFromDatabase(tdAll.journeyId) shouldBeLike j
     }
     "cheque" in {
@@ -175,7 +175,7 @@ class CheckYourAnswersSpec extends ItSpec {
       NpsReferenceCheckStub.checkReference(j.nino.value, tdAll.p800ReferenceSanitised, j.getP800ReferenceChecked(request = tdAll.fakeRequest))
       pages.checkYourAnswersChequePage.clickSubmit()
       pages.yourIdentityIsConfirmedChequePage.assertPageIsDisplayed(JourneyType.Cheque)
-      NpsReferenceCheckStub.verifyCheckReference(j.nino.value, tdAll.p800ReferenceSanitised)
+      NpsReferenceCheckStub.verifyCheckReference(j.nino.value, tdAll.p800ReferenceSanitised, tdAll.correlationId)
       getJourneyFromDatabase(tdAll.journeyId) shouldBeLike j
     }
 
@@ -197,8 +197,8 @@ class CheckYourAnswersSpec extends ItSpec {
 
       pages.checkYourAnswersBankTransferPage.clickSubmit()
       pages.yourIdentityIsConfirmedBankTransferPage.assertPageIsDisplayed(JourneyType.BankTransfer)
-      NpsReferenceCheckStub.verifyCheckReference(j.nino.value, p800ReferenceThatShouldBeSent)
-      NpsTraceIndividualStub.verifyTraceIndividual()
+      NpsReferenceCheckStub.verifyCheckReference(j.nino.value, p800ReferenceThatShouldBeSent, tdAll.correlationId)
+      NpsTraceIndividualStub.verifyTraceIndividual(tdAll.correlationId)
       getJourneyFromDatabase(tdAll.journeyId) shouldBeLike j
     }
   }
@@ -220,7 +220,7 @@ class CheckYourAnswersSpec extends ItSpec {
       )
       pages.checkYourAnswersBankTransferPage.clickSubmit()
       pages.weCannotConfirmYourIdentityBankTransferPage.assertPageIsDisplayed(JourneyType.BankTransfer)
-      NpsReferenceCheckStub.verifyCheckReference(j.nino.value, tdAll.p800ReferenceSanitised)
+      NpsReferenceCheckStub.verifyCheckReference(j.nino.value, tdAll.p800ReferenceSanitised, tdAll.correlationId)
       getJourneyFromDatabase(tdAll.journeyId) shouldBeLike tdAll.BankTransfer.AfterReferenceCheck.journeyReferenceDidntMatchNino
       getFailedAttemptCount() shouldBe Some(1)
     }
@@ -235,7 +235,7 @@ class CheckYourAnswersSpec extends ItSpec {
       pages.checkYourAnswersChequePage.clickSubmit()
       pages.weCannotConfirmYourIdentityChequePage.assertPageIsDisplayed(JourneyType.Cheque)
 
-      NpsReferenceCheckStub.verifyCheckReference(j.nino.value, tdAll.p800ReferenceSanitised)
+      NpsReferenceCheckStub.verifyCheckReference(j.nino.value, tdAll.p800ReferenceSanitised, tdAll.correlationId)
       getJourneyFromDatabase(tdAll.journeyId) shouldBeLike tdAll.Cheque.AfterReferenceCheck.journeyReferenceDidntMatchNino
       getFailedAttemptCount() shouldBe Some(1)
     }
@@ -251,7 +251,7 @@ class CheckYourAnswersSpec extends ItSpec {
       pages.checkYourAnswersBankTransferPage.clickSubmit()
       pages.weCannotConfirmYourIdentityBankTransferPage.assertPageIsDisplayed(JourneyType.BankTransfer)
 
-      NpsReferenceCheckStub.verifyCheckReference(j.nino.value, tdAll.p800ReferenceSanitised)
+      NpsReferenceCheckStub.verifyCheckReference(j.nino.value, tdAll.p800ReferenceSanitised, tdAll.correlationId)
       getJourneyFromDatabase(tdAll.journeyId) shouldBeLike j
       getFailedAttemptCount() shouldBe Some(2)
     }
@@ -266,7 +266,7 @@ class CheckYourAnswersSpec extends ItSpec {
       pages.checkYourAnswersChequePage.clickSubmit()
       pages.weCannotConfirmYourIdentityChequePage.assertPageIsDisplayed(JourneyType.Cheque)
 
-      NpsReferenceCheckStub.verifyCheckReference(j.nino.value, tdAll.p800ReferenceSanitised)
+      NpsReferenceCheckStub.verifyCheckReference(j.nino.value, tdAll.p800ReferenceSanitised, tdAll.correlationId)
       getJourneyFromDatabase(tdAll.journeyId) shouldBeLike j
       getFailedAttemptCount() shouldBe Some(2)
     }
@@ -283,7 +283,7 @@ class CheckYourAnswersSpec extends ItSpec {
       test(JourneyType.BankTransfer)
 
       pages.noMoreAttemptsLeftToConfirmYourIdentityBankTransferPage.assertPageIsDisplayed(JourneyType.BankTransfer)
-      NpsReferenceCheckStub.verifyCheckReference(j.nino.value, tdAll.p800ReferenceSanitised)
+      NpsReferenceCheckStub.verifyCheckReference(j.nino.value, tdAll.p800ReferenceSanitised, tdAll.correlationId)
       getJourneyFromDatabase(tdAll.journeyId) shouldBeLike tdAll.BankTransfer.journeyLockedOutFromFailedAttempts
       getFailedAttemptCount() shouldBe Some(3)
     }
@@ -297,7 +297,7 @@ class CheckYourAnswersSpec extends ItSpec {
       test(JourneyType.Cheque)
 
       pages.noMoreAttemptsLeftToConfirmYourIdentityChequePage.assertPageIsDisplayed(JourneyType.Cheque)
-      NpsReferenceCheckStub.verifyCheckReference(j.nino.value, tdAll.p800ReferenceSanitised)
+      NpsReferenceCheckStub.verifyCheckReference(j.nino.value, tdAll.p800ReferenceSanitised, tdAll.correlationId)
       getJourneyFromDatabase(tdAll.journeyId) shouldBeLike tdAll.Cheque.journeyLockedOutFromFailedAttempts
       getFailedAttemptCount() shouldBe Some(3)
     }

@@ -31,6 +31,7 @@ trait TdJourney {
   lazy val journeyStarted: Journey = Journey(
     _id                           = journeyId,
     createdAt                     = dependencies.instant,
+    correlationId                 = dependencies.correlationId,
     hasFinished                   = HasFinished.No,
     journeyType                   = None,
     p800Reference                 = None,

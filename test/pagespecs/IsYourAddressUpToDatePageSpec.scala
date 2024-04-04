@@ -58,7 +58,7 @@ class IsYourAddressUpToDatePageSpec extends ItSpec {
         pages.isYourAddressUpToDate.clickSubmit()
 
         pages.requestReceivedChequePage.assertPageIsDisplayedForCheque()
-        NpsIssuePayableOrderStub.verifyIssuePayableOrder(journey.nino.value, tdAll.p800ReferenceSanitised)
+        NpsIssuePayableOrderStub.verifyIssuePayableOrder(journey.nino.value, tdAll.p800ReferenceSanitised, tdAll.correlationId)
         getJourneyFromDatabase(journey.journeyId) shouldBeLike tdAll.Cheque.journeyClaimedOverpayment
       }
       "'Technical difficulties' when API call fails we don't update the journey state" in {
@@ -78,7 +78,7 @@ class IsYourAddressUpToDatePageSpec extends ItSpec {
         pages.isYourAddressUpToDate.clickSubmit()
 
         pages.isYourAddressUpToDate.assertPageIsDisplayedWithTechnicalDifficultiesError()
-        NpsIssuePayableOrderStub.verifyIssuePayableOrder(journey.nino.value, tdAll.p800ReferenceSanitised)
+        NpsIssuePayableOrderStub.verifyIssuePayableOrder(journey.nino.value, tdAll.p800ReferenceSanitised, tdAll.correlationId)
         getJourneyFromDatabase(journey.journeyId) shouldBeLike journey withClue "journey was not updated"
       }
     }

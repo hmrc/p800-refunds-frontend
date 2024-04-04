@@ -18,6 +18,7 @@ package testsupport.stubs
 
 import com.github.tomakehurst.wiremock.client.WireMock._
 import com.github.tomakehurst.wiremock.stubbing.StubMapping
+import models.CorrelationId
 import nps.models.{TraceIndividualRequest, TraceIndividualResponse}
 import play.api.http.Status
 import play.api.libs.json.Json
@@ -36,8 +37,11 @@ object NpsTraceIndividualStub {
     )
   }
 
-  def verifyTraceIndividual(): Unit =
-    verify(exactly(1), postRequestedFor(urlPathEqualTo(url)))
+  def verifyTraceIndividual(correlationId: CorrelationId): Unit =
+    verify(
+      exactly(1),
+      postRequestedFor(urlPathEqualTo(url)).withHeader("correlationid", matching(correlationId.value.toString))
+    )
 
   private val url: String = s"/p800-refunds-backend/nps-json-service/nps/v1/api/individual/trace-individual"
 

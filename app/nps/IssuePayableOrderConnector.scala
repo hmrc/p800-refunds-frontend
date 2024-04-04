@@ -16,8 +16,8 @@
 
 package nps
 
-import _root_.models.{Nino, P800Reference}
-import nps.models.IssuePayableOrderRequest
+import _root_.models.{Nino, P800Reference, CorrelationId}
+import models.IssuePayableOrderRequest
 import play.api.http.Status.{BAD_GATEWAY, INTERNAL_SERVER_ERROR}
 import play.api.mvc.RequestHeader
 import requests.RequestSupport._
@@ -39,7 +39,12 @@ class IssuePayableOrderConnector @Inject() (
   private def url(nino: Nino, p800Reference: P800Reference): String = npsConfig.baseUrl +
     s"/nps-json-service/nps/v1/api/accounting/issue-payable-order/${nino.value}/${p800Reference.sanitiseReference.value}"
 
-  def issuePayableOrder(nino: Nino, p800Reference: P800Reference, issuePayableOrderRequest: IssuePayableOrderRequest)(implicit requestHeader: RequestHeader): Future[Unit] = {
+  def issuePayableOrder(
+      nino:                     Nino,
+      p800Reference:            P800Reference,
+      issuePayableOrderRequest: IssuePayableOrderRequest,
+      correlationId:            CorrelationId
+  )(implicit requestHeader: RequestHeader): Future[Unit] = {
     JourneyLogger.info("Issuing payable order")
 
     implicit val readUnit: HttpReads[Unit] = HttpReads.ask.map {
@@ -57,7 +62,7 @@ class IssuePayableOrderConnector @Inject() (
     httpClient.PUT[IssuePayableOrderRequest, Unit](
       url     = url(nino, p800Reference),
       body    = issuePayableOrderRequest,
-      headers = npsConfig.makeHeadersForNps()
+      headers = npsConfig.makeHeadersForNps(correlationId)
     )
   }
 }
