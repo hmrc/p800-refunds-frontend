@@ -47,7 +47,6 @@ class NpsConfig @Inject() (servicesConfig: ServicesConfig) {
     "Authorization" -> s"Basic $credentialsEncoded"
   }
 
-  //TODO: update this to use correlationId from journey object when we've done that ticket (OPS-11777)
   private def makeCorrelationIdHeader(correlationId: CorrelationId): (String, String) = {
     "CorrelationId" -> correlationId.value.toString
   }
