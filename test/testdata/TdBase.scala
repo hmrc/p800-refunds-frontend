@@ -18,7 +18,7 @@ package testdata
 
 import _root_.nps.models._
 import casemanagement._
-import edh.{BankSortCode, BankAccountNumber, BankAccountName, PersonType}
+import edh.{BankSortCode, BankAccountNumber, BankAccountName, PersonType, Postcode}
 import models._
 import models.attemptmodels.{AttemptId, AttemptInfo, IpAddress, NumberOfAttempts}
 import models.dateofbirth.{DateOfBirth, DayOfMonth, Month, Year}
@@ -74,7 +74,7 @@ trait TdBase {
     reconciliationIdentifier = reconciliationIdentifier,
     paymentNumber            = p800Reference,
     payeNumber               = PayeNumber("PayeNumber-123"),
-    taxDistrictNumber        = TaxDistrictNumber("EAST LONDON AREA (SERVICE) (717)"),
+    taxDistrictNumber        = TaxDistrictNumber(717),
     paymentAmount            = paymentAmount,
     associatedPayableNumber  = associatedPayableNumber,
     customerAccountNumber    = CustomerAccountNumber("customerAccountNumber-1234"),
@@ -86,10 +86,13 @@ trait TdBase {
   lazy val surname: String = "of Gaul"
 
   lazy val traceIndividualResponse = TraceIndividualResponse(
-    title          = Some(title),
-    firstForename  = Some(firstForename),
-    secondForename = None,
-    surname        = surname
+    title           = Some(title),
+    firstForename   = Some(firstForename),
+    secondForename  = None,
+    surname         = surname,
+    addressLine1    = "Flat 1 Rose House",
+    addressLine2    = "Worthing",
+    addressPostcode = Postcode("BN12 4XL")
   )
 
   lazy val bankId: BankId = BankId("obie-barclays-personal")

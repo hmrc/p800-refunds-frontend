@@ -16,6 +16,7 @@
 
 package nps.models
 
+import edh.Postcode
 import play.api.libs.json.{Json, OFormat}
 
 /**
@@ -25,7 +26,11 @@ final case class TraceIndividualResponse(
     title:          Option[String],
     firstForename:  Option[String],
     secondForename: Option[String],
-    surname:        String
+    surname:        String,
+    // addressType:    String, // TODO: MYLES: IDK if we care, though if we do mk this an enum ("CORRESPONDANCE ADDRESS", "NOT KNOWN" or "RESIDENTIAL")
+    addressLine1:    String,
+    addressLine2:    String,
+    addressPostcode: Postcode
 )
 
 object TraceIndividualResponse {

@@ -18,7 +18,7 @@ package nps.models
 
 import play.api.libs.json.{Format, Json}
 
-final case class TaxDistrictNumber(value: String)
+final case class TaxDistrictNumber(value: Int)
 
 object TaxDistrictNumber {
   implicit val format: Format[TaxDistrictNumber] = Json.valueFormat[TaxDistrictNumber]
