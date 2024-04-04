@@ -16,12 +16,40 @@
 
 package pagespecs
 
+import models.journeymodels.Journey
 import testsupport.ItSpec
+import testsupport.stubs.NpsReferenceCheckStub
 
 class ThereIsAProblemSpec extends ItSpec {
 
-  "navigating to /there-is-a-problem" in {
-    pages.thereIsAProblemPage.open()
+  override def beforeEach(): Unit = {
+    super.beforeEach()
+    addJourneyIdToSession(tdAll.journeyId)
+  }
+
+  "navigating to /there-is-a-problem should render the 'There is a problem' page correctly for" - {
+    "bank transfer" in {
+      val journey = tdAll.BankTransfer.AfterReferenceCheck.journeyRefundAlreadyTaken
+      upsertJourneyToDatabase(journey)
+      pages.thereIsAProblemPage.open()
+      pages.thereIsAProblemPage.assertPageIsDisplayed()
+    }
+    "cheque" in {
+      val journey = tdAll.Cheque.AfterReferenceCheck.journeyRefundAlreadyTaken
+      upsertJourneyToDatabase(journey)
+      pages.thereIsAProblemPage.open()
+      pages.thereIsAProblemPage.assertPageIsDisplayed()
+    }
+  }
+
+  "If locked out the user should not be able to click back - instead be redirected to the 'There is a problem' page" in {
+    val j: Journey = tdAll.BankTransfer.journeyEnteredDateOfBirth
+    NpsReferenceCheckStub.checkReferenceRefundAlreadyTaken(j.nino.value, tdAll.p800ReferenceSanitised)
+    upsertJourneyToDatabase(j)
+    pages.checkYourAnswersBankTransferPage.open()
+    pages.checkYourAnswersBankTransferPage.clickSubmit()
+    pages.thereIsAProblemPage.assertPageIsDisplayed()
+    pages.thereIsAProblemPage.clickBackButtonInBrowser()
     pages.thereIsAProblemPage.assertPageIsDisplayed()
   }
 }

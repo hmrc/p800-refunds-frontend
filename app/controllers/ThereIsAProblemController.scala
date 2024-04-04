@@ -25,13 +25,13 @@ import javax.inject.{Inject, Singleton}
 
 @Singleton
 class ThereIsAProblemController @Inject() (
+    actions: Actions,
     mcc:     MessagesControllerComponents,
-    views:   Views,
-    actions: Actions
+    views:   Views
 ) extends FrontendController(mcc) {
 
-  def get: Action[AnyContent] = actions.default {
-    implicit request: Request[_] => Ok(views.thereIsAProblem())
+  def get: Action[AnyContent] = actions.journeyFinished { implicit request: Request[_] =>
+    Ok(views.thereIsAProblemPage())
   }
 
 }

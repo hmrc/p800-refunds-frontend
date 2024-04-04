@@ -60,7 +60,7 @@ object JourneyLogger {
 
   private def journeyId(implicit r: JourneyRequest[_]) = s"[${r.journey.id.toString}]"
 
-  private def correlationId(implicit r: JourneyRequest[_]) = s"[${r.journey.correlationId.toString}]"
+  private def correlationId(implicit r: JourneyRequest[_]) = s"[correlationId:${r.journey.correlationId.toString}]"
 
   private def consentId(implicit r: JourneyRequest[_]) = s"[consentId:${r.journey.bankConsentResponse.map(_.id.value).getOrElse("")}]"
 

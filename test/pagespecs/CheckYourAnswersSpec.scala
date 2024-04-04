@@ -312,6 +312,41 @@ class CheckYourAnswersSpec extends ItSpec {
       }
   }
 
+  "clicking submit, resulting in Nps indicating that refund has already been claimed, redirects to 'There is a problem' page" - {
+    "bank transfer" in {
+      val j: Journey = tdAll.BankTransfer.journeyEnteredDateOfBirth
+      NpsReferenceCheckStub.checkReferenceRefundAlreadyTaken(j.nino.value, tdAll.p800ReferenceSanitised)
+      upsertJourneyToDatabase(j)
+
+      test(JourneyType.BankTransfer)
+
+      getJourneyFromDatabase(tdAll.journeyId) shouldBeLike tdAll.BankTransfer.AfterReferenceCheck.journeyRefundAlreadyTaken
+      NpsReferenceCheckStub.verifyCheckReference(j.nino.value, tdAll.p800ReferenceSanitised, tdAll.correlationId)
+      NpsTraceIndividualStub.verifyNoneTraceIndividual()
+    }
+    "cheque" in {
+      val j: Journey = tdAll.Cheque.journeyEnteredNino
+      NpsReferenceCheckStub.checkReferenceRefundAlreadyTaken(j.nino.value, tdAll.p800ReferenceSanitised)
+      upsertJourneyToDatabase(j)
+
+      test(JourneyType.Cheque)
+
+      getJourneyFromDatabase(tdAll.journeyId) shouldBeLike tdAll.Cheque.AfterReferenceCheck.journeyRefundAlreadyTaken
+      NpsReferenceCheckStub.verifyCheckReference(j.nino.value, tdAll.p800ReferenceSanitised, tdAll.correlationId)
+      NpsTraceIndividualStub.verifyNoneTraceIndividual()
+    }
+
+      def test(journeyType: JourneyType): Unit = {
+        val startPage = journeyType match {
+          case JourneyType.Cheque       => pages.checkYourAnswersChequePage
+          case JourneyType.BankTransfer => pages.checkYourAnswersBankTransferPage
+        }
+        startPage.open()
+        startPage.clickSubmit()
+        pages.thereIsAProblemPage.assertPageIsDisplayed()
+      }
+  }
+
   override def beforeEach(): Unit = {
     super.beforeEach()
     addJourneyIdToSession(tdAll.journeyId)

@@ -18,6 +18,7 @@ package pagespecs.pages
 
 import org.openqa.selenium.WebDriver
 import pagespecs.pagesupport.{ContentExpectation, Page, PageUtil}
+import testsupport.RichMatchers.convertToAnyShouldWrapper
 
 class ThereIsAProblemPage(baseUrl: String)(implicit webDriver: WebDriver) extends Page(
   baseUrl,
@@ -46,6 +47,11 @@ class ThereIsAProblemPage(baseUrl: String)(implicit webDriver: WebDriver) extend
       title               = PageUtil.standardTitle(expectedTitleContent),
       contentExpectations = contentExpectations: _*
     )
+
+    PageUtil.elementDisplayedByClassName("govuk-back-link") shouldBe false
+    contactHmrcHref() shouldBe "https://www.gov.uk/government/organisations/hm-revenue-customs/contact/income-tax-enquiries-for-individuals-pensioners-and-employees"
+    ()
   }
 
+  private def contactHmrcHref(): String = PageUtil.getHrefById("contact-hmrc-link")
 }

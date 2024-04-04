@@ -26,6 +26,7 @@ object HasFinished {
     case YesSucceeded          => true
     case YesRefundNotSubmitted => true
     case YesLockedOut          => true
+    case YesRefundAlreadyTaken => true
   }
 
   def isInProgress(hasFinished: HasFinished): Boolean = !HasFinished.hasFinished(hasFinished)
@@ -46,9 +47,14 @@ object HasFinished {
   case object YesRefundNotSubmitted extends HasFinished
 
   /**
-   * User entered too many times incorrect data. He was locked out.
+   * User entered too many times incorrect data. They are locked out.
    */
   case object YesLockedOut extends HasFinished
+
+  /**
+   * Response from p800 refund reference check api was a 422 with code indicating refund already claimed. They are locked out.
+   */
+  case object YesRefundAlreadyTaken extends HasFinished
 
   @SuppressWarnings(Array("org.wartremover.warts.Any"))
   implicit val format: OFormat[HasFinished] = derived.oformat()
