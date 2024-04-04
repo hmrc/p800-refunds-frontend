@@ -17,7 +17,8 @@
 package testdata
 
 import _root_.nps.models._
-import org.apache.pekko.http.scaladsl.model.Uri
+import casemanagement._
+import edh.{BankSortCode, BankAccountNumber, BankAccountName, PersonType}
 import models._
 import models.attemptmodels.{AttemptId, AttemptInfo, IpAddress, NumberOfAttempts}
 import models.dateofbirth.{DateOfBirth, DayOfMonth, Month, Year}
@@ -26,6 +27,7 @@ import models.ecospend.account._
 import models.ecospend.consent._
 import models.p800externalapi.EventValue
 import nps.models.ReferenceCheckResult.P800ReferenceChecked
+import org.apache.pekko.http.scaladsl.model.Uri
 import testsupport.ItSpec
 
 import java.time.format.DateTimeFormatter
@@ -197,4 +199,45 @@ trait TdBase {
     currentOptimisticLock = currentOptimisticLock
   )
 
+  lazy val clientUId: ClientUId = ClientUId("a3d35e50-ea17-4865-a2d2-38b0069b2665")
+  lazy val caseManagementRequest: CaseManagementRequest = CaseManagementRequest(
+    clientUId             = clientUId,
+    clientSystemId        = ClientSystemId("MDTP"),
+    nino                  = nino,
+    bankSortCode          = BankSortCode(sortCode),
+    bankAccountNumber     = BankAccountNumber(bankAccountNumber),
+    bankAccountName       = BankAccountName(bankAccountSummary.displayName.value),
+    designatedAccountFlag = 1,
+    contact               = List(
+      CaseManagementContact(
+        `type`    = PersonType.Customer,
+        firstName = firstForename,
+        surname   = surname,
+        address   = List()
+      )
+    ),
+    currency              = bankAccountSummary.currency,
+    paymentAmount         = paymentAmount,
+    overallRiskResult     = 45,
+    ruleResults           = Some(List(
+      CaseManagementRuleResult(
+        ruleId          = Some("Rule1"),
+        ruleInformation = Some("Additional information for Rule1"),
+        ruleScore       = Some(80)
+      ),
+      CaseManagementRuleResult(
+        ruleId          = Some("Rule2"),
+        ruleInformation = None,
+        ruleScore       = Some(70)
+      )
+    )),
+    nameMatches           = None,
+    addressMatches        = None,
+    accountExists         = None,
+    subjectHasDeceased    = None,
+    nonConsented          = None,
+    reconciliationId      = None,
+    taxDistrictNumber     = None,
+    payeNumber            = None
+  )
 }

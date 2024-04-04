@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package edh
+package casemanagement
 
 import play.api.libs.json.{Format, Json}
 

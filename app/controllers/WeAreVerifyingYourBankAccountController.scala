@@ -41,6 +41,7 @@ class WeAreVerifyingYourBankAccountController @Inject() (
     actions:                         Actions,
     ecospendService:                 EcospendService,
     edhConnector:                    EdhConnector,
+    caseManagementConnector:         CaseManagementConnector,
     journeyService:                  JourneyService,
     suspendOverpaymentConnector:     SuspendOverpaymentConnector,
     mcc:                             MessagesControllerComponents,
@@ -252,7 +253,7 @@ class WeAreVerifyingYourBankAccountController @Inject() (
       r
     }
 
-    edhConnector.notifyCaseManagement(clientUId, request)
+    caseManagementConnector.notifyCaseManagement(clientUId, request)
       .map(_ => ())
   }
 

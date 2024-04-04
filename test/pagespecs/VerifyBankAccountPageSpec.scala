@@ -19,7 +19,7 @@ package pagespecs
 import edh.GetBankDetailsRiskResultResponse
 import models.p800externalapi.EventValue
 import testsupport.ItSpec
-import testsupport.stubs.{DateCalculatorStub, EcospendStub, EdhStub, NpsClaimOverpaymentStub, NpsSuspendOverpaymentStub, P800RefundsExternalApiStub}
+import testsupport.stubs.{CaseManagementStub, DateCalculatorStub, EcospendStub, EdhStub, NpsClaimOverpaymentStub, NpsSuspendOverpaymentStub, P800RefundsExternalApiStub}
 
 class VerifyBankAccountPageSpec extends ItSpec {
 
@@ -213,14 +213,14 @@ class VerifyBankAccountPageSpec extends ItSpec {
 
     val doNotPay: GetBankDetailsRiskResultResponse = tdAll.getBankDetailsRiskResultResponseDoNotPay
     EdhStub.getBankDetailsRiskResult(tdAll.getBankDetailsRiskResultRequest, doNotPay)
-    EdhStub.CaseManagement.notifyCaseManagement2xx(tdAll.clientUId, tdAll.caseManagementRequest)
+    CaseManagementStub.notifyCaseManagement2xx(tdAll.clientUId, tdAll.caseManagementRequest)
     NpsSuspendOverpaymentStub.suspendOverpayment(tdAll.nino, tdAll.p800ReferenceSanitised, tdAll.suspendOverpaymentRequest, tdAll.suspendOverpaymentResponse)
 
     pages.verifyBankAccountPage.open()
     pages.refundRequestNotSubmittedPage.assertPageIsDisplayed()
 
     EdhStub.verifyGetBankDetailsRiskResult(tdAll.claimId)
-    EdhStub.CaseManagement.verifyNotifyCaseManagement(tdAll.clientUId)
+    CaseManagementStub.verifyNotifyCaseManagement(tdAll.clientUId)
     NpsSuspendOverpaymentStub.verifySuspendOverpayment(tdAll.nino, tdAll.p800ReferenceSanitised)
     P800RefundsExternalApiStub.verifyIsValid(tdAll.consentId)
     NpsClaimOverpaymentStub.verifyNoneClaimOverpayment(tdAll.nino, tdAll.p800ReferenceSanitised)
@@ -234,13 +234,13 @@ class VerifyBankAccountPageSpec extends ItSpec {
 
     val doNotPay: GetBankDetailsRiskResultResponse = tdAll.getBankDetailsRiskResultResponseDoNotPay
     EdhStub.getBankDetailsRiskResult(tdAll.getBankDetailsRiskResultRequest, doNotPay)
-    EdhStub.CaseManagement.notifyCaseManagement4xx(tdAll.clientUId, tdAll.caseManagementRequest)
+    CaseManagementStub.notifyCaseManagement4xx(tdAll.clientUId, tdAll.caseManagementRequest)
 
     pages.verifyBankAccountPage.open()
     pages.verifyBankAccountPage.assertPageIsDisplayedWithTechnicalDifficultiesError()
 
     EdhStub.verifyGetBankDetailsRiskResult(tdAll.claimId)
-    EdhStub.CaseManagement.verifyNotifyCaseManagement(tdAll.clientUId)
+    CaseManagementStub.verifyNotifyCaseManagement(tdAll.clientUId)
     P800RefundsExternalApiStub.verifyIsValid(tdAll.consentId)
     NpsClaimOverpaymentStub.verifyNoneClaimOverpayment(tdAll.nino, tdAll.p800ReferenceSanitised)
   }

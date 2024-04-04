@@ -14,8 +14,9 @@
  * limitations under the License.
  */
 
-package edh
+package casemanagement
 
+import edh.{BankSortCode, BankAccountNumber, BankAccountName, Postcode, PersonType, AddressType}
 import models.Nino
 import play.api.libs.json.{Json, OFormat, Format}
 import util.CurrencyFormat
