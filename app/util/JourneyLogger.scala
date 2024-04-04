@@ -60,6 +60,8 @@ object JourneyLogger {
 
   private def journeyId(implicit r: JourneyRequest[_]) = s"[${r.journey.id.toString}]"
 
+  private def correlationId(implicit r: JourneyRequest[_]) = s"[${r.journey.correlationId.toString}]"
+
   private def consentId(implicit r: JourneyRequest[_]) = s"[consentId:${r.journey.bankConsentResponse.map(_.id.value).getOrElse("")}]"
 
   private def selectedBank(implicit r: JourneyRequest[_]) = s"[bankName:${r.journey.bankDescription.map(_.friendlyName.value).getOrElse("")}]"
@@ -73,7 +75,7 @@ object JourneyLogger {
       case r: JourneyRequest[_] =>
         implicit val req: JourneyRequest[_] = r
         //Warn, don't log whole journey as it might contain sensitive data (PII)
-        s"$message $journeyType $journeyId $selectedBank $consentId $isValidEventValue $context"
+        s"$message $journeyType $journeyId $correlationId $selectedBank $consentId $isValidEventValue $context"
       case _ =>
         s"$message $context "
     }

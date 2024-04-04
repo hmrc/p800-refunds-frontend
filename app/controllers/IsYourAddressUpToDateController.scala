@@ -67,7 +67,8 @@ class IsYourAddressUpToDateController @Inject() (
                 customerAccountNumber   = journey.getP800ReferenceChecked.customerAccountNumber,
                 associatedPayableNumber = journey.getP800ReferenceChecked.associatedPayableNumber,
                 currentOptimisticLock   = journey.getP800ReferenceChecked.currentOptimisticLock
-              )
+              ),
+              correlationId            = journey.correlationId
             )
             _ <- journeyService.upsert(
               journey.copy(hasFinished = HasFinished.YesSucceeded)

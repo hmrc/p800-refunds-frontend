@@ -18,15 +18,14 @@ package connectors
 
 import com.google.inject.{Inject, Singleton}
 import config.AppConfig
-import models.{Nino, P800Reference}
-import nps.models.{ClaimOverpaymentRequest, ClaimOverpaymentResponse, ReferenceCheckResult, TraceIndividualRequest, TraceIndividualResponse}
+import models.{CorrelationId, Nino, P800Reference}
+import nps.models._
 import play.api.mvc.RequestHeader
 import requests.RequestSupport.hc
 import uk.gov.hmrc.http.HttpClient
 import uk.gov.hmrc.http.HttpReads.Implicits._
 import util.JourneyLogger
 
-import java.util.UUID
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
@@ -38,24 +37,24 @@ class P800RefundsBackendConnector @Inject() (
   private def referenceCheckUrl(nino: Nino, p800Reference: P800Reference): String = appConfig.P800RefundsBackend.p800RefundsBackendBaseUrl +
     s"/nps-json-service/nps/v1/api/reconciliation/p800/${nino.value}/${p800Reference.value}"
 
-  def p800ReferenceCheck(nino: Nino, p800Reference: P800Reference)(implicit requestHeader: RequestHeader): Future[ReferenceCheckResult] = {
+  def p800ReferenceCheck(nino: Nino, p800Reference: P800Reference, correlationId: CorrelationId)(implicit requestHeader: RequestHeader): Future[ReferenceCheckResult] = {
     val sanitisedP800Reference = p800Reference.sanitiseReference
     httpClient
       .GET[ReferenceCheckResult](
         url     = referenceCheckUrl(nino, sanitisedP800Reference),
-        headers = Seq(P800RefundsBackendConnector.makeCorrelationIdHeader())
+        headers = Seq(P800RefundsBackendConnector.makeCorrelationIdHeader(correlationId))
       )
   }
 
   private val traceIndividualUrl: String = appConfig.P800RefundsBackend.p800RefundsBackendBaseUrl +
     "/nps-json-service/nps/v1/api/individual/trace-individual?exactMatch=true&returnRealName=true"
 
-  def traceIndividual(traceIndividualRequest: TraceIndividualRequest)(implicit requestHeader: RequestHeader): Future[TraceIndividualResponse] = {
+  def traceIndividual(traceIndividualRequest: TraceIndividualRequest, correlationId: CorrelationId)(implicit requestHeader: RequestHeader): Future[TraceIndividualResponse] = {
     httpClient
       .POST[TraceIndividualRequest, TraceIndividualResponse](
         url     = traceIndividualUrl,
         body    = traceIndividualRequest,
-        headers = Seq(P800RefundsBackendConnector.makeCorrelationIdHeader())
+        headers = Seq(P800RefundsBackendConnector.makeCorrelationIdHeader(correlationId))
       )
   }
 
@@ -65,7 +64,8 @@ class P800RefundsBackendConnector @Inject() (
   def claimOverpayment(
       nino:                    Nino,
       p800Reference:           P800Reference,
-      claimOverpaymentRequest: ClaimOverpaymentRequest
+      claimOverpaymentRequest: ClaimOverpaymentRequest,
+      correlationId:           CorrelationId
   )(implicit requestHeader: RequestHeader): Future[ClaimOverpaymentResponse] = {
 
     JourneyLogger.info("Claiming overpayment")
@@ -74,15 +74,14 @@ class P800RefundsBackendConnector @Inject() (
       .PUT[ClaimOverpaymentRequest, ClaimOverpaymentResponse](
         url     = url(nino, sanitisedP800Reference),
         body    = claimOverpaymentRequest,
-        headers = Seq(P800RefundsBackendConnector.makeCorrelationIdHeader())
+        headers = Seq(P800RefundsBackendConnector.makeCorrelationIdHeader(correlationId))
       )
   }
 
 }
 
 object P800RefundsBackendConnector {
-  //TODO: update this to use correlationId from journey object when we've done that ticket (OPS-11777)
-  private def makeCorrelationIdHeader(): (String, String) = {
-    "CorrelationId" -> UUID.randomUUID().toString
+  private def makeCorrelationIdHeader(correlationId: CorrelationId): (String, String) = {
+    "CorrelationId" -> correlationId.value.toString
   }
 }

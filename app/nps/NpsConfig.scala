@@ -16,9 +16,10 @@
 
 package nps
 
+import _root_.models.CorrelationId
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 
-import java.util.{Base64, UUID}
+import java.util.Base64
 import javax.inject.Inject
 
 class NpsConfig @Inject() (servicesConfig: ServicesConfig) {
@@ -26,9 +27,9 @@ class NpsConfig @Inject() (servicesConfig: ServicesConfig) {
   val baseUrl: String = servicesConfig.baseUrl("nps")
 
   //TODO: we should probably just move all of this into backend once all NPS APIs migrated
-  def makeHeadersForNps(): Seq[(String, String)] = Seq(
+  def makeHeadersForNps(correlationId: CorrelationId): Seq[(String, String)] = Seq(
     authorisationHeader,
-    makeCorrelationIdHeader(),
+    makeCorrelationIdHeader(correlationId),
     makeOriginatorIdHeader()
   )
 
@@ -46,9 +47,8 @@ class NpsConfig @Inject() (servicesConfig: ServicesConfig) {
     "Authorization" -> s"Basic $credentialsEncoded"
   }
 
-  //TODO: update this to use correlationId from journey object when we've done that ticket (OPS-11777)
-  private def makeCorrelationIdHeader(): (String, String) = {
-    "CorrelationId" -> UUID.randomUUID().toString
+  private def makeCorrelationIdHeader(correlationId: CorrelationId): (String, String) = {
+    "CorrelationId" -> correlationId.value.toString
   }
 
   private def makeOriginatorIdHeader(): (String, String) = {

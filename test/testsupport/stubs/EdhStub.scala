@@ -17,9 +17,10 @@
 package testsupport.stubs
 
 import com.github.tomakehurst.wiremock.client.WireMock._
-import com.github.tomakehurst.wiremock.matching.StringValuePattern;
+import com.github.tomakehurst.wiremock.matching.StringValuePattern
 import com.github.tomakehurst.wiremock.stubbing.StubMapping
 import edh.{ClaimId, GetBankDetailsRiskResultRequest, GetBankDetailsRiskResultResponse}
+import models.CorrelationId
 import play.api.http.Status
 import play.api.libs.json.Json
 
@@ -45,8 +46,12 @@ object EdhStub {
     )
   }
 
-  def verifyGetBankDetailsRiskResult(claimId: ClaimId, numberOfRequests: Int = 1): Unit =
-    verify(exactly(numberOfRequests), postRequestedFor(urlPathEqualTo(url(claimId))))
+  def verifyGetBankDetailsRiskResult(claimId: ClaimId, correlationId: CorrelationId, numberOfRequests: Int = 1): Unit =
+    verify(
+      exactly(numberOfRequests),
+      postRequestedFor(urlPathEqualTo(url(claimId)))
+        .withHeader("correlationid", matching(correlationId.value.toString))
+    )
 
   private def url(claimId: ClaimId) = s"/risking/claims/${claimId.value}/bank-details"
 

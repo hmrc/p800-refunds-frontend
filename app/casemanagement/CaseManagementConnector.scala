@@ -16,6 +16,7 @@
 
 package casemanagement
 
+import models.CorrelationId
 import play.api.mvc.RequestHeader
 import requests.RequestSupport._
 import uk.gov.hmrc.http.HttpReads.Implicits._
@@ -23,9 +24,9 @@ import uk.gov.hmrc.http.{HttpClient, HttpResponse, UpstreamErrorResponse}
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 import util.JourneyLogger
 
+import java.util.Base64
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
-import java.util.{Base64, UUID}
 
 @Singleton
 class CaseManagementConnector @Inject() (
@@ -38,8 +39,9 @@ class CaseManagementConnector @Inject() (
     s"/risking/exceptions/${clientUId.value}"
 
   def notifyCaseManagement(
-      clientUId: ClientUId,
-      request:   CaseManagementRequest
+      clientUId:     ClientUId,
+      request:       CaseManagementRequest,
+      correlationId: CorrelationId
   )(implicit requestHeader: RequestHeader): Future[Unit] = {
 
     JourneyLogger.info(s"Notifying case management: ${clientUId.value}")
@@ -48,7 +50,7 @@ class CaseManagementConnector @Inject() (
       .POST[CaseManagementRequest, Either[UpstreamErrorResponse, HttpResponse]](
         url     = notifyCaseManagementUrl(clientUId),
         body    = request,
-        headers = makeHeaders()
+        headers = makeHeaders(correlationId)
       ).map {
           case Right(_)    => ()
           case Left(error) => throw error
@@ -70,9 +72,9 @@ class CaseManagementConnector @Inject() (
   }
   private val environment: String = servicesConfig.getString("microservice.services.casemanagement.environment")
 
-  private def makeHeaders(): Seq[(String, String)] = Seq(
+  private def makeHeaders(correlationId: CorrelationId): Seq[(String, String)] = Seq(
     authorisationHeader,
-    "CorrelationId" -> UUID.randomUUID().toString,
+    "CorrelationId" -> correlationId.value.toString,
     "Environment" -> environment
   )
 

@@ -16,10 +16,11 @@
 
 package testsupport.stubs
 
-import casemanagement.{ClientUId, CaseManagementRequest}
+import casemanagement.{CaseManagementRequest, ClientUId}
 import com.github.tomakehurst.wiremock.client.WireMock._
-import com.github.tomakehurst.wiremock.matching.StringValuePattern;
+import com.github.tomakehurst.wiremock.matching.StringValuePattern
 import com.github.tomakehurst.wiremock.stubbing.StubMapping
+import models.CorrelationId
 import play.api.http.Status
 import play.api.libs.json.Json
 
@@ -55,8 +56,12 @@ object CaseManagementStub {
     )
   }
 
-  def verifyNotifyCaseManagement(clientUId: ClientUId, numberOfRequests: Int = 1): Unit =
-    verify(exactly(numberOfRequests), postRequestedFor(urlPathEqualTo(url(clientUId))))
+  def verifyNotifyCaseManagement(clientUId: ClientUId, correlationId: CorrelationId, numberOfRequests: Int = 1): Unit =
+    verify(
+      exactly(numberOfRequests),
+      postRequestedFor(urlPathEqualTo(url(clientUId)))
+        .withHeader("correlationid", matching(correlationId.value.toString))
+    )
 
   private def url(clientUId: ClientUId): String = s"/risking/exceptions/${clientUId.value}"
 

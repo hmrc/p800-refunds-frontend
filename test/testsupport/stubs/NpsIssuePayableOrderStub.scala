@@ -18,7 +18,7 @@ package testsupport.stubs
 
 import com.github.tomakehurst.wiremock.client.WireMock._
 import com.github.tomakehurst.wiremock.stubbing.StubMapping
-import models.{Nino, P800Reference}
+import models.{CorrelationId, Nino, P800Reference}
 import nps.models.IssuePayableOrderRequest
 import play.api.http.Status
 import play.api.libs.json.{JsObject, Json}
@@ -54,8 +54,12 @@ object NpsIssuePayableOrderStub {
     )
   }
 
-  def verifyIssuePayableOrder(nino: Nino, p800Reference: P800Reference): Unit =
-    verify(exactly(1), putRequestedFor(urlPathEqualTo(url(nino, p800Reference))))
+  def verifyIssuePayableOrder(nino: Nino, p800Reference: P800Reference, correlationId: CorrelationId): Unit =
+    verify(
+      exactly(1),
+      putRequestedFor(urlPathEqualTo(url(nino, p800Reference)))
+        .withHeader("correlationid", matching(correlationId.value.toString))
+    )
 
   def verifyNoneIssuePayableOrder(nino: Nino, p800Reference: P800Reference): Unit =
     verify(exactly(0), putRequestedFor(urlPathEqualTo(url(nino, p800Reference))))

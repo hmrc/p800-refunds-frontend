@@ -109,7 +109,7 @@ class WeAreVerifyingYourBankAccountController @Inject() (
 
     for {
       _ <- notifyCaseManagement(journey)
-      _ <- suspendOverpaymentConnector.suspendOverpayment(journey.getNino, journey.getP800Reference, suspendOverpaymentRequest)
+      _ <- suspendOverpaymentConnector.suspendOverpayment(journey.getNino, journey.getP800Reference, suspendOverpaymentRequest, journey.correlationId)
     } yield (
       Redirect(routes.RefundRequestNotSubmittedController.get),
       journey.update(hasFinished = HasFinished.YesRefundNotSubmitted)
@@ -198,7 +198,7 @@ class WeAreVerifyingYourBankAccountController @Inject() (
     journey
       .bankDetailsRiskResultResponse
       .map(Future.successful)
-      .getOrElse(edhConnector.getBankDetailsRiskResult(claimId, bankDetailsRiskResultRequest))
+      .getOrElse(edhConnector.getBankDetailsRiskResult(claimId, bankDetailsRiskResultRequest, journey.correlationId))
   }
 
   private def notifyCaseManagement(journey: Journey)(implicit requestHeader: RequestHeader): Future[Unit] = {
@@ -254,7 +254,8 @@ class WeAreVerifyingYourBankAccountController @Inject() (
       r
     }
 
-    caseManagementConnector.notifyCaseManagement(clientUId, request)
+    caseManagementConnector
+      .notifyCaseManagement(clientUId, request, journey.correlationId)
       .map(_ => ())
   }
 
@@ -272,7 +273,7 @@ class WeAreVerifyingYourBankAccountController @Inject() (
     )
 
     p800RefundsBackendConnector
-      .claimOverpayment(journey.getNino, journey.getP800Reference, claimOverpaymentRequest)
+      .claimOverpayment(journey.getNino, journey.getP800Reference, claimOverpaymentRequest, journey.correlationId)
       .map(_ => ())
   }
 
