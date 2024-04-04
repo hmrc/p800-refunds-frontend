@@ -16,6 +16,7 @@
 
 package nps.models
 
+import edh.Postcode
 import play.api.libs.json.{Json, OFormat}
 
 /**
@@ -25,7 +26,10 @@ final case class TraceIndividualResponse(
     title:          Option[String],
     firstForename:  Option[String],
     secondForename: Option[String],
-    surname:        String
+    surname:        String,
+    addressLine1:    String,
+    addressLine2:    String,
+    addressPostcode: Postcode
 )
 
 object TraceIndividualResponse {

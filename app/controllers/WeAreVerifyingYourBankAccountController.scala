@@ -225,7 +225,14 @@ class WeAreVerifyingYourBankAccountController @Inject() (
             `type`    = PersonType.Customer,
             firstName = journey.getTraceIndividualResponse.firstForename.getOrElse(""),
             surname   = journey.getTraceIndividualResponse.surname,
-            address   = List() // TODO: Confirm what this should be
+            address   = List(
+              CaseManagementAddress(
+                `type`       = NPSAddress,
+                addressLine1 = Some(journey.getTraceIndividualResponse.addressLine1),
+                addressLine2 = Some(journey.getTraceIndividualResponse.addressLine2),
+                postcode     = Some(journey.getTraceIndividualResponse.addressPostcode)
+              )
+            )
           )
         ),
         currency              = bankAccountSummary.currency,
@@ -244,9 +251,9 @@ class WeAreVerifyingYourBankAccountController @Inject() (
         accountExists         = None,
         subjectHasDeceased    = None,
         nonConsented          = None,
-        reconciliationId      = None,
-        taxDistrictNumber     = None,
-        payeNumber            = None
+        reconciliationId      = Some(journey.getP800ReferenceChecked.reconciliationIdentifier),
+        taxDistrictNumber     = Some(journey.getP800ReferenceChecked.taxDistrictNumber),
+        payeNumber            = Some(journey.getP800ReferenceChecked.payeNumber)
       )
 
       r.validate.fold(())(validationProblem =>

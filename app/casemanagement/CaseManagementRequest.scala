@@ -16,12 +16,18 @@
 
 package casemanagement
 
-import edh.{BankSortCode, BankAccountNumber, BankAccountName, Postcode, PersonType, AddressType}
 import models.Nino
-import play.api.libs.json.{Json, OFormat, Format}
+import nps.models.PayeNumber
+import nps.models.ReconciliationIdentifier
+import nps.models.TaxDistrictNumber
+import play.api.libs.json.Format
+import play.api.libs.json.Json
+import play.api.libs.json.OFormat
 import util.CurrencyFormat
 
 import java.util.Currency
+
+import edh.{BankSortCode, BankAccountNumber, BankAccountName, Postcode, PersonType, AddressType}
 
 final case class CaseManagementRequest(
     clientUId:             ClientUId,
@@ -41,9 +47,9 @@ final case class CaseManagementRequest(
     subjectHasDeceased:    Option[String],
     nonConsented:          Option[String],
     ruleResults:           Option[List[CaseManagementRuleResult]],
-    reconciliationId:      Option[Int],
-    taxDistrictNumber:     Option[Int],
-    payeNumber:            Option[String]
+    reconciliationId:      Option[ReconciliationIdentifier],
+    taxDistrictNumber:     Option[TaxDistrictNumber],
+    payeNumber:            Option[PayeNumber]
 ) {
   def validate: Option[String] =
     clientUId.validate
@@ -90,11 +96,11 @@ object CaseManagementContact {
 
 final case class CaseManagementAddress(
     `type`:       AddressType,
-    addressLine1: Option[String],
-    addressLine2: Option[String],
-    addressLine3: Option[String],
-    addressLine4: Option[String],
-    addressLine5: Option[String],
+    addressLine1: Option[String]   = None,
+    addressLine2: Option[String]   = None,
+    addressLine3: Option[String]   = None,
+    addressLine4: Option[String]   = None,
+    addressLine5: Option[String]   = None,
     postcode:     Option[Postcode]
 )
 
