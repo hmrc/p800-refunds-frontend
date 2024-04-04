@@ -17,7 +17,7 @@
 package nps
 
 import testsupport.UnitSpec
-//TODO: Jake, next time in backend move this over (next ticket)
+
 class NpsErrorCodesSpec extends UnitSpec {
 
   "Error codes should match specification" in {

@@ -17,13 +17,13 @@
 package controllers
 
 import action.{Actions, JourneyRequest}
-import connectors.P800RefundsExternalApiConnector
+import connectors.{P800RefundsBackendConnector, P800RefundsExternalApiConnector}
 import edh._
 import models.ecospend.account.BankAccountSummary
 import models.ecospend.consent.{BankReferenceId, ConsentId, ConsentStatus}
 import models.journeymodels._
 import models.p800externalapi.EventValue
-import nps.{ClaimOverpaymentConnector, SuspendOverpaymentConnector}
+import nps.SuspendOverpaymentConnector
 import nps.models.ReferenceCheckResult.P800ReferenceChecked
 import nps.models._
 import play.api.mvc._
@@ -42,9 +42,9 @@ class WeAreVerifyingYourBankAccountController @Inject() (
     ecospendService:                 EcospendService,
     edhConnector:                    EdhConnector,
     journeyService:                  JourneyService,
-    claimOverpaymentConnector:       ClaimOverpaymentConnector,
     suspendOverpaymentConnector:     SuspendOverpaymentConnector,
     mcc:                             MessagesControllerComponents,
+    p800RefundsBackendConnector:     P800RefundsBackendConnector,
     p800RefundsExternalApiConnector: P800RefundsExternalApiConnector,
     views:                           Views,
     claimIdGenerator:                ClaimIdGenerator
@@ -269,7 +269,7 @@ class WeAreVerifyingYourBankAccountController @Inject() (
       designatedPayeeAccount   = DesignatedPayeeAccount(true)
     )
 
-    claimOverpaymentConnector
+    p800RefundsBackendConnector
       .claimOverpayment(journey.getNino, journey.getP800Reference, claimOverpaymentRequest)
       .map(_ => ())
   }
