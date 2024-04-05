@@ -79,9 +79,13 @@ trait TdJourney {
         j
       }
 
+      /**
+       * When response from Nps indicates that refund has already been claimed
+       */
       lazy val journeyRefundAlreadyTaken: Journey = {
         val j = journeyEnteredDateOfBirth.copy(
-          referenceCheckResult = Some(ReferenceCheckResult.RefundAlreadyTaken)
+          referenceCheckResult = Some(ReferenceCheckResult.RefundAlreadyTaken),
+          hasFinished          = HasFinished.YesRefundAlreadyTaken
         )
         require(!j.isIdentityVerified, "this journey instance has to have NOT verified identity")
         j
@@ -181,9 +185,13 @@ trait TdJourney {
         j
       }
 
+      /**
+       * When response from Nps indicates that refund has already been claimed
+       */
       lazy val journeyRefundAlreadyTaken: Journey = {
         val j = journeyEnteredNino.copy(
-          referenceCheckResult = Some(ReferenceCheckResult.RefundAlreadyTaken)
+          referenceCheckResult = Some(ReferenceCheckResult.RefundAlreadyTaken),
+          hasFinished          = HasFinished.YesRefundAlreadyTaken
         )
         require(!j.isIdentityVerified, "this journey instance has to have NOT verified identity")
         j

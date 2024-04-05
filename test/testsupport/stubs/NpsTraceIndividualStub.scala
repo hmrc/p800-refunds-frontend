@@ -43,6 +43,8 @@ object NpsTraceIndividualStub {
       postRequestedFor(urlPathEqualTo(url)).withHeader("correlationid", matching(correlationId.value.toString))
     )
 
+  def verifyNoneTraceIndividual(): Unit = verify(exactly(0), postRequestedFor(urlPathEqualTo(url)))
+
   private val url: String = s"/p800-refunds-backend/nps-json-service/nps/v1/api/individual/trace-individual"
 
 }

@@ -29,6 +29,7 @@ import services.{FailedVerificationAttemptService, JourneyService}
 import uk.gov.hmrc.govukfrontend.views.Aliases.{HtmlContent, Key, SummaryListRow, Value}
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryList
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
+import util.JourneyLogger
 import views.Views
 
 import java.time.format.DateTimeFormatter
@@ -136,8 +137,11 @@ class CheckYourAnswersController @Inject() (
           Future.successful(None)
         case ReferenceCheckResult.RefundAlreadyTaken =>
           journeyService
-            .upsert(r.journey)
-            .map(j => Some(Redirect(controllers.CannotConfirmYourIdentityTryAgainController.redirectLocation(j))))
+            .upsert(r.journey.update(HasFinished.YesRefundAlreadyTaken))
+            .map { _ =>
+              JourneyLogger.info("NPS indicate that refund has already been claimed")
+              Some(Redirect(routes.ThereIsAProblemController.get))
+            }
         case ReferenceCheckResult.ReferenceDidntMatchNino =>
           for {
             shouldBeLockedOut <- failedVerificationAttemptService.updateNumberOfFailedAttempts()

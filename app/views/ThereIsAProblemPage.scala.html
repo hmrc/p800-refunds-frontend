@@ -16,22 +16,23 @@
 
 @import views.html.templates.Layout
 @import language.Messages
+@import config.AppConfig
 
 @this(
-        layout: Layout,
-        viewsHelpers: views.ViewsHelpers
+    appConfig:    AppConfig,
+    layout:       Layout,
+    viewsHelpers: views.ViewsHelpers
 )
 
 @()(implicit request: Request[_])
 
-    @import viewsHelpers.requestSupport._
+@import viewsHelpers.requestSupport._
 
-    @heading = @{
-        Messages.ThereIsAProblem.`thereIsAProblem`.show
-    }
+@heading = @{
+    Messages.ThereIsAProblem.`There is a problem`.show
+}
 
-
-    @layout(pageTitle = Some(heading)) {
-        <h1 class="govuk-heading-xl">@heading</h1>
-        <p class="govuk-body">  @{Html(Messages.ThereIsAProblem.`cannontProcess`("#contact-us").show)} </p>
-    }
+@layout(pageTitle = Some(heading), showBackLink = false) {
+    <h1 class="govuk-heading-xl">@heading</h1>
+    <p class="govuk-body">@{Html(Messages.ThereIsAProblem.`We cannot process your refund request online, so we need you to...`(appConfig.generalEnquiriesUrl).show)}</p>
+}
