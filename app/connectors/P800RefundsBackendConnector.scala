@@ -58,7 +58,7 @@ class P800RefundsBackendConnector @Inject() (
       )
   }
 
-  private def url(nino: Nino, p800Reference: P800Reference): String = appConfig.P800RefundsBackend.p800RefundsBackendBaseUrl +
+  private def claimOverpaymentUrl(nino: Nino, p800Reference: P800Reference): String = appConfig.P800RefundsBackend.p800RefundsBackendBaseUrl +
     s"/nps-json-service/nps/v1/api/accounting/claim-overpayment/${nino.value}/${p800Reference.sanitiseReference.value}"
 
   def claimOverpayment(
@@ -72,7 +72,7 @@ class P800RefundsBackendConnector @Inject() (
     val sanitisedP800Reference = p800Reference.sanitiseReference
     httpClient
       .PUT[ClaimOverpaymentRequest, ClaimOverpaymentResponse](
-        url     = url(nino, sanitisedP800Reference),
+        url     = claimOverpaymentUrl(nino, sanitisedP800Reference),
         body    = claimOverpaymentRequest,
         headers = Seq(P800RefundsBackendConnector.makeCorrelationIdHeader(correlationId))
       )
@@ -94,6 +94,26 @@ class P800RefundsBackendConnector @Inject() (
     httpClient.PUT[SuspendOverpaymentRequest, Unit](
       url     = suspendOverpaymentUrl(nino, p800Reference),
       body    = suspendOverpaymentRequest,
+      headers = Seq(P800RefundsBackendConnector.makeCorrelationIdHeader(correlationId))
+    )
+  }
+
+  private def issuePayableOrderUrl(nino: Nino, p800Reference: P800Reference): String = appConfig.P800RefundsBackend.p800RefundsBackendBaseUrl +
+    s"/nps-json-service/nps/v1/api/accounting/issue-payable-order/${nino.value}/${p800Reference.sanitiseReference.value}"
+
+  def issuePayableOrder(
+      nino:                     Nino,
+      p800Reference:            P800Reference,
+      issuePayableOrderRequest: IssuePayableOrderRequest,
+      correlationId:            CorrelationId
+  )(implicit requestHeader: RequestHeader): Future[Unit] = {
+    JourneyLogger.info("Issuing payable order")
+
+    implicit val readUnit: HttpReads[Unit] = HttpResponseUtils.httpReadsUnit
+
+    httpClient.PUT[IssuePayableOrderRequest, Unit](
+      url     = issuePayableOrderUrl(nino, p800Reference),
+      body    = issuePayableOrderRequest,
       headers = Seq(P800RefundsBackendConnector.makeCorrelationIdHeader(correlationId))
     )
   }
