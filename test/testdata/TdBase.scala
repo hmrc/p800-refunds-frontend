@@ -184,11 +184,6 @@ trait TdBase {
     designatedPayeeAccount   = DesignatedPayeeAccount(false)
   )
 
-  lazy val suspendOverpaymentResponse: SuspendOverpaymentResponse = SuspendOverpaymentResponse(
-    identifier            = nino,
-    currentOptimisticLock = currentOptimisticLock
-  )
-
   lazy val claimOverpaymentRequest: ClaimOverpaymentRequest = ClaimOverpaymentRequest(
     currentOptimisticLock    = currentOptimisticLock,
     reconciliationIdentifier = reconciliationIdentifier,

@@ -19,17 +19,17 @@ package testsupport.stubs
 import com.github.tomakehurst.wiremock.client.WireMock._
 import com.github.tomakehurst.wiremock.stubbing.StubMapping
 import models.{CorrelationId, Nino, P800Reference}
-import nps.models.{SuspendOverpaymentRequest, SuspendOverpaymentResponse}
+import nps.models.SuspendOverpaymentRequest
 import play.api.http.Status
 import play.api.libs.json.Json
 import testsupport.stubs.NpsHeaders.npsHeaders
 
 object NpsSuspendOverpaymentStub {
 
-  def suspendOverpayment(nino: Nino, p800Reference: P800Reference, request: SuspendOverpaymentRequest, response: SuspendOverpaymentResponse): StubMapping = {
+  def suspendOverpayment(nino: Nino, p800Reference: P800Reference, request: SuspendOverpaymentRequest): StubMapping = {
     WireMockHelpers.Put.stubForPut(
       url             = url(nino, p800Reference),
-      responseBody    = Json.prettyPrint(Json.toJson(response)),
+      responseBody    = "",
       responseStatus  = Status.OK,
       requestBodyJson = Some(Json.prettyPrint(Json.toJson(request))),
       requiredHeaders = npsHeaders
@@ -54,5 +54,5 @@ object NpsSuspendOverpaymentStub {
   def verifyNoneSuspendOverpayment(nino: Nino, p800Reference: P800Reference): Unit =
     verify(exactly(0), putRequestedFor(urlPathEqualTo(url(nino, p800Reference))))
 
-  private def url(nino: Nino, p800Reference: P800Reference) = s"/nps-json-service/nps/v1/api/accounting/suspend-overpayment/${nino.value}/${p800Reference.value}"
+  private def url(nino: Nino, p800Reference: P800Reference) = s"/p800-refunds-backend/nps-json-service/nps/v1/api/accounting/suspend-overpayment/${nino.value}/${p800Reference.value}"
 }
