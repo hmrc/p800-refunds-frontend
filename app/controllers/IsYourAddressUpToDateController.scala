@@ -20,7 +20,7 @@ import action.{Actions, JourneyRequest}
 import models.forms.IsYourAddressUpToDateForm
 import models.forms.enumsforforms.IsYourAddressUpToDateFormValue
 import models.journeymodels.{HasFinished, Journey, JourneyType}
-import nps.IssuePayableOrderConnector
+import connectors.P800RefundsBackendConnector
 import nps.models.IssuePayableOrderRequest
 import play.api.mvc._
 import requests.RequestSupport
@@ -35,12 +35,12 @@ import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class IsYourAddressUpToDateController @Inject() (
-    actions:                    Actions,
-    issuePayableOrderConnector: IssuePayableOrderConnector,
-    journeyService:             JourneyService,
-    mcc:                        MessagesControllerComponents,
-    views:                      Views,
-    requestSupport:             RequestSupport
+    actions:                     Actions,
+    p800RefundsBackendConnector: P800RefundsBackendConnector,
+    journeyService:              JourneyService,
+    mcc:                         MessagesControllerComponents,
+    views:                       Views,
+    requestSupport:              RequestSupport
 )(implicit executionContext: ExecutionContext) extends FrontendController(mcc) {
 
   import requestSupport._
@@ -60,7 +60,7 @@ class IsYourAddressUpToDateController @Inject() (
 
         case IsYourAddressUpToDateFormValue.Yes =>
           for {
-            _ <- issuePayableOrderConnector.issuePayableOrder(
+            _ <- p800RefundsBackendConnector.issuePayableOrder(
               nino                     = journey.getNino,
               p800Reference            = journey.getP800Reference,
               issuePayableOrderRequest = IssuePayableOrderRequest(
