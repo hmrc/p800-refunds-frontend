@@ -22,9 +22,9 @@ import models.{CorrelationId, Nino, P800Reference}
 import nps.models._
 import play.api.mvc.RequestHeader
 import requests.RequestSupport.hc
-import uk.gov.hmrc.http.HttpClient
 import uk.gov.hmrc.http.HttpReads.Implicits._
-import util.JourneyLogger
+import uk.gov.hmrc.http.{HttpClient, HttpReads}
+import util.{HttpResponseUtils, JourneyLogger}
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -76,6 +76,26 @@ class P800RefundsBackendConnector @Inject() (
         body    = claimOverpaymentRequest,
         headers = Seq(P800RefundsBackendConnector.makeCorrelationIdHeader(correlationId))
       )
+  }
+
+  private def suspendOverpaymentUrl(nino: Nino, p800Reference: P800Reference): String = appConfig.P800RefundsBackend.p800RefundsBackendBaseUrl +
+    s"/nps-json-service/nps/v1/api/accounting/suspend-overpayment/${nino.value}/${p800Reference.sanitiseReference.value}"
+
+  def suspendOverpayment(
+      nino:                      Nino,
+      p800Reference:             P800Reference,
+      suspendOverpaymentRequest: SuspendOverpaymentRequest,
+      correlationId:             CorrelationId
+  )(implicit requestHeader: RequestHeader): Future[Unit] = {
+    JourneyLogger.info("Suspending Overpayment...")
+
+    implicit val readUnit: HttpReads[Unit] = HttpResponseUtils.httpReadsUnit
+
+    httpClient.PUT[SuspendOverpaymentRequest, Unit](
+      url     = suspendOverpaymentUrl(nino, p800Reference),
+      body    = suspendOverpaymentRequest,
+      headers = Seq(P800RefundsBackendConnector.makeCorrelationIdHeader(correlationId))
+    )
   }
 
 }

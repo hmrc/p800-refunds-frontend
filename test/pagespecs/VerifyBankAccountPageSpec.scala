@@ -214,7 +214,7 @@ class VerifyBankAccountPageSpec extends ItSpec {
     val doNotPay: GetBankDetailsRiskResultResponse = tdAll.getBankDetailsRiskResultResponseDoNotPay
     EdhStub.getBankDetailsRiskResult(tdAll.getBankDetailsRiskResultRequest, doNotPay)
     CaseManagementStub.notifyCaseManagement2xx(tdAll.clientUId, tdAll.caseManagementRequest)
-    NpsSuspendOverpaymentStub.suspendOverpayment(tdAll.nino, tdAll.p800ReferenceSanitised, tdAll.suspendOverpaymentRequest, tdAll.suspendOverpaymentResponse)
+    NpsSuspendOverpaymentStub.suspendOverpayment(tdAll.nino, tdAll.p800ReferenceSanitised, tdAll.suspendOverpaymentRequest)
 
     pages.verifyBankAccountPage.open()
     pages.refundRequestNotSubmittedPage.assertPageIsDisplayed()

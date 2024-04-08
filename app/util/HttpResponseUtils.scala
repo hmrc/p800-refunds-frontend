@@ -16,8 +16,9 @@
 
 package util
 
+import play.api.http.Status.{BAD_GATEWAY, INTERNAL_SERVER_ERROR}
 import play.api.libs.json.Reads
-import uk.gov.hmrc.http.HttpResponse
+import uk.gov.hmrc.http.{HttpErrorFunctions, HttpReads, HttpResponse, UpstreamErrorResponse}
 
 import scala.util.{Failure, Success, Try}
 
@@ -41,6 +42,18 @@ object HttpResponseUtils {
           Left(s"Could not read http response as JSON")
       }
 
+  }
+
+  val httpReadsUnit: HttpReads[Unit] = HttpReads.ask.map {
+    case (method, url, response) => response.status match {
+      case 200 => ()
+      case other => throw UpstreamErrorResponse(
+        message    = HttpErrorFunctions.upstreamResponseMessage(method, url, other, response.body),
+        statusCode = response.status,
+        reportAs   = if (HttpErrorFunctions.is4xx(response.status)) INTERNAL_SERVER_ERROR else BAD_GATEWAY,
+        headers    = response.headers
+      )
+    }
   }
 
 }

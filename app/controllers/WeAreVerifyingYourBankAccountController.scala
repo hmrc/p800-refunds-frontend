@@ -24,7 +24,6 @@ import models.ecospend.account.BankAccountSummary
 import models.ecospend.consent.{BankReferenceId, ConsentId, ConsentStatus}
 import models.journeymodels._
 import models.p800externalapi.EventValue
-import nps.SuspendOverpaymentConnector
 import nps.models.ReferenceCheckResult.P800ReferenceChecked
 import nps.models._
 import play.api.mvc._
@@ -44,7 +43,6 @@ class WeAreVerifyingYourBankAccountController @Inject() (
     edhConnector:                    EdhConnector,
     caseManagementConnector:         CaseManagementConnector,
     journeyService:                  JourneyService,
-    suspendOverpaymentConnector:     SuspendOverpaymentConnector,
     mcc:                             MessagesControllerComponents,
     p800RefundsBackendConnector:     P800RefundsBackendConnector,
     p800RefundsExternalApiConnector: P800RefundsExternalApiConnector,
@@ -109,7 +107,7 @@ class WeAreVerifyingYourBankAccountController @Inject() (
 
     for {
       _ <- notifyCaseManagement(journey)
-      _ <- suspendOverpaymentConnector.suspendOverpayment(journey.getNino, journey.getP800Reference, suspendOverpaymentRequest, journey.correlationId)
+      _ <- p800RefundsBackendConnector.suspendOverpayment(journey.getNino, journey.getP800Reference, suspendOverpaymentRequest, journey.correlationId)
     } yield (
       Redirect(routes.RefundRequestNotSubmittedController.get),
       journey.update(hasFinished = HasFinished.YesRefundNotSubmitted)

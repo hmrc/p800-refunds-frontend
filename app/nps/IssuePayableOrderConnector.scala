@@ -16,13 +16,12 @@
 
 package nps
 
-import _root_.models.{Nino, P800Reference, CorrelationId}
-import models.IssuePayableOrderRequest
-import play.api.http.Status.{BAD_GATEWAY, INTERNAL_SERVER_ERROR}
+import _root_.models.{CorrelationId, Nino, P800Reference}
+import nps.models.IssuePayableOrderRequest
 import play.api.mvc.RequestHeader
 import requests.RequestSupport._
-import uk.gov.hmrc.http.{HttpClient, HttpErrorFunctions, HttpReads, UpstreamErrorResponse}
-import util.JourneyLogger
+import uk.gov.hmrc.http.{HttpClient, HttpReads}
+import util.{HttpResponseUtils, JourneyLogger}
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
@@ -47,17 +46,7 @@ class IssuePayableOrderConnector @Inject() (
   )(implicit requestHeader: RequestHeader): Future[Unit] = {
     JourneyLogger.info("Issuing payable order")
 
-    implicit val readUnit: HttpReads[Unit] = HttpReads.ask.map {
-      case (method, url, response) => response.status match {
-        case 200 => ()
-        case other => throw UpstreamErrorResponse(
-          message    = HttpErrorFunctions.upstreamResponseMessage(method, url, other, response.body),
-          statusCode = response.status,
-          reportAs   = if (HttpErrorFunctions.is4xx(response.status)) INTERNAL_SERVER_ERROR else BAD_GATEWAY,
-          headers    = response.headers
-        )
-      }
-    }
+    implicit val readUnit: HttpReads[Unit] = HttpResponseUtils.httpReadsUnit
 
     httpClient.PUT[IssuePayableOrderRequest, Unit](
       url     = url(nino, p800Reference),

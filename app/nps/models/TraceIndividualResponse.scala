@@ -23,10 +23,10 @@ import play.api.libs.json.{Json, OFormat}
  * We're storing only few fields which will be actually used
  */
 final case class TraceIndividualResponse(
-    title:          Option[String],
-    firstForename:  Option[String],
-    secondForename: Option[String],
-    surname:        String,
+    title:           Option[String],
+    firstForename:   Option[String],
+    secondForename:  Option[String],
+    surname:         String,
     addressLine1:    String,
     addressLine2:    String,
     addressPostcode: Postcode
