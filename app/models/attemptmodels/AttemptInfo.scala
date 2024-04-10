@@ -17,7 +17,6 @@
 package models.attemptmodels
 
 import play.api.libs.json.{Format, Json, OFormat, OWrites}
-import play.api.mvc.RequestHeader
 import uk.gov.hmrc.mongo.play.json.formats.MongoJavatimeFormats
 
 import java.time.{Clock, Instant}
@@ -30,10 +29,10 @@ final case class AttemptInfo(_id: AttemptId, createdAt: Instant, ipAddress: IpAd
 
 object AttemptInfo {
 
-  def newAttemptInfo(implicit requestHeader: RequestHeader): AttemptInfo = AttemptInfo(
+  def newAttemptInfo(ipAddress: IpAddress): AttemptInfo = AttemptInfo(
     _id                    = AttemptId.newRandomAttemptId,
     createdAt              = Instant.now(Clock.systemUTC()),
-    ipAddress              = IpAddress(requestHeader.remoteAddress),
+    ipAddress              = ipAddress,
     numberOfFailedAttempts = NumberOfAttempts(1)
   )
 

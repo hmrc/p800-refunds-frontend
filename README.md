@@ -108,6 +108,42 @@ button on that page.
 
 ---
 
+### Testing features requiring `True-Client-IP` header
+
+Optionally, you can setup an Nginx server as a reverse proxy to test and debug with custom values for
+`True-Client-IP`.
+
+This can be useful for testing the lockout mechanism.
+
+Install with brew and start the service:
+
+```bash
+brew install nginx
+brew services start nginx
+```
+
+Edit the configuration under `/usr/local/etc/nginx/nginx.conf` to contain the following `server` block within the
+`http` block.
+
+```nginx
+server {
+    listen 127.0.0.1:8008;
+
+    location / {
+        proxy_set_header True-Client-IP 10.10.10.10;
+        proxy_pass http://127.0.0.1:10150;
+    }
+}
+```
+
+The port used for the `listen` directive can be adjusted to any free port. The IP address given to the
+`proxy_set_header` directive can be changed.
+
+After making any changes make sure to run `brew services restart nginx`.
+
+Now using the application normally via the new port, `localhost:8008` in this example, each request will send an
+additional `True-Client-IP` header.
+
 ### License
 
 This code is open source software licensed under the [Apache 2.0 License]("http://www.apache.org/licenses/LICENSE-2.0.html").

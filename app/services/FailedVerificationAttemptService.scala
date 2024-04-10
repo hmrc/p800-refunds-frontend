@@ -21,6 +21,7 @@ import config.AppConfig
 import models.attemptmodels.{AttemptInfo, IpAddress}
 import play.api.mvc.RequestHeader
 import repository.FailedVerificationAttemptRepo
+import uk.gov.hmrc.http.HeaderNames
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -33,12 +34,16 @@ class FailedVerificationAttemptService @Inject() (
   //TODO: encrypt/decrypt the ip address in service layer - OPS-11735
   //TODO: find in action when landing, so we can lock users out straight away - OPS-11736
 
+  def trueClientIpAddress(implicit requestHeader: RequestHeader): IpAddress =
+    IpAddress(requestHeader.headers.get(HeaderNames.trueClientIp)
+      .getOrElse(requestHeader.remoteAddress))
+
   def find()(implicit requestHeader: RequestHeader): Future[Option[AttemptInfo]] =
-    failedVerificationAttemptRepo.findByIpAddress(IpAddress(requestHeader.remoteAddress))
+    failedVerificationAttemptRepo.findByIpAddress(trueClientIpAddress)
 
   def shouldBeLockedOut()(implicit requestHeader: RequestHeader): Future[Boolean] = {
     failedVerificationAttemptRepo
-      .findByIpAddress(IpAddress(requestHeader.remoteAddress))
+      .findByIpAddress(trueClientIpAddress)
       .map{ _.map(AttemptInfo.shouldBeLockedOut(_, appConfig.FailedAttemptRepo.failedAttemptRepoMaxAttempts)) }
       .map(_.getOrElse(false))
   }
@@ -48,8 +53,8 @@ class FailedVerificationAttemptService @Inject() (
    */
   def updateNumberOfFailedAttempts()(implicit requestHeader: RequestHeader): Future[Boolean] = {
     for {
-      maybeAttemptInfo <- failedVerificationAttemptRepo.findByIpAddress(IpAddress(requestHeader.remoteAddress))
-      newAttemptInfo: AttemptInfo = maybeAttemptInfo.fold(AttemptInfo.newAttemptInfo)(a => a.incrementAttemptNumberByOne)
+      maybeAttemptInfo <- failedVerificationAttemptRepo.findByIpAddress(trueClientIpAddress)
+      newAttemptInfo: AttemptInfo = maybeAttemptInfo.fold(AttemptInfo.newAttemptInfo(trueClientIpAddress))(a => a.incrementAttemptNumberByOne)
       attemptInfoAfterUpsert: AttemptInfo <- failedVerificationAttemptRepo.upsert(newAttemptInfo).map(_ => newAttemptInfo)
     } yield AttemptInfo.shouldBeLockedOut(attemptInfoAfterUpsert, appConfig.FailedAttemptRepo.failedAttemptRepoMaxAttempts)
   }
