@@ -16,23 +16,25 @@
 
 @import views.html.templates.Layout
 @import language.Messages
+@import config.AppConfig
 
 @this(
+        appConfig: AppConfig,
         layout: Layout,
         viewsHelpers: views.ViewsHelpers
 )
 
-@()(implicit request: Request[_])
+@(lockoutDate: String)(implicit request: Request[_])
 
     @import viewsHelpers.requestSupport._
 
-    @heading = @{
+@heading = @{
         Messages.YouCannotConfirmSecurityDetailsYet.`cannotConfirm`.show
     }
 
 
     @layout(pageTitle = Some(heading)) {
         <h1 class="govuk-heading-xl">@heading</h1>
-        <p class="govuk-body">  @{Html(Messages.YouCannotConfirmSecurityDetailsYet.`youHavePreviously`("*A DATE*").show)} </p>
-        <p class="govuk-body">  @{Html(Messages.YouCannotConfirmSecurityDetailsYet.`alternativly`("#signin", "#contact").show)} </p>
+        <p class="govuk-body">  @{Html(Messages.YouCannotConfirmSecurityDetailsYet.`youHavePreviously`(lockoutDate).show)} </p>
+        <p class="govuk-body">  @{Html(Messages.YouCannotConfirmSecurityDetailsYet.`alternativly`(appConfig.PersonalTaxAccountUrls.personalTaxAccountSignInUrl, appConfig.generalEnquiriesUrl).show)} </p>
     }

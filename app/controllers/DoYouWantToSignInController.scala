@@ -22,19 +22,22 @@ import models.forms.DoYouWantToSignInForm
 import models.forms.enumsforforms.DoYouWantToSignInFormValue
 import play.api.mvc._
 import requests.RequestSupport
+import services.FailedVerificationAttemptService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import views.Views
 
 import javax.inject.{Inject, Singleton}
+import scala.concurrent.ExecutionContext
 
 @Singleton
 class DoYouWantToSignInController @Inject() (
-    mcc:            MessagesControllerComponents,
-    requestSupport: RequestSupport,
-    views:          Views,
-    actions:        Actions,
-    appConfig:      AppConfig
-) extends FrontendController(mcc) {
+    mcc:                              MessagesControllerComponents,
+    requestSupport:                   RequestSupport,
+    failedVerificationAttemptService: FailedVerificationAttemptService,
+    views:                            Views,
+    actions:                          Actions,
+    appConfig:                        AppConfig
+)(implicit ec: ExecutionContext) extends FrontendController(mcc) {
 
   import requestSupport._
 
@@ -44,17 +47,25 @@ class DoYouWantToSignInController @Inject() (
     ))
   }
 
-  def post: Action[AnyContent] = actions.journeyInProgress { implicit request =>
-    DoYouWantToSignInForm.form.bindFromRequest().fold(
-      formWithErrors => BadRequest(views.doYouWantToSignInPage(
-        form = formWithErrors
-      )), {
-        case DoYouWantToSignInFormValue.Yes =>
-          Redirect(appConfig.PersonalTaxAccountUrls.personalTaxAccountSignInUrl)
-        case DoYouWantToSignInFormValue.No =>
-          Redirect(controllers.routes.DoYouWantYourRefundViaBankTransferController.get)
-      }
-    )
+  def post: Action[AnyContent] = actions.journeyInProgress.async { implicit request =>
+    for {
+      userIsLockedOut <- failedVerificationAttemptService.shouldBeLockedOut()
+    } yield {
+      DoYouWantToSignInForm.form.bindFromRequest().fold(
+        formWithErrors => BadRequest(views.doYouWantToSignInPage(
+          form = formWithErrors
+        )), {
+          case DoYouWantToSignInFormValue.Yes =>
+            Redirect(appConfig.PersonalTaxAccountUrls.personalTaxAccountSignInUrl)
+          case DoYouWantToSignInFormValue.No if userIsLockedOut =>
+            Redirect(controllers.routes.YouCannotConfirmYourSecurityDetailsYetController.get)
+          case DoYouWantToSignInFormValue.No =>
+            Redirect(controllers.routes.DoYouWantYourRefundViaBankTransferController.get)
+        }
+      )
+
+    }
+
   }
 
 }

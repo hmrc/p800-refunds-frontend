@@ -20,8 +20,32 @@ import testsupport.ItSpec
 
 class YouCannotConfirmYourSecurityDetailsYetSpec extends ItSpec {
 
+  override def beforeEach(): Unit = {
+    super.beforeEach()
+    clearDownFailedAttemptDatabase()
+    addJourneyIdToSession(tdAll.journeyId)
+    upsertJourneyToDatabase(tdAll.Cheque.journeyLockedOutFromFailedAttempts)
+  }
+
   "navigating to /you-cannot-confirm-your-security-details-yet" in {
+    upsertFailedAttemptToDatabase(tdAll.attemptInfo(failedAttempts = 3))
     pages.youCannotConfirmYourSecurityDetailsYetSpec.open()
     pages.youCannotConfirmYourSecurityDetailsYetSpec.assertPageIsDisplayed()
+    getFailedAttemptCount() shouldBe Some(3)
   }
+
+  "navigating to /you-cannot-confirm-your-security-details-yet and Pressing the back button, should stay on the same page" in {
+    upsertFailedAttemptToDatabase(tdAll.attemptInfo(failedAttempts = 3))
+    pages.youCannotConfirmYourSecurityDetailsYetSpec.open()
+    pages.youCannotConfirmYourSecurityDetailsYetSpec.assertPageIsDisplayed()
+    pages.youCannotConfirmYourSecurityDetailsYetSpec.clickBackButton()
+    pages.youCannotConfirmYourSecurityDetailsYetSpec.assertPageIsDisplayed()
+  }
+
+  "navigating to /you-cannot-confirm-your-security-details-yet without any AttemptInfo should redirect to the Error Page" in {
+    pages.youCannotConfirmYourSecurityDetailsYetSpec.open()
+    getJourneyFromDatabase(tdAll.journeyId) shouldBe tdAll.Cheque.journeyLockedOutFromFailedAttempts
+    pages.thereIsAProblemPage.assertPageIsDisplayed()
+  }
+
 }
