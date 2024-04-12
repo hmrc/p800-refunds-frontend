@@ -24,7 +24,7 @@
         viewsHelpers: views.ViewsHelpers
 )
 
-@(lockoutDate: String)(implicit request: Request[_])
+@(unlockDate: String)(implicit request: Request[_])
 
     @import viewsHelpers.requestSupport._
 
@@ -35,6 +35,6 @@
 
     @layout(pageTitle = Some(heading)) {
         <h1 class="govuk-heading-xl">@heading</h1>
-        <p class="govuk-body">  @{Html(Messages.YouCannotConfirmSecurityDetailsYet.`youHavePreviously`(lockoutDate).show)} </p>
+        <p class="govuk-body">  @{Html(Messages.YouCannotConfirmSecurityDetailsYet.`youHavePreviously`(unlockDate).show)} </p>
         <p class="govuk-body">  @{Html(Messages.YouCannotConfirmSecurityDetailsYet.`alternativly`(appConfig.PersonalTaxAccountUrls.personalTaxAccountSignInUrl, appConfig.generalEnquiriesUrl).show)} </p>
     }

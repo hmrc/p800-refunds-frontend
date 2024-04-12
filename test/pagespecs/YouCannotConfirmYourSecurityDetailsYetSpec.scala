@@ -42,10 +42,10 @@ class YouCannotConfirmYourSecurityDetailsYetSpec extends ItSpec {
     pages.youCannotConfirmYourSecurityDetailsYetSpec.assertPageIsDisplayed()
   }
 
-  "navigating to /you-cannot-confirm-your-security-details-yet without any AttemptInfo should redirect to the Error Page" in {
+  "navigating to /you-cannot-confirm-your-security-details-yet without any AttemptInfo should display the Error Page" in {
     pages.youCannotConfirmYourSecurityDetailsYetSpec.open()
     getJourneyFromDatabase(tdAll.journeyId) shouldBe tdAll.Cheque.journeyLockedOutFromFailedAttempts
-    pages.thereIsAProblemPage.assertPageIsDisplayed()
+    pages.youCannotConfirmYourSecurityDetailsYetSpec.assertPageIsDisplayedWithTechnicalDifficultiesError()
   }
 
 }

@@ -18,75 +18,29 @@ package util
 
 import testsupport.UnitSpec
 
-import java.time.format.DateTimeFormatter
-import java.time.{Instant, LocalDate, ZoneId, ZonedDateTime}
+import java.time.{Instant, LocalDate}
 
 class DateTimeFormatUtilSpec extends UnitSpec {
 
-  val testLocalDateFormat: DateTimeFormatter = DateTimeFormatsUtil.gdsDateTimeFormatter
-  val zonedToday: ZonedDateTime = Instant.now().atZone(ZoneId.systemDefault())
-  val zonedTomorrow: ZonedDateTime = Instant.now().atZone(ZoneId.systemDefault()).plusDays(1)
-
   "The LocalDate formatter should only return a date in the format '11 June 24'" in {
     val testInstantDate: LocalDate = LocalDate.parse("2019-03-29")
-    val result = testLocalDateFormat.format(testInstantDate)
+    val result = DateTimeFormatsUtil.gdsDateTimeFormatter.format(testInstantDate)
 
     result shouldBe "29 March 2019"
   }
 
   "The Instant formatter should return the date and time" in {
     val testInstantDate = Instant.parse("2042-01-12T11:24:24.00Z")
-    val result = DateTimeFormatsUtil.customDateFormatter(testInstantDate)
+    val result = DateTimeFormatsUtil.lockoutUnlockDateFormatter(testInstantDate)
 
     result shouldBe "12 January 2042, 11:24am"
   }
 
   "The Instant formatter should return the time on a 12 hour clock" in {
     val testInstantDate = Instant.parse("2024-12-01T17:26:24.00Z")
-    val result = DateTimeFormatsUtil.customDateFormatter(testInstantDate)
+    val result = DateTimeFormatsUtil.lockoutUnlockDateFormatter(testInstantDate)
 
     result shouldBe "1 December 2024, 5:26pm"
   }
 
-  "The Instant formatter should return 'midday today'" in {
-    val testInstantDate = zonedToday.withHour(12).toInstant
-    val result = DateTimeFormatsUtil.customDateFormatter(testInstantDate)
-
-    result shouldBe "midday today"
-  }
-
-  "The Instant formatter should return 'midnight tonight'" in {
-    val testInstantDate = zonedToday.withHour(0).toInstant
-    val result = DateTimeFormatsUtil.customDateFormatter(testInstantDate)
-
-    result shouldBe "midnight tonight"
-  }
-
-  "The Instant formatter should return '5:45am today'" in {
-    val testInstantDate = zonedToday.withHour(5).withMinute(45).toInstant
-    val result = DateTimeFormatsUtil.customDateFormatter(testInstantDate)
-
-    result shouldBe "5:45am today"
-  }
-
-  "The Instant formatter should return 'midday tomorrow'" in {
-    val testInstantDate = zonedTomorrow.withHour(12).toInstant
-    val result = DateTimeFormatsUtil.customDateFormatter(testInstantDate)
-
-    result shouldBe "midday tomorrow"
-  }
-
-  "The Instant formatter should return 'midnight tomorrow'" in {
-    val testInstantDate = zonedTomorrow.withHour(0).toInstant
-    val result = DateTimeFormatsUtil.customDateFormatter(testInstantDate)
-
-    result shouldBe "midnight tomorrow"
-  }
-
-  "The Instant formatter should return '5:45am tomorrow'" in {
-    val testInstantDate = zonedTomorrow.withHour(17).withMinute(45).toInstant
-    val result = DateTimeFormatsUtil.customDateFormatter(testInstantDate)
-
-    result shouldBe "5:45pm tomorrow"
-  }
 }
