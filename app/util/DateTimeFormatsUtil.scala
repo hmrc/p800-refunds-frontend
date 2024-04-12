@@ -16,11 +16,21 @@
 
 package util
 
+import java.time.{Instant, ZoneId}
 import java.time.format.DateTimeFormatter
 
 object DateTimeFormatsUtil {
 
   //e.g. 1 September 2017
   val gdsDateTimeFormatter: DateTimeFormatter = DateTimeFormatter.ofPattern("d MMMM Y")
+
+  //e.g. 1 December 2024, 5:26pm
+  def lockoutUnlockDateFormatter(unlockDate: Instant): String = {
+    val dateFormatter = DateTimeFormatter.ofPattern("d MMMM yyyy, h:mma").withZone(ZoneId.systemDefault())
+    val unlockDateFormatted = dateFormatter.format(unlockDate)
+    val (date, amPm) = unlockDateFormatted.format(unlockDate) splitAt (unlockDateFormatted.length - 2)
+
+    s"$date${amPm.toLowerCase}"
+  }
 
 }

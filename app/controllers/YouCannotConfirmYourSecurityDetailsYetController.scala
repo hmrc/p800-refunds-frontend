@@ -17,21 +17,33 @@
 package controllers
 
 import action.Actions
+import play.api.Logging
 import play.api.mvc._
+import services.FailedVerificationAttemptService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
+import util.DateTimeFormatsUtil
 import views.Views
 
+import java.time.temporal.ChronoUnit.DAYS
 import javax.inject.{Inject, Singleton}
+import scala.concurrent.ExecutionContext
 
 @Singleton
 class YouCannotConfirmYourSecurityDetailsYetController @Inject() (
-    mcc:     MessagesControllerComponents,
-    views:   Views,
-    actions: Actions
-) extends FrontendController(mcc) {
+    mcc:                              MessagesControllerComponents,
+    failedVerificationAttemptService: FailedVerificationAttemptService,
+    views:                            Views,
+    actions:                          Actions
+)(implicit val ec: ExecutionContext) extends FrontendController(mcc) with Logging {
 
-  def get: Action[AnyContent] = actions.default {
-    implicit request: Request[_] => Ok(views.youCannotConfirmSecurityDetailsYet())
+  def get: Action[AnyContent] = actions.default.async { implicit request: Request[_] =>
+
+    failedVerificationAttemptService.find().map{ optAttemptInfo =>
+      val attemptInfo = optAttemptInfo.getOrElse(throw new RuntimeException(s"[YouCannotConfirmYourSecurityDetailsYetController] Attempt info not found"))
+
+      val formattedDate = DateTimeFormatsUtil.lockoutUnlockDateFormatter(attemptInfo.createdAt.plus(1, DAYS))
+      Ok(views.youCannotConfirmSecurityDetailsYet(formattedDate))
+    }
   }
 
 }

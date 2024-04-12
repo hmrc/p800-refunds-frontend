@@ -35,7 +35,7 @@ class YouCannotConfirmYourSecurityDetailsYetPage(baseUrl: String)(implicit webDr
       expectedLines =
         """
           |You cannot confirm your security details yet
-          |You have previously entered information that does not match our records too many times. For security reasons you have been locked out. You can try again after *A DATE*.
+          |You have previously entered information that does not match our records too many times. For security reasons you have been locked out. You can try again after 26 November 2059, 4:33pm.
           |Alternatively you can sign in to your HMRC online account to request your refund. If you continue having problems with confirming your identity, you need to contact us.
           |""".stripMargin
     )) ++ extraExpectations
