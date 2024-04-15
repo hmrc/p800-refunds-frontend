@@ -53,12 +53,9 @@ object EdhStub {
         .withHeader("correlationid", matching(correlationId.value.toString))
     )
 
-  private def url(claimId: ClaimId) = s"/risking/claims/${claimId.value}/bank-details"
+  private def url(claimId: ClaimId) = s"/p800-refunds-backend/risking/claims/${claimId.value}/bank-details"
 
   private val requiredHeaders: Seq[(String, StringValuePattern)] = Seq(
-    ("RequesterId", matching("Repayment Service")),
-    ("CorrelationId", matching(".*")),
-    ("Environment", matching(".*")),
-    ("Authorization", matching("Bearer .*"))
+    ("CorrelationId", matching(".*"))
   )
 }

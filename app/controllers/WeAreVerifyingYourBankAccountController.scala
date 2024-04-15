@@ -40,7 +40,6 @@ import scala.concurrent.{ExecutionContext, Future}
 class WeAreVerifyingYourBankAccountController @Inject() (
     actions:                         Actions,
     ecospendService:                 EcospendService,
-    edhConnector:                    EdhConnector,
     caseManagementConnector:         CaseManagementConnector,
     journeyService:                  JourneyService,
     mcc:                             MessagesControllerComponents,
@@ -196,7 +195,7 @@ class WeAreVerifyingYourBankAccountController @Inject() (
     journey
       .bankDetailsRiskResultResponse
       .map(Future.successful)
-      .getOrElse(edhConnector.getBankDetailsRiskResult(claimId, bankDetailsRiskResultRequest, journey.correlationId))
+      .getOrElse(p800RefundsBackendConnector.getBankDetailsRiskResult(claimId, bankDetailsRiskResultRequest, journey.correlationId))
   }
 
   private def notifyCaseManagement(journey: Journey)(implicit requestHeader: RequestHeader): Future[Unit] = {
