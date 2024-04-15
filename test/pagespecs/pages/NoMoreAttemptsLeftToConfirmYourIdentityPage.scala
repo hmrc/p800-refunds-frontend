@@ -19,6 +19,7 @@ package pagespecs.pages
 import models.journeymodels.JourneyType
 import org.openqa.selenium.WebDriver
 import pagespecs.pagesupport.{ContentExpectation, Page, PageUtil}
+import testsupport.RichMatchers.convertToAnyShouldWrapper
 
 class NoMoreAttemptsLeftToConfirmYourIdentityPage(baseUrl: String, pathForJourneyType: String)(implicit webDriver: WebDriver) extends Page(
   baseUrl,
@@ -40,6 +41,7 @@ class NoMoreAttemptsLeftToConfirmYourIdentityPage(baseUrl: String, pathForJourne
           |You have entered information that does not match our records too many times.
           |For security reasons, you must wait 24 hours and then try again.
           |Alternatively you can sign in to you HMRC online account to request your refund.
+          |If you continue having problems with confirming your identity, you need to contact us.
           |""".stripMargin
     )) ++ extraExpectations
 
@@ -50,8 +52,12 @@ class NoMoreAttemptsLeftToConfirmYourIdentityPage(baseUrl: String, pathForJourne
       contentExpectations = contentExpectations: _*,
       baseUrl             = baseUrl
     )
+
+    contactUsHref() shouldBe "https://www.gov.uk/government/organisations/hm-revenue-customs/contact/income-tax-enquiries-for-individuals-pensioners-and-employees"
+    ()
   }
 
   def clickSignInToYourHmrcAccount(): Unit = PageUtil.clickByIdOrName("sign-in-to-you-hmrc-online-account")
+  def contactUsHref(): String = PageUtil.getHrefById("contact-hmrc")
 
 }
