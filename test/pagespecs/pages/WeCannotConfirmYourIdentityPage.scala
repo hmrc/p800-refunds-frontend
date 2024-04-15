@@ -32,14 +32,19 @@ class WeCannotConfirmYourIdentityPage(baseUrl: String, pathForJourneyType: Strin
 
   def assertPageIsDisplayed(journeyType: JourneyType, extraExpectations: ContentExpectation*): Unit = withPageClue {
 
+    val chooseAnotherMethodLinkText: String = journeyType match {
+      case JourneyType.Cheque       => "Claim your refund by bank transfer"
+      case JourneyType.BankTransfer => "Choose another method"
+    }
+
     val contentExpectations: Seq[ContentExpectation] = Seq(ContentExpectation(
       atXpath       = PageUtil.Xpath.mainContent,
       expectedLines =
-        """
+        s"""
           |We cannot confirm your identity
           |The information you have provided does not match our records.
           |Try again
-          |Choose another method
+          |$chooseAnotherMethodLinkText
           |""".stripMargin
     )) ++ extraExpectations
 

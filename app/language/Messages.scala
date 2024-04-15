@@ -481,6 +481,9 @@ object Messages {
     val `Choose another method`: Message = Message(
       english = "Choose another method"
     )
+    val `Claim your refund by bank transfer`: Message = Message(
+      english = "Claim your refund by bank transfer"
+    )
   }
 
   object NoMoreAttemptsLeftToConfirmYourIdentityMessages {
