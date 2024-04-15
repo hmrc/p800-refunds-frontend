@@ -18,6 +18,7 @@ package connectors
 
 import com.google.inject.{Inject, Singleton}
 import config.AppConfig
+import edh.{ClaimId, GetBankDetailsRiskResultRequest, GetBankDetailsRiskResultResponse}
 import models.{CorrelationId, Nino, P800Reference}
 import nps.models._
 import play.api.mvc.RequestHeader
@@ -118,6 +119,20 @@ class P800RefundsBackendConnector @Inject() (
     )
   }
 
+  private def getBankDetailsRiskResultUrl(claimId: ClaimId): String = appConfig.P800RefundsBackend.p800RefundsBackendBaseUrl +
+    s"/risking/claims/${claimId.value}/bank-details"
+
+  def getBankDetailsRiskResult(claimId: ClaimId, request: GetBankDetailsRiskResultRequest, correlationId: CorrelationId)(implicit requestHeader: RequestHeader): Future[GetBankDetailsRiskResultResponse] = {
+    JourneyLogger.info(s"calling EDH ${claimId.toString}...")
+    httpClient.POST[GetBankDetailsRiskResultRequest, GetBankDetailsRiskResultResponse](
+      url     = getBankDetailsRiskResultUrl(claimId),
+      body    = request,
+      headers = Seq(P800RefundsBackendConnector.makeCorrelationIdHeader(correlationId))
+    ).map { response: GetBankDetailsRiskResultResponse =>
+        JourneyLogger.info(s"got BankDetailsRiskResult from EDH ${claimId.toString} succeeded: [NextAction=${response.overallRiskResult.nextAction.toString}]")
+        response
+      }
+  }
 }
 
 object P800RefundsBackendConnector {
