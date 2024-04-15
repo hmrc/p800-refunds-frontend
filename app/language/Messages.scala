@@ -758,6 +758,29 @@ object Messages {
 
   }
 
+  object RefundCancelled {
+    val `Refund cancelled`: Message = Message(
+      english = "Refund cancelled"
+    )
+
+    val `You have cancelled`: Message = Message(
+      english = "You have cancelled your refund request."
+    )
+
+    val `No refund`: Message = Message(
+      english = "No refund has been sent to your bank account."
+    )
+
+    val `Choose another`: Message = Message(
+      english = "Choose another way to get my refund"
+    )
+
+    def `We cannot process your refund request online, so we need you to...`(linkContact: String): Message = Message(
+      english = s"""We cannot process your refund request online, so we need you to <a id="contact-hmrc-link" class="govuk-link" href="$linkContact">contact us</a>."""
+    )
+
+  }
+
   object UpdateYourAddress {
     val `Update your address`: Message = Message(
       english = "Update your address"

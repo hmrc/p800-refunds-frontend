@@ -71,6 +71,8 @@ class Pages(baseUrl: String)(implicit webDriver: WebDriver) {
   // for when techinical error occurs?
   val yourRefundRequestHasNotBeenSubmittedSpec = new YourRefundRequestHasNotBeenSubmittedPage(baseUrl = baseUrl)
 
+  val refundCancelledSpec = new RefundCancelledPage(baseUrl = baseUrl)
+
   val thereIsAProblemPage = new ThereIsAProblemPage(baseUrl = baseUrl)
 
   val isYourAddressUpToDate = new IsYourAddressUpToDatePage(baseUrl = baseUrl)

@@ -43,7 +43,8 @@ class Views @Inject() (
     val yourRefundRequestHasNotBeenSubmitted:        views.html.YourRefundRequestHasNotBeenSubmitted,
     val isYourAddressUpToDatePage:                   views.html.chequejourney.IsYourAddressUpToDatePage,
     val updateYourAddressPage:                       views.html.chequejourney.UpdateYourAddressPage,
-    val thereIsAProblemPage:                         views.html.ThereIsAProblemPage
+    val thereIsAProblemPage:                         views.html.ThereIsAProblemPage,
+    val refundCancelledPage:                         views.html.RefundCancelledPage
 )
 
 class ViewsTestOnly @Inject() (
