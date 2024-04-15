@@ -63,11 +63,9 @@ object CaseManagementStub {
         .withHeader("correlationid", matching(correlationId.value.toString))
     )
 
-  private def url(clientUId: ClientUId): String = s"/risking/exceptions/${clientUId.value}"
+  private def url(clientUId: ClientUId): String = s"/p800-refunds-backend/risking/exceptions/${clientUId.value}"
 
   private val requiredHeaders: Seq[(String, StringValuePattern)] = Seq(
-    ("CorrelationId", matching(".*")),
-    ("Environment", matching(".*")),
-    ("Authorization", matching("Basic .*"))
+    ("CorrelationId", matching(".*"))
   )
 }
