@@ -77,3 +77,4 @@ POST        /cheque/is-your-address-up-to-date                             contr
 GET         /cheque/update-your-address                                    controllers.UpdateYourAddressController.get
 
 GET         /there-is-a-problem                                            controllers.ThereIsAProblemController.get
+GET         /refund-cancelled                                              controllers.RefundCancelledController.get
