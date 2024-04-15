@@ -19,13 +19,14 @@
 @import views.ViewsHelpers
 @import views.html.templates.Layout
 @import action.JourneyRequest
+@import language.Message
 
 @this(
         layout: Layout,
         viewsHelpers: ViewsHelpers
 )
 
-@(chooseAnotherMethodCall: Call)(implicit request: JourneyRequest[_])
+@(chooseAnotherMethodCall: Call, chooseAnotherMethodMessage: Message)(implicit request: JourneyRequest[_])
 
 @import viewsHelpers.requestSupport._
 
@@ -45,7 +46,7 @@
             id = Some("try-again")
         ))
         <a id="choose-another-method-link" class="govuk-link" href=@{chooseAnotherMethodCall.url}>
-            @{Messages.WeCannotConfirmYourIdentity.`Choose another method`.show}
+            @{chooseAnotherMethodMessage.show}
         </a>
     }
     </div>

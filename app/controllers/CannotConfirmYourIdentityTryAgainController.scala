@@ -17,6 +17,7 @@
 package controllers
 
 import action.Actions
+import language.Messages
 import models.journeymodels.{Journey, JourneyType}
 import play.api.mvc._
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
@@ -32,11 +33,17 @@ class CannotConfirmYourIdentityTryAgainController @Inject() (
 ) extends FrontendController(mcc) {
 
   def getBankTransfer: Action[AnyContent] = actions.journeyInProgress { implicit request =>
-    Ok(views.cannotConfirmYourIdentityTryAgainPage(chooseAnotherMethodCall = routes.ChooseAnotherWayToGetYourRefundController.getBankTransfer))
+    Ok(views.cannotConfirmYourIdentityTryAgainPage(
+      chooseAnotherMethodCall    = routes.ChooseAnotherWayToGetYourRefundController.getBankTransfer,
+      chooseAnotherMethodMessage = Messages.WeCannotConfirmYourIdentity.`Choose another method`
+    ))
   }
 
   def getCheque: Action[AnyContent] = actions.journeyInProgress { implicit request =>
-    Ok(views.cannotConfirmYourIdentityTryAgainPage(chooseAnotherMethodCall = routes.ClaimYourRefundByBankTransferController.get))
+    Ok(views.cannotConfirmYourIdentityTryAgainPage(
+      chooseAnotherMethodCall    = routes.ClaimYourRefundByBankTransferController.get,
+      chooseAnotherMethodMessage = Messages.WeCannotConfirmYourIdentity.`Claim your refund by bank transfer`
+    ))
   }
 
   def tryAgain: Action[AnyContent] = actions.journeyInProgress { implicit journeyRequest =>
