@@ -16,6 +16,7 @@
 
 package connectors
 
+import casemanagement.{CaseManagementRequest, ClientUId}
 import com.google.inject.{Inject, Singleton}
 import config.AppConfig
 import edh.{ClaimId, GetBankDetailsRiskResultRequest, GetBankDetailsRiskResultResponse}
@@ -24,7 +25,7 @@ import nps.models._
 import play.api.mvc.RequestHeader
 import requests.RequestSupport.hc
 import uk.gov.hmrc.http.HttpReads.Implicits._
-import uk.gov.hmrc.http.{HttpClient, HttpReads}
+import uk.gov.hmrc.http.{HttpClient, HttpReads, UpstreamErrorResponse, HttpResponse}
 import util.{HttpResponseUtils, JourneyLogger}
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -132,6 +133,27 @@ class P800RefundsBackendConnector @Inject() (
         JourneyLogger.info(s"got BankDetailsRiskResult from EDH ${claimId.toString} succeeded: [NextAction=${response.overallRiskResult.nextAction.toString}]")
         response
       }
+  }
+
+  private def notifyCaseManagementUrl(clientUId: ClientUId): String = appConfig.P800RefundsBackend.p800RefundsBackendBaseUrl +
+    s"/risking/exceptions/${clientUId.value}"
+
+  def notifyCaseManagement(
+      clientUId:     ClientUId,
+      request:       CaseManagementRequest,
+      correlationId: CorrelationId
+  )(implicit requestHeader: RequestHeader): Future[Unit] = {
+    JourneyLogger.info(s"Notifying case management: ${clientUId.value}")
+
+    httpClient
+      .POST[CaseManagementRequest, Either[UpstreamErrorResponse, HttpResponse]](
+        url     = notifyCaseManagementUrl(clientUId),
+        body    = request,
+        headers = Seq(P800RefundsBackendConnector.makeCorrelationIdHeader(correlationId))
+      ).map {
+          case Right(_)    => ()
+          case Left(error) => throw error
+        }
   }
 }
 

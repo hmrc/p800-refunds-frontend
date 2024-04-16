@@ -40,7 +40,6 @@ import scala.concurrent.{ExecutionContext, Future}
 class WeAreVerifyingYourBankAccountController @Inject() (
     actions:                         Actions,
     ecospendService:                 EcospendService,
-    caseManagementConnector:         CaseManagementConnector,
     journeyService:                  JourneyService,
     mcc:                             MessagesControllerComponents,
     p800RefundsBackendConnector:     P800RefundsBackendConnector,
@@ -258,7 +257,7 @@ class WeAreVerifyingYourBankAccountController @Inject() (
       r
     }
 
-    caseManagementConnector
+    p800RefundsBackendConnector
       .notifyCaseManagement(clientUId, request, journey.correlationId)
       .map(_ => ())
   }
