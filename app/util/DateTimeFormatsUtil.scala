@@ -32,5 +32,4 @@ object DateTimeFormatsUtil {
 
     s"$date${amPm.toLowerCase}"
   }
-
 }

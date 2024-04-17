@@ -44,13 +44,13 @@ class DoYouWantToSignInPageSpec extends ItSpec {
     getJourneyFromDatabase(tdAll.journeyId) shouldBeLike tdAll.journeyStarted
   }
 
-  "Selecting 'No, continue without signing in' but the user has been locked out, it redirects to 'YouCannotConfirmYourSecurityDetailsYet' page" in {
+  "Selecting 'No, continue without signing in' but the user has been locked out, it redirects to 'YouCannotConfirmYourIdentityDetailsYet' page" in {
     upsertFailedAttemptToDatabase(tdAll.attemptInfo(failedAttempts = 3))
     pages.doYouWantToSignInPage.open()
     pages.doYouWantToSignInPage.assertPageIsDisplayed()
     pages.doYouWantToSignInPage.selectNo()
     pages.doYouWantToSignInPage.clickSubmit()
-    pages.youCannotConfirmYourSecurityDetailsYetSpec.assertPageIsDisplayed()
+    pages.youCannotConfirmYourIdentityDetailsYetSpec.assertPageIsDisplayed()
   }
 
   "Selecting nothing and clicking continue shows error" in {
