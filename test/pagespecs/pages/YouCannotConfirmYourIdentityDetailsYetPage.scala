@@ -19,13 +19,13 @@ package pagespecs.pages
 import org.openqa.selenium.WebDriver
 import pagespecs.pagesupport.{ContentExpectation, Page, PageUtil}
 
-class YouCannotConfirmYourSecurityDetailsYetPage(baseUrl: String)(implicit webDriver: WebDriver) extends Page(
+class YouCannotConfirmYourIdentityDetailsYetPage(baseUrl: String)(implicit webDriver: WebDriver) extends Page(
   baseUrl,
-  path = "/get-an-income-tax-refund/you-cannot-confirm-your-security-details-yet"
+  path = "/get-an-income-tax-refund/you-cannot-confirm-your-identity-details-yet"
 ) {
 
-  override def expectedH1: String = "You cannot confirm your security details yet"
-  override def expectedTitleContent: String = "You cannot confirm your security details yet"
+  override def expectedH1: String = "You cannot confirm your identity details yet"
+  override def expectedTitleContent: String = "You cannot confirm your identity details yet"
 
   def staticJourney: String = ""
   override def assertPageIsDisplayed(extraExpectations: ContentExpectation*): Unit = withPageClue {
@@ -34,7 +34,7 @@ class YouCannotConfirmYourSecurityDetailsYetPage(baseUrl: String)(implicit webDr
       atXpath       = PageUtil.Xpath.mainContent,
       expectedLines =
         """
-          |You cannot confirm your security details yet
+          |You cannot confirm your identity details yet
           |You have previously entered information that does not match our records too many times. For security reasons you have been locked out. You can try again after 26 November 2059, 4:33pm.
           |Alternatively you can sign in to your HMRC online account to request your refund. If you continue having problems with confirming your identity, you need to contact us.
           |""".stripMargin

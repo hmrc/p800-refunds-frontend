@@ -712,16 +712,16 @@ object Messages {
     )
 
   }
-  object YouCannotConfirmSecurityDetailsYet {
+  object YouCannotConfirmIdentityDetailsYet {
     val cannotConfirm: Message = Message(
-      english = "You cannot confirm your security details yet"
+      english = "You cannot confirm your identity details yet"
     )
 
     def youHavePreviously(date: String): Message = Message(
-      english = s"""You have previously entered information that does not match our records too many times. For security reasons you have been locked out. You can try again after $date."""
+      english = s"""You have previously entered information that does not match our records too many times. For security reasons you have been locked out. You can try again after <b>$date.<b>"""
     )
 
-    def alternativly(linkSignIn: String, linkContact: String): Message = Message(
+    def alternatively(linkSignIn: String, linkContact: String): Message = Message(
       english = s"""Alternatively you can <a class="govuk-link" href="$linkSignIn">sign in to your HMRC online account</a> to request your refund. If you continue having problems with confirming your identity, you need to <a class="govuk-link" href="$linkContact">contact us</a>.""".stripMargin
     )
 

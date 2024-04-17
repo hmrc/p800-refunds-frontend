@@ -39,7 +39,7 @@ class Views @Inject() (
     val claimYourRefundByBankTransfer:               views.html.chooseanotherway.ClaimYourRefundByBankTransfer,
     val enterTheNameOfYourBankPage:                  views.html.EnterTheNameOfYourBankPage,
     val bankTransferRequestReceivedPage:             views.html.BankTransferRequestReceivedPage,
-    val youCannotConfirmSecurityDetailsYet:          views.html.YouCannotConfirmSecurityDetailsYet,
+    val youCannotConfirmYourIdentityDetailsYet:      views.html.YouCannotConfirmYourIdentityDetailsYet,
     val yourRefundRequestHasNotBeenSubmitted:        views.html.YourRefundRequestHasNotBeenSubmitted,
     val isYourAddressUpToDatePage:                   views.html.chequejourney.IsYourAddressUpToDatePage,
     val updateYourAddressPage:                       views.html.chequejourney.UpdateYourAddressPage,
