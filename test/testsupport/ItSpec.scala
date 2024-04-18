@@ -66,6 +66,7 @@ trait ItSpec extends AnyFreeSpecLike
     "urls.gov-uk.govuk-route-in" -> s"http://localhost:${testServerPort.toString}/get-an-income-tax-refund/test-only/gov-uk-route-in",
     "urls.pta-sign-in" -> s"http://localhost:${testServerPort.toString}/get-an-income-tax-refund/test-only/pta-sign-in",
     "urls.gov-uk.income-tax-general-enquiries" -> s"http://localhost:${testServerPort.toString}/get-an-income-tax-refund/test-only/income-tax-general-enquiries",
+    "urls.feedback-frontend" -> s"http://localhost:${testServerPort.toString}/get-an-income-tax-refund/test-only",
     "microservice.services.p800-reference-validation.port" -> WireMockSupport.port,
     "microservice.services.ecospend-auth.port" -> WireMockSupport.port,
     "microservice.services.ecospend.port" -> WireMockSupport.port,

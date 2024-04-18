@@ -85,6 +85,27 @@ class RequestReceivedPageSpec extends ItSpec {
       getJourneyFromDatabase(tdAll.journeyId) shouldBeLike journey
       DateCalculatorStub.verifyAddWorkingDays()
     }
+
+    "bank transfer when user clicks survey link is sent to feedback service" in {
+      upsertJourneyToDatabase(tdAll.BankTransfer.journeyClaimedOverpayment)
+      DateCalculatorStub.addWorkingDays()
+
+      pages.requestReceivedBankTransferPage.open()
+      pages.requestReceivedBankTransferPage.assertPageIsDisplayedForBankTransfer()
+
+      pages.requestReceivedBankTransferPage.clickFeedbackLink()
+      pages.feedbackFrontendStubPageBankTransfer.assertPageIsDisplayedForBankTransfer()
+    }
+
+    "cheque when user clicks survey link is sent to feedback service" in {
+      upsertJourneyToDatabase(tdAll.Cheque.journeyClaimedOverpayment)
+
+      pages.requestReceivedChequePage.open()
+      pages.requestReceivedChequePage.assertPageIsDisplayedForCheque()
+
+      pages.requestReceivedChequePage.clickFeedbackLink()
+      pages.feedbackFrontendStubPageCheque.assertPageIsDisplayedForCheque()
+    }
   }
 
   //TODO: unignore this when we have the callbacks/fetching of the bank verification statuses from ecospend along with other API calls, rewrite in style above

@@ -88,4 +88,6 @@ class Pages(baseUrl: String)(implicit webDriver: WebDriver) {
   val ptaSignInPage = new PtaSignInPage(baseUrl = baseUrl)
   val generalIncomeTaxEnquiriesPage = new GeneralIncomeTaxEnquiriesPage(baseUrl = baseUrl)
   val bankStubPage = new BankStubPage(baseUrl = baseUrl)
+  val feedbackFrontendStubPageBankTransfer = new FeedbackFrontendStubPage(baseUrl            = baseUrl, pathForJourneyType = bankTransferRelativeUrl)
+  val feedbackFrontendStubPageCheque = new FeedbackFrontendStubPage(baseUrl            = baseUrl, pathForJourneyType = chequeRelativeUrl)
 }

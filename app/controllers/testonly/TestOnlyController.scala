@@ -59,6 +59,11 @@ class TestOnlyController @Inject() (
     Ok(viewsTestOnly.incomeTaxGeneralEnquiriesStubPage())
   }
 
+  def feedbackFrontend(serviceName: String): Action[AnyContent] = as.default { implicit request =>
+    Ok(viewsTestOnly.feedbackFrontendStubPage(serviceName))
+      .withNewSession
+  }
+
   val showJourney: Action[AnyContent] = as.default.async { implicit request =>
     request.session.get(JourneyIdKey.journeyIdKey).map(JourneyId.apply) match {
       case None            => Future.successful(Ok(s"No ${JourneyIdKey.journeyIdKey} in play session"))

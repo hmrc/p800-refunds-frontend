@@ -78,3 +78,5 @@ GET         /cheque/update-your-address                                    contr
 
 GET         /there-is-a-problem                                            controllers.ThereIsAProblemController.get
 GET         /refund-cancelled                                              controllers.RefundCancelledController.get
+
+GET         /feedback                                                      controllers.FeedbackController.get
