@@ -662,7 +662,7 @@ object Messages {
     def `If you do not receive your refund you can call or write...`(generalEnquiriesLink: String): Message = Message(
       english =
         s"""If you do not receive your refund you can <a id="general-enquiries-link" target="_blank" class="govuk-link" href="$generalEnquiriesLink">
-           |call or write to the Income Tax helpline (opens in new tab)</a>. You will need your P800 reference.""".stripMargin
+           |write to us or call the Income Tax helpline (opens in new tab)</a>. You will need your P800 reference.""".stripMargin
     )
   }
   object ServicePhase {
