@@ -285,7 +285,7 @@ object Messages {
     )
 
     val `National insurance number`: Message = Message(
-      english = "National insurance number"
+      english = "National Insurance number"
     )
 
     val `Change`: Message = Message(
@@ -551,7 +551,7 @@ object Messages {
     )
 
     val `Wait two days for HMRC to update your details.`: Message = Message(
-      english = "Wait two days for HMRC to update your details."
+      english = "Wait 2 days for HMRC to update your details."
     )
 
     val `Restart your refund request.`: Message = Message(
@@ -596,7 +596,7 @@ object Messages {
     def `If you do not receive your refund you can call or write...`(generalEnquiriesLink: String): Message = Message(
       english =
         s"""If you do not receive your refund you can <a id="general-enquiries-link" target="_blank" class="govuk-link" href="$generalEnquiriesLink">
-           |call or write to the Income Tax helpline (opens in new tab)</a>. You will need your P800 reference.""".stripMargin
+           |write to us or call the Income Tax helpline (opens in new tab)</a>. You will need your P800 reference.""".stripMargin
     )
   }
 
@@ -662,7 +662,7 @@ object Messages {
     def `If you do not receive your refund you can call or write...`(generalEnquiriesLink: String): Message = Message(
       english =
         s"""If you do not receive your refund you can <a id="general-enquiries-link" target="_blank" class="govuk-link" href="$generalEnquiriesLink">
-           |call or write to the Income Tax helpline (opens in new tab)</a>. You will need your P800 reference.""".stripMargin
+           |write to us or call the Income Tax helpline (opens in new tab)</a>. You will need your P800 reference.""".stripMargin
     )
   }
   object ServicePhase {
@@ -806,7 +806,7 @@ object Messages {
     )
 
     val `Wait two days for HMRC to update your details.`: Message = Message(
-      english = "Wait two days for HMRC to update your details."
+      english = "Wait 2 days for HMRC to update your details."
     )
 
     val `Restart your refund request.`: Message = Message(

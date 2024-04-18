@@ -94,7 +94,7 @@ class CheckYourAnswersPage(baseUrl: String, pathForJourneyType: String)(implicit
               |Check your answers
               |P800 reference
               |Change
-              |National insurance number
+              |National Insurance number
               |Change
               |Date of birth
               |Change
@@ -109,7 +109,7 @@ class CheckYourAnswersPage(baseUrl: String, pathForJourneyType: String)(implicit
               |Check your answers
               |P800 reference
               |Change
-              |National insurance number
+              |National Insurance number
               |Change
               |Continue
               |""".stripMargin

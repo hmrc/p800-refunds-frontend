@@ -49,7 +49,7 @@ class RequestReceivedPage(baseUrl: String, pathForJourneyType: String)(implicit 
           |Print this page
           |
           |What happens next
-          |If you do not receive your refund you can call or write to the Income Tax helpline (opens in new tab). You will need your P800 reference.
+          |If you do not receive your refund you can write to us or call the Income Tax helpline (opens in new tab). You will need your P800 reference.
           |What did you think of this service? (takes 30 seconds)
           |""".stripMargin
     )
@@ -81,7 +81,7 @@ class RequestReceivedPage(baseUrl: String, pathForJourneyType: String)(implicit 
           |Print this page
           |
           |What happens next
-          |If you do not receive your refund you can call or write to the Income Tax helpline (opens in new tab). You will need your P800 reference.
+          |If you do not receive your refund you can write to us or call the Income Tax helpline (opens in new tab). You will need your P800 reference.
           |What did you think of this service? (takes 30 seconds)
           |""".stripMargin
     )

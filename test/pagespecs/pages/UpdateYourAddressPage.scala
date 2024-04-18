@@ -38,7 +38,7 @@ class UpdateYourAddressPage(baseUrl: String)(implicit webDriver: WebDriver) exte
           |Update your address
           |To update your address you need to:
           |Contact HMRC to tell us that you have changed address.
-          |Wait two days for HMRC to update your details.
+          |Wait 2 days for HMRC to update your details.
           |Restart your refund request.
           |""".stripMargin
     )) ++ extraExpectations

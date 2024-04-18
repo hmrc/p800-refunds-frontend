@@ -57,6 +57,7 @@ class EnterYourP800ReferencePage(baseUrl: String, pathForJourneyType: String)(im
             |It is on the letter HMRC sent you about your tax calculation, also known as a ‘P800’, and is up to 10 digits long.
             |For example, 1002033400.
             |If you do not know your P800 reference
+            |Sign in using your Government Gateway user ID to claim your refund.
             |""".stripMargin
       )
     ) ++ extraExpectations
