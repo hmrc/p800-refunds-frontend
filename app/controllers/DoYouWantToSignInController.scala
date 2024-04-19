@@ -58,7 +58,7 @@ class DoYouWantToSignInController @Inject() (
           case DoYouWantToSignInFormValue.Yes =>
             Redirect(appConfig.PersonalTaxAccountUrls.personalTaxAccountSignInUrl)
           case DoYouWantToSignInFormValue.No if userIsLockedOut =>
-            Redirect(controllers.routes.YouCannotConfirmYourIdentityDetailsYetController.get)
+            Redirect(controllers.routes.YouCannotConfirmYourIdentityYetController.get)
           case DoYouWantToSignInFormValue.No =>
             Redirect(controllers.routes.DoYouWantYourRefundViaBankTransferController.get)
         }

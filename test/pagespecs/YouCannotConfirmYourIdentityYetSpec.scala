@@ -18,7 +18,7 @@ package pagespecs
 
 import testsupport.ItSpec
 
-class YouCannotConfirmYourIdentityDetailsYetSpec extends ItSpec {
+class YouCannotConfirmYourIdentityYetSpec extends ItSpec {
 
   override def beforeEach(): Unit = {
     super.beforeEach()
@@ -29,23 +29,23 @@ class YouCannotConfirmYourIdentityDetailsYetSpec extends ItSpec {
 
   "navigating to /you-cannot-confirm-your-security-details-yet" in {
     upsertFailedAttemptToDatabase(tdAll.attemptInfo(failedAttempts = 3))
-    pages.youCannotConfirmYourIdentityDetailsYetSpec.open()
-    pages.youCannotConfirmYourIdentityDetailsYetSpec.assertPageIsDisplayed()
+    pages.youCannotConfirmYourIdentityYetSpec.open()
+    pages.youCannotConfirmYourIdentityYetSpec.assertPageIsDisplayed()
     getFailedAttemptCount() shouldBe Some(3)
   }
 
   "navigating to /you-cannot-confirm-your-security-details-yet and Pressing the back button, should stay on the same page" in {
     upsertFailedAttemptToDatabase(tdAll.attemptInfo(failedAttempts = 3))
-    pages.youCannotConfirmYourIdentityDetailsYetSpec.open()
-    pages.youCannotConfirmYourIdentityDetailsYetSpec.assertPageIsDisplayed()
-    pages.youCannotConfirmYourIdentityDetailsYetSpec.clickBackButton()
-    pages.youCannotConfirmYourIdentityDetailsYetSpec.assertPageIsDisplayed()
+    pages.youCannotConfirmYourIdentityYetSpec.open()
+    pages.youCannotConfirmYourIdentityYetSpec.assertPageIsDisplayed()
+    pages.youCannotConfirmYourIdentityYetSpec.clickBackButton()
+    pages.youCannotConfirmYourIdentityYetSpec.assertPageIsDisplayed()
   }
 
   "navigating to /you-cannot-confirm-your-security-details-yet without any AttemptInfo should display the Error Page" in {
-    pages.youCannotConfirmYourIdentityDetailsYetSpec.open()
+    pages.youCannotConfirmYourIdentityYetSpec.open()
     getJourneyFromDatabase(tdAll.journeyId) shouldBe tdAll.Cheque.journeyLockedOutFromFailedAttempts
-    pages.youCannotConfirmYourIdentityDetailsYetSpec.assertPageIsDisplayedWithTechnicalDifficultiesError()
+    pages.youCannotConfirmYourIdentityYetSpec.assertPageIsDisplayedWithTechnicalDifficultiesError()
   }
 
 }
