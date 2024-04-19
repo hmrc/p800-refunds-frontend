@@ -25,15 +25,15 @@ class ChooseAnotherWayToReceiveYourRefundPage(baseUrl: String)(implicit webDrive
   path    = s"/get-an-income-tax-refund/bank-transfer/choose-another-way-to-receive-your-refund"
 ) {
 
-  override def expectedH1: String = "Choose another way to receive your refund"
-  override def expectedTitleContent: String = "choose another way to receive your refund"
+  override def expectedH1: String = "Choose another way to get your refund"
+  override def expectedTitleContent: String = "choose another way to get your refund"
 
   override def assertPageIsDisplayed(errors: ContentExpectation*): Unit = withPageClue {
     val contentExpectations: Seq[ContentExpectation] = Seq(ContentExpectation(
       atXpath       = PageUtil.Xpath.mainContent,
       expectedLines =
         """
-          |Choose another way to receive your refund
+          |Choose another way to get your refund
           |You can claim your refund by bank transfer or cheque. If you want your refund by bank transfer, you will have fewer details to enter if you sign in using your Government Gateway ID.
           |Do you want your refund by bank transfer or cheque?
           |Bank transfer using your Government Gateway user ID to sign in
