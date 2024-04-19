@@ -5,7 +5,7 @@ GET         /assets/*file                                                  contr
 
 GET         /start                                                         controllers.StartController.get
 
-GET         /you-cannot-confirm-your-identity-details-yet                  controllers.YouCannotConfirmYourIdentityDetailsYetController.get
+GET         /you-cannot-confirm-your-identity-yet                          controllers.YouCannotConfirmYourIdentityYetController.get
 
 # techincal error page?
 GET         /your-refund-request-has-not-been-submitted                    controllers.YourRefundRequestHasNotBeenSubmittedController.get

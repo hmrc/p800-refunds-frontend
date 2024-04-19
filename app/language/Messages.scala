@@ -712,9 +712,9 @@ object Messages {
     )
 
   }
-  object YouCannotConfirmIdentityDetailsYet {
+  object YouCannotConfirmIdentityYet {
     val cannotConfirm: Message = Message(
-      english = "You cannot confirm your identity details yet"
+      english = "You cannot confirm your identity yet"
     )
 
     def youHavePreviously(date: String): Message = Message(

@@ -50,7 +50,7 @@ class DoYouWantToSignInPageSpec extends ItSpec {
     pages.doYouWantToSignInPage.assertPageIsDisplayed()
     pages.doYouWantToSignInPage.selectNo()
     pages.doYouWantToSignInPage.clickSubmit()
-    pages.youCannotConfirmYourIdentityDetailsYetSpec.assertPageIsDisplayed()
+    pages.youCannotConfirmYourIdentityYetSpec.assertPageIsDisplayed()
   }
 
   "Selecting nothing and clicking continue shows error" in {

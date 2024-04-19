@@ -29,7 +29,7 @@ import javax.inject.{Inject, Singleton}
 import scala.concurrent.ExecutionContext
 
 @Singleton
-class YouCannotConfirmYourIdentityDetailsYetController @Inject() (
+class YouCannotConfirmYourIdentityYetController @Inject() (
     mcc:                              MessagesControllerComponents,
     failedVerificationAttemptService: FailedVerificationAttemptService,
     views:                            Views,
@@ -39,7 +39,7 @@ class YouCannotConfirmYourIdentityDetailsYetController @Inject() (
   def get: Action[AnyContent] = actions.default.async { implicit request: Request[_] =>
 
     failedVerificationAttemptService.find().map{ optAttemptInfo =>
-      val attemptInfo = optAttemptInfo.getOrElse(throw new RuntimeException(s"[YouCannotConfirmYourIdentityDetailsYetController] Attempt info not found"))
+      val attemptInfo = optAttemptInfo.getOrElse(throw new RuntimeException(s"[YouCannotConfirmYourIdentityYetController] Attempt info not found"))
       val formattedDate = DateTimeFormatsUtil.lockoutUnlockDateFormatter(attemptInfo.createdAt.plus(1, DAYS))
       Ok(views.youCannotConfirmYourIdentityDetailsYet(formattedDate))
     }

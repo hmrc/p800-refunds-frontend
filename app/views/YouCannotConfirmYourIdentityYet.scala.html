@@ -29,11 +29,11 @@
     @import viewsHelpers.requestSupport._
 
 @heading = @{
-        Messages.YouCannotConfirmIdentityDetailsYet.`cannotConfirm`.show
+        Messages.YouCannotConfirmIdentityYet.`cannotConfirm`.show
     }
 
     @layout(pageTitle = Some(heading)) {
         <h1 class="govuk-heading-xl">@heading</h1>
-        <p class="govuk-body">  @{Html(Messages.YouCannotConfirmIdentityDetailsYet.`youHavePreviously`(unlockDate).show)} </p>
-        <p class="govuk-body">  @{Html(Messages.YouCannotConfirmIdentityDetailsYet.`alternatively`(appConfig.PersonalTaxAccountUrls.personalTaxAccountSignInUrl, appConfig.generalEnquiriesUrl).show)} </p>
+        <p class="govuk-body">  @{Html(Messages.YouCannotConfirmIdentityYet.`youHavePreviously`(unlockDate).show)} </p>
+        <p class="govuk-body">  @{Html(Messages.YouCannotConfirmIdentityYet.`alternatively`(appConfig.PersonalTaxAccountUrls.personalTaxAccountSignInUrl, appConfig.generalEnquiriesUrl).show)} </p>
     }

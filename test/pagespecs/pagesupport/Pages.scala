@@ -66,7 +66,7 @@ class Pages(baseUrl: String)(implicit webDriver: WebDriver) {
 
   val giveYourPermissionPage = new GiveYourPermissionPage(baseUrl = baseUrl)
 
-  val youCannotConfirmYourIdentityDetailsYetSpec = new YouCannotConfirmYourIdentityDetailsYetPage(baseUrl = baseUrl)
+  val youCannotConfirmYourIdentityYetSpec = new YouCannotConfirmYourIdentityYetPage(baseUrl = baseUrl)
 
   // for when techinical error occurs?
   val yourRefundRequestHasNotBeenSubmittedSpec = new YourRefundRequestHasNotBeenSubmittedPage(baseUrl = baseUrl)
