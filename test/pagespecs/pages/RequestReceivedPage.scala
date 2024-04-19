@@ -105,4 +105,6 @@ class RequestReceivedPage(baseUrl: String, pathForJourneyType: String)(implicit 
 
   def clickPrintThisPage(): Unit = PageUtil.clickByIdOrName("print-page")
 
+  def clickFeedbackLink(): Unit = PageUtil.clickByIdOrName("survey-link")
+
 }

@@ -46,6 +46,8 @@ class AppConfig @Inject() (servicesConfig: ServicesConfig, configuration: Config
 
   val lostNationalInsuranceNumberUrl: String = readConfigAsValidUrlString("urls.gov-uk.lost-national-insurance-number")
 
+  val feedbackFrontendUrl: String = readConfigAsValidUrlString("urls.feedback-frontend")
+
   object PersonalTaxAccountUrls {
     val personalTaxAccountSignInUrl: String = readConfigAsValidUrlString("urls.pta-sign-in")
   }
