@@ -33,8 +33,8 @@ class GiveYourPermissionPage(baseUrl: String)(implicit webDriver: WebDriver) ext
       atXpath       = PageUtil.Xpath.mainContent,
       expectedLines =
         """
-          |By choosing approve, you will be redirected to Barclays Personal to securely log in and approve your refund of £12.34. Change my bank.
-          |This is a service provided by Ecospend, an authorised payment institution regulated by the Financial Conduct Authority (FCA), which will initiate a refund directly from HMRC to your bank.
+          |By choosing approve, you will be transferred to Barclays Personal to securely sign in and approve your refund of £12.34. Change my bank.
+          |This is a service provided by Ecospend, an authorised payment institution regulated by the Financial Conduct Authority (FCA). Ecospend will check your bank details so HMRC can send the refund to your bank account.
           |Ecospend will have one-off access to:
           |the name on your account
           |your account number and sort code
@@ -42,7 +42,7 @@ class GiveYourPermissionPage(baseUrl: String)(implicit webDriver: WebDriver) ext
           |Ecospend will not store or share any of your data.
           |HMRC cannot see your transactions or online bank account.
           |Approve this refund
-          |Choose another way to get my money
+          |Choose another way to get my refund
           |""".stripMargin
     )) ++ errors
 

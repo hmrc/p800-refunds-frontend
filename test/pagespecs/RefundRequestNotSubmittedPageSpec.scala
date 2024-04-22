@@ -37,7 +37,7 @@ class RefundRequestNotSubmittedPageSpec extends ItSpec {
     }
   }
 
-  "Clicking 'Choose another way to you my money' redirects to 'Choose another way to receive your refund' page" - {
+  "Clicking 'Choose another way to get my refund' redirects to 'Choose another way to receive your refund' page" - {
     "bank transfer" in {
       upsertJourneyToDatabase(tdAll.BankTransfer.journeyClaimOverpaymentFailed)
       pages.refundRequestNotSubmittedPage.open()

@@ -37,7 +37,7 @@ class RefundRequestNotSubmittedPage(baseUrl: String)(implicit webDriver: WebDriv
         """
           |Your refund request has not been submitted
           |We can not process your refund request.
-          |Choose another way to get my money
+          |Choose another way to get my refund
           |""".stripMargin
     )) ++ errors
 

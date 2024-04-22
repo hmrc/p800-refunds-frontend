@@ -85,7 +85,7 @@ class WeCannotConfirmYourIdentityPageSpec extends ItSpec {
   }
 
   "clicking 'Choose another method' sends user to" - {
-    "'Choose another way to receive your refund' for bank transfer" in {
+    "'Choose another way to get your refund' for bank transfer" in {
       upsertJourneyToDatabase(tdAll.BankTransfer.AfterReferenceCheck.journeyReferenceDidntMatchNino)
       test(JourneyType.BankTransfer)
       pages.chooseAnotherWayToReceiveYourRefundPage.assertPageIsDisplayed()

@@ -156,7 +156,7 @@ object Messages {
     )
 
     val `Choose another way to get my money`: Message = Message(
-      english = "Choose another way to get my money"
+      english = "Choose another way to get my refund"
     )
   }
 
@@ -172,11 +172,11 @@ object Messages {
 
     def `By choosing approve`(bankName: BankFriendlyName, amount: AmountInPence, changeBankLink: String): Message = Message(
       // language=HTML
-      english = s"""By choosing approve, you will be redirected to <strong>${bankName.value}</strong> to securely log in and approve your refund of <strong>${amount.gdsFormatInPounds}</strong>. <a href="$changeBankLink" id="change-bank" class="govuk-link">Change my bank</a>."""
+      english = s"""By choosing approve, you will be transferred to <strong>${bankName.value}</strong> to securely sign in and approve your refund of <strong>${amount.gdsFormatInPounds}</strong>. <a href="$changeBankLink" id="change-bank" class="govuk-link">Change my bank</a>."""
     )
 
     val `This is a service provided by Ecospend`: Message = Message(
-      english = "This is a service provided by Ecospend, an authorised payment institution regulated by the Financial Conduct Authority (FCA), which will initiate a refund directly from HMRC to your bank."
+      english = "This is a service provided by Ecospend, an authorised payment institution regulated by the Financial Conduct Authority (FCA). Ecospend will check your bank details so HMRC can send the refund to your bank account."
     )
 
     val `Ecospend will have one-off access to`: Message = Message(
@@ -208,7 +208,7 @@ object Messages {
     )
 
     val `Choose another way to get my money`: Message = Message(
-      english = "Choose another way to get my money"
+      english = "Choose another way to get my refund"
     )
 
   }
@@ -223,13 +223,13 @@ object Messages {
     )
 
     def `This usually takes a few seconds`(refreshLink: String): Message = Message(
-      english = s"""This usually takes a few seconds. You can <a href="$refreshLink" id="refresh-this-page" class="govuk-link">refresh this page</a> if it doesn't update automatically."""
+      english = s"""This usually takes a few seconds. You can <a href="$refreshLink" id="refresh-this-page" class="govuk-link">refresh this page</a> if it does not update automatically."""
     )
   }
 
   object ChooseAnotherWayToReceiveYourRefund {
     val `Choose another way to receive your refund`: Message = Message(
-      english = "Choose another way to receive your refund"
+      english = "Choose another way to get your refund"
     )
 
     val `You can claim your refund by bank transfer or cheque...`: Message = Message(
@@ -241,7 +241,7 @@ object Messages {
     )
 
     val `choose another way to receive your refund`: Message = Message(
-      english = "choose another way to receive your refund"
+      english = "choose another way to get your refund"
     )
 
     val `Bank transfer using your Government Gateway user ID to sign in`: Message = Message(
@@ -479,7 +479,7 @@ object Messages {
       english = "Try again"
     )
     val `Choose another method`: Message = Message(
-      english = "Choose another method"
+      english = "Choose another way to get my refund"
     )
     val `Claim your refund by bank transfer`: Message = Message(
       english = "Claim your refund by bank transfer"

@@ -34,7 +34,7 @@ class WeCannotConfirmYourIdentityPage(baseUrl: String, pathForJourneyType: Strin
 
     val chooseAnotherMethodLinkText: String = journeyType match {
       case JourneyType.Cheque       => "Claim your refund by bank transfer"
-      case JourneyType.BankTransfer => "Choose another method"
+      case JourneyType.BankTransfer => "Choose another way to get my refund"
     }
 
     val contentExpectations: Seq[ContentExpectation] = Seq(ContentExpectation(
