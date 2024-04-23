@@ -52,13 +52,16 @@ class WeAreVerifyingYourBankAccountController @Inject() (
     val journey: Journey = request.journey
     sanityChecks(consent_id, bank_reference_id, journey)
 
+    val consentStatus: ConsentStatus =
+      status.getOrElse(Errors.throwServerErrorException("This endpoint requires a status parameter."))
+
     for {
       isValidEventValue: EventValue <- obtainIsValid(journey)
       bankAccountSummary: BankAccountSummary <- obtainBankAccountSummary(journey)
       bankDetailsRiskResultResponse: GetBankDetailsRiskResultResponse <- obtainGetBankDetailsRiskResultResponse(journey, bankAccountSummary)
       //TODO: Fuzzy Name Matching
       newJourney = journey.update(isValidEventValue, bankAccountSummary, bankDetailsRiskResultResponse)
-      (result, newJourney) <- next(newJourney, isValidEventValue, bankDetailsRiskResultResponse, bankAccountSummary, status)
+      (result, newJourney) <- next(newJourney, isValidEventValue, bankDetailsRiskResultResponse, bankAccountSummary, consentStatus)
       _ <- journeyService.upsert(newJourney)
     } yield result
   }
@@ -68,27 +71,43 @@ class WeAreVerifyingYourBankAccountController @Inject() (
       isValidEventValue:             EventValue,
       bankDetailsRiskResultResponse: GetBankDetailsRiskResultResponse,
       bankAccountSummary:            BankAccountSummary,
-      consentStatus:                 Option[ConsentStatus]
-  )(implicit request: RequestHeader): Future[(Result, Journey)] = isValidEventValue match {
-    case EventValue.NotReceived => Future.successful(
+      consentStatus:                 ConsentStatus
+  )(implicit request: RequestHeader): Future[(Result, Journey)] = (isValidEventValue, consentStatus) match {
+    case (_, ConsentStatus.Failed) => Future.successful {
+      JourneyLogger.info(s"User failed consent flow. [ConsentStatus: Failed]")
       (
-        Ok(views.weAreVerifyingYourBankAccountPage(journey, consentStatus, Some(journey.getBankConsent.id), Some(journey.getBankConsent.bankReferenceId))),
+        Redirect(routes.RefundRequestNotSubmittedController.get),
+        journey
+      )
+    }
+    case (_, ConsentStatus.Canceled) => Future.successful {
+      JourneyLogger.info(s"User Canceled consent flow. [ConsentStatus: Canceled]")
+      (
+        Redirect(routes.RefundRequestNotSubmittedController.get),
+        journey
+      )
+    }
+    case (EventValue.NotReceived, ConsentStatus.Authorised) => Future.successful(
+      (
+        Ok(views.weAreVerifyingYourBankAccountPage(journey, Some(consentStatus), Some(journey.getBankConsent.id), Some(journey.getBankConsent.bankReferenceId))),
         journey
       )
     )
-    case EventValue.NotValid => Future.successful {
+    case (EventValue.NotValid, ConsentStatus.Authorised) => Future.successful {
       JourneyLogger.info(s"Account assessment failed.")
       (
         Redirect(routes.RefundRequestNotSubmittedController.get),
         journey.update(HasFinished.YesRefundNotSubmitted)
       )
     }
-    case EventValue.Valid =>
+    case (EventValue.Valid, ConsentStatus.Authorised) =>
       JourneyLogger.info(s"Account assessment succeeded.")
       bankDetailsRiskResultResponse.overallRiskResult.nextAction match {
         case NextAction.DoNotPay => handleDoNotPay(journey)
         case NextAction.Pay      => handlePay(journey, bankAccountSummary)
       }
+    case (_, consentStatus) =>
+      Errors.throwServerErrorException(s"Unexpected [consentStatus: ${consentStatus.toString}]. Expected status to be one of [Authorised, Canceled, Failed].")
   }
 
   private def handleDoNotPay(journey: Journey)(implicit request: RequestHeader): Future[(Result, Journey)] = {
@@ -107,8 +126,8 @@ class WeAreVerifyingYourBankAccountController @Inject() (
       _ <- notifyCaseManagement(journey)
       _ <- p800RefundsBackendConnector.suspendOverpayment(journey.getNino, journey.getP800Reference, suspendOverpaymentRequest, journey.correlationId)
     } yield (
-      Redirect(routes.RefundRequestNotSubmittedController.get),
-      journey.update(hasFinished = HasFinished.YesRefundNotSubmitted)
+      Redirect(routes.RequestReceivedController.getBankTransfer),
+      journey.update(hasFinished = HasFinished.YesSentToCaseManagement)
     )
   }
 

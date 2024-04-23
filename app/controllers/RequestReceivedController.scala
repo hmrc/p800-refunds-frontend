@@ -45,7 +45,6 @@ class RequestReceivedController @Inject() (
     if (journey.hasFinished === HasFinished.YesRefundNotSubmitted) {
       Future.successful(Redirect(controllers.routes.RefundRequestNotSubmittedController.get))
     } else {
-
       journey.getJourneyType match {
         case JourneyType.Cheque       => getResultCheque(journey)
         case JourneyType.BankTransfer => getResultBankTransfer(journey)

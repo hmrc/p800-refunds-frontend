@@ -206,10 +206,12 @@ class VerifyBankAccountPageSpec extends ItSpec {
     NpsClaimOverpaymentStub.verifyNoneClaimOverpayment(tdAll.nino, tdAll.p800ReferenceSanitised)
   }
 
-  "redirect to 'Request not submitted' page when EDH call results in nextAction=DoNotPay" in {
+  "redirect to 'Request received' page when EDH call results in nextAction=DoNotPay" in {
+    // NOTE: When the EDH risk call fails, the application should direct the user to the 'Request received' page.
     EcospendStub.AuthStubs.stubEcospendAuth2xxSucceeded
     EcospendStub.AccountStub.stubAccountSummary2xxSucceeded(tdAll.consentId)
     P800RefundsExternalApiStub.isValid(tdAll.consentId, EventValue.Valid)
+    DateCalculatorStub.addWorkingDays()
 
     val doNotPay: GetBankDetailsRiskResultResponse = tdAll.getBankDetailsRiskResultResponseDoNotPay
     EdhStub.getBankDetailsRiskResult(tdAll.getBankDetailsRiskResultRequest, doNotPay)
@@ -217,14 +219,13 @@ class VerifyBankAccountPageSpec extends ItSpec {
     NpsSuspendOverpaymentStub.suspendOverpayment(tdAll.nino, tdAll.p800ReferenceSanitised, tdAll.suspendOverpaymentRequest)
 
     pages.verifyBankAccountPage.open()
-    pages.refundRequestNotSubmittedPage.assertPageIsDisplayed()
+    pages.requestReceivedBankTransferPage.assertPageIsDisplayedForBankTransfer()
 
     EdhStub.verifyGetBankDetailsRiskResult(tdAll.claimId, tdAll.correlationId)
     CaseManagementStub.verifyNotifyCaseManagement(tdAll.clientUId, tdAll.correlationId)
     NpsSuspendOverpaymentStub.verifySuspendOverpayment(tdAll.nino, tdAll.p800ReferenceSanitised, tdAll.correlationId)
     P800RefundsExternalApiStub.verifyIsValid(tdAll.consentId)
     NpsClaimOverpaymentStub.verifyNoneClaimOverpayment(tdAll.nino, tdAll.p800ReferenceSanitised)
-
   }
 
   "Show technical difficulties page when 'Notify case management' call fails" in {
