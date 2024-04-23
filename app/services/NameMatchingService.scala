@@ -16,44 +16,43 @@
 
 package services
 
+import action.JourneyRequest
 import models.namematching._
-import nps.models.TraceIndividualResponse
 import org.apache.commons.text.similarity.LevenshteinDetailedDistance
-import play.api.Logger
+import util.JourneyLogger
 import util.SafeEquals.EqualsOps
 
 import java.text.Normalizer
-import javax.inject.{Inject, Singleton}
 
-@Singleton
-class NameMatchingService @Inject() () extends {
-  private val log: Logger = Logger("nameMatchingService")
+class NameMatchingService extends {
 
-  def buildNpsName(indiTrace: TraceIndividualResponse): String = {
-    val surnameNoSpaces = indiTrace.surname.replaceAll(" +", "")
-    s"${indiTrace.firstForename.getOrElse("")} ${indiTrace.secondForename.getOrElse("")} $surnameNoSpaces"
-  }
+  def fuzzyNameMatching(
+      npsOptFirstName:  Option[String],
+      npsOptSecondName: Option[String],
+      npsSurname:       String,
+      ecospendName:     String
+  )(implicit request: JourneyRequest[_]): NameMatchingResponse = {
 
-  def fuzzyNameMatching(npsName: TraceIndividualResponse, ecospendName: String): NameMatchingResponse = {
-    val (sanitisedNpsName, sanitisedEcospendName) = (sanitiseName(buildNpsName(npsName)), sanitiseName(ecospendName))
+    val sanitisedNpsName = sanitiseFullName(s"${removeSpacesAndHyphens(npsOptFirstName.getOrElse(""))} ${npsOptSecondName.getOrElse("")} ${removeSpacesAndHyphens(npsSurname)}")
+    val sanitisedEcospendName = sanitiseFullName(ecospendName)
 
     val npsNamesList = sanitisedNpsName.split(' ')
     val ecoNamesList = sanitisedEcospendName.split(' ')
-    val (npsListWithoutSurname, npsSurname) = npsNamesList.splitAt(npsNamesList.length - 1)
+    val (npsListWithoutSurname, npsSurnameFromArray) = npsNamesList.splitAt(npsNamesList.length - 1)
     val (ecoListWithoutSurname, ecoSurname) = ecoNamesList.splitAt(ecoNamesList.length - 1)
 
     val doSanitisedNamesMatch = sanitisedNpsName === sanitisedEcospendName
-    val doSurnamesMatch = npsSurname.head === ecoSurname.head
+    val doSurnamesMatch = npsSurnameFromArray.head === ecoSurname.head
 
     (doSanitisedNamesMatch, doSurnamesMatch) match {
       case (true, _) => BasicSuccessfulNameMatch
       case (false, false) =>
-        log.info(s"Failed Surname Match")
+        JourneyLogger.info(s"Failed Surname Match")
         FailedNameMatch
       case (false, true) =>
         val comparisonResult = compareFirstAndMiddleNames(npsListWithoutSurname, ecoListWithoutSurname)
         if (comparisonResult.didNamesMatch) {
-          log.info("Successful Initials Match")
+          JourneyLogger.info(s"Successful Initials Match")
           InitialsSuccessfulNameMatch
         } else {
           isWithinLevenshteinDistance(comparisonResult.npsNameWithInitials, comparisonResult.ecospendNameWithInitials)
@@ -84,9 +83,20 @@ class NameMatchingService @Inject() () extends {
     }
   }
 
-  def sanitiseName(name: String): String = {
+  def removeSpacesAndHyphens(name: String): String = {
+    name.trim
+      .replace("-", "")
+      .replaceAll("\\s", "")
+  }
+
+  def sanitiseFullName(name: String): String = {
     val nameWithoutDiatrics = removeDiacritics(name)
-    val nameWithoutHyphensOrSpaces = nameWithoutDiatrics.replace("-", "").trim.replaceAll(" +", " ")
+    val nameWithoutHyphensOrSpaces = nameWithoutDiatrics
+      .replace("-", "")
+      .trim
+      .replaceAll(" +", " ")
+      .replaceAll("\\s", " ")
+
     nameWithoutHyphensOrSpaces.toLowerCase
   }
 
@@ -96,13 +106,13 @@ class NameMatchingService @Inject() () extends {
   }
 
   @SuppressWarnings(Array("org.wartremover.warts.AutoUnboxing"))
-  def isWithinLevenshteinDistance(name: String, comparisonName: String): NameMatchingResponse = {
+  def isWithinLevenshteinDistance(name: String, comparisonName: String)(implicit request: JourneyRequest[_]): NameMatchingResponse = {
     val distance = LevenshteinDetailedDistance.getDefaultInstance.apply(name, comparisonName)
     if (distance.getDistance <= 1) {
-      log.info("Successful Levenshtein Match")
+      JourneyLogger.info("Successful Levenshtein Match")
       LevenshteinSuccessfulNameMatch
     } else {
-      log.info("Failed Levenshtein Match")
+      JourneyLogger.info("Failed Levenshtein Match")
       FailedNameMatch
     }
   }

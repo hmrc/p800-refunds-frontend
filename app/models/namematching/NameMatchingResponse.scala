@@ -16,11 +16,20 @@
 
 package models.namematching
 
-sealed trait NameMatchingResponse
+sealed trait NameMatchingResponse {
+  val isSuccess: Boolean
+}
 
-case object BasicSuccessfulNameMatch extends NameMatchingResponse
-case object InitialsSuccessfulNameMatch extends NameMatchingResponse
-case object LevenshteinSuccessfulNameMatch extends NameMatchingResponse
-case object FailedNameMatch extends NameMatchingResponse
+sealed class SuccessfulMatch extends NameMatchingResponse {
+  val isSuccess = true
+}
+
+case object BasicSuccessfulNameMatch extends SuccessfulMatch
+case object InitialsSuccessfulNameMatch extends SuccessfulMatch
+case object LevenshteinSuccessfulNameMatch extends SuccessfulMatch
+
+case object FailedNameMatch extends NameMatchingResponse {
+  override val isSuccess: Boolean = false
+}
 
 final case class ComparisonResult(didNamesMatch: Boolean, npsNameWithInitials: String, ecospendNameWithInitials: String)

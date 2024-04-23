@@ -85,11 +85,25 @@ trait TdBase {
   lazy val firstForename: String = "Accolon"
   lazy val surname: String = "of Gaul"
 
+  lazy val firstNameGreg = "Greg"
+  lazy val secondForenameGreggson = "Greggory"
+  lazy val surnameGreg = "Greggson"
+
   lazy val traceIndividualResponse = TraceIndividualResponse(
     title           = Some(title),
     firstForename   = Some(firstForename),
     secondForename  = None,
     surname         = surname,
+    addressLine1    = "Flat 1 Rose House",
+    addressLine2    = "Worthing",
+    addressPostcode = Postcode("BN12 4XL")
+  )
+
+  lazy val traceIndividualResponseSuccessFulNameMatch: TraceIndividualResponse = TraceIndividualResponse(
+    title           = Some(title),
+    firstForename   = Some("Greg"),
+    secondForename  = Some("Greggory"),
+    surname         = "Greggson",
     addressLine1    = "Flat 1 Rose House",
     addressLine2    = "Worthing",
     addressPostcode = Postcode("BN12 4XL")
@@ -213,8 +227,8 @@ trait TdBase {
     contact               = List(
       CaseManagementContact(
         `type`    = PersonType.Customer,
-        firstName = firstForename,
-        surname   = surname,
+        firstName = firstNameGreg,
+        surname   = surnameGreg,
         address   = List()
       )
     ),
