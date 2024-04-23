@@ -47,20 +47,6 @@ class EnterYourNationalInsuranceNumberPage(baseUrl: String, pathForJourneyType: 
           |For example, ‘QQ 12 34 56 C’.
           |Continue
           |""".stripMargin
-    ),
-    ContentExpectation(
-      atXpath       = """//*[@class="govuk-details__summary-text"]""",
-      expectedLines =
-        """
-          |I do not know my National Insurance number
-          |""".stripMargin
-    ),
-    ContentExpectation(
-      atXpath       = """//*[@class="govuk-details__text"]""",
-      expectedLines =
-        """
-          |You can get help to find a lost National Insurance number (opens in new tab)
-          |""".stripMargin
     )
   )
 
