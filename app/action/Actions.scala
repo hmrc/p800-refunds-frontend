@@ -66,7 +66,7 @@ class Actions @Inject() (
       }
     case HasFinished.YesSentToCaseManagement =>
       journey.journeyType match {
-        case Some(JourneyType.BankTransfer)  => controllers.routes.RequestReceivedController.getBankTransfer
+        case Some(JourneyType.BankTransfer) => controllers.routes.RequestReceivedController.getBankTransfer
         case Some(JourneyType.Cheque) | None =>
           throw new RuntimeException(s"This case is not supported for YesSentToCaseManagement, journey should have a journey type of BankTransfer but was [${journey.journeyType.toString}] [${journey.id.toString}] [${journey.hasFinished.toString}]")
       }
