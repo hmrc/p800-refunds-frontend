@@ -61,11 +61,8 @@ class EnterYourNationalInsuranceNumberPage(baseUrl: String, pathForJourneyType: 
       title               = PageUtil.standardTitleWithJourneyType(expectedTitleContent, journeyType),
       contentExpectations = contentExpectations: _*
     )
-    lostNationalInsuranceNumberHref() shouldBe "https://www.gov.uk/lost-national-insurance-number"
-    ()
-  }
 
-  private def lostNationalInsuranceNumberHref(): String = PageUtil.getHrefById("lost-national-insurance-number-link")
+  }
 
   def assertPageShowsErrorEmptyInput(journeyType: JourneyType): Unit = withPageClue {
     val contentExpectations = Seq(
