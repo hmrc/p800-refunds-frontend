@@ -22,11 +22,12 @@ import play.api.libs.json.OFormat
 object HasFinished {
 
   def hasFinished(hasFinished: HasFinished): Boolean = hasFinished match {
-    case No                    => false
-    case YesSucceeded          => true
-    case YesRefundNotSubmitted => true
-    case YesLockedOut          => true
-    case YesRefundAlreadyTaken => true
+    case No                      => false
+    case YesSucceeded            => true
+    case YesSentToCaseManagement => true
+    case YesRefundNotSubmitted   => true
+    case YesLockedOut            => true
+    case YesRefundAlreadyTaken   => true
   }
 
   def isInProgress(hasFinished: HasFinished): Boolean = !HasFinished.hasFinished(hasFinished)
@@ -40,6 +41,11 @@ object HasFinished {
    * Journey has finished in successful way. The refund was claimed or standing order was requested
    */
   case object YesSucceeded extends HasFinished
+
+  /**
+   * Journey has finished in successful way. The refund has been sent to case management for manual review.
+   */
+  case object YesSentToCaseManagement extends HasFinished
 
   /**
    * Claiming refund failed

@@ -36,7 +36,8 @@ class AppConfig @Inject() (servicesConfig: ServicesConfig, configuration: Config
     val failedAttemptRepoMaxAttempts: Int = configuration.get[Int]("mongodb.failed-attempts.failed-attempt-repo-max-attempts")
   }
 
-  val platformFrontendHost: String = readConfigAsValidUrlString("platform.frontend.host")
+  val platformFrontendHost: String = readConfigAsValidUrlString("urls.localhost")
+  val feedbackFrontendUrl: String = readConfigAsValidUrlString("urls.feedback-frontend")
 
   val govUkRouteIn: String = readConfigAsValidUrlString("urls.gov-uk.govuk-route-in")
 
@@ -45,8 +46,6 @@ class AppConfig @Inject() (servicesConfig: ServicesConfig, configuration: Config
   val generalEnquiriesUrl: String = readConfigAsValidUrlString("urls.gov-uk.general-enquiries")
 
   val lostNationalInsuranceNumberUrl: String = readConfigAsValidUrlString("urls.gov-uk.lost-national-insurance-number")
-
-  val feedbackFrontendUrl: String = readConfigAsValidUrlString("urls.feedback-frontend")
 
   object PersonalTaxAccountUrls {
     val personalTaxAccountSignInUrl: String = readConfigAsValidUrlString("urls.pta-sign-in")
@@ -87,7 +86,7 @@ class AppConfig @Inject() (servicesConfig: ServicesConfig, configuration: Config
    */
   private def readConfigAsValidUrlString(configPath: String): String = {
     val url: String = configuration.get[String](configPath)
-    Try(new java.net.URI(url)).fold[String](
+    Try(new java.net.URI(url).toURL).fold[String](
       e => throw new RuntimeException(s"Invalid URL in config under [$configPath]", e),
       _ => url
     )
