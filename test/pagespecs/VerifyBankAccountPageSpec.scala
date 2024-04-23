@@ -208,6 +208,8 @@ class VerifyBankAccountPageSpec extends ItSpec {
 
   "redirect to 'Request received' page when EDH call results in nextAction=DoNotPay" in {
     // NOTE: When the EDH risk call fails, the application should direct the user to the 'Request received' page.
+    // Where the customer passes the Ecospend fraud algorithm but fails the RIS Risking/EDH, we need to mirror PTA
+    // and advice the customer the refund is being processed
     EcospendStub.AuthStubs.stubEcospendAuth2xxSucceeded
     EcospendStub.AccountStub.stubAccountSummary2xxSucceeded(tdAll.consentId)
     P800RefundsExternalApiStub.isValid(tdAll.consentId, EventValue.Valid)
