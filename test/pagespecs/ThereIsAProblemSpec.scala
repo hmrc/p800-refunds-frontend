@@ -18,7 +18,7 @@ package pagespecs
 
 import models.journeymodels.Journey
 import testsupport.ItSpec
-import testsupport.stubs.NpsReferenceCheckStub
+import testsupport.stubs.VerifyP800ReferenceStub
 
 class ThereIsAProblemSpec extends ItSpec {
 
@@ -44,7 +44,7 @@ class ThereIsAProblemSpec extends ItSpec {
 
   "If locked out the user should not be able to click back - instead be redirected to the 'There is a problem' page" in {
     val j: Journey = tdAll.BankTransfer.journeyEnteredDateOfBirth
-    NpsReferenceCheckStub.checkReferenceRefundAlreadyTaken(j.nino.value, tdAll.p800ReferenceSanitised)
+    VerifyP800ReferenceStub.refundAlreadyTaken(j.nino.value, tdAll.p800ReferenceSanitised)
     upsertJourneyToDatabase(j)
     pages.checkYourAnswersBankTransferPage.open()
     pages.checkYourAnswersBankTransferPage.clickSubmit()

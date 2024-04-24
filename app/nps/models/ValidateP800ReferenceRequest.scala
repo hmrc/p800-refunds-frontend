@@ -16,15 +16,15 @@
 
 package nps.models
 
-import _root_.models.Nino
-import play.api.libs.json.{OFormat, Json}
+import models.{Nino, P800Reference}
+import play.api.libs.json.{Json, OFormat}
 
-final case class ClaimOverpaymentResponse(
-    identifier:            Nino,
-    currentOptimisticLock: CurrentOptimisticLock
+final case class ValidateP800ReferenceRequest(
+    nino:          Nino,
+    p800Reference: P800Reference
 )
 
-@SuppressWarnings(Array("org.wartremover.warts.Any"))
-object ClaimOverpaymentResponse {
-  implicit val format: OFormat[ClaimOverpaymentResponse] = Json.format[ClaimOverpaymentResponse]
+object ValidateP800ReferenceRequest {
+  @SuppressWarnings(Array("org.wartremover.warts.Any"))
+  implicit val format: OFormat[ValidateP800ReferenceRequest] = Json.format[ValidateP800ReferenceRequest]
 }

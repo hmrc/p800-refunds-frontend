@@ -19,7 +19,7 @@ package nps.models
 import models.P800Reference
 import play.api.libs.json.{Json, OFormat}
 
-final case class SuspendOverpaymentRequest(
+final case class MakeBacsRepaymentRequest(
     paymentNumber:            P800Reference,
     currentOptimisticLock:    CurrentOptimisticLock,
     reconciliationIdentifier: ReconciliationIdentifier,
@@ -30,8 +30,7 @@ final case class SuspendOverpaymentRequest(
     designatedPayeeAccount:   DesignatedPayeeAccount
 )
 
-object SuspendOverpaymentRequest {
-  @SuppressWarnings(Array("org.wartremover.warts.Any"))
-  implicit val format: OFormat[SuspendOverpaymentRequest] = Json.format[SuspendOverpaymentRequest]
+@SuppressWarnings(Array("org.wartremover.warts.Any"))
+object MakeBacsRepaymentRequest {
+  implicit val format: OFormat[MakeBacsRepaymentRequest] = Json.format[MakeBacsRepaymentRequest]
 }
-

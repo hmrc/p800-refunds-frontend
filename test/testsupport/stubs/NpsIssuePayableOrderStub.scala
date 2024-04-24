@@ -16,53 +16,52 @@
 
 package testsupport.stubs
 
+import com.github.tomakehurst.wiremock.client.WireMock
 import com.github.tomakehurst.wiremock.client.WireMock._
 import com.github.tomakehurst.wiremock.stubbing.StubMapping
 import models.{CorrelationId, Nino, P800Reference}
 import nps.models.IssuePayableOrderRequest
 import play.api.http.Status
-import play.api.libs.json.{JsObject, Json}
+import play.api.libs.json.Json
 import testsupport.stubs.NpsHeaders.npsHeaders
 
 object NpsIssuePayableOrderStub {
 
-  def issuePayableOrder(nino: Nino, p800Reference: P800Reference, request: IssuePayableOrderRequest, response: JsObject): StubMapping = {
-    WireMockHelpers.Put.stubForPut(
+  def `issuePayableOrder 200`(nino: Nino, p800Reference: P800Reference, request: IssuePayableOrderRequest): StubMapping = {
+    WireMockHelpers.Post.stubForPost(
       url             = url(nino, p800Reference),
-      responseBody    = Json.prettyPrint(response),
+      responseBody    = "",
       responseStatus  = Status.OK,
       requestBodyJson = Some(Json.prettyPrint(Json.toJson(request))),
       requiredHeaders = npsHeaders
     )
   }
 
-  def issuePayableOrderRefundAlreadyTaken(nino: Nino, p800Reference: P800Reference, request: IssuePayableOrderRequest): StubMapping = {
-    WireMockHelpers.Put.stubForPut(
+  def `issuePayableOrder 5xx refundAlreadyTaken`(nino: Nino, p800Reference: P800Reference, request: IssuePayableOrderRequest): StubMapping = {
+    WireMockHelpers.Post.stubForPost(
       url             = url(nino, p800Reference),
       responseBody    =
-        //language=JSON
-        """
-        {
+        //whatever actually because it will be only logged when exception is caught by error handler
+        """POST of url ... returned 422. Response body: '{
          "failures" : [
            {"reason" : "Overpayment has already been claimed", "code": "63480"}
          ]
-        }
-        """.stripMargin,
-      responseStatus  = Status.UNPROCESSABLE_ENTITY,
+        }'""",
+      responseStatus  = Status.INTERNAL_SERVER_ERROR,
       requestBodyJson = Some(Json.prettyPrint(Json.toJson(request))),
       requiredHeaders = npsHeaders
     )
   }
 
-  def verifyIssuePayableOrder(nino: Nino, p800Reference: P800Reference, correlationId: CorrelationId): Unit =
-    verify(
+  def verify(nino: Nino, p800Reference: P800Reference, correlationId: CorrelationId): Unit =
+    WireMock.verify(
       exactly(1),
       putRequestedFor(urlPathEqualTo(url(nino, p800Reference)))
         .withHeader("correlationid", matching(correlationId.value.toString))
     )
 
-  def verifyNoneIssuePayableOrder(nino: Nino, p800Reference: P800Reference): Unit =
-    verify(exactly(0), putRequestedFor(urlPathEqualTo(url(nino, p800Reference))))
+  def verifyNone(nino: Nino, p800Reference: P800Reference): Unit =
+    WireMock.verify(exactly(0), putRequestedFor(urlPathEqualTo(url(nino, p800Reference))))
 
-  private def url(nino: Nino, p800Reference: P800Reference) = s"/p800-refunds-backend/nps-json-service/nps/v1/api/accounting/issue-payable-order/${nino.value}/${p800Reference.value}"
+  private def url(nino: Nino, p800Reference: P800Reference) = s"/p800-refunds-backend/nps/issue-payable-order/${nino.value}/${p800Reference.value}"
 }

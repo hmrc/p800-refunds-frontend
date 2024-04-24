@@ -24,7 +24,7 @@ import models.ecospend.account.BankAccountSummary
 import models.ecospend.consent.{BankReferenceId, ConsentId, ConsentStatus}
 import models.journeymodels._
 import models.p800externalapi.EventValue
-import nps.models.ReferenceCheckResult.P800ReferenceChecked
+import nps.models.ValidateReferenceResult.P800ReferenceChecked
 import nps.models._
 import play.api.mvc._
 import services.{EcospendService, JourneyService}
@@ -113,6 +113,7 @@ class WeAreVerifyingYourBankAccountController @Inject() (
   private def handleDoNotPay(journey: Journey)(implicit request: RequestHeader): Future[(Result, Journey)] = {
 
     val suspendOverpaymentRequest = SuspendOverpaymentRequest(
+      paymentNumber            = journey.getP800Reference,
       currentOptimisticLock    = journey.getP800ReferenceChecked.currentOptimisticLock,
       reconciliationIdentifier = journey.getP800ReferenceChecked.reconciliationIdentifier,
       associatedPayableNumber  = journey.getP800ReferenceChecked.associatedPayableNumber,
@@ -124,7 +125,7 @@ class WeAreVerifyingYourBankAccountController @Inject() (
 
     for {
       _ <- notifyCaseManagement(journey)
-      _ <- p800RefundsBackendConnector.suspendOverpayment(journey.getNino, journey.getP800Reference, suspendOverpaymentRequest, journey.correlationId)
+      _ <- p800RefundsBackendConnector.suspendOverpayment(journey.getNino, suspendOverpaymentRequest, journey.correlationId)
     } yield (
       Redirect(routes.RequestReceivedController.getBankTransfer),
       journey.update(hasFinished = HasFinished.YesSentToCaseManagement)
@@ -132,7 +133,7 @@ class WeAreVerifyingYourBankAccountController @Inject() (
   }
 
   private def handlePay(journey: Journey, bankAccountSummary: BankAccountSummary)(implicit request: RequestHeader): Future[(Result, Journey)] = {
-    claimOverpayment(journey, bankAccountSummary).map{ _ =>
+    makeBacsRepayment(journey, bankAccountSummary).map{ _ =>
       (
         Redirect(routes.RequestReceivedController.getBankTransfer),
         journey.update(hasFinished = HasFinished.YesSucceeded)
@@ -281,10 +282,11 @@ class WeAreVerifyingYourBankAccountController @Inject() (
       .map(_ => ())
   }
 
-  private def claimOverpayment(journey: Journey, bankAccountSummary: BankAccountSummary)(implicit request: RequestHeader): Future[Unit] = {
+  private def makeBacsRepayment(journey: Journey, bankAccountSummary: BankAccountSummary)(implicit request: RequestHeader): Future[Unit] = {
     val p800ReferenceCheckResult: P800ReferenceChecked = journey.getP800ReferenceChecked
 
-    val claimOverpaymentRequest: ClaimOverpaymentRequest = ClaimOverpaymentRequest(
+    val makeBacsRepaymentRequest: MakeBacsRepaymentRequest = MakeBacsRepaymentRequest(
+      paymentNumber            = journey.getP800Reference,
       currentOptimisticLock    = p800ReferenceCheckResult.currentOptimisticLock,
       reconciliationIdentifier = p800ReferenceCheckResult.reconciliationIdentifier,
       associatedPayableNumber  = p800ReferenceCheckResult.associatedPayableNumber,
@@ -295,7 +297,7 @@ class WeAreVerifyingYourBankAccountController @Inject() (
     )
 
     p800RefundsBackendConnector
-      .claimOverpayment(journey.getNino, journey.getP800Reference, claimOverpaymentRequest, journey.correlationId)
+      .makeBacsRepayment(journey.getNino, makeBacsRepaymentRequest, journey.correlationId)
       .map(_ => ())
   }
 

@@ -36,56 +36,45 @@ class P800RefundsBackendConnector @Inject() (
     httpClient: HttpClient
 )(implicit executionContext: ExecutionContext) {
 
-  private def referenceCheckUrl(nino: Nino, p800Reference: P800Reference): String = appConfig.P800RefundsBackend.p800RefundsBackendBaseUrl +
-    s"/nps-json-service/nps/v1/api/reconciliation/p800/${nino.value}/${p800Reference.value}"
+  private val baseUrl: String = appConfig.P800RefundsBackend.p800RefundsBackendBaseUrl + "/p800-refunds-backend"
 
-  def p800ReferenceCheck(nino: Nino, p800Reference: P800Reference, correlationId: CorrelationId)(implicit requestHeader: RequestHeader): Future[ReferenceCheckResult] = {
-    val sanitisedP800Reference = p800Reference.sanitiseReference
+  private def makeHeaders(correlationId: CorrelationId): Seq[(String, String)] = Seq(
+    P800RefundsBackendConnector.makeCorrelationIdHeader(correlationId)
+  )
+
+  def validateP800Reference(nino: Nino, p800Reference: P800Reference, correlationId: CorrelationId)(implicit requestHeader: RequestHeader): Future[ValidateReferenceResult] = {
     httpClient
-      .GET[ReferenceCheckResult](
-        url     = referenceCheckUrl(nino, sanitisedP800Reference),
-        headers = Seq(P800RefundsBackendConnector.makeCorrelationIdHeader(correlationId))
+      .POST[ValidateP800ReferenceRequest, ValidateReferenceResult](
+        url     = s"$baseUrl/nps/validate-p800-reference",
+        body    = ValidateP800ReferenceRequest(nino, p800Reference),
+        headers = makeHeaders(correlationId)
       )
   }
-
-  private val traceIndividualUrl: String = appConfig.P800RefundsBackend.p800RefundsBackendBaseUrl +
-    "/nps-json-service/nps/v1/api/individual/trace-individual?exactMatch=true&returnRealName=true"
 
   def traceIndividual(traceIndividualRequest: TraceIndividualRequest, correlationId: CorrelationId)(implicit requestHeader: RequestHeader): Future[TraceIndividualResponse] = {
     httpClient
       .POST[TraceIndividualRequest, TraceIndividualResponse](
-        url     = traceIndividualUrl,
+        url     = s"$baseUrl/nps/trace-individual",
         body    = traceIndividualRequest,
-        headers = Seq(P800RefundsBackendConnector.makeCorrelationIdHeader(correlationId))
+        headers = makeHeaders(correlationId)
       )
   }
 
-  private def claimOverpaymentUrl(nino: Nino, p800Reference: P800Reference): String = appConfig.P800RefundsBackend.p800RefundsBackendBaseUrl +
-    s"/nps-json-service/nps/v1/api/accounting/claim-overpayment/${nino.value}/${p800Reference.sanitiseReference.value}"
-
-  def claimOverpayment(
-      nino:                    Nino,
-      p800Reference:           P800Reference,
-      claimOverpaymentRequest: ClaimOverpaymentRequest,
-      correlationId:           CorrelationId
-  )(implicit requestHeader: RequestHeader): Future[ClaimOverpaymentResponse] = {
-
-    JourneyLogger.info("Claiming overpayment")
-    val sanitisedP800Reference = p800Reference.sanitiseReference
-    httpClient
-      .PUT[ClaimOverpaymentRequest, ClaimOverpaymentResponse](
-        url     = claimOverpaymentUrl(nino, sanitisedP800Reference),
-        body    = claimOverpaymentRequest,
-        headers = Seq(P800RefundsBackendConnector.makeCorrelationIdHeader(correlationId))
-      )
+  def makeBacsRepayment(
+      nino:                     Nino,
+      makeBacsRepaymentRequest: MakeBacsRepaymentRequest,
+      correlationId:            CorrelationId
+  )(implicit requestHeader: RequestHeader): Future[MakeBacsRepaymentResponse] = {
+    JourneyLogger.info("Making Bacs repayment (Claiming overpayment)")
+    httpClient.POST[MakeBacsRepaymentRequest, MakeBacsRepaymentResponse](
+      url     = s"$baseUrl/nps/make-bacs-repayment/${nino.value}",
+      body    = makeBacsRepaymentRequest,
+      headers = makeHeaders(correlationId)
+    )
   }
-
-  private def suspendOverpaymentUrl(nino: Nino, p800Reference: P800Reference): String = appConfig.P800RefundsBackend.p800RefundsBackendBaseUrl +
-    s"/nps-json-service/nps/v1/api/accounting/suspend-overpayment/${nino.value}/${p800Reference.sanitiseReference.value}"
 
   def suspendOverpayment(
       nino:                      Nino,
-      p800Reference:             P800Reference,
       suspendOverpaymentRequest: SuspendOverpaymentRequest,
       correlationId:             CorrelationId
   )(implicit requestHeader: RequestHeader): Future[Unit] = {
@@ -93,15 +82,12 @@ class P800RefundsBackendConnector @Inject() (
 
     implicit val readUnit: HttpReads[Unit] = HttpResponseUtils.httpReadsUnit
 
-    httpClient.PUT[SuspendOverpaymentRequest, Unit](
-      url     = suspendOverpaymentUrl(nino, p800Reference),
+    httpClient.POST[SuspendOverpaymentRequest, Unit](
+      url     = s"$baseUrl/nps/suspend-overpayment/${nino.value}",
       body    = suspendOverpaymentRequest,
-      headers = Seq(P800RefundsBackendConnector.makeCorrelationIdHeader(correlationId))
+      headers = makeHeaders(correlationId)
     )
   }
-
-  private def issuePayableOrderUrl(nino: Nino, p800Reference: P800Reference): String = appConfig.P800RefundsBackend.p800RefundsBackendBaseUrl +
-    s"/nps-json-service/nps/v1/api/accounting/issue-payable-order/${nino.value}/${p800Reference.sanitiseReference.value}"
 
   def issuePayableOrder(
       nino:                     Nino,
@@ -113,14 +99,14 @@ class P800RefundsBackendConnector @Inject() (
 
     implicit val readUnit: HttpReads[Unit] = HttpResponseUtils.httpReadsUnit
 
-    httpClient.PUT[IssuePayableOrderRequest, Unit](
-      url     = issuePayableOrderUrl(nino, p800Reference),
+    httpClient.POST[IssuePayableOrderRequest, Unit](
+      url     = s"$baseUrl/nps/issue-payable-order/${nino.value}/${p800Reference.sanitiseReference.value}",
       body    = issuePayableOrderRequest,
-      headers = Seq(P800RefundsBackendConnector.makeCorrelationIdHeader(correlationId))
+      headers = makeHeaders(correlationId)
     )
   }
 
-  private def getBankDetailsRiskResultUrl(claimId: ClaimId): String = appConfig.P800RefundsBackend.p800RefundsBackendBaseUrl +
+  private def getBankDetailsRiskResultUrl(claimId: ClaimId): String = baseUrl +
     s"/risking/claims/${claimId.value}/bank-details"
 
   def getBankDetailsRiskResult(claimId: ClaimId, request: GetBankDetailsRiskResultRequest, correlationId: CorrelationId)(implicit requestHeader: RequestHeader): Future[GetBankDetailsRiskResultResponse] = {
@@ -128,14 +114,14 @@ class P800RefundsBackendConnector @Inject() (
     httpClient.POST[GetBankDetailsRiskResultRequest, GetBankDetailsRiskResultResponse](
       url     = getBankDetailsRiskResultUrl(claimId),
       body    = request,
-      headers = Seq(P800RefundsBackendConnector.makeCorrelationIdHeader(correlationId))
+      headers = makeHeaders(correlationId)
     ).map { response: GetBankDetailsRiskResultResponse =>
         JourneyLogger.info(s"got BankDetailsRiskResult from EDH ${claimId.toString} succeeded: [NextAction=${response.overallRiskResult.nextAction.toString}]")
         response
       }
   }
 
-  private def notifyCaseManagementUrl(clientUId: ClientUId): String = appConfig.P800RefundsBackend.p800RefundsBackendBaseUrl +
+  private def notifyCaseManagementUrl(clientUId: ClientUId): String = baseUrl +
     s"/risking/exceptions/${clientUId.value}"
 
   def notifyCaseManagement(
@@ -149,7 +135,7 @@ class P800RefundsBackendConnector @Inject() (
       .POST[CaseManagementRequest, Either[UpstreamErrorResponse, HttpResponse]](
         url     = notifyCaseManagementUrl(clientUId),
         body    = request,
-        headers = Seq(P800RefundsBackendConnector.makeCorrelationIdHeader(correlationId))
+        headers = makeHeaders(correlationId)
       ).map {
           case Right(_)    => ()
           case Left(error) => throw error

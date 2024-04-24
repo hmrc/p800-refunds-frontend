@@ -18,7 +18,7 @@ package testdata
 
 import models.journeymodels.HasFinished.hasFinished
 import models.journeymodels._
-import nps.models.ReferenceCheckResult
+import nps.models.ValidateReferenceResult
 
 /**
  * Test Data (Td) Journey. It has journey examples in all possible states.
@@ -73,7 +73,7 @@ trait TdJourney {
 
       lazy val journeyReferenceDidntMatchNino: Journey = {
         val j = journeyEnteredDateOfBirth.copy(
-          referenceCheckResult = Some(ReferenceCheckResult.ReferenceDidntMatchNino)
+          referenceCheckResult = Some(ValidateReferenceResult.ReferenceDidntMatchNino)
         )
         require(!j.isIdentityVerified, "this journey instance has to have NOT verified identity")
         j
@@ -84,7 +84,7 @@ trait TdJourney {
        */
       lazy val journeyRefundAlreadyTaken: Journey = {
         val j = journeyEnteredDateOfBirth.copy(
-          referenceCheckResult = Some(ReferenceCheckResult.RefundAlreadyTaken),
+          referenceCheckResult = Some(ValidateReferenceResult.RefundAlreadyTaken),
           hasFinished          = HasFinished.YesRefundAlreadyTaken
         )
         require(!j.isIdentityVerified, "this journey instance has to have NOT verified identity")
@@ -179,7 +179,7 @@ trait TdJourney {
 
       lazy val journeyReferenceDidntMatchNino: Journey = {
         val j = journeyEnteredNino.copy(
-          referenceCheckResult = Some(ReferenceCheckResult.ReferenceDidntMatchNino)
+          referenceCheckResult = Some(ValidateReferenceResult.ReferenceDidntMatchNino)
         )
         require(!j.isIdentityVerified, "this journey instance has to have NOT verified identity")
         j
@@ -190,7 +190,7 @@ trait TdJourney {
        */
       lazy val journeyRefundAlreadyTaken: Journey = {
         val j = journeyEnteredNino.copy(
-          referenceCheckResult = Some(ReferenceCheckResult.RefundAlreadyTaken),
+          referenceCheckResult = Some(ValidateReferenceResult.RefundAlreadyTaken),
           hasFinished          = HasFinished.YesRefundAlreadyTaken
         )
         require(!j.isIdentityVerified, "this journey instance has to have NOT verified identity")
