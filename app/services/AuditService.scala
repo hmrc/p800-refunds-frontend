@@ -16,7 +16,7 @@
 
 package services
 
-import models.audit.{AuditDetail, UserLoginSelection}
+import models.audit.{AuditDetail, UserLoginSelection, Login, IpAddressLockedout}
 import play.api.libs.json.{Json, Writes}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.audit.AuditExtensions._
@@ -42,7 +42,7 @@ class AuditService @Inject() (auditConnector: AuditConnector)(implicit ec: Execu
     )
   }
 
-  def auditUserLoginSelection(login: Boolean, ipAddressLockedout: Boolean)(implicit hc: HeaderCarrier): Unit =
+  def auditUserLoginSelection(login: Login, ipAddressLockedout: IpAddressLockedout)(implicit hc: HeaderCarrier): Unit =
     audit(UserLoginSelection(
       login              = login,
       ipAddressLockedout = ipAddressLockedout

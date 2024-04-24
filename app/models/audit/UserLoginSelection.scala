@@ -16,16 +16,28 @@
 
 package models.audit
 
-import play.api.libs.json.{Json, OWrites}
+import play.api.libs.json.{Json, Writes, OWrites}
 
 final case class UserLoginSelection(
-    login:              Boolean,
-    ipAddressLockedout: Boolean
+    login:              Login,
+    ipAddressLockedout: IpAddressLockedout
 ) extends AuditDetail {
   val auditType: String = "userLoginSelection"
 }
 
 object UserLoginSelection {
   implicit val writes: OWrites[UserLoginSelection] = Json.writes[UserLoginSelection]
+}
+
+final case class Login(value: Boolean) extends AnyVal
+
+object Login {
+  implicit val writes: Writes[Login] = Json.valueWrites[Login]
+}
+
+final case class IpAddressLockedout(value: Boolean) extends AnyVal
+
+object IpAddressLockedout {
+  implicit val writes: Writes[IpAddressLockedout] = Json.valueWrites[IpAddressLockedout]
 }
 

@@ -25,6 +25,7 @@ import requests.RequestSupport
 import services.{AuditService, FailedVerificationAttemptService}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import views.Views
+import models.audit.{Login, IpAddressLockedout}
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.ExecutionContext
@@ -57,14 +58,14 @@ class DoYouWantToSignInController @Inject() (
           form = formWithErrors
         )), {
           case DoYouWantToSignInFormValue.Yes => {
-            auditService.auditUserLoginSelection(login              = true, ipAddressLockedout = userIsLockedOut)(hc)
+            auditService.auditUserLoginSelection(Login(true), IpAddressLockedout(userIsLockedOut))(hc)
             Redirect(appConfig.PersonalTaxAccountUrls.personalTaxAccountSignInUrl)
           }
           case DoYouWantToSignInFormValue.No if userIsLockedOut =>
-            auditService.auditUserLoginSelection(login              = false, ipAddressLockedout = userIsLockedOut)(hc)
+            auditService.auditUserLoginSelection(Login(false), IpAddressLockedout(userIsLockedOut))(hc)
             Redirect(controllers.routes.YouCannotConfirmYourIdentityYetController.get)
           case DoYouWantToSignInFormValue.No =>
-            auditService.auditUserLoginSelection(login              = false, ipAddressLockedout = userIsLockedOut)(hc)
+            auditService.auditUserLoginSelection(Login(false), IpAddressLockedout(userIsLockedOut))(hc)
             Redirect(controllers.routes.DoYouWantYourRefundViaBankTransferController.get)
         }
       )
