@@ -22,7 +22,7 @@ import models.forms.DoYouWantToSignInForm
 import models.forms.enumsforforms.DoYouWantToSignInFormValue
 import play.api.mvc._
 import requests.RequestSupport
-import services.FailedVerificationAttemptService
+import services.{AuditService, FailedVerificationAttemptService}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import views.Views
 
@@ -33,6 +33,7 @@ import scala.concurrent.ExecutionContext
 class DoYouWantToSignInController @Inject() (
     mcc:                              MessagesControllerComponents,
     requestSupport:                   RequestSupport,
+    auditService:                     AuditService,
     failedVerificationAttemptService: FailedVerificationAttemptService,
     views:                            Views,
     actions:                          Actions,
@@ -55,11 +56,15 @@ class DoYouWantToSignInController @Inject() (
         formWithErrors => BadRequest(views.doYouWantToSignInPage(
           form = formWithErrors
         )), {
-          case DoYouWantToSignInFormValue.Yes =>
+          case DoYouWantToSignInFormValue.Yes => {
+            auditService.auditUserLoginSelection(login              = true, ipAddressLockedout = userIsLockedOut)(hc)
             Redirect(appConfig.PersonalTaxAccountUrls.personalTaxAccountSignInUrl)
+          }
           case DoYouWantToSignInFormValue.No if userIsLockedOut =>
+            auditService.auditUserLoginSelection(login              = false, ipAddressLockedout = userIsLockedOut)(hc)
             Redirect(controllers.routes.YouCannotConfirmYourIdentityYetController.get)
           case DoYouWantToSignInFormValue.No =>
+            auditService.auditUserLoginSelection(login              = false, ipAddressLockedout = userIsLockedOut)(hc)
             Redirect(controllers.routes.DoYouWantYourRefundViaBankTransferController.get)
         }
       )
