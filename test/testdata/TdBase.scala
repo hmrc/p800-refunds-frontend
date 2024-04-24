@@ -72,7 +72,7 @@ trait TdBase {
   lazy val associatedPayableNumber: AssociatedPayableNumber = AssociatedPayableNumber(1234)
   lazy val p800ReferenceChecked: P800ReferenceChecked = ValidateReferenceResult.P800ReferenceChecked(
     reconciliationIdentifier = reconciliationIdentifier,
-    paymentNumber            = p800Reference,
+    paymentNumber            = p800ReferenceSanitised,
     payeNumber               = PayeNumber("PayeNumber-123"),
     taxDistrictNumber        = TaxDistrictNumber(717),
     paymentAmount            = paymentAmount,
@@ -175,7 +175,7 @@ trait TdBase {
   lazy val isValidEventValueNotReceived: EventValue = EventValue.NotReceived
 
   lazy val suspendOverpaymentRequest: SuspendOverpaymentRequest = SuspendOverpaymentRequest(
-    paymentNumber            = p800Reference,
+    paymentNumber            = p800ReferenceSanitised,
     currentOptimisticLock    = currentOptimisticLock,
     reconciliationIdentifier = reconciliationIdentifier,
     associatedPayableNumber  = associatedPayableNumber,

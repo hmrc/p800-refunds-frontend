@@ -56,12 +56,12 @@ object NpsIssuePayableOrderStub {
   def verify(nino: Nino, p800Reference: P800Reference, correlationId: CorrelationId): Unit =
     WireMock.verify(
       exactly(1),
-      putRequestedFor(urlPathEqualTo(url(nino, p800Reference)))
+      postRequestedFor(urlPathEqualTo(url(nino, p800Reference)))
         .withHeader("correlationid", matching(correlationId.value.toString))
     )
 
   def verifyNone(nino: Nino, p800Reference: P800Reference): Unit =
-    WireMock.verify(exactly(0), putRequestedFor(urlPathEqualTo(url(nino, p800Reference))))
+    WireMock.verify(exactly(0), postRequestedFor(urlPathEqualTo(url(nino, p800Reference))))
 
   private def url(nino: Nino, p800Reference: P800Reference) = s"/p800-refunds-backend/nps/issue-payable-order/${nino.value}/${p800Reference.value}"
 }

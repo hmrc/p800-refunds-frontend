@@ -54,12 +54,12 @@ object NpsSuspendOverpaymentStub {
   def verify(nino: Nino, correlationId: CorrelationId): Unit =
     WireMock.verify(
       exactly(1),
-      putRequestedFor(urlPathEqualTo(url(nino)))
+      postRequestedFor(urlPathEqualTo(url(nino)))
         .withHeader("correlationid", matching(correlationId.value.toString))
     )
 
   def verifyNone(nino: Nino): Unit =
-    WireMock.verify(exactly(0), putRequestedFor(urlPathEqualTo(url(nino))))
+    WireMock.verify(exactly(0), postRequestedFor(urlPathEqualTo(url(nino))))
 
   private def url(nino: Nino) = s"/p800-refunds-backend/nps/suspend-overpayment/${nino.value}"
 }

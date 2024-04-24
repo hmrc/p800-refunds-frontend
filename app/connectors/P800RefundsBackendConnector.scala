@@ -46,7 +46,7 @@ class P800RefundsBackendConnector @Inject() (
     httpClient
       .POST[ValidateP800ReferenceRequest, ValidateReferenceResult](
         url     = s"$baseUrl/nps/validate-p800-reference",
-        body    = ValidateP800ReferenceRequest(nino, p800Reference),
+        body    = ValidateP800ReferenceRequest(nino, p800Reference.sanitiseReference),
         headers = makeHeaders(correlationId)
       )
   }

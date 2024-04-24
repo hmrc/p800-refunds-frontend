@@ -67,7 +67,7 @@ object VerifyP800ReferenceStub {
   def verify(correlationId: CorrelationId): Unit =
     WireMock.verify(
       exactly(1),
-      getRequestedFor(urlPathEqualTo(url))
+      postRequestedFor(urlPathEqualTo(url))
         .withHeader("correlationid", matching(correlationId.value.toString))
     )
 

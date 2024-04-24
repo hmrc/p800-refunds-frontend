@@ -113,7 +113,7 @@ class WeAreVerifyingYourBankAccountController @Inject() (
   private def handleDoNotPay(journey: Journey)(implicit request: RequestHeader): Future[(Result, Journey)] = {
 
     val suspendOverpaymentRequest = SuspendOverpaymentRequest(
-      paymentNumber            = journey.getP800Reference,
+      paymentNumber            = journey.getP800Reference.sanitiseReference,
       currentOptimisticLock    = journey.getP800ReferenceChecked.currentOptimisticLock,
       reconciliationIdentifier = journey.getP800ReferenceChecked.reconciliationIdentifier,
       associatedPayableNumber  = journey.getP800ReferenceChecked.associatedPayableNumber,
@@ -286,7 +286,7 @@ class WeAreVerifyingYourBankAccountController @Inject() (
     val p800ReferenceCheckResult: P800ReferenceChecked = journey.getP800ReferenceChecked
 
     val makeBacsRepaymentRequest: MakeBacsRepaymentRequest = MakeBacsRepaymentRequest(
-      paymentNumber            = journey.getP800Reference,
+      paymentNumber            = journey.getP800Reference.sanitiseReference,
       currentOptimisticLock    = p800ReferenceCheckResult.currentOptimisticLock,
       reconciliationIdentifier = p800ReferenceCheckResult.reconciliationIdentifier,
       associatedPayableNumber  = p800ReferenceCheckResult.associatedPayableNumber,
