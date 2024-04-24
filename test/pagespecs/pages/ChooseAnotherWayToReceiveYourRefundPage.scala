@@ -34,7 +34,7 @@ class ChooseAnotherWayToReceiveYourRefundPage(baseUrl: String)(implicit webDrive
       expectedLines =
         """
           |Choose another way to get your refund
-          |You can claim your refund by bank transfer or cheque. If you want your refund by bank transfer, you will have fewer details to enter if you sign in using your Government Gateway ID.
+          |You can claim your refund by bank transfer or cheque. If you want your refund by bank transfer, you will have fewer details to enter if you sign in using your Government Gateway user ID.
           |Do you want your refund by bank transfer or cheque?
           |Bank transfer using your Government Gateway user ID to sign in
           |Cheque
