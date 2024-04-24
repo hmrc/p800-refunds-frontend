@@ -47,20 +47,6 @@ class EnterYourNationalInsuranceNumberPage(baseUrl: String, pathForJourneyType: 
           |For example, ‘QQ 12 34 56 C’.
           |Continue
           |""".stripMargin
-    ),
-    ContentExpectation(
-      atXpath       = """//*[@class="govuk-details__summary-text"]""",
-      expectedLines =
-        """
-          |I do not know my National Insurance number
-          |""".stripMargin
-    ),
-    ContentExpectation(
-      atXpath       = """//*[@class="govuk-details__text"]""",
-      expectedLines =
-        """
-          |You can get help to find a lost National Insurance number (opens in new tab)
-          |""".stripMargin
     )
   )
 
@@ -75,11 +61,8 @@ class EnterYourNationalInsuranceNumberPage(baseUrl: String, pathForJourneyType: 
       title               = PageUtil.standardTitleWithJourneyType(expectedTitleContent, journeyType),
       contentExpectations = contentExpectations: _*
     )
-    lostNationalInsuranceNumberHref() shouldBe "https://www.gov.uk/lost-national-insurance-number"
-    ()
-  }
 
-  private def lostNationalInsuranceNumberHref(): String = PageUtil.getHrefById("lost-national-insurance-number-link")
+  }
 
   def assertPageShowsErrorEmptyInput(journeyType: JourneyType): Unit = withPageClue {
     val contentExpectations = Seq(

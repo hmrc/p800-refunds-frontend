@@ -14,7 +14,6 @@
  * limitations under the License.
  *@
 
-@import config.AppConfig
 @import language.Messages
 @import models.P800Reference
 @import uk.gov.hmrc.govukfrontend.views.html.components._
@@ -24,7 +23,6 @@
 
 @this(
     layout: Layout,
-    appConfig: AppConfig,
     viewsHelpers: views.ViewsHelpers
 )
 
@@ -64,12 +62,6 @@
             autocomplete = Some("off"),
             spellcheck = Some(false)
           ).withFormField(form(key)))
-
-          <h2 class="govuk-heading-s">@{Messages.EnterP800ReferenceMessages.`If you do not know your P800 reference`.show}</h2>
-
-          <p class="govuk-body">
-            @{Html(Messages.EnterP800ReferenceMessages.`Sign in using your Government Gateway user ID to claim your refund.`(appConfig.PersonalTaxAccountUrls.personalTaxAccountSignInUrl).show)}
-          </p>
 
         @viewsHelpers.govukButton(Button(
             content = Text(Messages.CommonMessages.continue.show),

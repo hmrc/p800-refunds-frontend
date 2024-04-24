@@ -99,14 +99,6 @@ object Messages {
       english = "It is on the letter HMRC sent you about your tax calculation, also known as a ‘P800’, and is up to 10 digits long. For example, 1002033400."
     )
 
-    val `If you do not know your P800 reference`: Message = Message(
-      english = "If you do not know your P800 reference"
-    )
-
-    def `Sign in using your Government Gateway user ID to claim your refund.`(link: String): Message = Message(
-      english = s"""<a id="personal-tax-account-sign-in" class="govuk-link" href="$link">Sign in using your Government Gateway user ID</a> to claim your refund."""
-    )
-
     val `Enter your P800 reference`: Message = Message(
       english = "Enter your P800 reference"
     )
@@ -346,6 +338,22 @@ object Messages {
     val `We do this to protect your security`: Message = Message(
       english = "We do this to protect your security."
     )
+
+    val `If you do not know your P800 reference`: Message = Message(
+      english = "If you do not know your P800 reference,"
+    )
+
+    def `Sign in using your Government Gateway user ID to claim your refund.`(link: String): Message = Message(
+      english = s"""<a id="personal-tax-account-sign-in" class="govuk-link" href="$link">Sign in using your Government Gateway user ID</a> to claim your refund."""
+    )
+
+    val `If you do not know your National Insurance number`: Message = Message(
+      english = "If you do not know your National Insurance number, "
+    )
+
+    def `get help to find it`(link: String): Message = Message(
+      english = s"""you can <a id="personal-tax-account-sign-in" class="govuk-link" href="$link">get help to find it (opens in new tab)</a>."""
+    )
   }
 
   object WhatIsYourNationalInsuranceNumber {
@@ -360,14 +368,6 @@ object Messages {
 
     val `It’s on your National Insurance`: Message = Message(
       english = "It’s on your National Insurance card or letter, benefit letter, payslip or P60. For example, ‘QQ 12 34 56 C’."
-    )
-
-    val `I do not know my National Insurance number`: Message = Message(
-      english = "I do not know my National Insurance number"
-    )
-
-    def `You can get help to find a lost National`(link: String): Message = Message(
-      english = s"""You can get help to <a id="lost-national-insurance-number-link" href="$link" target="_blank" class="govuk-link">find a lost National Insurance number (opens in new tab).</a>"""
     )
 
     val `Enter your National Insurance number`: Message = Message(

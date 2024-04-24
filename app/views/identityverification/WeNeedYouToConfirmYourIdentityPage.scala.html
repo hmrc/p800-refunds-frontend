@@ -14,6 +14,7 @@
  * limitations under the License.
  *@
 
+@import config.AppConfig
 @import language.Messages
 @import uk.gov.hmrc.govukfrontend.views.html.components._
 @import views.html.templates.Layout
@@ -22,6 +23,7 @@
 
 @this(
     layout: Layout,
+    appConfig: AppConfig,
     viewsHelpers: views.ViewsHelpers
 )
 
@@ -64,12 +66,19 @@
         @{Messages.WeNeedToConfirmYourIdentity.`We do this to protect your security`.show}
     </p>
 
+    <div class="govuk-inset-text">
+        <p class="govuk-body">@{Messages.WeNeedToConfirmYourIdentity.`If you do not know your P800 reference`.show} @{Html(Messages.WeNeedToConfirmYourIdentity.`Sign in using your Government Gateway user ID to claim your refund.`(appConfig.PersonalTaxAccountUrls.personalTaxAccountSignInUrl).show)}
+        </p>
+        <p class="govuk-body">@{Messages.WeNeedToConfirmYourIdentity.`If you do not know your National Insurance number`.show} @{Html(Messages.WeNeedToConfirmYourIdentity.`get help to find it`(appConfig.PersonalTaxAccountUrls.personalTaxAccountSignInUrl).show)}
+        </p>
+    </div>
+
 
     @viewsHelpers.formWithCsrf(action = routes.WeNeedYouToConfirmYourIdentityController.post) {
         @viewsHelpers.govukButton(Button(
             content = Text(Messages.CommonMessages.`continue`.show),
             id = Some("submit"),
-            classes = "govuk-!-margin-top-4"
+            classes = "govuk-!-margin-top-2"
         ))
     }
 }
