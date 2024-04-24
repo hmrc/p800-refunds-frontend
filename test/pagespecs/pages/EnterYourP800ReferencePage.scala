@@ -35,8 +35,6 @@ class EnterYourP800ReferencePage(baseUrl: String, pathForJourneyType: String)(im
 
   def enterP800Reference(p800Reference: String): Unit = PageUtil.setTextFieldById(p800ReferenceFieldId, p800Reference)
 
-  def clickPtaSignInLink(): Unit = PageUtil.clickByIdOrName("personal-tax-account-sign-in")
-
   def clickIncomeTaxGeneralEnquiriesLink(): String = {
     val handleBefore: String = webDriver.getWindowHandle
     PageUtil.clickByIdOrName("income-tax-general-enquiries")

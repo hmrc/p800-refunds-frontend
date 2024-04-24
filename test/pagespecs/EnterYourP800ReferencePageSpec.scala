@@ -137,26 +137,5 @@ class EnterYourP800ReferencePageSpec extends ItSpec {
     }
   }
 
-  "Clicking 'Sign in or create a personal tax account' link opens correctly" - {
-    "bank transfer" in {
-      upsertJourneyToDatabase(tdAll.BankTransfer.journeySelectedType)
-      test(JourneyType.BankTransfer)
-      getJourneyFromDatabase(tdAll.journeyId) shouldBeLike tdAll.BankTransfer.journeySelectedType
-    }
-    "cheque" in {
-      upsertJourneyToDatabase(tdAll.Cheque.journeySelectedType)
-      test(JourneyType.Cheque)
-      getJourneyFromDatabase(tdAll.journeyId) shouldBeLike tdAll.Cheque.journeySelectedType
-    }
-      def test(journeyType: JourneyType): Unit = {
-        val page = journeyType match {
-          case JourneyType.BankTransfer => pages.whatIsYourP800ReferenceBankTransferPage
-          case JourneyType.Cheque       => pages.whatIsYourP800ReferenceChequePage
-        }
-        page.open()
-        page.assertPageIsDisplayed(journeyType)
-        page.clickPtaSignInLink()
-        pages.ptaSignInPage.assertPageIsDisplayed()
-      }
-  }
+
 }
