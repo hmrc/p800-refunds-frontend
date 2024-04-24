@@ -61,7 +61,7 @@ trait ItSpec extends AnyFreeSpecLike
     "mongodb.uri" -> s"mongodb://localhost:27017/$databaseName",
     "play.http.router" -> "testOnlyDoNotUseInAppConf.Routes",
     "auditing.consumer.baseUri.port" -> WireMockSupport.port,
-    "auditing.enabled" -> false,
+    "auditing.enabled" -> true,
     "auditing.traceRequests" -> false,
     "urls.gov-uk.govuk-route-in" -> s"http://localhost:${testServerPort.toString}/get-an-income-tax-refund/test-only/gov-uk-route-in",
     "urls.pta-sign-in" -> s"http://localhost:${testServerPort.toString}/get-an-income-tax-refund/test-only/pta-sign-in",

@@ -17,6 +17,8 @@
 package pagespecs
 
 import testsupport.ItSpec
+import testsupport.stubs.AuditConnectorStub
+import play.api.libs.json.{Json, JsObject}
 
 class DoYouWantToSignInPageSpec extends ItSpec {
 
@@ -33,6 +35,19 @@ class DoYouWantToSignInPageSpec extends ItSpec {
     pages.doYouWantToSignInPage.clickSubmit()
     pages.ptaSignInPage.assertPageIsDisplayed()
     getJourneyFromDatabase(tdAll.journeyId) shouldBeLike tdAll.journeyStarted
+
+    AuditConnectorStub.verifyEventAudited(
+      "userLoginSelection",
+      Json.parse(
+        //format=JSON
+        s"""
+         {
+           "login": true,
+           "ipAddressLockedout": false
+         }
+         """.stripMargin
+      ).as[JsObject]
+    )
   }
 
   "Selecting 'No, continue without signing in' redirects to 'Do you want your refund by bank transfer' page" in {
@@ -42,6 +57,19 @@ class DoYouWantToSignInPageSpec extends ItSpec {
     pages.doYouWantToSignInPage.clickSubmit()
     pages.doYouWantYourRefundViaBankTransferPage.assertPageIsDisplayed()
     getJourneyFromDatabase(tdAll.journeyId) shouldBeLike tdAll.journeyStarted
+
+    AuditConnectorStub.verifyEventAudited(
+      "userLoginSelection",
+      Json.parse(
+        //format=JSON
+        s"""
+         {
+           "login": false,
+           "ipAddressLockedout": false
+         }
+         """.stripMargin
+      ).as[JsObject]
+    )
   }
 
   "Selecting 'No, continue without signing in' but the user has been locked out, it redirects to 'YouCannotConfirmYourIdentityDetailsYet' page" in {
@@ -51,6 +79,19 @@ class DoYouWantToSignInPageSpec extends ItSpec {
     pages.doYouWantToSignInPage.selectNo()
     pages.doYouWantToSignInPage.clickSubmit()
     pages.youCannotConfirmYourIdentityYetSpec.assertPageIsDisplayed()
+
+    AuditConnectorStub.verifyEventAudited(
+      "userLoginSelection",
+      Json.parse(
+        //format=JSON
+        s"""
+         {
+           "login": false,
+           "ipAddressLockedout": true
+         }
+         """.stripMargin
+      ).as[JsObject]
+    )
   }
 
   "Selecting nothing and clicking continue shows error" in {
@@ -59,6 +100,8 @@ class DoYouWantToSignInPageSpec extends ItSpec {
     pages.doYouWantToSignInPage.clickSubmit()
     pages.doYouWantToSignInPage.assertPageShowsWithErrors()
     getJourneyFromDatabase(tdAll.journeyId) shouldBeLike tdAll.journeyStarted
+
+    AuditConnectorStub.verifyNoAuditEvent("userLoginSelection")
   }
 
 }
