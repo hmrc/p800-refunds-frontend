@@ -54,7 +54,7 @@ trait TdJourney {
     )
 
     lazy val journeyEnteredP800Reference: Journey = journeySelectedType.copy(
-      p800Reference = Some(dependencies.p800Reference)
+      p800Reference = Some(dependencies.userEnteredP800Reference)
     )
 
     lazy val journeyEnteredNino: Journey = journeyEnteredP800Reference.copy(
@@ -164,7 +164,7 @@ trait TdJourney {
     )
 
     lazy val journeyEnteredP800Reference: Journey = journeySelectedType.copy(
-      p800Reference = Some(dependencies.p800Reference)
+      p800Reference = Some(dependencies.userEnteredP800Reference)
     )
 
     lazy val journeyEnteredNino: Journey = journeyEnteredP800Reference.copy(

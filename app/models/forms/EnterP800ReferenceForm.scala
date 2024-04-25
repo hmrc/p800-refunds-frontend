@@ -17,7 +17,7 @@
 package models.forms
 
 import language.{Language, Messages}
-import models.P800Reference
+import models.UserEnteredP800Reference
 import play.api.data.Forms.mapping
 import play.api.data.format.Formatter
 import play.api.data.{Form, FormError, Forms}
@@ -35,11 +35,11 @@ object EnterP800ReferenceForm {
   private def trimLeadingZeros(str: String): String = str.dropWhile(_ === '0')
   private def isWithinBounds(str: String): Boolean = str.length <= referenceMaxLength && str.length >= referenceMinLength
 
-  def form(implicit langauge: Language): Form[P800Reference] = {
-    val p800ReferenceMapping = Forms.of(new Formatter[P800Reference]() {
-      override def bind(key: String, data: Map[String, String]): Either[Seq[FormError], P800Reference] = {
+  def form(implicit langauge: Language): Form[UserEnteredP800Reference] = {
+    val p800ReferenceMapping = Forms.of(new Formatter[UserEnteredP800Reference]() {
+      override def bind(key: String, data: Map[String, String]): Either[Seq[FormError], UserEnteredP800Reference] = {
 
-        data.get(key).fold[Either[Seq[FormError], P800Reference]] {
+        data.get(key).fold[Either[Seq[FormError], UserEnteredP800Reference]] {
           Left(Seq(FormError(key, Messages.EnterP800ReferenceMessages.`Enter your P800 reference`.show)))
         } { referenceEntered: String =>
 
@@ -52,11 +52,11 @@ object EnterP800ReferenceForm {
             Left(Seq(FormError(key, Messages.EnterP800ReferenceMessages.`Enter your P800 reference in the correct format`.show)))
           } else if (!isWithinBounds(attemptAtSanitising)) {
             Left(Seq(FormError(key, Messages.EnterP800ReferenceMessages.`Enter your P800 reference in the correct format`.show)))
-          } else Right(P800Reference(referenceEntered))
+          } else Right(UserEnteredP800Reference(referenceEntered))
         }
       }
 
-      override def unbind(key: String, value: P800Reference): Map[String, String] = Map(key -> value.value)
+      override def unbind(key: String, value: UserEnteredP800Reference): Map[String, String] = Map(key -> value.value)
     })
 
     Form(

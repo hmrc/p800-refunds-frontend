@@ -16,7 +16,7 @@
 
 package pagespecs
 
-import models.P800Reference
+import models.UserEnteredP800Reference
 import models.journeymodels.JourneyType
 import testsupport.ItSpec
 
@@ -48,12 +48,12 @@ class EnterYourP800ReferencePageSpec extends ItSpec {
       s"[$reference] bank transfer" in {
         upsertJourneyToDatabase(tdAll.BankTransfer.journeySelectedType)
         test(JourneyType.BankTransfer, reference)
-        getJourneyFromDatabase(tdAll.journeyId) shouldBeLike tdAll.BankTransfer.journeyEnteredP800Reference.copy(p800Reference = Some(P800Reference(reference)))
+        getJourneyFromDatabase(tdAll.journeyId) shouldBeLike tdAll.BankTransfer.journeyEnteredP800Reference.copy(p800Reference = Some(UserEnteredP800Reference(reference)))
       }
       s"[$reference] cheque" in {
         upsertJourneyToDatabase(tdAll.Cheque.journeySelectedType)
         test(JourneyType.Cheque, reference)
-        getJourneyFromDatabase(tdAll.journeyId) shouldBeLike tdAll.Cheque.journeyEnteredP800Reference.copy(p800Reference = Some(P800Reference(reference)))
+        getJourneyFromDatabase(tdAll.journeyId) shouldBeLike tdAll.Cheque.journeyEnteredP800Reference.copy(p800Reference = Some(UserEnteredP800Reference(reference)))
       }
     }
 

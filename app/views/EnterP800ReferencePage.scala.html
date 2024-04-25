@@ -15,7 +15,7 @@
  *@
 
 @import language.Messages
-@import models.P800Reference
+@import models.UserEnteredP800Reference
 @import uk.gov.hmrc.govukfrontend.views.html.components._
 @import uk.gov.hmrc.govukfrontend.views.html.components.implicits._
 @import views.html.templates.Layout
@@ -27,7 +27,7 @@
 )
 
 @(
-    form: Form[P800Reference]
+    form: Form[UserEnteredP800Reference]
 )(implicit request: JourneyRequest[_])
 
 @import viewsHelpers.requestSupport._

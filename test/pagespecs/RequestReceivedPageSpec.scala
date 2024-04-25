@@ -16,7 +16,7 @@
 
 package pagespecs
 
-import models.P800Reference
+import models.UserEnteredP800Reference
 import testsupport.ItSpec
 import testsupport.stubs.{DateCalculatorStub, EcospendStub}
 
@@ -75,7 +75,7 @@ class RequestReceivedPageSpec extends ItSpec {
     }
 
     "bank transfer when user previously entered a p800 ref with non digits in, which should get sanitised" in {
-      val journey = tdAll.BankTransfer.journeyClaimedOverpayment.copy(p800Reference = Some(P800Reference("000123, 45- 678")))
+      val journey = tdAll.BankTransfer.journeyClaimedOverpayment.copy(p800Reference = Some(UserEnteredP800Reference("000123, 45- 678")))
       upsertJourneyToDatabase(journey)
       DateCalculatorStub.addWorkingDays()
 

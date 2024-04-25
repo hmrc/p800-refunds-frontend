@@ -42,7 +42,7 @@ class IsYourAddressUpToDatePageSpec extends ItSpec {
       "'Cheque Request received' page when API calls succeed" in {
         NpsIssuePayableOrderStub.`issuePayableOrder 200`(
           journey.nino.value,
-          tdAll.p800ReferenceSanitised,
+          tdAll.p800Reference,
           IssuePayableOrderRequest(
             customerAccountNumber   = tdAll.p800ReferenceChecked.customerAccountNumber,
             associatedPayableNumber = tdAll.p800ReferenceChecked.associatedPayableNumber,
@@ -56,14 +56,14 @@ class IsYourAddressUpToDatePageSpec extends ItSpec {
         pages.isYourAddressUpToDate.clickSubmit()
 
         pages.requestReceivedChequePage.assertPageIsDisplayedForCheque()
-        NpsIssuePayableOrderStub.verify(journey.nino.value, tdAll.p800ReferenceSanitised, tdAll.correlationId)
+        NpsIssuePayableOrderStub.verify(journey.nino.value, tdAll.p800Reference, tdAll.correlationId)
         getJourneyFromDatabase(journey.journeyId) shouldBeLike tdAll.Cheque.journeyClaimedOverpayment
       }
 
       "'Technical difficulties' when API call fails we don't update the journey state" in {
         NpsIssuePayableOrderStub.`issuePayableOrder 5xx refundAlreadyTaken`(
           journey.nino.value,
-          tdAll.p800ReferenceSanitised,
+          tdAll.p800Reference,
           IssuePayableOrderRequest(
             customerAccountNumber   = tdAll.p800ReferenceChecked.customerAccountNumber,
             associatedPayableNumber = tdAll.p800ReferenceChecked.associatedPayableNumber,
@@ -77,7 +77,7 @@ class IsYourAddressUpToDatePageSpec extends ItSpec {
         pages.isYourAddressUpToDate.clickSubmit()
 
         pages.isYourAddressUpToDate.assertPageIsDisplayedWithTechnicalDifficultiesError()
-        NpsIssuePayableOrderStub.verify(journey.nino.value, tdAll.p800ReferenceSanitised, tdAll.correlationId)
+        NpsIssuePayableOrderStub.verify(journey.nino.value, tdAll.p800Reference, tdAll.correlationId)
         getJourneyFromDatabase(journey.journeyId) shouldBeLike journey withClue "journey was not updated"
       }
     }
@@ -89,7 +89,7 @@ class IsYourAddressUpToDatePageSpec extends ItSpec {
       pages.isYourAddressUpToDate.clickSubmit()
 
       pages.updateYourAddressPage.assertPageIsDisplayed()
-      NpsIssuePayableOrderStub.verifyNone(journey.nino.value, journey.p800Reference.value)
+      NpsIssuePayableOrderStub.verifyNone(journey.nino.value, journey.p800Reference.value.sanitiseReference)
       getJourneyFromDatabase(tdAll.journeyId) shouldBeLike tdAll.Cheque.AfterReferenceCheck.journeyReferenceChecked
     }
 
@@ -98,7 +98,8 @@ class IsYourAddressUpToDatePageSpec extends ItSpec {
       pages.isYourAddressUpToDate.assertPageIsDisplayed()
       pages.isYourAddressUpToDate.clickSubmit()
       pages.isYourAddressUpToDate.assertPageIsDisplayedWithError()
-      NpsIssuePayableOrderStub.verifyNone(journey.nino.value, journey.p800Reference.value)
+
+      NpsIssuePayableOrderStub.verifyNone(journey.nino.value, journey.p800Reference.value.sanitiseReference)
       getJourneyFromDatabase(tdAll.journeyId) shouldBeLike tdAll.Cheque.AfterReferenceCheck.journeyReferenceChecked
     }
 

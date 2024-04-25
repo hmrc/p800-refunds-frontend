@@ -45,7 +45,7 @@ class WhatIsYourDateOfBirthPageSpec extends ItSpec {
     pages.enterYourDateOfBirthPage.enterYear("2000")
     pages.enterYourDateOfBirthPage.clickSubmit()
     pages.checkYourAnswersBankTransferPage.assertPageIsDisplayedForBankTransfer(
-      p800Reference           = tdAll.p800Reference,
+      p800Reference           = tdAll.userEnteredP800Reference,
       dateOfBirth             = tdAll.dateOfBirthFormatted,
       nationalInsuranceNumber = tdAll.nino
     )
@@ -92,7 +92,7 @@ class WhatIsYourDateOfBirthPageSpec extends ItSpec {
           pages.enterYourDateOfBirthPage.enterYear("2000")
           pages.enterYourDateOfBirthPage.clickSubmit()
           pages.checkYourAnswersBankTransferPage.assertPageIsDisplayedForBankTransfer(
-            p800Reference           = tdAll.p800Reference,
+            p800Reference           = tdAll.userEnteredP800Reference,
             dateOfBirth             = s"01 $monthFormatted 2000",
             nationalInsuranceNumber = tdAll.nino
           )

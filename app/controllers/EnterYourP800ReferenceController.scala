@@ -17,7 +17,7 @@
 package controllers
 
 import action.{Actions, JourneyRequest}
-import models.P800Reference
+import models.UserEnteredP800Reference
 import models.forms.EnterP800ReferenceForm
 import models.journeymodels._
 import play.api.mvc._
@@ -51,7 +51,7 @@ class EnterYourP800ReferenceController @Inject() (
     getResult(journey.p800Reference)
   }
 
-  private def getResult(maybeP800Reference: Option[P800Reference])(implicit request: JourneyRequest[_]): Result = {
+  private def getResult(maybeP800Reference: Option[UserEnteredP800Reference])(implicit request: JourneyRequest[_]): Result = {
     Ok(views.enterP800ReferencePage(
       form = maybeP800Reference.fold(
         EnterP800ReferenceForm.form

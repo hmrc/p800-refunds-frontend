@@ -71,12 +71,12 @@ class WeCannotConfirmYourIdentityPageSpec extends ItSpec {
         journeyType match {
           case JourneyType.Cheque =>
             pages.checkYourAnswersChequePage.assertPageIsDisplayedForCheque(
-              p800Reference           = tdAll.p800Reference,
+              p800Reference           = tdAll.userEnteredP800Reference,
               nationalInsuranceNumber = tdAll.nino
             )
           case JourneyType.BankTransfer =>
             pages.checkYourAnswersBankTransferPage.assertPageIsDisplayedForBankTransfer(
-              p800Reference           = tdAll.p800Reference,
+              p800Reference           = tdAll.userEnteredP800Reference,
               dateOfBirth             = tdAll.dateOfBirthFormatted,
               nationalInsuranceNumber = tdAll.nino
             )

@@ -48,9 +48,9 @@ trait TdBase {
 
   lazy val correlationId: CorrelationId = CorrelationId(UUID.fromString("5eda7a62-7b15-4960-927c-41a67be208e8"))
 
-  lazy val p800ReferenceSanitised: P800Reference = P800Reference("12345678")
+  lazy val p800Reference: P800Reference = P800Reference(12345678)
 
-  lazy val p800Reference: P800Reference = P800Reference(" 12-3 4.5.6 78") //It might contain non digits see OPS-11141
+  lazy val userEnteredP800Reference: UserEnteredP800Reference = UserEnteredP800Reference(" 12-3 4.5.6 78") //It might contain non digits see OPS-11141
 
   lazy val gdsDateTimeFormatter: DateTimeFormatter = DateTimeFormatter.ofPattern("d MMMM Y")
 
@@ -72,7 +72,7 @@ trait TdBase {
   lazy val associatedPayableNumber: AssociatedPayableNumber = AssociatedPayableNumber(1234)
   lazy val p800ReferenceChecked: P800ReferenceChecked = ValidateReferenceResult.P800ReferenceChecked(
     reconciliationIdentifier = reconciliationIdentifier,
-    paymentNumber            = p800ReferenceSanitised,
+    paymentNumber            = p800Reference,
     payeNumber               = PayeNumber("PayeNumber-123"),
     taxDistrictNumber        = TaxDistrictNumber(717),
     paymentAmount            = paymentAmount,
@@ -175,7 +175,7 @@ trait TdBase {
   lazy val isValidEventValueNotReceived: EventValue = EventValue.NotReceived
 
   lazy val suspendOverpaymentRequest: SuspendOverpaymentRequest = SuspendOverpaymentRequest(
-    paymentNumber            = p800ReferenceSanitised,
+    paymentNumber            = p800Reference,
     currentOptimisticLock    = currentOptimisticLock,
     reconciliationIdentifier = reconciliationIdentifier,
     associatedPayableNumber  = associatedPayableNumber,
@@ -186,7 +186,7 @@ trait TdBase {
   )
 
   lazy val claimOverpaymentRequest: MakeBacsRepaymentRequest = MakeBacsRepaymentRequest(
-    paymentNumber            = p800ReferenceSanitised,
+    paymentNumber            = p800Reference,
     currentOptimisticLock    = currentOptimisticLock,
     reconciliationIdentifier = reconciliationIdentifier,
     associatedPayableNumber  = associatedPayableNumber,

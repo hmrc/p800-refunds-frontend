@@ -21,8 +21,8 @@ import com.github.tomakehurst.wiremock.client.WireMock._
 import com.github.tomakehurst.wiremock.stubbing.StubMapping
 import models.{CorrelationId, Nino, P800Reference}
 import nps.models.ValidateReferenceResult
-import play.api.libs.json.Json
 import play.api.http.Status
+import play.api.libs.json.Json
 import testsupport.stubs.NpsHeaders.npsHeaders
 
 object VerifyP800ReferenceStub {
@@ -31,7 +31,7 @@ object VerifyP800ReferenceStub {
     //language=JSON
     s"""{
          | "nino": "${nino.value}",
-         | "p800Reference": "${p800Reference.value}"
+         | "p800Reference": ${p800Reference.value.toString}
          |}
          |"""
       .stripMargin

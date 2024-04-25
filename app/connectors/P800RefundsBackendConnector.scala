@@ -25,7 +25,7 @@ import nps.models._
 import play.api.mvc.RequestHeader
 import requests.RequestSupport.hc
 import uk.gov.hmrc.http.HttpReads.Implicits._
-import uk.gov.hmrc.http.{HttpClient, HttpReads, UpstreamErrorResponse, HttpResponse}
+import uk.gov.hmrc.http.{HttpClient, HttpReads, HttpResponse, UpstreamErrorResponse}
 import util.{HttpResponseUtils, JourneyLogger}
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -46,7 +46,7 @@ class P800RefundsBackendConnector @Inject() (
     httpClient
       .POST[ValidateP800ReferenceRequest, ValidateReferenceResult](
         url     = s"$baseUrl/nps/validate-p800-reference",
-        body    = ValidateP800ReferenceRequest(nino, p800Reference.sanitiseReference),
+        body    = ValidateP800ReferenceRequest(nino, p800Reference),
         headers = makeHeaders(correlationId)
       )
   }
@@ -100,7 +100,7 @@ class P800RefundsBackendConnector @Inject() (
     implicit val readUnit: HttpReads[Unit] = HttpResponseUtils.httpReadsUnit
 
     httpClient.POST[IssuePayableOrderRequest, Unit](
-      url     = s"$baseUrl/nps/issue-payable-order/${nino.value}/${p800Reference.sanitiseReference.value}",
+      url     = s"$baseUrl/nps/issue-payable-order/${nino.value}/${p800Reference.value.toString}",
       body    = issuePayableOrderRequest,
       headers = makeHeaders(correlationId)
     )
