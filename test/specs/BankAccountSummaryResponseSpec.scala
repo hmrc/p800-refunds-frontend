@@ -19,6 +19,7 @@ package specs
 import models.ecospend.BankId
 import models.ecospend.account._
 import play.api.libs.json.{Format, JsSuccess, Json, Reads}
+import testdata.TdAll
 import testsupport.UnitSpec
 
 import java.util.{Currency, UUID}
