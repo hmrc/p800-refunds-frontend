@@ -18,12 +18,12 @@ package nps.models
 
 import play.api.libs.json.{Json, OFormat}
 
-final case class P800ReferenceCheckResultFailures(
+final case class ValidateP800ReferenceFailures(
     failures: List[Failure]
 )
 
-object P800ReferenceCheckResultFailures {
-  implicit val format: OFormat[P800ReferenceCheckResultFailures] = Json.format[P800ReferenceCheckResultFailures]
+object ValidateP800ReferenceFailures {
+  implicit val format: OFormat[ValidateP800ReferenceFailures] = Json.format[ValidateP800ReferenceFailures]
 }
 
 final case class Failure(reason: String, code: String)

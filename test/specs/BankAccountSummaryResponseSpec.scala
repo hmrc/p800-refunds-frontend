@@ -21,9 +21,9 @@ import models.ecospend.account._
 import play.api.libs.json.{Format, JsSuccess, Json, Reads}
 import testsupport.UnitSpec
 
-import java.util.{Currency, UUID}
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
+import java.util.{Currency, UUID}
 
 class BankAccountSummaryResponseSpec extends UnitSpec {
   private val localDateTime: LocalDateTime = {

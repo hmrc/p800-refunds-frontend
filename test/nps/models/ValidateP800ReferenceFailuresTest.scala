@@ -19,11 +19,11 @@ package nps.models
 import play.api.libs.json.Json
 import testsupport.UnitSpec
 
-class P800ReferenceCheckResultFailuresTest extends UnitSpec {
+class ValidateP800ReferenceFailuresTest extends UnitSpec {
 
   val failures = """{"failures":[{"reason":"Overpayment has already been claimed","code":"63480"}]}"""
 
-  val p800ReferenceCheckResultFailures = P800ReferenceCheckResultFailures(failures = List(
+  val p800ReferenceCheckResultFailures = ValidateP800ReferenceFailures(failures = List(
     Failure(
       reason = "Overpayment has already been claimed",
       code   = "63480"
@@ -31,7 +31,7 @@ class P800ReferenceCheckResultFailuresTest extends UnitSpec {
   ))
 
   "deserialize" in {
-    Json.parse(failures).as[P800ReferenceCheckResultFailures] shouldBe p800ReferenceCheckResultFailures
+    Json.parse(failures).as[ValidateP800ReferenceFailures] shouldBe p800ReferenceCheckResultFailures
   }
 
 }
