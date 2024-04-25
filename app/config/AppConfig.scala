@@ -45,15 +45,8 @@ class AppConfig @Inject() (servicesConfig: ServicesConfig, configuration: Config
 
   val generalEnquiriesUrl: String = readConfigAsValidUrlString("urls.gov-uk.general-enquiries")
 
-  val lostNationalInsuranceNumberUrl: String = readConfigAsValidUrlString("urls.gov-uk.lost-national-insurance-number")
-
-  object PersonalTaxAccountUrls {
-    val personalTaxAccountSignInUrl: String = readConfigAsValidUrlString("urls.pta-sign-in")
-  }
-
-  object NationalInsuranceNumberUrls {
-    val nationalInsuranceNumberUrl: String = readConfigAsValidUrlString("urls.gov-uk.lost-national-insurance-number")
-  }
+  val personalTaxAccountSignInUrl: String = readConfigAsValidUrlString("urls.pta-sign-in")
+  val nationalInsuranceNumberUrl: String = readConfigAsValidUrlString("urls.gov-uk.lost-national-insurance-number")
 
   object ExternalApiCalls {
 

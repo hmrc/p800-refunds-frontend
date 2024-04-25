@@ -59,7 +59,7 @@ class DoYouWantToSignInController @Inject() (
         )), {
           case DoYouWantToSignInFormValue.Yes => {
             auditService.auditUserLoginSelection(Login(true), IpAddressLockedout(userIsLockedOut))(hc)
-            Redirect(appConfig.PersonalTaxAccountUrls.personalTaxAccountSignInUrl)
+            Redirect(appConfig.personalTaxAccountSignInUrl)
           }
           case DoYouWantToSignInFormValue.No if userIsLockedOut =>
             auditService.auditUserLoginSelection(Login(false), IpAddressLockedout(userIsLockedOut))(hc)
