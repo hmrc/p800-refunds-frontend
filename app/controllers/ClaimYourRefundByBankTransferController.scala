@@ -59,7 +59,7 @@ class ClaimYourRefundByBankTransferController @Inject() (
       {
         case DoYouWantToSignInFormValue.Yes =>
           Future.successful(
-            Redirect(appConfig.PersonalTaxAccountUrls.personalTaxAccountSignInUrl)
+            Redirect(appConfig.personalTaxAccountSignInUrl)
           )
         case DoYouWantToSignInFormValue.No =>
           journeyService

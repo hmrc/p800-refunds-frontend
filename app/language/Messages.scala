@@ -352,7 +352,7 @@ object Messages {
     )
 
     def `get help to find it`(link: String): Message = Message(
-      english = s"""you can <a id="personal-tax-account-sign-in" class="govuk-link" href="$link">get help to find it (opens in new tab)</a>."""
+      english = s"""you can <a id="lost-national-insurance-number-link" rel="noreferrer noopener" target="_blank" class="govuk-link" href="$link">get help to find it (opens in new tab)</a>."""
     )
   }
 

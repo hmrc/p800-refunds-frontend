@@ -59,7 +59,7 @@ class ChooseAnotherWayToGetYourRefundController @Inject() (
       {
         case PtaOrChequeFormValue.BankTransferViaPta =>
           Future.successful(
-            Redirect(appConfig.PersonalTaxAccountUrls.personalTaxAccountSignInUrl)
+            Redirect(appConfig.personalTaxAccountSignInUrl)
           )
         case PtaOrChequeFormValue.Cheque =>
           journeyService

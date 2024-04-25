@@ -19,6 +19,7 @@ package pagespecs.pages
 import models.journeymodels.JourneyType
 import org.openqa.selenium.WebDriver
 import pagespecs.pagesupport.{ContentExpectation, Page, PageUtil}
+import testsupport.RichMatchers.convertToAnyShouldWrapper
 
 class WeNeedYouToConfirmYourIdentityPage(baseUrl: String, pathForJourneyType: String)(implicit webDriver: WebDriver) extends Page(
   baseUrl,
@@ -67,6 +68,11 @@ class WeNeedYouToConfirmYourIdentityPage(baseUrl: String, pathForJourneyType: St
       title               = PageUtil.standardTitleWithJourneyType("confirm your identity", journeyType),
       contentExpectations = contentExpectations: _*
     )
+
+    PageUtil.getHrefById("lost-national-insurance-number-link") shouldBe "https://www.gov.uk/lost-national-insurance-number"
+
+    ()
+
   }
 
 }
