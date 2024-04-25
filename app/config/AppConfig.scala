@@ -51,6 +51,10 @@ class AppConfig @Inject() (servicesConfig: ServicesConfig, configuration: Config
     val personalTaxAccountSignInUrl: String = readConfigAsValidUrlString("urls.pta-sign-in")
   }
 
+  object NationalInsuranceNumberUrls {
+    val nationalInsuranceNumberUrl: String = readConfigAsValidUrlString("urls.gov-uk.lost-national-insurance-number")
+  }
+
   object ExternalApiCalls {
 
     val ecospendApiVersionPath: String = "/api/v2.0"
