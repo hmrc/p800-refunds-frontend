@@ -16,19 +16,20 @@
 
 package testsupport.stubs
 
+import com.github.tomakehurst.wiremock.client.WireMock
 import com.github.tomakehurst.wiremock.client.WireMock._
 import com.github.tomakehurst.wiremock.stubbing.StubMapping
-import models.{CorrelationId, Nino, P800Reference}
-import nps.models.{ClaimOverpaymentRequest, ClaimOverpaymentResponse}
+import models.{CorrelationId, Nino}
+import nps.models.{MakeBacsRepaymentRequest, MakeBacsRepaymentResponse}
 import play.api.http.Status
 import play.api.libs.json.Json
 import testsupport.stubs.NpsHeaders.npsHeaders
 
-object NpsClaimOverpaymentStub {
+object MakeBacsRepaymentStub {
 
-  def claimOverpayment(nino: Nino, p800Reference: P800Reference, request: ClaimOverpaymentRequest, response: ClaimOverpaymentResponse): StubMapping = {
-    WireMockHelpers.Put.stubForPut(
-      url             = url(nino, p800Reference),
+  def `makeBacsRepayment 200 OK`(nino: Nino, request: MakeBacsRepaymentRequest, response: MakeBacsRepaymentResponse): StubMapping = {
+    WireMockHelpers.Post.stubForPost(
+      url             = url(nino),
       responseBody    = Json.prettyPrint(Json.toJson(response)),
       responseStatus  = Status.OK,
       requestBodyJson = Some(Json.prettyPrint(Json.toJson(request))),
@@ -36,9 +37,10 @@ object NpsClaimOverpaymentStub {
     )
   }
 
-  def claimOverpaymentRefundAlreadyTaken(nino: Nino, p800Reference: P800Reference): StubMapping =
-    WireMockHelpers.Put.stubForPut(
-      url             = url(nino, p800Reference),
+  //TODO: this actually doesn't happen. p800-refunds-backend responds with 5xx for such case
+  def `refundAlreadyTaken 422`(nino: Nino): StubMapping =
+    WireMockHelpers.Post.stubForPost(
+      url             = url(nino),
       responseBody    =
         //language=JSON
         """
@@ -52,9 +54,10 @@ object NpsClaimOverpaymentStub {
       requiredHeaders = npsHeaders
     )
 
-  def claimOverpaymentRefundSuspended(nino: Nino, p800Reference: P800Reference): StubMapping =
-    WireMockHelpers.Put.stubForPut(
-      url             = url(nino, p800Reference),
+  //TODO: this actually doesn't happen. p800-refunds-backend responds with 5xx for such case
+  def `refundSuspended 422`(nino: Nino): StubMapping =
+    WireMockHelpers.Post.stubForPost(
+      url             = url(nino),
       responseBody    =
         //language=JSON
         """
@@ -68,23 +71,23 @@ object NpsClaimOverpaymentStub {
       requiredHeaders = npsHeaders
     )
 
-  def claimOverpaymentInternalServerError(nino: Nino, p800Reference: P800Reference): StubMapping =
-    WireMockHelpers.Put.stubForPut(
-      url             = url(nino, p800Reference),
+  def `internalServerError 500`(nino: Nino): StubMapping =
+    WireMockHelpers.Post.stubForPost(
+      url             = url(nino),
       responseBody    = "",
       responseStatus  = Status.INTERNAL_SERVER_ERROR,
       requiredHeaders = npsHeaders
     )
 
-  def verifyClaimOverpayment(nino: Nino, p800Reference: P800Reference, correlationId: CorrelationId): Unit =
-    verify(
+  def verify(nino: Nino, correlationId: CorrelationId): Unit =
+    WireMock.verify(
       exactly(1),
-      putRequestedFor(urlPathEqualTo(url(nino, p800Reference)))
+      postRequestedFor(urlPathEqualTo(url(nino)))
         .withHeader("correlationid", matching(correlationId.value.toString))
     )
 
-  def verifyNoneClaimOverpayment(nino: Nino, p800Reference: P800Reference): Unit =
-    verify(exactly(0), putRequestedFor(urlPathEqualTo(url(nino, p800Reference))))
+  def verifyNone(nino: Nino): Unit =
+    WireMock.verify(exactly(0), postRequestedFor(urlPathEqualTo(url(nino))))
 
-  private def url(nino: Nino, p800Reference: P800Reference) = s"/p800-refunds-backend/nps-json-service/nps/v1/api/accounting/claim-overpayment/${nino.value}/${p800Reference.value}"
+  private def url(nino: Nino) = s"/p800-refunds-backend/nps/make-bacs-repayment/${nino.value}"
 }

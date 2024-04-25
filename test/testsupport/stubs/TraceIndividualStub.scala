@@ -24,7 +24,7 @@ import play.api.http.Status
 import play.api.libs.json.Json
 import testsupport.stubs.NpsHeaders.npsHeaders
 
-object NpsTraceIndividualStub {
+object TraceIndividualStub {
 
   def traceIndividual(request: TraceIndividualRequest, response: TraceIndividualResponse): StubMapping = {
     WireMockHelpers.Post.stubForPost(
@@ -32,7 +32,6 @@ object NpsTraceIndividualStub {
       responseBody    = Json.prettyPrint(Json.toJson(response)),
       responseStatus  = Status.OK,
       requestBodyJson = Some(Json.prettyPrint(Json.toJson(request))),
-      queryParams     = Map("exactMatch" -> matching("true"), "returnRealName" -> matching("true")),
       requiredHeaders = npsHeaders
     )
   }
@@ -45,6 +44,6 @@ object NpsTraceIndividualStub {
 
   def verifyNoneTraceIndividual(): Unit = verify(exactly(0), postRequestedFor(urlPathEqualTo(url)))
 
-  private val url: String = s"/p800-refunds-backend/nps-json-service/nps/v1/api/individual/trace-individual"
+  private val url: String = s"/p800-refunds-backend/nps/trace-individual"
 
 }

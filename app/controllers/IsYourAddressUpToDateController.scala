@@ -62,7 +62,7 @@ class IsYourAddressUpToDateController @Inject() (
           for {
             _ <- p800RefundsBackendConnector.issuePayableOrder(
               nino                     = journey.getNino,
-              p800Reference            = journey.getP800Reference,
+              p800Reference            = journey.getP800Reference.sanitiseReference,
               issuePayableOrderRequest = IssuePayableOrderRequest(
                 customerAccountNumber   = journey.getP800ReferenceChecked.customerAccountNumber,
                 associatedPayableNumber = journey.getP800ReferenceChecked.associatedPayableNumber,

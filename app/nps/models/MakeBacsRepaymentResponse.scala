@@ -16,19 +16,15 @@
 
 package nps.models
 
+import _root_.models.Nino
 import play.api.libs.json.{OFormat, Json}
 
-final case class ClaimOverpaymentRequest(
-    currentOptimisticLock:    CurrentOptimisticLock,
-    reconciliationIdentifier: ReconciliationIdentifier,
-    associatedPayableNumber:  AssociatedPayableNumber,
-    payeeBankAccountNumber:   PayeeBankAccountNumber,
-    payeeBankSortCode:        PayeeBankSortCode,
-    payeeBankAccountName:     PayeeBankAccountName,
-    designatedPayeeAccount:   DesignatedPayeeAccount
+final case class MakeBacsRepaymentResponse(
+    identifier:            Nino,
+    currentOptimisticLock: CurrentOptimisticLock
 )
 
 @SuppressWarnings(Array("org.wartremover.warts.Any"))
-object ClaimOverpaymentRequest {
-  implicit val format: OFormat[ClaimOverpaymentRequest] = Json.format[ClaimOverpaymentRequest]
+object MakeBacsRepaymentResponse {
+  implicit val format: OFormat[MakeBacsRepaymentResponse] = Json.format[MakeBacsRepaymentResponse]
 }

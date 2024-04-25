@@ -21,7 +21,7 @@ import models.dateofbirth.{DateOfBirth, DayOfMonth, Month, Year}
 import models.journeymodels.{Journey, JourneyType}
 import nps.models.TraceIndividualRequest
 import testsupport.ItSpec
-import testsupport.stubs.{NpsReferenceCheckStub, NpsTraceIndividualStub}
+import testsupport.stubs.{VerifyP800ReferenceStub, TraceIndividualStub}
 
 class CheckYourAnswersSpec extends ItSpec {
 
@@ -156,26 +156,26 @@ class CheckYourAnswersSpec extends ItSpec {
       upsertJourneyToDatabase(tdAll.BankTransfer.journeyEnteredDateOfBirth)
       pages.checkYourAnswersBankTransferPage.open()
       val j = tdAll.BankTransfer.journeyAfterTracedIndividual
-      NpsReferenceCheckStub.checkReference(j.nino.value, tdAll.p800ReferenceSanitised, j.getP800ReferenceChecked(request = tdAll.fakeRequest))
-      NpsTraceIndividualStub.traceIndividual(
+      VerifyP800ReferenceStub.p800ReferenceChecked(j.nino.value, tdAll.p800ReferenceSanitised, j.getP800ReferenceChecked(request = tdAll.fakeRequest))
+      TraceIndividualStub.traceIndividual(
         request  = TraceIndividualRequest(j.nino.value, tdAll.`dateOfBirthFormatted YYYY-MM-DD`),
         response = j.traceIndividualResponse.value
       )
 
       pages.checkYourAnswersBankTransferPage.clickSubmit()
       pages.yourIdentityIsConfirmedBankTransferPage.assertPageIsDisplayed(JourneyType.BankTransfer)
-      NpsReferenceCheckStub.verifyCheckReference(j.nino.value, tdAll.p800ReferenceSanitised, tdAll.correlationId)
-      NpsTraceIndividualStub.verifyTraceIndividual(tdAll.correlationId)
+      VerifyP800ReferenceStub.verify(tdAll.correlationId)
+      TraceIndividualStub.verifyTraceIndividual(tdAll.correlationId)
       getJourneyFromDatabase(tdAll.journeyId) shouldBeLike j
     }
     "cheque" in {
       upsertJourneyToDatabase(tdAll.Cheque.journeyEnteredNino)
       pages.checkYourAnswersChequePage.open()
       val j = tdAll.Cheque.AfterReferenceCheck.journeyReferenceChecked
-      NpsReferenceCheckStub.checkReference(j.nino.value, tdAll.p800ReferenceSanitised, j.getP800ReferenceChecked(request = tdAll.fakeRequest))
+      VerifyP800ReferenceStub.p800ReferenceChecked(j.nino.value, tdAll.p800ReferenceSanitised, j.getP800ReferenceChecked(request = tdAll.fakeRequest))
       pages.checkYourAnswersChequePage.clickSubmit()
       pages.yourIdentityIsConfirmedChequePage.assertPageIsDisplayed(JourneyType.Cheque)
-      NpsReferenceCheckStub.verifyCheckReference(j.nino.value, tdAll.p800ReferenceSanitised, tdAll.correlationId)
+      VerifyP800ReferenceStub.verify(tdAll.correlationId)
       getJourneyFromDatabase(tdAll.journeyId) shouldBeLike j
     }
 
@@ -189,16 +189,16 @@ class CheckYourAnswersSpec extends ItSpec {
         p800Reference        = Some(P800Reference("00123,- 4560")),
         referenceCheckResult = expectedCheckResult
       )
-      NpsReferenceCheckStub.checkReference(j.nino.value, p800ReferenceThatShouldBeSent, j.getP800ReferenceChecked(request = tdAll.fakeRequest).copy(paymentNumber = p800ReferenceThatShouldBeSent))
-      NpsTraceIndividualStub.traceIndividual(
+      VerifyP800ReferenceStub.p800ReferenceChecked(j.nino.value, p800ReferenceThatShouldBeSent, j.getP800ReferenceChecked(request = tdAll.fakeRequest).copy(paymentNumber = p800ReferenceThatShouldBeSent))
+      TraceIndividualStub.traceIndividual(
         request  = TraceIndividualRequest(j.nino.value, tdAll.`dateOfBirthFormatted YYYY-MM-DD`),
         response = j.traceIndividualResponse.value
       )
 
       pages.checkYourAnswersBankTransferPage.clickSubmit()
       pages.yourIdentityIsConfirmedBankTransferPage.assertPageIsDisplayed(JourneyType.BankTransfer)
-      NpsReferenceCheckStub.verifyCheckReference(j.nino.value, p800ReferenceThatShouldBeSent, tdAll.correlationId)
-      NpsTraceIndividualStub.verifyTraceIndividual(tdAll.correlationId)
+      VerifyP800ReferenceStub.verify(tdAll.correlationId)
+      TraceIndividualStub.verifyTraceIndividual(tdAll.correlationId)
       getJourneyFromDatabase(tdAll.journeyId) shouldBeLike j
     }
   }
@@ -208,7 +208,7 @@ class CheckYourAnswersSpec extends ItSpec {
     "bank transfer - failed attempts repo is empty" in {
       val j = tdAll.BankTransfer.journeyEnteredDateOfBirth
       upsertJourneyToDatabase(j)
-      NpsReferenceCheckStub.checkReferenceReferenceDidntMatchNino(j.nino.value, tdAll.p800ReferenceSanitised)
+      VerifyP800ReferenceStub.checkReferenceReferenceDidntMatchNino(j.nino.value, tdAll.p800ReferenceSanitised)
       getFailedAttemptCount() shouldBe None
       //No need for TraceIndividual stub as it won't be called
 
@@ -220,7 +220,7 @@ class CheckYourAnswersSpec extends ItSpec {
       )
       pages.checkYourAnswersBankTransferPage.clickSubmit()
       pages.weCannotConfirmYourIdentityBankTransferPage.assertPageIsDisplayed(JourneyType.BankTransfer)
-      NpsReferenceCheckStub.verifyCheckReference(j.nino.value, tdAll.p800ReferenceSanitised, tdAll.correlationId)
+      VerifyP800ReferenceStub.verify(tdAll.correlationId)
       getJourneyFromDatabase(tdAll.journeyId) shouldBeLike tdAll.BankTransfer.AfterReferenceCheck.journeyReferenceDidntMatchNino
       getFailedAttemptCount() shouldBe Some(1)
     }
@@ -228,21 +228,21 @@ class CheckYourAnswersSpec extends ItSpec {
     "cheque - failed attempts repo is empty" in {
       val j = tdAll.Cheque.journeyEnteredNino
       upsertJourneyToDatabase(j)
-      NpsReferenceCheckStub.checkReferenceReferenceDidntMatchNino(j.nino.value, tdAll.p800ReferenceSanitised)
+      VerifyP800ReferenceStub.checkReferenceReferenceDidntMatchNino(j.nino.value, tdAll.p800ReferenceSanitised)
       getFailedAttemptCount() shouldBe None
 
       pages.checkYourAnswersChequePage.open()
       pages.checkYourAnswersChequePage.clickSubmit()
       pages.weCannotConfirmYourIdentityChequePage.assertPageIsDisplayed(JourneyType.Cheque)
 
-      NpsReferenceCheckStub.verifyCheckReference(j.nino.value, tdAll.p800ReferenceSanitised, tdAll.correlationId)
+      VerifyP800ReferenceStub.verify(tdAll.correlationId)
       getJourneyFromDatabase(tdAll.journeyId) shouldBeLike tdAll.Cheque.AfterReferenceCheck.journeyReferenceDidntMatchNino
       getFailedAttemptCount() shouldBe Some(1)
     }
 
     "bank transfer - user already failed 1 time" in {
       val j = tdAll.BankTransfer.AfterReferenceCheck.journeyReferenceDidntMatchNino
-      NpsReferenceCheckStub.checkReferenceReferenceDidntMatchNino(j.nino.value, tdAll.p800ReferenceSanitised)
+      VerifyP800ReferenceStub.checkReferenceReferenceDidntMatchNino(j.nino.value, tdAll.p800ReferenceSanitised)
 
       upsertJourneyToDatabase(j)
       upsertFailedAttemptToDatabase(tdAll.attemptInfo(failedAttempts = 1))
@@ -251,14 +251,14 @@ class CheckYourAnswersSpec extends ItSpec {
       pages.checkYourAnswersBankTransferPage.clickSubmit()
       pages.weCannotConfirmYourIdentityBankTransferPage.assertPageIsDisplayed(JourneyType.BankTransfer)
 
-      NpsReferenceCheckStub.verifyCheckReference(j.nino.value, tdAll.p800ReferenceSanitised, tdAll.correlationId)
+      VerifyP800ReferenceStub.verify(tdAll.correlationId)
       getJourneyFromDatabase(tdAll.journeyId) shouldBeLike j
       getFailedAttemptCount() shouldBe Some(2)
     }
 
     "cheque - user already failed 1 time" in {
       val j = tdAll.Cheque.AfterReferenceCheck.journeyReferenceDidntMatchNino
-      NpsReferenceCheckStub.checkReferenceReferenceDidntMatchNino(j.nino.value, tdAll.p800ReferenceSanitised)
+      VerifyP800ReferenceStub.checkReferenceReferenceDidntMatchNino(j.nino.value, tdAll.p800ReferenceSanitised)
       upsertJourneyToDatabase(j)
       upsertFailedAttemptToDatabase(tdAll.attemptInfo(failedAttempts = 1))
 
@@ -266,7 +266,7 @@ class CheckYourAnswersSpec extends ItSpec {
       pages.checkYourAnswersChequePage.clickSubmit()
       pages.weCannotConfirmYourIdentityChequePage.assertPageIsDisplayed(JourneyType.Cheque)
 
-      NpsReferenceCheckStub.verifyCheckReference(j.nino.value, tdAll.p800ReferenceSanitised, tdAll.correlationId)
+      VerifyP800ReferenceStub.verify(tdAll.correlationId)
       getJourneyFromDatabase(tdAll.journeyId) shouldBeLike j
       getFailedAttemptCount() shouldBe Some(2)
     }
@@ -276,28 +276,28 @@ class CheckYourAnswersSpec extends ItSpec {
 
     "bank transfer - when user has 2 existing failed attempts, 3rd attempt also fails" in {
       val j: Journey = tdAll.BankTransfer.AfterReferenceCheck.journeyReferenceDidntMatchNino
-      NpsReferenceCheckStub.checkReferenceReferenceDidntMatchNino(j.nino.value, tdAll.p800ReferenceSanitised)
+      VerifyP800ReferenceStub.checkReferenceReferenceDidntMatchNino(j.nino.value, tdAll.p800ReferenceSanitised)
 
       upsertJourneyToDatabase(j)
       upsertFailedAttemptToDatabase(tdAll.attemptInfo(2))
       test(JourneyType.BankTransfer)
 
       pages.noMoreAttemptsLeftToConfirmYourIdentityBankTransferPage.assertPageIsDisplayed(JourneyType.BankTransfer)
-      NpsReferenceCheckStub.verifyCheckReference(j.nino.value, tdAll.p800ReferenceSanitised, tdAll.correlationId)
+      VerifyP800ReferenceStub.verify(tdAll.correlationId)
       getJourneyFromDatabase(tdAll.journeyId) shouldBeLike tdAll.BankTransfer.journeyLockedOutFromFailedAttempts
       getFailedAttemptCount() shouldBe Some(3)
     }
 
     "cheque - when user has 2 existing failed attempts, 3rd attempt also fails" in {
       val j: Journey = tdAll.Cheque.AfterReferenceCheck.journeyReferenceDidntMatchNino
-      NpsReferenceCheckStub.checkReferenceReferenceDidntMatchNino(j.nino.value, tdAll.p800ReferenceSanitised)
+      VerifyP800ReferenceStub.checkReferenceReferenceDidntMatchNino(j.nino.value, tdAll.p800ReferenceSanitised)
 
       upsertJourneyToDatabase(j)
       upsertFailedAttemptToDatabase(tdAll.attemptInfo(2))
       test(JourneyType.Cheque)
 
       pages.noMoreAttemptsLeftToConfirmYourIdentityChequePage.assertPageIsDisplayed(JourneyType.Cheque)
-      NpsReferenceCheckStub.verifyCheckReference(j.nino.value, tdAll.p800ReferenceSanitised, tdAll.correlationId)
+      VerifyP800ReferenceStub.verify(tdAll.correlationId)
       getJourneyFromDatabase(tdAll.journeyId) shouldBeLike tdAll.Cheque.journeyLockedOutFromFailedAttempts
       getFailedAttemptCount() shouldBe Some(3)
     }
@@ -315,25 +315,25 @@ class CheckYourAnswersSpec extends ItSpec {
   "clicking submit, resulting in Nps indicating that refund has already been claimed, redirects to 'There is a problem' page" - {
     "bank transfer" in {
       val j: Journey = tdAll.BankTransfer.journeyEnteredDateOfBirth
-      NpsReferenceCheckStub.checkReferenceRefundAlreadyTaken(j.nino.value, tdAll.p800ReferenceSanitised)
+      VerifyP800ReferenceStub.refundAlreadyTaken(j.nino.value, tdAll.p800ReferenceSanitised)
       upsertJourneyToDatabase(j)
 
       test(JourneyType.BankTransfer)
 
       getJourneyFromDatabase(tdAll.journeyId) shouldBeLike tdAll.BankTransfer.AfterReferenceCheck.journeyRefundAlreadyTaken
-      NpsReferenceCheckStub.verifyCheckReference(j.nino.value, tdAll.p800ReferenceSanitised, tdAll.correlationId)
-      NpsTraceIndividualStub.verifyNoneTraceIndividual()
+      VerifyP800ReferenceStub.verify(tdAll.correlationId)
+      TraceIndividualStub.verifyNoneTraceIndividual()
     }
     "cheque" in {
       val j: Journey = tdAll.Cheque.journeyEnteredNino
-      NpsReferenceCheckStub.checkReferenceRefundAlreadyTaken(j.nino.value, tdAll.p800ReferenceSanitised)
+      VerifyP800ReferenceStub.refundAlreadyTaken(j.nino.value, tdAll.p800ReferenceSanitised)
       upsertJourneyToDatabase(j)
 
       test(JourneyType.Cheque)
 
       getJourneyFromDatabase(tdAll.journeyId) shouldBeLike tdAll.Cheque.AfterReferenceCheck.journeyRefundAlreadyTaken
-      NpsReferenceCheckStub.verifyCheckReference(j.nino.value, tdAll.p800ReferenceSanitised, tdAll.correlationId)
-      NpsTraceIndividualStub.verifyNoneTraceIndividual()
+      VerifyP800ReferenceStub.verify(tdAll.correlationId)
+      TraceIndividualStub.verifyNoneTraceIndividual()
     }
 
       def test(journeyType: JourneyType): Unit = {

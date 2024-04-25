@@ -23,7 +23,7 @@ import models.ecospend.account.BankAccountSummary
 import models.ecospend.consent.BankConsentResponse
 import models.p800externalapi.EventValue
 import models.{AmountInPence, CorrelationId, Nino, P800Reference}
-import nps.models.{ReferenceCheckResult, TraceIndividualResponse}
+import nps.models.{ValidateReferenceResult, TraceIndividualResponse}
 import play.api.libs.json.OFormat
 import play.api.mvc.RequestHeader
 import util.Errors
@@ -41,7 +41,7 @@ final case class Journey(
     isChanging:    IsChanging,
     dateOfBirth:   Option[DateOfBirth],
     // below, API Responses only
-    referenceCheckResult:          Option[ReferenceCheckResult], //reset this field upon changes of dependant fields
+    referenceCheckResult:          Option[ValidateReferenceResult], //reset this field upon changes of dependant fields
     traceIndividualResponse:       Option[TraceIndividualResponse], //reset this field upon changes of dependant fields
     bankDescription:               Option[BankDescription],
     bankConsentResponse:           Option[BankConsentResponse],
@@ -74,7 +74,7 @@ final case class Journey(
         p800Reference = Some(p800Reference)
       )
 
-  def update(referenceCheckResult: ReferenceCheckResult): Journey =
+  def update(referenceCheckResult: ValidateReferenceResult): Journey =
     this
       .resetAllApiResponses()
       .copy(
@@ -151,10 +151,10 @@ final case class Journey(
 
   def getTraceIndividualResponse(implicit request: RequestHeader): TraceIndividualResponse = traceIndividualResponse.getOrElse(Errors.throwServerErrorException(s"Expected 'traceIndividualResponse' to be defined but it was None [${journeyId.toString}] "))
 
-  def getReferenceCheckResult(implicit request: RequestHeader): ReferenceCheckResult = referenceCheckResult.getOrElse(Errors.throwServerErrorException(s"Expected 'referenceCheckResult' to be defined but it was None [${journeyId.toString}] "))
+  def getReferenceCheckResult(implicit request: RequestHeader): ValidateReferenceResult = referenceCheckResult.getOrElse(Errors.throwServerErrorException(s"Expected 'referenceCheckResult' to be defined but it was None [${journeyId.toString}] "))
 
-  def getP800ReferenceChecked(implicit request: RequestHeader): ReferenceCheckResult.P800ReferenceChecked = getReferenceCheckResult match {
-    case r: ReferenceCheckResult.P800ReferenceChecked => r
+  def getP800ReferenceChecked(implicit request: RequestHeader): ValidateReferenceResult.P800ReferenceChecked = getReferenceCheckResult match {
+    case r: ValidateReferenceResult.P800ReferenceChecked => r
     case r => Errors.throwServerErrorException(s"Expected 'referenceCheckResult' to be 'P800ReferenceChecked' to be defined but it was '${r.toString}' [${journeyId.toString}] ")
   }
 
@@ -163,9 +163,9 @@ final case class Journey(
   def getAmount(implicit request: RequestHeader): AmountInPence = AmountInPence(getP800ReferenceChecked.paymentAmount)
 
   def isIdentityVerified: Boolean = referenceCheckResult.exists {
-    case _: ReferenceCheckResult.P800ReferenceChecked => true
-    case ReferenceCheckResult.RefundAlreadyTaken      => false
-    case ReferenceCheckResult.ReferenceDidntMatchNino => false
+    case _: ValidateReferenceResult.P800ReferenceChecked => true
+    case ValidateReferenceResult.RefundAlreadyTaken      => false
+    case ValidateReferenceResult.ReferenceDidntMatchNino => false
   }
 
   val lastUpdated: Instant = Instant.now(Clock.systemUTC())

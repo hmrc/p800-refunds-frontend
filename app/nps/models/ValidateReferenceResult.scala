@@ -20,16 +20,16 @@ import julienrf.json.derived
 import models.P800Reference
 import play.api.libs.json.{Json, OFormat}
 
-sealed trait ReferenceCheckResult
+sealed trait ValidateReferenceResult
 
-object ReferenceCheckResult {
+object ValidateReferenceResult {
 
   @SuppressWarnings(Array("org.wartremover.warts.Any"))
-  implicit val format: OFormat[ReferenceCheckResult] = derived.oformat[ReferenceCheckResult]()
+  implicit val format: OFormat[ValidateReferenceResult] = derived.oformat[ValidateReferenceResult]()
 
-  case object ReferenceDidntMatchNino extends ReferenceCheckResult
+  case object ReferenceDidntMatchNino extends ValidateReferenceResult
 
-  case object RefundAlreadyTaken extends ReferenceCheckResult
+  case object RefundAlreadyTaken extends ValidateReferenceResult
 
   //TODO case object RefundSuspended extends ReferenceCheckResult
 
@@ -42,7 +42,7 @@ object ReferenceCheckResult {
       associatedPayableNumber:  AssociatedPayableNumber,
       customerAccountNumber:    CustomerAccountNumber,
       currentOptimisticLock:    CurrentOptimisticLock
-  ) extends ReferenceCheckResult
+  ) extends ValidateReferenceResult
 
   object P800ReferenceChecked {
     @SuppressWarnings(Array("org.wartremover.warts.Any"))

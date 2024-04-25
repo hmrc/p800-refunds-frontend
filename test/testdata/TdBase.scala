@@ -26,7 +26,7 @@ import models.ecospend._
 import models.ecospend.account._
 import models.ecospend.consent._
 import models.p800externalapi.EventValue
-import nps.models.ReferenceCheckResult.P800ReferenceChecked
+import nps.models.ValidateReferenceResult.P800ReferenceChecked
 import org.apache.pekko.http.scaladsl.model.Uri
 import testsupport.ItSpec
 
@@ -70,9 +70,9 @@ trait TdBase {
   lazy val reconciliationIdentifier: ReconciliationIdentifier = ReconciliationIdentifier(123)
 
   lazy val associatedPayableNumber: AssociatedPayableNumber = AssociatedPayableNumber(1234)
-  lazy val p800ReferenceChecked: P800ReferenceChecked = ReferenceCheckResult.P800ReferenceChecked(
+  lazy val p800ReferenceChecked: P800ReferenceChecked = ValidateReferenceResult.P800ReferenceChecked(
     reconciliationIdentifier = reconciliationIdentifier,
-    paymentNumber            = p800Reference,
+    paymentNumber            = p800ReferenceSanitised,
     payeNumber               = PayeNumber("PayeNumber-123"),
     taxDistrictNumber        = TaxDistrictNumber(717),
     paymentAmount            = paymentAmount,
@@ -175,6 +175,7 @@ trait TdBase {
   lazy val isValidEventValueNotReceived: EventValue = EventValue.NotReceived
 
   lazy val suspendOverpaymentRequest: SuspendOverpaymentRequest = SuspendOverpaymentRequest(
+    paymentNumber            = p800ReferenceSanitised,
     currentOptimisticLock    = currentOptimisticLock,
     reconciliationIdentifier = reconciliationIdentifier,
     associatedPayableNumber  = associatedPayableNumber,
@@ -184,7 +185,8 @@ trait TdBase {
     designatedPayeeAccount   = DesignatedPayeeAccount(false)
   )
 
-  lazy val claimOverpaymentRequest: ClaimOverpaymentRequest = ClaimOverpaymentRequest(
+  lazy val claimOverpaymentRequest: MakeBacsRepaymentRequest = MakeBacsRepaymentRequest(
+    paymentNumber            = p800ReferenceSanitised,
     currentOptimisticLock    = currentOptimisticLock,
     reconciliationIdentifier = reconciliationIdentifier,
     associatedPayableNumber  = associatedPayableNumber,
@@ -194,7 +196,7 @@ trait TdBase {
     designatedPayeeAccount   = DesignatedPayeeAccount(true)
   )
 
-  lazy val claimOverpaymentResponse: ClaimOverpaymentResponse = ClaimOverpaymentResponse(
+  lazy val claimOverpaymentResponse: MakeBacsRepaymentResponse = MakeBacsRepaymentResponse(
     identifier            = nino,
     currentOptimisticLock = currentOptimisticLock
   )

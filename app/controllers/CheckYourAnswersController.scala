@@ -22,7 +22,7 @@ import language.Messages
 import models.dateofbirth.DateOfBirth
 import models.journeymodels._
 import models.{Nino, P800Reference}
-import nps.models.{ReferenceCheckResult, TraceIndividualRequest, TraceIndividualResponse}
+import nps.models.{ValidateReferenceResult, TraceIndividualRequest, TraceIndividualResponse}
 import play.api.mvc._
 import requests.RequestSupport
 import services.{FailedVerificationAttemptService, JourneyService}
@@ -92,7 +92,7 @@ class CheckYourAnswersController @Inject() (
   @SuppressWarnings(Array("org.wartremover.warts.Any"))
   def post: Action[AnyContent] = actions
     .journeyInProgress
-    .andThen(checkP800Reference)
+    .andThen(validateP800Reference)
     .andThen(processFailedReferenceCheck)
     .async { implicit request =>
       val journey: Journey = request.journey
@@ -114,12 +114,12 @@ class CheckYourAnswersController @Inject() (
     }
 
   @SuppressWarnings(Array("org.wartremover.warts.Any"))
-  private val checkP800Reference: ActionRefiner[JourneyRequest, JourneyRequest] = new ActionRefiner[JourneyRequest, JourneyRequest] {
+  private val validateP800Reference: ActionRefiner[JourneyRequest, JourneyRequest] = new ActionRefiner[JourneyRequest, JourneyRequest] {
     override protected def refine[A](request: JourneyRequest[A]): Future[Either[Result, JourneyRequest[A]]] = {
       implicit val r: JourneyRequest[A] = request
       p800RefundsBackendConnector
-        .p800ReferenceCheck(r.journey.getNino, r.journey.getP800Reference, r.journey.correlationId)
-        .map { referenceCheckResult =>
+        .validateP800Reference(r.journey.getNino, r.journey.getP800Reference, r.journey.correlationId)
+        .map { referenceCheckResult: ValidateReferenceResult =>
           Right(new JourneyRequest[A](journey = r.journey.update(referenceCheckResult), request = r.request))
         }
     }
@@ -132,17 +132,17 @@ class CheckYourAnswersController @Inject() (
     override protected def filter[A](request: JourneyRequest[A]): Future[Option[Result]] = {
       implicit val r: JourneyRequest[A] = request
       r.journey.getReferenceCheckResult match {
-        case _: ReferenceCheckResult.P800ReferenceChecked =>
+        case _: ValidateReferenceResult.P800ReferenceChecked =>
           //All good, proceed to next action
           Future.successful(None)
-        case ReferenceCheckResult.RefundAlreadyTaken =>
+        case ValidateReferenceResult.RefundAlreadyTaken =>
           journeyService
             .upsert(r.journey.update(HasFinished.YesRefundAlreadyTaken))
             .map { _ =>
               JourneyLogger.info("NPS indicate that refund has already been claimed")
               Some(Redirect(routes.ThereIsAProblemController.get))
             }
-        case ReferenceCheckResult.ReferenceDidntMatchNino =>
+        case ValidateReferenceResult.ReferenceDidntMatchNino =>
           for {
             shouldBeLockedOut <- failedVerificationAttemptService.updateNumberOfFailedAttempts()
             result <- if (shouldBeLockedOut) {
