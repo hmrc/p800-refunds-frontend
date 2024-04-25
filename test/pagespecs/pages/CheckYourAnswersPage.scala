@@ -17,7 +17,7 @@
 package pagespecs.pages
 
 import models.journeymodels.JourneyType
-import models.{Nino, P800Reference}
+import models.{Nino, UserEnteredP800Reference}
 import org.openqa.selenium.WebDriver
 import pagespecs.pagesupport.{ContentExpectation, Page, PageUtil}
 import testsupport.RichMatchers.convertToAnyShouldWrapper
@@ -31,7 +31,7 @@ class CheckYourAnswersPage(baseUrl: String, pathForJourneyType: String)(implicit
   override def expectedTitleContent: String = "check your answers"
 
   def assertPageIsDisplayedForBankTransfer(
-      p800Reference:           P800Reference,
+      p800Reference:           UserEnteredP800Reference,
       dateOfBirth:             String,
       nationalInsuranceNumber: Nino
   ): Unit = withPageClue {
@@ -60,7 +60,7 @@ class CheckYourAnswersPage(baseUrl: String, pathForJourneyType: String)(implicit
   }
 
   def assertPageIsDisplayedForCheque(
-      p800Reference:           P800Reference,
+      p800Reference:           UserEnteredP800Reference,
       nationalInsuranceNumber: Nino
   ): Unit = withPageClue {
 

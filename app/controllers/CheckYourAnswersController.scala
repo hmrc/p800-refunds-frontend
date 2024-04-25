@@ -21,8 +21,8 @@ import connectors.P800RefundsBackendConnector
 import language.Messages
 import models.dateofbirth.DateOfBirth
 import models.journeymodels._
-import models.{Nino, P800Reference}
-import nps.models.{ValidateReferenceResult, TraceIndividualRequest, TraceIndividualResponse}
+import models.{Nino, UserEnteredP800Reference}
+import nps.models.{TraceIndividualRequest, TraceIndividualResponse, ValidateReferenceResult}
 import play.api.mvc._
 import requests.RequestSupport
 import services.{FailedVerificationAttemptService, JourneyService}
@@ -118,7 +118,7 @@ class CheckYourAnswersController @Inject() (
     override protected def refine[A](request: JourneyRequest[A]): Future[Either[Result, JourneyRequest[A]]] = {
       implicit val r: JourneyRequest[A] = request
       p800RefundsBackendConnector
-        .validateP800Reference(r.journey.getNino, r.journey.getP800Reference, r.journey.correlationId)
+        .validateP800Reference(r.journey.getNino, r.journey.getP800Reference.sanitiseReference, r.journey.correlationId)
         .map { referenceCheckResult: ValidateReferenceResult =>
           Right(new JourneyRequest[A](journey = r.journey.update(referenceCheckResult), request = r.request))
         }
@@ -160,7 +160,7 @@ class CheckYourAnswersController @Inject() (
   }
 
   private def buildSummaryList(
-      p800Reference:           P800Reference,
+      p800Reference:           UserEnteredP800Reference,
       nationalInsuranceNumber: Nino,
       dateOfBirth:             DateOfBirth
   )(implicit request: Request[_]): SummaryList = SummaryList(rows = Seq(
@@ -170,7 +170,7 @@ class CheckYourAnswersController @Inject() (
   ))
 
   private def buildSummaryList(
-      p800Reference: P800Reference,
+      p800Reference: UserEnteredP800Reference,
       nino:          Nino
   )(implicit request: Request[_]): SummaryList = SummaryList(rows = Seq(
     p800ReferenceSummaryRow(p800Reference),
@@ -197,7 +197,7 @@ class CheckYourAnswersController @Inject() (
     )
   }
 
-  private def p800ReferenceSummaryRow(p800Reference: P800Reference)(implicit request: Request[_]): SummaryListRow = {
+  private def p800ReferenceSummaryRow(p800Reference: UserEnteredP800Reference)(implicit request: Request[_]): SummaryListRow = {
     buildSummaryListRow(
       Messages.CheckYourAnswersMessages.`P800 reference`.show,
       id    = "reference",

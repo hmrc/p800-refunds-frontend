@@ -30,7 +30,7 @@ trait TdEdh { dependencies: TdBase =>
     ),
     paymentData  = Some(PaymentData(
       paymentAmount = Some(paymentAmount), //TODO: according to analysis this comes form repayment status API, but we don't call it.
-      paymentNumber = Some(p800Reference.sanitiseReference.value.toInt) //TODO: according to analysis this comes form repayment status API, but we don't call it.
+      paymentNumber = Some(userEnteredP800Reference.sanitiseReference.value) //TODO: according to analysis this comes form repayment status API, but we don't call it.
     )),
     employerData = None, //TODO: according to the analysis: confirm this is not needed
 

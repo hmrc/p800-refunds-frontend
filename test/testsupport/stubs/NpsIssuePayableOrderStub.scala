@@ -63,5 +63,5 @@ object NpsIssuePayableOrderStub {
   def verifyNone(nino: Nino, p800Reference: P800Reference): Unit =
     WireMock.verify(exactly(0), postRequestedFor(urlPathEqualTo(url(nino, p800Reference))))
 
-  private def url(nino: Nino, p800Reference: P800Reference) = s"/p800-refunds-backend/nps/issue-payable-order/${nino.value}/${p800Reference.value}"
+  private def url(nino: Nino, p800Reference: P800Reference) = s"/p800-refunds-backend/nps/issue-payable-order/${nino.value}/${p800Reference.value.toString}"
 }

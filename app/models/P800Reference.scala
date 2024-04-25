@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2024 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,25 +16,10 @@
 
 package models
 
-import models.forms.EnterP800ReferenceForm
-import util.SafeEquals.EqualsOps
 import play.api.libs.json.{Format, Json}
 
-final case class P800Reference(value: String) {
-  def sanitiseReference: P800Reference = {
-    val charactersThatAreAllowedFromForm: Set[Char] = EnterP800ReferenceForm.allowedSpecialCharacters
-    P800Reference(
-      value
-        .trim
-        .replaceAll(" ", "")
-        .filter(!charactersThatAreAllowedFromForm.contains(_))
-        .filter(_.isDigit)
-        .dropWhile(_ === '0')
-    )
-  }
-}
-
 object P800Reference {
-  implicit val formats: Format[P800Reference] = Json.valueFormat[P800Reference]
+  implicit val format: Format[P800Reference] = Json.valueFormat[P800Reference]
 }
 
+final case class P800Reference(value: Int)

@@ -22,7 +22,7 @@ import models.ecospend.BankDescription
 import models.ecospend.account.BankAccountSummary
 import models.ecospend.consent.BankConsentResponse
 import models.p800externalapi.EventValue
-import models.{AmountInPence, CorrelationId, Nino, P800Reference}
+import models.{AmountInPence, CorrelationId, Nino, UserEnteredP800Reference}
 import nps.models.{ValidateReferenceResult, TraceIndividualResponse}
 import play.api.libs.json.OFormat
 import play.api.mvc.RequestHeader
@@ -36,7 +36,7 @@ final case class Journey(
     correlationId: CorrelationId,
     hasFinished:   HasFinished,
     journeyType:   Option[JourneyType],
-    p800Reference: Option[P800Reference],
+    p800Reference: Option[UserEnteredP800Reference],
     nino:          Option[Nino],
     isChanging:    IsChanging,
     dateOfBirth:   Option[DateOfBirth],
@@ -67,7 +67,7 @@ final case class Journey(
         dateOfBirth = Some(dateOfBirth)
       )
 
-  def update(p800Reference: P800Reference): Journey =
+  def update(p800Reference: UserEnteredP800Reference): Journey =
     this
       .resetAllApiResponses()
       .copy(
@@ -137,7 +137,7 @@ final case class Journey(
 
   def getJourneyType(implicit request: RequestHeader): JourneyType = journeyType.getOrElse(Errors.throwServerErrorException(s"Expected 'journeyType' to be defined but it was None [${journeyId.toString}] "))
 
-  def getP800Reference(implicit request: RequestHeader): P800Reference = p800Reference.getOrElse(Errors.throwServerErrorException(s"Expected 'p800Reference' to be defined but it was None [${journeyId.toString}] "))
+  def getP800Reference(implicit request: RequestHeader): UserEnteredP800Reference = p800Reference.getOrElse(Errors.throwServerErrorException(s"Expected 'p800Reference' to be defined but it was None [${journeyId.toString}] "))
 
   def getDateOfBirth(implicit request: RequestHeader): DateOfBirth = dateOfBirth.getOrElse(Errors.throwServerErrorException(s"Expected 'dateOfBirth' to be defined but it was None [${journeyId.toString}] "))
 
