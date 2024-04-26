@@ -331,7 +331,7 @@ object Messages {
       english = "date of birth"
     )
 
-    val `national insurance number`: Message = Message(
+    val `National Insurance number`: Message = Message(
       english = "National Insurance number"
     )
 
