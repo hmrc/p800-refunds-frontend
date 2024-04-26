@@ -25,7 +25,7 @@ sealed class SuccessfulMatch extends NameMatchingResponse {
 }
 
 case object BasicSuccessfulNameMatch extends SuccessfulMatch
-case object InitialsSuccessfulNameMatch extends SuccessfulMatch
+case object FirstAndMiddleNameSuccessfulNameMatch extends SuccessfulMatch
 case object LevenshteinSuccessfulNameMatch extends SuccessfulMatch
 
 case object FailedNameMatch extends NameMatchingResponse {

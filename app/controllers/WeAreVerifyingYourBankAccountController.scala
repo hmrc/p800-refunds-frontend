@@ -50,7 +50,25 @@ class WeAreVerifyingYourBankAccountController @Inject() (
     claimIdGenerator:                ClaimIdGenerator
 )(implicit ec: ExecutionContext) extends FrontendController(mcc) {
 
-  def getFuzzyMatchingResponse(individualResponse: TraceIndividualResponse, bankAccountPartyList: List[BankAccountParty])
+  def get(status: Option[ConsentStatus], consent_id: Option[ConsentId], bank_reference_id: Option[BankReferenceId]): Action[AnyContent] = actions.journeyInProgress.async { implicit request: JourneyRequest[_] =>
+    val journey: Journey = request.journey
+    sanityChecks(consent_id, bank_reference_id, journey)
+
+    val consentStatus: ConsentStatus =
+      status.getOrElse(Errors.throwServerErrorException("This endpoint requires a status parameter."))
+
+    for {
+      isValidEventValue: EventValue <- obtainIsValid(journey)
+      bankAccountSummary: BankAccountSummary <- obtainBankAccountSummary(journey)
+      bankDetailsRiskResultResponse: GetBankDetailsRiskResultResponse <- obtainGetBankDetailsRiskResultResponse(journey, bankAccountSummary)
+      didAnyNameMatch = doAnyNamesFromPartiesListMatch(journey.getTraceIndividualResponse, bankAccountSummary.parties)
+      newJourney = journey.update(isValidEventValue, bankAccountSummary, bankDetailsRiskResultResponse)
+      (result, newJourney) <- next(newJourney, isValidEventValue, bankDetailsRiskResultResponse, bankAccountSummary, consentStatus, didAnyNameMatch)
+      _ <- journeyService.upsert(newJourney)
+    } yield result
+  }
+
+  def doAnyNamesFromPartiesListMatch(individualResponse: TraceIndividualResponse, bankAccountPartyList: List[BankAccountParty])
     (implicit request: JourneyRequest[_]): Boolean = {
     val matchingResponseList: Seq[NameMatchingResponse] = bankAccountPartyList.map { party =>
       nameMatchingService.fuzzyNameMatching(
@@ -63,32 +81,14 @@ class WeAreVerifyingYourBankAccountController @Inject() (
     matchingResponseList.exists(_.isSuccess)
   }
 
-  def get(status: Option[ConsentStatus], consent_id: Option[ConsentId], bank_reference_id: Option[BankReferenceId]): Action[AnyContent] = actions.journeyInProgress.async { implicit request: JourneyRequest[_] =>
-    val journey: Journey = request.journey
-    sanityChecks(consent_id, bank_reference_id, journey)
-
-    val consentStatus: ConsentStatus =
-      status.getOrElse(Errors.throwServerErrorException("This endpoint requires a status parameter."))
-
-    for {
-      isValidEventValue: EventValue <- obtainIsValid(journey)
-      bankAccountSummary: BankAccountSummary <- obtainBankAccountSummary(journey)
-      bankDetailsRiskResultResponse: GetBankDetailsRiskResultResponse <- obtainGetBankDetailsRiskResultResponse(journey, bankAccountSummary)
-      isNameASuccessfulMatch = getFuzzyMatchingResponse(journey.getTraceIndividualResponse, bankAccountSummary.parties)
-      newJourney = journey.update(isValidEventValue, bankAccountSummary, bankDetailsRiskResultResponse)
-      (result, newJourney) <- next(newJourney, isValidEventValue, bankDetailsRiskResultResponse, bankAccountSummary, consentStatus, isNameASuccessfulMatch)
-      _ <- journeyService.upsert(newJourney)
-    } yield result
-  }
-
   private def next(
       journey:                       Journey,
       isValidEventValue:             EventValue,
       bankDetailsRiskResultResponse: GetBankDetailsRiskResultResponse,
       bankAccountSummary:            BankAccountSummary,
       consentStatus:                 ConsentStatus,
-      isNameASuccessfulMatch:        Boolean
-  )(implicit request: RequestHeader): Future[(Result, Journey)] = (isValidEventValue, consentStatus, isNameASuccessfulMatch) match {
+      didAnyNameMatch:               Boolean
+  )(implicit request: RequestHeader): Future[(Result, Journey)] = (isValidEventValue, consentStatus, didAnyNameMatch) match {
     case (_, ConsentStatus.Failed, _) => Future.successful {
       JourneyLogger.info(s"User failed consent flow. [ConsentStatus: Failed]")
       (
@@ -104,7 +104,7 @@ class WeAreVerifyingYourBankAccountController @Inject() (
       )
     }
     case (_, _, false) => Future.successful {
-      JourneyLogger.info(s"User failed Name Match Match")
+      JourneyLogger.info(s"Ecospend names failed matching against NPS name")
       (
         Redirect(routes.RefundRequestNotSubmittedController.get),
         journey

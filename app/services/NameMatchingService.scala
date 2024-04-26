@@ -16,9 +16,9 @@
 
 package services
 
-import action.JourneyRequest
 import models.namematching._
 import org.apache.commons.text.similarity.LevenshteinDetailedDistance
+import play.api.mvc.RequestHeader
 import util.JourneyLogger
 import util.SafeEquals.EqualsOps
 
@@ -31,18 +31,20 @@ class NameMatchingService extends {
       npsOptSecondName: Option[String],
       npsSurname:       String,
       ecospendName:     String
-  )(implicit request: JourneyRequest[_]): NameMatchingResponse = {
+  )(implicit request: RequestHeader): NameMatchingResponse = {
 
-    val sanitisedNpsName = sanitiseFullName(s"${removeSpacesAndHyphens(npsOptFirstName.getOrElse(""))} ${npsOptSecondName.getOrElse("")} ${removeSpacesAndHyphens(npsSurname)}")
+    val sanitisedNpsName = sanitiseFullName(s"${npsOptFirstName.getOrElse("")} ${npsOptSecondName.getOrElse("")} $npsSurname")
     val sanitisedEcospendName = sanitiseFullName(ecospendName)
 
-    val npsNamesList = sanitisedNpsName.split(' ')
-    val ecoNamesList = sanitisedEcospendName.split(' ')
-    val (npsListWithoutSurname, npsSurnameFromArray) = npsNamesList.splitAt(npsNamesList.length - 1)
-    val (ecoListWithoutSurname, ecoSurname) = ecoNamesList.splitAt(ecoNamesList.length - 1)
+    val npsNamesList = sanitisedNpsName.split(' ').toSeq
+    val ecoNamesList = sanitisedEcospendName.split(' ').toSeq
+    val (npsListWithoutSurname, npsSurnameFromSeq) = npsNamesList.splitAt(npsNamesList.length - 1)
+    val (ecoListWithoutSurname, ecoSurname) = splitEcospendSurname(npsSurname, ecoNamesList)
 
-    val doSanitisedNamesMatch = sanitisedNpsName === sanitisedEcospendName
-    val doSurnamesMatch = npsSurnameFromArray.head === ecoSurname.head
+    val fullEcospendName = s"${ecoListWithoutSurname.mkString(" ")} $ecoSurname"
+
+    val doSanitisedNamesMatch = sanitisedNpsName === fullEcospendName
+    val doSurnamesMatch = npsSurnameFromSeq.mkString === ecoSurname
 
     (doSanitisedNamesMatch, doSurnamesMatch) match {
       case (true, _) => BasicSuccessfulNameMatch
@@ -52,16 +54,17 @@ class NameMatchingService extends {
       case (false, true) =>
         val comparisonResult = compareFirstAndMiddleNames(npsListWithoutSurname, ecoListWithoutSurname)
         if (comparisonResult.didNamesMatch) {
-          JourneyLogger.info(s"Successful Initials Match")
-          InitialsSuccessfulNameMatch
+          JourneyLogger.info(s"Successful First and Middle name Match")
+          FirstAndMiddleNameSuccessfulNameMatch
         } else {
           isWithinLevenshteinDistance(comparisonResult.npsNameWithInitials, comparisonResult.ecospendNameWithInitials)
         }
     }
   }
 
-  def compareFirstAndMiddleNames(npsNamesList: Array[String], ecospendNamesList: Array[String]): ComparisonResult = {
-    val pairedList: Array[(String, String)] = npsNamesList.zip(ecospendNamesList).map{ nameTuple =>
+  def compareFirstAndMiddleNames(npsNamesList: Seq[String], ecospendNamesList: Seq[String]): ComparisonResult = {
+    //Excess middle names are intentionally dropped & we only convert to initials if one already exists
+    val pairedList: Seq[(String, String)] = npsNamesList.zip(ecospendNamesList).map{ nameTuple =>
       val (npsPart, ecoPart) = nameTuple
       val isAnyPartAnInitial = (npsPart.length === 1) || (ecoPart.length === 1)
 
@@ -83,21 +86,32 @@ class NameMatchingService extends {
     }
   }
 
-  def removeSpacesAndHyphens(name: String): String = {
-    name.trim
-      .replace("-", "")
-      .replaceAll("\\s", "")
+  def splitEcospendSurname(npsSurname: String, ecospendNamesList: Seq[String]): (Seq[String], String) = {
+    //By looking at the structure of the NPS surname, we can identify the structure of the Ecospend name to learn where the first/middle name ends and the surname begins.
+    //This is necessary for surnames split but spaces not hyphens.
+    val npsSurnameLength = processSpacesApostrophesAndHyphens(npsSurname)
+      .split(" ")
+      .toSeq
+      .length
+
+    val (firstMiddleList, surnameList) = ecospendNamesList.splitAt(ecospendNamesList.length - npsSurnameLength)
+    val sanitisedSurname = processSpacesApostrophesAndHyphens(surnameList.mkString(" "))
+    (firstMiddleList, sanitisedSurname)
   }
 
   def sanitiseFullName(name: String): String = {
-    val nameWithoutDiatrics = removeDiacritics(name)
-    val nameWithoutHyphensOrSpaces = nameWithoutDiatrics
-      .replace("-", "")
-      .trim
-      .replaceAll(" +", " ")
-      .replaceAll("\\s", " ")
+    val nameWithoutHyphensOrSpaces = processSpacesApostrophesAndHyphens(name)
+    val sanitisedName = removeDiacritics(nameWithoutHyphensOrSpaces)
+    sanitisedName.toLowerCase
+  }
 
-    nameWithoutHyphensOrSpaces.toLowerCase
+  def processSpacesApostrophesAndHyphens(name: String): String = {
+    name
+      .trim
+      .replaceAll("['.]", "")
+      .replaceAll("[‒‑—–-]", " ")
+      .replaceAll("\\s", " ")
+      .replaceAll(" +", " ")
   }
 
   def removeDiacritics(name: String): String = {
@@ -106,7 +120,7 @@ class NameMatchingService extends {
   }
 
   @SuppressWarnings(Array("org.wartremover.warts.AutoUnboxing"))
-  def isWithinLevenshteinDistance(name: String, comparisonName: String)(implicit request: JourneyRequest[_]): NameMatchingResponse = {
+  def isWithinLevenshteinDistance(name: String, comparisonName: String)(implicit request: RequestHeader): NameMatchingResponse = {
     val distance = LevenshteinDetailedDistance.getDefaultInstance.apply(name, comparisonName)
     if (distance.getDistance <= 1) {
       JourneyLogger.info("Successful Levenshtein Match")
