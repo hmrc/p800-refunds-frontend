@@ -331,8 +331,8 @@ object Messages {
       english = "date of birth"
     )
 
-    val `national insurance number`: Message = Message(
-      english = "national insurance number"
+    val `National Insurance number`: Message = Message(
+      english = "National Insurance number"
     )
 
     val `We do this to protect your security`: Message = Message(
@@ -343,8 +343,8 @@ object Messages {
       english = "If you do not know your P800 reference,"
     )
 
-    def `Sign in using your Government Gateway user ID to claim your refund.`(link: String): Message = Message(
-      english = s"""<a id="personal-tax-account-sign-in" class="govuk-link" href="$link">Sign in using your Government Gateway user ID</a> to claim your refund."""
+    def `sign in using your Government Gateway user ID to claim your refund.`(link: String): Message = Message(
+      english = s"""<a id="personal-tax-account-sign-in" class="govuk-link" href="$link">sign in using your Government Gateway user ID</a> to claim your refund."""
     )
 
     val `If you do not know your National Insurance number`: Message = Message(

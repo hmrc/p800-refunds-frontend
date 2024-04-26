@@ -51,7 +51,7 @@
 
     <ul  class="govuk-list govuk-list--bullet">
         <li>@{Messages.WeNeedToConfirmYourIdentity.`P800 reference`.show}</li>
-        <li>@{Messages.WeNeedToConfirmYourIdentity.`national insurance number`.show}</li>
+        <li>@{Messages.WeNeedToConfirmYourIdentity.`National Insurance number`.show}</li>
 
         @{  journeyType match {
               case JourneyType.Cheque => Html("")
@@ -67,7 +67,7 @@
     </p>
 
     <div class="govuk-inset-text">
-        <p class="govuk-body">@{Messages.WeNeedToConfirmYourIdentity.`If you do not know your P800 reference`.show} @{Html(Messages.WeNeedToConfirmYourIdentity.`Sign in using your Government Gateway user ID to claim your refund.`(appConfig.personalTaxAccountSignInUrl).show)}
+        <p class="govuk-body">@{Messages.WeNeedToConfirmYourIdentity.`If you do not know your P800 reference`.show} @{Html(Messages.WeNeedToConfirmYourIdentity.`sign in using your Government Gateway user ID to claim your refund.`(appConfig.personalTaxAccountSignInUrl).show)}
         </p>
         <p class="govuk-body">@{Messages.WeNeedToConfirmYourIdentity.`If you do not know your National Insurance number`.show} @{Html(Messages.WeNeedToConfirmYourIdentity.`get help to find it`(appConfig.nationalInsuranceNumberUrl).show)}
         </p>
