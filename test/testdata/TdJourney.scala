@@ -109,12 +109,33 @@ trait TdJourney {
       bankDescription = Some(dependencies.bankDescription)
     )
 
+    lazy val journeySelectedBankWithSuccessfulMatch: Journey = journeyAfterTracedIndividual.copy(
+      bankDescription         = Some(dependencies.bankDescription),
+      traceIndividualResponse = Some(dependencies.traceIndividualResponseSuccessFulNameMatch)
+    )
+
     lazy val journeyBankConsent: Journey = journeySelectedBank.copy(
       bankConsentResponse = Some(dependencies.bankConsent)
     )
 
+    lazy val journeyBankAccountConsentSuccessfulNameMatch: Journey = journeySelectedBank.copy(
+      bankConsentResponse     = Some(dependencies.bankConsent),
+      traceIndividualResponse = Some(dependencies.traceIndividualResponseSuccessFulNameMatch)
+    )
+
     lazy val journeyReceivedNotificationFromEcospendNotReceived: Journey =
       journeyBankConsent.copy(
+        isValidEventValue = Some(dependencies.isValidEventValueNotReceived),
+        //Even if the notification was not received,
+        // in the same controller call
+        // other APIs were made
+        // and their responses were stored in the journey:
+        bankDetailsRiskResultResponse = Some(dependencies.getBankDetailsRiskResultResponse),
+        bankAccountSummary            = Some(dependencies.bankAccountSummary)
+      )
+
+    lazy val journeyReceivedNotificationFromEcospendNotReceivedSuccessfulNameMatch: Journey =
+      journeyBankAccountConsentSuccessfulNameMatch.copy(
         isValidEventValue = Some(dependencies.isValidEventValueNotReceived),
         //Even if the notification was not received,
         // in the same controller call

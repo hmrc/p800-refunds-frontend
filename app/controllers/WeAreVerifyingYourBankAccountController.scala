@@ -20,14 +20,15 @@ import action.{Actions, JourneyRequest}
 import casemanagement._
 import connectors.{P800RefundsBackendConnector, P800RefundsExternalApiConnector}
 import edh._
-import models.ecospend.account.BankAccountSummary
+import models.ecospend.account.{BankAccountParty, BankAccountSummary}
 import models.ecospend.consent.{BankReferenceId, ConsentId, ConsentStatus}
 import models.journeymodels._
+import models.namematching.NameMatchingResponse
 import models.p800externalapi.EventValue
 import nps.models.ValidateReferenceResult.P800ReferenceChecked
 import nps.models._
 import play.api.mvc._
-import services.{EcospendService, JourneyService}
+import services.{EcospendService, JourneyService, NameMatchingService}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import util.SafeEquals.EqualsOps
 import util.{Errors, JourneyLogger}
@@ -41,6 +42,7 @@ class WeAreVerifyingYourBankAccountController @Inject() (
     actions:                         Actions,
     ecospendService:                 EcospendService,
     journeyService:                  JourneyService,
+    nameMatchingService:             NameMatchingService,
     mcc:                             MessagesControllerComponents,
     p800RefundsBackendConnector:     P800RefundsBackendConnector,
     p800RefundsExternalApiConnector: P800RefundsExternalApiConnector,
@@ -59,11 +61,24 @@ class WeAreVerifyingYourBankAccountController @Inject() (
       isValidEventValue: EventValue <- obtainIsValid(journey)
       bankAccountSummary: BankAccountSummary <- obtainBankAccountSummary(journey)
       bankDetailsRiskResultResponse: GetBankDetailsRiskResultResponse <- obtainGetBankDetailsRiskResultResponse(journey, bankAccountSummary)
-      //TODO: Fuzzy Name Matching
+      didAnyNameMatch = doAnyNamesFromPartiesListMatch(journey.getTraceIndividualResponse, bankAccountSummary.parties)
       newJourney = journey.update(isValidEventValue, bankAccountSummary, bankDetailsRiskResultResponse)
-      (result, newJourney) <- next(newJourney, isValidEventValue, bankDetailsRiskResultResponse, bankAccountSummary, consentStatus)
+      (result, newJourney) <- next(newJourney, isValidEventValue, bankDetailsRiskResultResponse, bankAccountSummary, consentStatus, didAnyNameMatch)
       _ <- journeyService.upsert(newJourney)
     } yield result
+  }
+
+  def doAnyNamesFromPartiesListMatch(individualResponse: TraceIndividualResponse, bankAccountPartyList: List[BankAccountParty])
+    (implicit request: JourneyRequest[_]): Boolean = {
+    val matchingResponseList: Seq[NameMatchingResponse] = bankAccountPartyList.map { party =>
+      nameMatchingService.fuzzyNameMatching(
+        individualResponse.firstForename,
+        individualResponse.secondForename,
+        individualResponse.surname,
+        party.fullLegalName.value
+      )
+    }
+    matchingResponseList.exists(_.isSuccess)
   }
 
   private def next(
@@ -71,42 +86,50 @@ class WeAreVerifyingYourBankAccountController @Inject() (
       isValidEventValue:             EventValue,
       bankDetailsRiskResultResponse: GetBankDetailsRiskResultResponse,
       bankAccountSummary:            BankAccountSummary,
-      consentStatus:                 ConsentStatus
-  )(implicit request: RequestHeader): Future[(Result, Journey)] = (isValidEventValue, consentStatus) match {
-    case (_, ConsentStatus.Failed) => Future.successful {
+      consentStatus:                 ConsentStatus,
+      didAnyNameMatch:               Boolean
+  )(implicit request: RequestHeader): Future[(Result, Journey)] = (isValidEventValue, consentStatus, didAnyNameMatch) match {
+    case (_, ConsentStatus.Failed, _) => Future.successful {
       JourneyLogger.info(s"User failed consent flow. [ConsentStatus: Failed]")
       (
         Redirect(routes.RefundRequestNotSubmittedController.get),
         journey
       )
     }
-    case (_, ConsentStatus.Canceled) => Future.successful {
+    case (_, ConsentStatus.Canceled, _) => Future.successful {
       JourneyLogger.info(s"User Canceled consent flow. [ConsentStatus: Canceled]")
       (
         Redirect(routes.RefundRequestNotSubmittedController.get),
         journey
       )
     }
-    case (EventValue.NotReceived, ConsentStatus.Authorised) => Future.successful(
+    case (_, _, false) => Future.successful {
+      JourneyLogger.info(s"Ecospend names failed matching against NPS name")
+      (
+        Redirect(routes.RefundRequestNotSubmittedController.get),
+        journey
+      )
+    }
+    case (EventValue.NotReceived, ConsentStatus.Authorised, _) => Future.successful(
       (
         Ok(views.weAreVerifyingYourBankAccountPage(journey, Some(consentStatus), Some(journey.getBankConsent.id), Some(journey.getBankConsent.bankReferenceId))),
         journey
       )
     )
-    case (EventValue.NotValid, ConsentStatus.Authorised) => Future.successful {
+    case (EventValue.NotValid, ConsentStatus.Authorised, _) => Future.successful {
       JourneyLogger.info(s"Account assessment failed.")
       (
         Redirect(routes.RefundRequestNotSubmittedController.get),
         journey.update(HasFinished.YesRefundNotSubmitted)
       )
     }
-    case (EventValue.Valid, ConsentStatus.Authorised) =>
+    case (EventValue.Valid, ConsentStatus.Authorised, _) =>
       JourneyLogger.info(s"Account assessment succeeded.")
       bankDetailsRiskResultResponse.overallRiskResult.nextAction match {
         case NextAction.DoNotPay => handleDoNotPay(journey)
         case NextAction.Pay      => handlePay(journey, bankAccountSummary)
       }
-    case (_, consentStatus) =>
+    case (_, consentStatus, _) =>
       Errors.throwServerErrorException(s"Unexpected [consentStatus: ${consentStatus.toString}]. Expected status to be one of [Authorised, Canceled, Failed].")
   }
 
