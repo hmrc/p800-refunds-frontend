@@ -42,7 +42,6 @@ class WeAreVerifyingYourBankAccountController @Inject() (
     actions:                         Actions,
     ecospendService:                 EcospendService,
     journeyService:                  JourneyService,
-    nameMatchingService:             NameMatchingService,
     mcc:                             MessagesControllerComponents,
     p800RefundsBackendConnector:     P800RefundsBackendConnector,
     p800RefundsExternalApiConnector: P800RefundsExternalApiConnector,
@@ -71,7 +70,7 @@ class WeAreVerifyingYourBankAccountController @Inject() (
   def doAnyNamesFromPartiesListMatch(individualResponse: TraceIndividualResponse, bankAccountPartyList: List[BankAccountParty])
     (implicit request: JourneyRequest[_]): Boolean = {
     val matchingResponseList: Seq[NameMatchingResponse] = bankAccountPartyList.map { party =>
-      nameMatchingService.fuzzyNameMatching(
+      NameMatchingService.fuzzyNameMatching(
         individualResponse.firstForename,
         individualResponse.secondForename,
         individualResponse.surname,
@@ -107,7 +106,7 @@ class WeAreVerifyingYourBankAccountController @Inject() (
       JourneyLogger.info(s"Ecospend names failed matching against NPS name")
       (
         Redirect(routes.RefundRequestNotSubmittedController.get),
-        journey
+        journey.copy(hasFinished = HasFinished.YesRefundNotSubmitted)
       )
     }
     case (EventValue.NotReceived, ConsentStatus.Authorised, _) => Future.successful(

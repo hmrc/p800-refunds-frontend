@@ -24,7 +24,7 @@ import util.SafeEquals.EqualsOps
 
 import java.text.Normalizer
 
-class NameMatchingService extends {
+object NameMatchingService {
 
   def fuzzyNameMatching(
       npsOptFirstName:  Option[String],
@@ -50,7 +50,7 @@ class NameMatchingService extends {
       case (true, _) => BasicSuccessfulNameMatch
       case (false, false) =>
         JourneyLogger.info(s"Failed Surname Match")
-        FailedNameMatch
+        FailedBasicNameMatch
       case (false, true) =>
         val comparisonResult = compareFirstAndMiddleNames(npsListWithoutSurname, ecoListWithoutSurname)
         if (comparisonResult.didNamesMatch) {
@@ -108,10 +108,10 @@ class NameMatchingService extends {
   def processSpacesApostrophesAndHyphens(name: String): String = {
     name
       .trim
-      .replaceAll("['.]", "")
-      .replaceAll("[‒‑—–-]", " ")
-      .replaceAll("\\s", " ")
-      .replaceAll(" +", " ")
+      .replaceAll("['.]", "") //removes apostrophes and fullstops
+      .replaceAll("[‒‑—–-]", " ") //turns different hyphen types into spaces
+      .replaceAll("\\s", " ") //turns tabs into single spaces
+      .replaceAll(" +", " ") //turns multiple spaces into single space, (must be done after tab conversion)
   }
 
   def removeDiacritics(name: String): String = {
@@ -127,7 +127,7 @@ class NameMatchingService extends {
       LevenshteinSuccessfulNameMatch
     } else {
       JourneyLogger.info("Failed Levenshtein Match")
-      FailedNameMatch
+      FailedComprehensiveNameMatch
     }
   }
 }

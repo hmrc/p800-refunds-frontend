@@ -24,12 +24,15 @@ sealed class SuccessfulMatch extends NameMatchingResponse {
   val isSuccess = true
 }
 
+sealed class FailedMatch extends NameMatchingResponse {
+  val isSuccess = false
+}
+
 case object BasicSuccessfulNameMatch extends SuccessfulMatch
 case object FirstAndMiddleNameSuccessfulNameMatch extends SuccessfulMatch
 case object LevenshteinSuccessfulNameMatch extends SuccessfulMatch
 
-case object FailedNameMatch extends NameMatchingResponse {
-  override val isSuccess: Boolean = false
-}
+case object FailedBasicNameMatch extends FailedMatch
+case object FailedComprehensiveNameMatch extends FailedMatch
 
 final case class ComparisonResult(didNamesMatch: Boolean, npsNameWithInitials: String, ecospendNameWithInitials: String)
