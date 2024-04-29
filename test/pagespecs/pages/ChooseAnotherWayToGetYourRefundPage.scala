@@ -20,7 +20,7 @@ import models.journeymodels.JourneyType
 import org.openqa.selenium.WebDriver
 import pagespecs.pagesupport.{ContentExpectation, Page, PageUtil}
 
-class ChooseAnotherWayToReceiveYourRefundPage(baseUrl: String)(implicit webDriver: WebDriver) extends Page(
+class ChooseAnotherWayToGetYourRefundPage(baseUrl: String)(implicit webDriver: WebDriver) extends Page(
   baseUrl = baseUrl,
   path    = s"/get-an-income-tax-refund/bank-transfer/choose-another-way-to-receive-your-refund"
 ) {

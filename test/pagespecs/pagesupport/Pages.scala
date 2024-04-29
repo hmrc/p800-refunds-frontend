@@ -60,7 +60,7 @@ class Pages(baseUrl: String)(implicit webDriver: WebDriver) {
   val verifyBankAccountPage = new VerifyBankAccountPage(baseUrl       = baseUrl, consentStatus = ConsentStatus.Authorised, TdAll.tdAll.consentId, TdAll.tdAll.bankReferenceId)
 
   //bank transfer specific page
-  val chooseAnotherWayToReceiveYourRefundPage = new ChooseAnotherWayToReceiveYourRefundPage(baseUrl = baseUrl)
+  val chooseAnotherWayToGetYourRefundPage = new ChooseAnotherWayToGetYourRefundPage(baseUrl = baseUrl)
   //cheque specific page
   val claimYourRefundByBankTransferPage = new ClaimYourRefundByBankTransferPage(baseUrl = baseUrl)
 

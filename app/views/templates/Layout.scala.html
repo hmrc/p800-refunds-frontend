@@ -35,7 +35,7 @@
     hmrcStandardHeader: HmrcStandardHeader,
     hmrcStandardFooter: HmrcStandardFooter,
     hmrcScripts: HmrcScripts,
-    //hmrcLanguageSelectHelper: HmrcLanguageSelectHelper, // add this back in when we support welsh
+    hmrcLanguageSelectHelper: HmrcLanguageSelectHelper,
     hmrcReportTechnicalIssueHelper: HmrcReportTechnicalIssueHelper,
     viewsHelpers: views.ViewsHelpers,
     appConfig: AppConfig
@@ -77,9 +77,7 @@
           content = HtmlContent(Messages.ServicePhase.bannerText("").show)
         )
       )
-      @* add this back in when we support welsh
-      @hmrcLanguageSelectHelper()
-      *@
+        @hmrcLanguageSelectHelper()
       @{
         if(showBackLink) {
             viewsHelpers.govukBackLink(BackLink.mimicsBrowserBackButtonViaJavaScript)

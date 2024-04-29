@@ -20,7 +20,7 @@ import models.journeymodels.JourneyType
 import pagespecs.pagesupport.{ContentExpectation, PageUtil}
 import testsupport.ItSpec
 
-class ChooseAnotherWayToReceiveYourRefundPageForBankTransferJourneySpec extends ItSpec {
+class ChooseAnotherWayToGetYourRefundPageForBankTransferJourneySpec extends ItSpec {
 
   override def beforeEach(): Unit = {
     super.beforeEach()
@@ -30,16 +30,16 @@ class ChooseAnotherWayToReceiveYourRefundPageForBankTransferJourneySpec extends 
   "bank transfer from give-your-consent page" - {
     "render page" in {
       upsertJourneyToDatabase(tdAll.BankTransfer.journeySelectedBank)
-      pages.chooseAnotherWayToReceiveYourRefundPage.open()
-      pages.chooseAnotherWayToReceiveYourRefundPage.assertPageIsDisplayed()
+      pages.chooseAnotherWayToGetYourRefundPage.open()
+      pages.chooseAnotherWayToGetYourRefundPage.assertPageIsDisplayed()
       getJourneyFromDatabase(tdAll.journeyId) shouldBeLike tdAll.BankTransfer.journeySelectedBank
     }
     "select cheque" in {
       upsertJourneyToDatabase(tdAll.BankTransfer.journeySelectedBank)
-      pages.chooseAnotherWayToReceiveYourRefundPage.open()
-      pages.chooseAnotherWayToReceiveYourRefundPage.assertPageIsDisplayed()
-      pages.chooseAnotherWayToReceiveYourRefundPage.PtaOrCheque.selectCheque()
-      pages.chooseAnotherWayToReceiveYourRefundPage.clickSubmit()
+      pages.chooseAnotherWayToGetYourRefundPage.open()
+      pages.chooseAnotherWayToGetYourRefundPage.assertPageIsDisplayed()
+      pages.chooseAnotherWayToGetYourRefundPage.PtaOrCheque.selectCheque()
+      pages.chooseAnotherWayToGetYourRefundPage.clickSubmit()
       pages.isYourAddressUpToDate.assertPageIsDisplayed()
       val expectedJourney = tdAll.Cheque.AfterReferenceCheck.journeyReferenceChecked.copy(
         dateOfBirth             = tdAll.BankTransfer.journeySelectedBank.dateOfBirth, //Date of Birth is also copied
@@ -50,23 +50,23 @@ class ChooseAnotherWayToReceiveYourRefundPageForBankTransferJourneySpec extends 
     }
     "select bank transfer via PTA" in {
       upsertJourneyToDatabase(tdAll.BankTransfer.journeySelectedBank)
-      pages.chooseAnotherWayToReceiveYourRefundPage.open()
-      pages.chooseAnotherWayToReceiveYourRefundPage.assertPageIsDisplayed()
-      pages.chooseAnotherWayToReceiveYourRefundPage.PtaOrCheque.selectBankTransferViaPta()
-      pages.chooseAnotherWayToReceiveYourRefundPage.clickSubmit()
+      pages.chooseAnotherWayToGetYourRefundPage.open()
+      pages.chooseAnotherWayToGetYourRefundPage.assertPageIsDisplayed()
+      pages.chooseAnotherWayToGetYourRefundPage.PtaOrCheque.selectBankTransferViaPta()
+      pages.chooseAnotherWayToGetYourRefundPage.clickSubmit()
       pages.ptaSignInPage.assertPageIsDisplayed()
       getJourneyFromDatabase(tdAll.journeyId) shouldBeLike tdAll.BankTransfer.journeySelectedBank
     }
     "empty selection" in {
       upsertJourneyToDatabase(tdAll.BankTransfer.journeySelectedBank)
-      pages.chooseAnotherWayToReceiveYourRefundPage.open()
-      pages.chooseAnotherWayToReceiveYourRefundPage.assertPageIsDisplayed()
-      pages.chooseAnotherWayToReceiveYourRefundPage.clickSubmit()
-      pages.chooseAnotherWayToReceiveYourRefundPage.assertPageIsDisplayed(
+      pages.chooseAnotherWayToGetYourRefundPage.open()
+      pages.chooseAnotherWayToGetYourRefundPage.assertPageIsDisplayed()
+      pages.chooseAnotherWayToGetYourRefundPage.clickSubmit()
+      pages.chooseAnotherWayToGetYourRefundPage.assertPageIsDisplayed(
         ContentExpectation(
           PageUtil.Xpath.errorSummary,
           """There is a problem
-            |Select the way you want to receive your refund
+            |Select if you want to receive a bank transfer or a cheque
             |""".stripMargin
         )
       )
@@ -77,16 +77,16 @@ class ChooseAnotherWayToReceiveYourRefundPageForBankTransferJourneySpec extends 
   "bank transfer from your-refund-was-not-submitted page" - {
     "render page" in {
       upsertJourneyToDatabase(tdAll.BankTransfer.journeyClaimOverpaymentFailedButIsChoosingAnotherWay)
-      pages.chooseAnotherWayToReceiveYourRefundPage.open()
-      pages.chooseAnotherWayToReceiveYourRefundPage.assertPageIsDisplayed()
+      pages.chooseAnotherWayToGetYourRefundPage.open()
+      pages.chooseAnotherWayToGetYourRefundPage.assertPageIsDisplayed()
       getJourneyFromDatabase(tdAll.journeyId) shouldBeLike tdAll.BankTransfer.journeyClaimOverpaymentFailedButIsChoosingAnotherWay
     }
     "select cheque" in {
       upsertJourneyToDatabase(tdAll.BankTransfer.journeyClaimOverpaymentFailedButIsChoosingAnotherWay)
-      pages.chooseAnotherWayToReceiveYourRefundPage.open()
-      pages.chooseAnotherWayToReceiveYourRefundPage.assertPageIsDisplayed()
-      pages.chooseAnotherWayToReceiveYourRefundPage.PtaOrCheque.selectCheque()
-      pages.chooseAnotherWayToReceiveYourRefundPage.clickSubmit()
+      pages.chooseAnotherWayToGetYourRefundPage.open()
+      pages.chooseAnotherWayToGetYourRefundPage.assertPageIsDisplayed()
+      pages.chooseAnotherWayToGetYourRefundPage.PtaOrCheque.selectCheque()
+      pages.chooseAnotherWayToGetYourRefundPage.clickSubmit()
       pages.isYourAddressUpToDate.assertPageIsDisplayed()
 
       val expectedJourney = tdAll.BankTransfer.journeyClaimOverpaymentFailedButIsChoosingAnotherWay.copy(
@@ -96,23 +96,23 @@ class ChooseAnotherWayToReceiveYourRefundPageForBankTransferJourneySpec extends 
     }
     "select bank transfer via PTA" in {
       upsertJourneyToDatabase(tdAll.BankTransfer.journeyClaimOverpaymentFailedButIsChoosingAnotherWay)
-      pages.chooseAnotherWayToReceiveYourRefundPage.open()
-      pages.chooseAnotherWayToReceiveYourRefundPage.assertPageIsDisplayed()
-      pages.chooseAnotherWayToReceiveYourRefundPage.PtaOrCheque.selectBankTransferViaPta()
-      pages.chooseAnotherWayToReceiveYourRefundPage.clickSubmit()
+      pages.chooseAnotherWayToGetYourRefundPage.open()
+      pages.chooseAnotherWayToGetYourRefundPage.assertPageIsDisplayed()
+      pages.chooseAnotherWayToGetYourRefundPage.PtaOrCheque.selectBankTransferViaPta()
+      pages.chooseAnotherWayToGetYourRefundPage.clickSubmit()
       pages.ptaSignInPage.assertPageIsDisplayed()
       getJourneyFromDatabase(tdAll.journeyId) shouldBeLike tdAll.BankTransfer.journeyClaimOverpaymentFailedButIsChoosingAnotherWay
     }
     "empty selection" in {
       upsertJourneyToDatabase(tdAll.BankTransfer.journeyClaimOverpaymentFailedButIsChoosingAnotherWay)
-      pages.chooseAnotherWayToReceiveYourRefundPage.open()
-      pages.chooseAnotherWayToReceiveYourRefundPage.assertPageIsDisplayed()
-      pages.chooseAnotherWayToReceiveYourRefundPage.clickSubmit()
-      pages.chooseAnotherWayToReceiveYourRefundPage.assertPageIsDisplayed(
+      pages.chooseAnotherWayToGetYourRefundPage.open()
+      pages.chooseAnotherWayToGetYourRefundPage.assertPageIsDisplayed()
+      pages.chooseAnotherWayToGetYourRefundPage.clickSubmit()
+      pages.chooseAnotherWayToGetYourRefundPage.assertPageIsDisplayed(
         ContentExpectation(
           PageUtil.Xpath.errorSummary,
           """There is a problem
-            |Select the way you want to receive your refund
+            |Select if you want to receive a bank transfer or a cheque
             |""".stripMargin
         )
       )
@@ -123,16 +123,16 @@ class ChooseAnotherWayToReceiveYourRefundPageForBankTransferJourneySpec extends 
   "bank transfer from we-cannot-confirm-confirm-your-identity page" - {
     "render page" in {
       upsertJourneyToDatabase(tdAll.BankTransfer.AfterReferenceCheck.journeyReferenceDidntMatchNino)
-      pages.chooseAnotherWayToReceiveYourRefundPage.open()
-      pages.chooseAnotherWayToReceiveYourRefundPage.assertPageIsDisplayed()
+      pages.chooseAnotherWayToGetYourRefundPage.open()
+      pages.chooseAnotherWayToGetYourRefundPage.assertPageIsDisplayed()
       getJourneyFromDatabase(tdAll.journeyId) shouldBeLike tdAll.BankTransfer.AfterReferenceCheck.journeyReferenceDidntMatchNino
     }
     "select cheque" in {
       upsertJourneyToDatabase(tdAll.BankTransfer.AfterReferenceCheck.journeyReferenceDidntMatchNino)
-      pages.chooseAnotherWayToReceiveYourRefundPage.open()
-      pages.chooseAnotherWayToReceiveYourRefundPage.assertPageIsDisplayed()
-      pages.chooseAnotherWayToReceiveYourRefundPage.PtaOrCheque.selectCheque()
-      pages.chooseAnotherWayToReceiveYourRefundPage.clickSubmit()
+      pages.chooseAnotherWayToGetYourRefundPage.open()
+      pages.chooseAnotherWayToGetYourRefundPage.assertPageIsDisplayed()
+      pages.chooseAnotherWayToGetYourRefundPage.PtaOrCheque.selectCheque()
+      pages.chooseAnotherWayToGetYourRefundPage.clickSubmit()
       pages.weNeedYouToConfirmYourIdentityChequePage.assertPageIsDisplayed(JourneyType.Cheque)
 
       val expectedJourney = tdAll.BankTransfer.AfterReferenceCheck.journeyReferenceDidntMatchNino.copy(
@@ -142,23 +142,23 @@ class ChooseAnotherWayToReceiveYourRefundPageForBankTransferJourneySpec extends 
     }
     "select bank transfer via PTA" in {
       upsertJourneyToDatabase(tdAll.BankTransfer.AfterReferenceCheck.journeyReferenceDidntMatchNino)
-      pages.chooseAnotherWayToReceiveYourRefundPage.open()
-      pages.chooseAnotherWayToReceiveYourRefundPage.assertPageIsDisplayed()
-      pages.chooseAnotherWayToReceiveYourRefundPage.PtaOrCheque.selectBankTransferViaPta()
-      pages.chooseAnotherWayToReceiveYourRefundPage.clickSubmit()
+      pages.chooseAnotherWayToGetYourRefundPage.open()
+      pages.chooseAnotherWayToGetYourRefundPage.assertPageIsDisplayed()
+      pages.chooseAnotherWayToGetYourRefundPage.PtaOrCheque.selectBankTransferViaPta()
+      pages.chooseAnotherWayToGetYourRefundPage.clickSubmit()
       pages.ptaSignInPage.assertPageIsDisplayed()
       getJourneyFromDatabase(tdAll.journeyId) shouldBeLike tdAll.BankTransfer.AfterReferenceCheck.journeyReferenceDidntMatchNino
     }
     "empty selection" in {
       upsertJourneyToDatabase(tdAll.BankTransfer.AfterReferenceCheck.journeyReferenceDidntMatchNino)
-      pages.chooseAnotherWayToReceiveYourRefundPage.open()
-      pages.chooseAnotherWayToReceiveYourRefundPage.assertPageIsDisplayed()
-      pages.chooseAnotherWayToReceiveYourRefundPage.clickSubmit()
-      pages.chooseAnotherWayToReceiveYourRefundPage.assertPageIsDisplayed(
+      pages.chooseAnotherWayToGetYourRefundPage.open()
+      pages.chooseAnotherWayToGetYourRefundPage.assertPageIsDisplayed()
+      pages.chooseAnotherWayToGetYourRefundPage.clickSubmit()
+      pages.chooseAnotherWayToGetYourRefundPage.assertPageIsDisplayed(
         ContentExpectation(
           PageUtil.Xpath.errorSummary,
           """There is a problem
-            |Select the way you want to receive your refund
+            |Select if you want to receive a bank transfer or a cheque
             |""".stripMargin
         )
       )

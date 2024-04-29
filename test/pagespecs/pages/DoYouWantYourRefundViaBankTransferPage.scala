@@ -25,7 +25,7 @@ class DoYouWantYourRefundViaBankTransferPage(baseUrl: String)(implicit webDriver
 ) {
 
   override def expectedH1: String = "Do you want your refund by bank transfer?"
-  override def expectedTitleContent: String = "Do you want to refund by bank transfer?"
+  override def expectedTitleContent: String = "Do you want your refund by bank transfer?"
 
   override def assertPageIsDisplayed(extraExpectations: ContentExpectation*): Unit = withPageClue {
     val contentExpectations: Seq[ContentExpectation] = Seq(
