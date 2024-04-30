@@ -292,8 +292,8 @@ object Messages {
       welsh   = "Os nad ydych yn gwybod eich cyfeirnod P800,"
     )
 
-    def `Sign in using your Government Gateway user ID to claim your refund.`(link: String): Message = Message(
-      english = s"""<a id="personal-tax-account-sign-in" class="govuk-link" href="$link">Sign in using your Government Gateway user ID</a> to claim your refund.""",
+    def `sign in using your Government Gateway user ID to claim your refund.`(link: String): Message = Message(
+      english = s"""<a id="personal-tax-account-sign-in" class="govuk-link" href="$link">sign in using your Government Gateway user ID</a> to claim your refund.""",
       welsh   = s"""<a id="personal-tax-account-sign-in" class="govuk-link" href="$link">mewngofnodwch gan ddefnyddio’ch Dynodydd Defnyddiwr (ID) ar gyfer Porth y Llywodraeth</a> i gael eich ad-daliad."""
     )
 
