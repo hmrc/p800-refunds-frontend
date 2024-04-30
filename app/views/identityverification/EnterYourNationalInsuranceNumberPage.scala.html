@@ -37,9 +37,8 @@
 }
 
 @layout(
-    pageTitle = Some(Messages.WhatIsYourNationalInsuranceNumber.`enter your National Insurance number`.show),
-    hasErrors = form.errors.nonEmpty,
-    maybeJourneyType = Some(request.journey.getJourneyType)
+    pageTitle = Some(Messages.WhatIsYourNationalInsuranceNumber.`What is your National Insurance number`.show),
+    hasErrors = form.errors.nonEmpty
 ) {
     @if(form.errors.nonEmpty) {
         @viewsHelpers.govukErrorSummary(ErrorSummary(errorList = form.errors.asTextErrorLinks, title = Text(Messages.CommonMessages.`There is a problem`.show)))

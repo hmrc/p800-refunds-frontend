@@ -63,10 +63,10 @@ class EnterYourP800ReferencePageSpec extends ItSpec {
           case JourneyType.Cheque       => pages.whatIsYourP800ReferenceChequePage -> pages.enterYourNationalInsuranceNumberChequePage
         }
         startPage.open()
-        startPage.assertPageIsDisplayed(journeyType)
+        startPage.assertPageIsDisplayed()
         startPage.enterP800Reference(referenceInput)
         startPage.clickSubmit()
-        endPage.assertPageIsDisplayed(journeyType)
+        endPage.assertPageIsDisplayed()
       }
   }
 
@@ -78,10 +78,10 @@ class EnterYourP800ReferencePageSpec extends ItSpec {
           case JourneyType.Cheque       => pages.whatIsYourP800ReferenceChequePage
         }
         page.open()
-        page.assertPageIsDisplayed(journeyType)
+        page.assertPageIsDisplayed()
         referenceInput.fold(())(r => page.enterP800Reference(r))
         page.clickSubmit()
-        page.assertPageShowsError(journeyType, expectedErrorContent)
+        page.assertPageShowsError(expectedErrorContent)
       }
 
     "Submitting with an empty text input shows error" - {

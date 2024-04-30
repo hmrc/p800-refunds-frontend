@@ -27,7 +27,7 @@ abstract class Page(
   extends Endpoint(baseUrl, path) {
 
   def expectedH1: String
-  def expectedTitleContent: String
+  def expectedWelshH1: String
   def clickEnglishLink()(implicit webDriver: WebDriver): Unit = click on xpath("""//a[@hreflang="en"]""")
   def clickWelshLink()(implicit webDriver: WebDriver): Unit = click on xpath("""//a[@hreflang="cy"]""")
   def clickBackButton()(implicit webDriver: WebDriver): Unit = click on xpath("""/html/body//a[@class="govuk-back-link"]""")
@@ -40,10 +40,11 @@ abstract class Page(
 
   def assertPageIsDisplayedWithTechnicalDifficultiesError(): Unit = withPageClue {
     PageUtil.assertPage(
-      baseUrl = baseUrl,
-      path    = path,
-      h1      = "Sorry, we’re experiencing technical difficulties",
-      title   = PageUtil.standardTitle("Sorry, we are experiencing technical difficulties - 500"),
+      baseUrl   = baseUrl,
+      path      = path,
+      h1        = "Sorry, we’re experiencing technical difficulties",
+      title     = PageUtil.standardTitle("Sorry, we are experiencing technical difficulties - 500"),
+      welshTest = false,
       ContentExpectation(
         atXpath       = PageUtil.Xpath.mainContent,
         expectedLines = """
@@ -57,10 +58,11 @@ abstract class Page(
 
   def assertPageIsDisplayedWithTechnicalDifficultiesErrorInWelsh(): Unit = withPageClue {
     PageUtil.assertPage(
-      baseUrl = baseUrl,
-      path    = path,
-      h1      = "Mae’n ddrwg gennym, mae problem gyda’r gwasanaeth",
-      title   = PageUtil.standardTitleInWelsh("Mae’n ddrwg gennym, mae problem gyda’r gwasanaeth"),
+      baseUrl   = baseUrl,
+      path      = path,
+      h1        = "Mae’n ddrwg gennym, mae problem gyda’r gwasanaeth",
+      title     = PageUtil.standardTitleInWelsh("Mae’n ddrwg gennym, mae problem gyda’r gwasanaeth"),
+      welshTest = true,
       ContentExpectation(
         atXpath       = PageUtil.Xpath.mainContent,
         expectedLines = """Rhowch gynnig arall arni yn nes ymlaen.

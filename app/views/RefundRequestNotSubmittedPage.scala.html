@@ -29,9 +29,8 @@
 @import viewsHelpers.requestSupport._
 
 @layout(
-    pageTitle = Some(Messages.RefundRequestNotSubmitted.`refund request not submitted`.show),
-    showBackLink = false,
-    maybeJourneyType = Some(request.journey.getJourneyType)
+    pageTitle = Some(Messages.RefundRequestNotSubmitted.`Your refund request has not been submitted`.show),
+    showBackLink = false
 ) {
 
     <h1 class="govuk-heading-xl">@{Messages.RefundRequestNotSubmitted.`Your refund request has not been submitted`.show}</h1>

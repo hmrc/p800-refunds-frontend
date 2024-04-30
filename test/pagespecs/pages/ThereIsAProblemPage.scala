@@ -26,9 +26,8 @@ class ThereIsAProblemPage(baseUrl: String)(implicit webDriver: WebDriver) extend
 ) {
 
   override def expectedH1: String = "There is a problem"
-  override def expectedTitleContent: String = "There is a problem"
+  override def expectedWelshH1: String = "Mae problem wedi codi"
 
-  def staticJourney: String = ""
   override def assertPageIsDisplayed(extraExpectations: ContentExpectation*): Unit = withPageClue {
 
     val contentExpectations: Seq[ContentExpectation] = Seq(ContentExpectation(
@@ -44,7 +43,8 @@ class ThereIsAProblemPage(baseUrl: String)(implicit webDriver: WebDriver) extend
       baseUrl             = baseUrl,
       path                = path,
       h1                  = expectedH1,
-      title               = PageUtil.standardTitle(expectedTitleContent),
+      title               = PageUtil.standardTitle(expectedH1),
+      welshTest           = false,
       contentExpectations = contentExpectations: _*
     )
 

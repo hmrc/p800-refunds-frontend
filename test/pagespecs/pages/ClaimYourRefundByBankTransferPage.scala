@@ -25,7 +25,7 @@ class ClaimYourRefundByBankTransferPage(baseUrl: String)(implicit webDriver: Web
 ) {
 
   override def expectedH1: String = "Claim your refund by bank transfer"
-  override def expectedTitleContent: String = "Cheque - claim your refund by bank transfer"
+  override def expectedWelshH1: String = "Hawliwch eich ad-daliad drwy drosglwyddiad banc"
 
   override def assertPageIsDisplayed(extraExpectations: ContentExpectation*): Unit = withPageClue {
 
@@ -47,7 +47,8 @@ class ClaimYourRefundByBankTransferPage(baseUrl: String)(implicit webDriver: Web
       baseUrl             = baseUrl,
       path                = path,
       h1                  = expectedH1,
-      title               = PageUtil.standardTitle(expectedTitleContent),
+      title               = PageUtil.standardTitle(expectedH1),
+      welshTest           = false,
       contentExpectations = contentExpectations: _*
     )
   }
@@ -79,7 +80,8 @@ class ClaimYourRefundByBankTransferPage(baseUrl: String)(implicit webDriver: Web
       baseUrl             = baseUrl,
       path                = path,
       h1                  = expectedH1,
-      title               = PageUtil.standardErrorTitle(expectedTitleContent),
+      title               = PageUtil.standardErrorTitle(expectedH1),
+      welshTest           = false,
       contentExpectations = contentExpectations: _*
     )
   }

@@ -16,7 +16,6 @@
 
 package pagespecs.pagesupport
 
-import models.journeymodels.JourneyType
 import org.openqa.selenium.{By, WebDriver, WebElement}
 import org.scalatestplus.selenium.WebBrowser
 import org.scalatestplus.selenium.WebBrowser._
@@ -170,12 +169,13 @@ object PageUtil {
       path:                String,
       h1:                  String,
       title:               String,
+      welshTest:           Boolean,
       contentExpectations: ContentExpectation*
   )(implicit webDriver: WebDriver): Unit = assertPage(
     path                = path,
     h1                  = h1,
     title               = title,
-    serviceName         = "Get an Income Tax refund",
+    serviceName         = if (welshTest) "Cael ad-daliad Treth Incwm" else "Get an Income Tax refund",
     serviceNameUrl      = Some(s"$baseUrl/get-an-income-tax-refund/test-only/gov-uk-route-in"),
     contentExpectations = contentExpectations: _*
   )
@@ -207,36 +207,13 @@ object PageUtil {
 
   def standardTitle(h1: String): String = s"$h1 - Get an Income Tax refund - GOV.UK"
 
-  def standardTitleWithJourneyType(titleContent: String, journeyType: JourneyType): String =
-    s"${journeyTypeAsStringContent(journeyType)} - $titleContent - Get an Income Tax refund - GOV.UK"
-
   val standardTitleForTestOnlyPages: String = s"Test Only - Get an Income Tax refund - GOV.UK"
 
-  def standardTitleInWelsh(h1: String): String = s"$h1 - Get an Income Tax refund - GOV.UK"
+  def standardTitleInWelsh(h1: String): String = s"$h1 - Cael ad-daliad Treth Incwm - GOV.UK"
 
-  def standardErrorTitle(titleContent: String): String = s"Error: $titleContent - Get an Income Tax refund - GOV.UK"
+  def standardErrorTitle(h1: String): String = s"Error: $h1 - Get an Income Tax refund - GOV.UK"
 
-  def standardErrorTitle(titleContent: String, journeyType: JourneyType): String =
-    s"Error: ${journeyTypeAsStringContent(journeyType)} - $titleContent - Get an Income Tax refund - GOV.UK"
-
-  private val journeyTypeAsStringContent: JourneyType => String = {
-    case JourneyType.Cheque       => "Cheque"
-    case JourneyType.BankTransfer => "Bank transfer"
-  }
-
-  val standardHeader: String =
-    """
-      |GOV.UK
-      |Telephone Payment Service
-      |Sign out"""
-      .stripMargin
-
-  val standardHeaderInWelsh: String =
-    """
-      |GOV.UK
-      |Gwasanaeth Talu Dros y Ffôn
-      |Allgofnodi"""
-      .stripMargin
+  def standardErrorTitleInWelsh(h1: String): String = s"Gwall: $h1 - Cael ad-daliad Treth Incwm - GOV.UK"
 
   implicit class StringOps(s: String) {
     /**

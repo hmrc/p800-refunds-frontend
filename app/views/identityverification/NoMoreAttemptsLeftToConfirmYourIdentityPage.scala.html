@@ -31,9 +31,8 @@
 @import viewsHelpers.requestSupport._
 
 @layout(
-    pageTitle = Some(Messages.NoMoreAttemptsLeftToConfirmYourIdentityMessages.`no more attempts left to confirm your identity`.show),
-    showBackLink = false,
-    maybeJourneyType = Some(request.journey.getJourneyType)
+    pageTitle = Some(Messages.WeCannotConfirmYourIdentity.`We cannot confirm your identity`.show),
+    showBackLink = false
 ) {
 
     <h1 class="govuk-heading-xl">@{Messages.WeCannotConfirmYourIdentity.`We cannot confirm your identity`.show}</h1>

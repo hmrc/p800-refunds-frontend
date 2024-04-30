@@ -35,8 +35,7 @@
 @import viewsHelpers.requestSupport._
 
 @layout(
-    pageTitle = Some(Messages.WeNeedToConfirmYourIdentity.`confirm your identity`.show),
-    maybeJourneyType = Some(request.journey.getJourneyType)
+    pageTitle = Some(Messages.WeNeedToConfirmYourIdentity.`We need you to confirm your identity`.show)
 ) {
 
     <h1 class="govuk-heading-xl">@{Messages.WeNeedToConfirmYourIdentity.`We need you to confirm your identity`.show}</h1>

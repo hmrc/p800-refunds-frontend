@@ -40,9 +40,8 @@
 }
 
 @layout(
-    pageTitle = Some(Messages.WhatIsTheNameOfYourBankAccount.`enter name of your bank`.show),
-    hasErrors = form.errors.nonEmpty,
-    maybeJourneyType = Some(request.journey.getJourneyType)
+    pageTitle = Some(Messages.WhatIsTheNameOfYourBankAccount.`What is the name of your bank?`.show),
+    hasErrors = form.errors.nonEmpty
 ) {
 
     @if(form.errors.nonEmpty) {

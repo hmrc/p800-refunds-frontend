@@ -50,18 +50,6 @@ object Messages {
       english = "Try again",
       welsh   = "Rhowch gynnig arall arni"
     )
-
-    val `Bank transfer`: Message = Message(
-      english = "Bank transfer" //TODO ask somto
-    )
-
-    val `Cheque`: Message = Message(
-      english = "Cheque" //TODO ask somto
-    )
-
-    val `request received`: Message = Message(
-      english = "request received" //TODO ask somto
-    )
   }
 
   object DoYouWantToSignInMessages {
@@ -97,12 +85,6 @@ object Messages {
       welsh   = "Beth yw’r cyfeirnod ar eich P800?"
     )
 
-    //title
-    val `enter your P800 reference`: Message = Message(
-      english = "enter your p800 reference",
-      welsh   = "nodwch eich cyfeirnod P800"
-    )
-
     val `It’s on the letter HMRC sent you about your tax calculation, also known as a ‘P800’, and is up to 10 digits long.`: Message = Message(
       english = "It is on the letter HMRC sent you about your tax calculation, also known as a ‘P800’, and is up to 10 digits long. For example, 1002033400.",
       welsh   = "Mae hwn ar y llythyr y mae CThEF wedi’i anfon atoch ynglŷn â’ch cyfrifiad treth, a elwir hefyd yn ‘P800’, ac mae hyd at 10 digid. Er enghraifft, 1002033400."
@@ -125,11 +107,6 @@ object Messages {
       welsh   = "Nid yw’ch cais am ad-daliad wedi’i gyflwyno"
     )
 
-    val `refund request not submitted`: Message = Message(
-      english = "refund request not submitted",
-      welsh   = "nid yw’ch cais am ad-daliad wedi’i gyflwyno"
-    )
-
     val `We can not process your refund request.`: Message = Message(
       english = "We can not process your refund request.",
       welsh   = "Ni allwn brosesu’ch cais am ad-daliad."
@@ -145,12 +122,6 @@ object Messages {
     val `Give your permission`: Message = Message(
       english = "Give your permission",
       welsh   = "Rhoi’ch caniatâd"
-    )
-
-    // title
-    val `give your permission`: Message = Message(
-      english = "give your permission",
-      welsh   = "rhoi’ch caniatâd"
     )
 
     def `By choosing approve`(bankName: BankFriendlyName, amount: AmountInPence, changeBankLink: String): Message = Message(
@@ -213,11 +184,6 @@ object Messages {
       welsh   = "Rydym yn gwirio’ch cyfrif banc"
     )
 
-    val `verifying your bank account`: Message = Message(
-      english = "verifying your bank account",
-      welsh   = "rydym yn gwirio’ch cyfrif banc"
-    )
-
     def `This usually takes a few seconds`(refreshLink: String): Message = Message(
       english = s"""This usually takes a few seconds. You can <a href="$refreshLink" id="refresh-this-page" class="govuk-link">refresh this page</a> if it does not update automatically.""",
       welsh   = s"""Mae hyn fel arfer yn cymryd ychydig eiliadau. Gallwch <a href="$refreshLink" id="refresh-this-page" class="govuk-link">adnewyddu’r dudalen hon</a> os nad yw’n diweddaru’n awtomatig."""
@@ -238,11 +204,6 @@ object Messages {
     val `Do you want your refund by bank transfer or cheque?`: Message = Message(
       english = "Do you want your refund by bank transfer or cheque?",
       welsh   = "A ydych am eich ad-daliad drwy drosglwyddiad banc neu siec?"
-    )
-
-    val `choose another way to get your refund`: Message = Message(
-      english = "choose another way to get your refund",
-      welsh   = "Dewiswch ffordd arall o gael fy ad-daliad"
     )
 
     val `Bank transfer using your Government Gateway user ID to sign in`: Message = Message(
@@ -273,12 +234,6 @@ object Messages {
       welsh   = "Gwiriwch eich atebion"
     )
 
-    //title
-    val `check your answers`: Message = Message(
-      english = "check your answers",
-      welsh   = "gwiriwch eich atebion"
-    )
-
     val `Date of birth`: Message = Message(
       english = "Date of birth",
       welsh   = "Dyddiad geni"
@@ -300,12 +255,6 @@ object Messages {
     val `We need you to confirm your identity`: Message = Message(
       english = "We need you to confirm your identity",
       welsh   = "Mae angen i chi gadarnhau pwy ydych"
-    )
-
-    //title
-    val `confirm your identity`: Message = Message(
-      english = "confirm your identity",
-      welsh   = "gadarnhau pwy ydych"
     )
 
     val `Before we pay your refund`: Message = Message(
@@ -365,11 +314,6 @@ object Messages {
       welsh   = "Beth yw eich rhif Yswiriant Gwladol?"
     )
 
-    //title
-    val `enter your National Insurance number`: Message = Message(
-      english = "enter your National Insurance number" //todo
-    )
-
     val `It’s on your National Insurance`: Message = Message(
       english = "It’s on your National Insurance card or letter, benefit letter, payslip or P60. For example, ‘QQ 12 34 56 C’.",
       welsh   = "Mae hwn ar eich cerdyn neu lythyr Yswiriant Gwladol, llythyr ynghylch budd-daliadau, slip cyflog neu P60. Er enghraifft, ‘QQ 12 34 56 C’."
@@ -392,12 +336,6 @@ object Messages {
       welsh   = "Beth yw’ch dyddiad geni?"
     )
 
-    // title
-    val `enter your date of birth`: Message = Message(
-      english = "enter your date of birth",
-      welsh   = "beth yw’ch dyddiad geni?"
-    )
-
     val `For example`: Message = Message(
       english = "For example, 27 3 2007",
       welsh   = "Er enghraifft, 27 3 2007"
@@ -405,7 +343,7 @@ object Messages {
 
     object Errors {
       val `Enter your date of birth`: Message = Message(
-        english = "Enter your date of birth", //todo ask somto - no error message for this in workbook
+        english = "Enter your date of birth",
         welsh   = "Nodwch eich dyddiad geni"
       )
 
@@ -445,21 +383,12 @@ object Messages {
       english = "We have confirmed your identity",
       welsh   = "Rydym wedi cadarnhau pwy ydych"
     )
-
-    // title
-    val `your identity is confirmed`: Message = Message(
-      english = "your identity is confirmed",
-      welsh   = "rydym wedi cadarnhau pwy ydych"
-    )
   }
 
   object WeCannotConfirmYourIdentity {
     val `We cannot confirm your identity`: Message = Message(
       english = "We cannot confirm your identity",
       welsh   = "Ni allwn gadarnhau pwy ydych"
-    )
-    val `cannot confirm your identity try again`: Message = Message(
-      english = "cannot confirm your identity try again" //todo ask somto
     )
     val `The information you have provided does not match our records.`: Message = Message(
       english = "The information you have provided does not match our records.",
@@ -495,21 +424,12 @@ object Messages {
         s"""Fel arall, gallwch <a id="sign-in-to-you-hmrc-online-account" href="$signInLink" class="govuk-link">fewngofnodi i’ch cyfrif ar-lein CThEF</a> i
            |ofyn am eich ad-daliad. Os ydych chi’n dal i gael trafferth cadarnhau pwy ydych, mae angen i chi <a id="contact-hmrc" href="$contactUsLink" class="govuk-link">gysylltu â ni</a>.""".stripMargin
     )
-
-    val `no more attempts left to confirm your identity`: Message = Message(
-      english = "no more attempts left to confirm your identity"
-    )
   }
 
   object WhatIsTheNameOfYourBankAccount {
     val `What is the name of your bank?`: Message = Message(
       english = "What is the name of your bank?",
       welsh   = "Beth yw enw’ch banc?"
-    )
-
-    // title
-    val `enter name of your bank`: Message = Message(
-      english = "enter name of your bank" //todo ask somto
     )
 
     val `Start typing the name of a UK bank that you want your refund to be sent to.`: Message = Message(
@@ -731,11 +651,6 @@ object Messages {
       welsh   = "Hawliwch eich ad-daliad drwy drosglwyddiad banc"
     )
 
-    val `claim your refund by bank transfer`: Message = Message(
-      english = "claim your refund by bank transfer",
-      welsh   = "hawliwch eich ad-daliad drwy drosglwyddiad banc"
-    )
-
     val `Choose to sign in using your Government Gateway user ID to claim your refund and you will have fewer details to enter.`: Message = Message(
       english = "Choose to sign in using your Government Gateway user ID to claim your refund and you will have fewer details to enter.",
       welsh   = "Dewiswch fewngofnodi gan ddefnyddio’ch Dynodydd Defnyddiwr (ID) ar gyfer Porth y Llywodraeth i hawlio’ch ad-daliad a bydd gennych lai o fanylion i fynd nodi."
@@ -805,11 +720,6 @@ object Messages {
       welsh   = "Diweddaru’ch cyfeiriad"
     )
 
-    val `update your address`: Message = Message(
-      english = "update your address",
-      welsh   = "diweddaru’ch cyfeiriad"
-    )
-
     val `To update your address you need to:`: Message = Message(
       english = "To update your address you need to:",
       welsh   = "I ddiweddaru’ch cyfeiriad mae angen i chi wneud y canlynol:"
@@ -836,11 +746,6 @@ object Messages {
     val `Is your address up to date?`: Message = Message(
       english = "Is your address up to date?",
       welsh   = "A yw’ch cyfeiriad yn gyfredol?"
-    )
-
-    val `is your address up to date`: Message = Message(
-      english = "is your address up to date",
-      welsh   = "a yw’ch cyfeiriad yn gyfredol?"
     )
 
     val `Your cheque will be sent to the same address as your tax calculation letter.`: Message = Message(

@@ -28,7 +28,7 @@ class CheckYourAnswersPage(baseUrl: String, pathForJourneyType: String)(implicit
 ) {
 
   override def expectedH1: String = "Check your answers"
-  override def expectedTitleContent: String = "check your answers"
+  override def expectedWelshH1: String = "Gwiriwch eich atebion"
 
   def assertPageIsDisplayedForBankTransfer(
       p800Reference:           UserEnteredP800Reference,
@@ -122,7 +122,8 @@ class CheckYourAnswersPage(baseUrl: String, pathForJourneyType: String)(implicit
       baseUrl             = baseUrl,
       path                = path,
       h1                  = expectedH1,
-      title               = PageUtil.standardTitleWithJourneyType(expectedTitleContent, journeyType),
+      title               = PageUtil.standardTitle(expectedH1),
+      welshTest           = false,
       contentExpectations = contentExpectations: _*
     )
 

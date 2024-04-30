@@ -38,9 +38,8 @@
 @chequeKey = @{PtaOrChequeFormValue.Cheque.toString}
 
 @layout(
-    pageTitle = Some(Messages.ChooseAnotherWayToGetYourRefund.`choose another way to get your refund`.show),
-    hasErrors = form.errors.nonEmpty,
-    maybeJourneyType = Some(request.journey.getJourneyType)
+    pageTitle = Some(Messages.ChooseAnotherWayToGetYourRefund.`Choose another way to get your refund`.show),
+    hasErrors = form.errors.nonEmpty
 ) {
 
     @if(form.errors.nonEmpty) {

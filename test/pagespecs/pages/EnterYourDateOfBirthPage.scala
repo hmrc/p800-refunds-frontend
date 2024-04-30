@@ -16,7 +16,6 @@
 
 package pagespecs.pages
 
-import models.journeymodels.JourneyType
 import org.openqa.selenium.WebDriver
 import org.scalatest.Assertion
 import pagespecs.pagesupport.{ContentExpectation, Page, PageUtil}
@@ -28,7 +27,7 @@ class EnterYourDateOfBirthPage(baseUrl: String)(implicit webDriver: WebDriver) e
 ) {
 
   override def expectedH1: String = "What is your date of birth?"
-  override def expectedTitleContent: String = "enter your date of birth"
+  override def expectedWelshH1: String = "Beth yw’ch dyddiad geni?"
 
   override def assertPageIsDisplayed(extraExpectations: ContentExpectation*): Unit = withPageClue {
 
@@ -47,7 +46,8 @@ class EnterYourDateOfBirthPage(baseUrl: String)(implicit webDriver: WebDriver) e
       baseUrl             = baseUrl,
       path                = path,
       h1                  = expectedH1,
-      title               = PageUtil.standardTitleWithJourneyType(expectedTitleContent, JourneyType.BankTransfer),
+      title               = PageUtil.standardTitle(expectedH1),
+      welshTest           = false,
       contentExpectations = contentExpectations: _*
     )
   }
@@ -83,7 +83,8 @@ class EnterYourDateOfBirthPage(baseUrl: String)(implicit webDriver: WebDriver) e
       baseUrl             = baseUrl,
       path                = path,
       h1                  = expectedH1,
-      title               = PageUtil.standardErrorTitle(expectedTitleContent, JourneyType.BankTransfer),
+      title               = PageUtil.standardErrorTitle(expectedH1),
+      welshTest           = false,
       contentExpectations = contentExpectations: _*
     )
   }

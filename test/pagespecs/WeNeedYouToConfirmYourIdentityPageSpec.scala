@@ -47,7 +47,7 @@ class WeNeedYouToConfirmYourIdentityPageSpec extends ItSpec {
           case JourneyType.Cheque       => pages.weNeedYouToConfirmYourIdentityBankTransferPage
         }
         page.open()
-        page.assertPageIsDisplayed(journeyType)
+        page.assertPageIsDisplayed()
       }
   }
 
@@ -69,9 +69,9 @@ class WeNeedYouToConfirmYourIdentityPageSpec extends ItSpec {
           case JourneyType.Cheque       => pages.weNeedYouToConfirmYourIdentityChequePage -> pages.whatIsYourP800ReferenceChequePage
         }
         startPage.open()
-        startPage.assertPageIsDisplayed(journeyType)
+        startPage.assertPageIsDisplayed()
         startPage.clickSubmit()
-        endPage.assertPageIsDisplayed(journeyType)
+        endPage.assertPageIsDisplayed()
       }
   }
 

@@ -35,9 +35,8 @@
 }
 
 @layout(
-    pageTitle = Some(Messages.ClaimYourRefundByBankTransfer.`claim your refund by bank transfer`.show),
-    hasErrors = form.errors.nonEmpty,
-    maybeJourneyType = Some(journeyRequest.journey.getJourneyType)
+    pageTitle = Some(Messages.ClaimYourRefundByBankTransfer.`Claim your refund by bank transfer`.show),
+    hasErrors = form.errors.nonEmpty
 ) {
 
     @if(form.errors.nonEmpty) {

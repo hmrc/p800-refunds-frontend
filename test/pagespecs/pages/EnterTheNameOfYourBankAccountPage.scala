@@ -17,7 +17,6 @@
 package pagespecs.pages
 
 import models.ecospend.BankId
-import models.journeymodels.JourneyType
 import org.openqa.selenium.WebDriver
 import pagespecs.pagesupport.{ContentExpectation, Page, PageUtil}
 
@@ -27,7 +26,7 @@ class EnterTheNameOfYourBankAccountPage(baseUrl: String)(implicit webDriver: Web
 ) {
 
   override def expectedH1: String = "What is the name of your bank?"
-  override def expectedTitleContent: String = "enter name of your bank"
+  override def expectedWelshH1: String = "Beth yw enw’ch banc?"
 
   override def clickSubmit()(implicit webDriver: WebDriver): Unit =
     PageUtil.clickByIdOrName("continue")
@@ -55,7 +54,8 @@ class EnterTheNameOfYourBankAccountPage(baseUrl: String)(implicit webDriver: Web
       baseUrl             = baseUrl,
       path                = path,
       h1                  = expectedH1,
-      title               = PageUtil.standardTitleWithJourneyType(expectedTitleContent, JourneyType.BankTransfer),
+      title               = PageUtil.standardTitle(expectedH1),
+      welshTest           = false,
       contentExpectations = contentExpectations: _*
     )
   }
@@ -87,7 +87,8 @@ class EnterTheNameOfYourBankAccountPage(baseUrl: String)(implicit webDriver: Web
       baseUrl             = baseUrl,
       path                = path,
       h1                  = expectedH1,
-      title               = PageUtil.standardErrorTitle(expectedTitleContent, JourneyType.BankTransfer),
+      title               = PageUtil.standardErrorTitle(expectedH1),
+      welshTest           = false,
       contentExpectations = contentExpectations: _*
     )
   }

@@ -16,7 +16,6 @@
 
 package pagespecs.pages
 
-import models.journeymodels.JourneyType
 import org.openqa.selenium.WebDriver
 import pagespecs.pagesupport.{ContentExpectation, Page, PageUtil}
 
@@ -28,8 +27,7 @@ class EnterYourP800ReferencePage(baseUrl: String, pathForJourneyType: String)(im
 ) {
 
   override def expectedH1: String = "What is your P800 reference?"
-
-  override def expectedTitleContent: String = "enter your p800 reference"
+  override def expectedWelshH1: String = "Beth yw’r cyfeirnod ar eich P800?"
 
   private val p800ReferenceFieldId: String = "reference"
 
@@ -44,9 +42,7 @@ class EnterYourP800ReferencePage(baseUrl: String, pathForJourneyType: String)(im
       .getOrElse(throw new Exception("Expecting at least one window handle"))
   }
 
-  override def assertPageIsDisplayed(extraExpectations: ContentExpectation*): Unit = sys.error("Use another variant for asserting page")
-
-  def assertPageIsDisplayed(journeyType: JourneyType, extraExpectations: ContentExpectation*): Unit = withPageClue {
+  override def assertPageIsDisplayed(extraExpectations: ContentExpectation*): Unit = withPageClue {
     val contentExpectations: Seq[ContentExpectation] = Seq(
       ContentExpectation(
         atXpath       = PageUtil.Xpath.mainContent,
@@ -62,7 +58,8 @@ class EnterYourP800ReferencePage(baseUrl: String, pathForJourneyType: String)(im
       baseUrl             = baseUrl,
       path                = path,
       h1                  = expectedH1,
-      title               = PageUtil.standardTitleWithJourneyType(expectedTitleContent, journeyType),
+      title               = PageUtil.standardTitle(expectedH1),
+      welshTest           = false,
       contentExpectations = contentExpectations: _*
     )
   }
@@ -70,7 +67,7 @@ class EnterYourP800ReferencePage(baseUrl: String, pathForJourneyType: String)(im
   val missingInputErrorContent = "Enter your P800 reference"
   val invalidInputErrorContent = "Enter your P800 reference in the correct format"
 
-  def assertPageShowsError(journeyType: JourneyType, errorContent: String): Unit = withPageClue {
+  def assertPageShowsError(errorContent: String): Unit = withPageClue {
     val contentExpectations = Seq(ContentExpectation(
       atXpath       = PageUtil.Xpath.mainContent,
       expectedLines =
@@ -84,12 +81,13 @@ class EnterYourP800ReferencePage(baseUrl: String, pathForJourneyType: String)(im
       baseUrl             = baseUrl,
       path                = path,
       h1                  = expectedH1,
-      title               = PageUtil.standardErrorTitle(expectedTitleContent, journeyType),
+      title               = PageUtil.standardErrorTitle(expectedH1),
+      welshTest           = false,
       contentExpectations = contentExpectations: _*
     )
   }
 
-  def assertPageShowsErrorReferenceFormat(journeyType: JourneyType): Unit = withPageClue {
+  def assertPageShowsErrorReferenceFormat(): Unit = withPageClue {
     val contentExpectations = Seq(ContentExpectation(
       atXpath       = PageUtil.Xpath.mainContent,
       expectedLines =
@@ -103,7 +101,8 @@ class EnterYourP800ReferencePage(baseUrl: String, pathForJourneyType: String)(im
       baseUrl             = baseUrl,
       path                = path,
       h1                  = expectedH1,
-      title               = PageUtil.standardErrorTitle(expectedTitleContent, journeyType),
+      title               = PageUtil.standardErrorTitle(expectedH1),
+      welshTest           = false,
       contentExpectations = contentExpectations: _*
     )
   }

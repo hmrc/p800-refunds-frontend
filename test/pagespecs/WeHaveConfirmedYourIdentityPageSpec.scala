@@ -16,7 +16,6 @@
 
 package pagespecs
 
-import models.journeymodels.JourneyType
 import testsupport.ItSpec
 import testsupport.stubs.EcospendStub
 
@@ -31,13 +30,13 @@ class WeHaveConfirmedYourIdentityPageSpec extends ItSpec {
     "bank transfer" in {
       upsertJourneyToDatabase(tdAll.BankTransfer.journeyAfterTracedIndividual)
       pages.yourIdentityIsConfirmedBankTransferPage.open()
-      pages.yourIdentityIsConfirmedBankTransferPage.assertPageIsDisplayed(JourneyType.BankTransfer)
+      pages.yourIdentityIsConfirmedBankTransferPage.assertPageIsDisplayed()
       getJourneyFromDatabase(tdAll.journeyId) shouldBeLike tdAll.BankTransfer.journeyAfterTracedIndividual
     }
     "cheque" in {
       upsertJourneyToDatabase(tdAll.Cheque.AfterReferenceCheck.journeyReferenceChecked)
       pages.yourIdentityIsConfirmedChequePage.open()
-      pages.yourIdentityIsConfirmedChequePage.assertPageIsDisplayed(JourneyType.Cheque)
+      pages.yourIdentityIsConfirmedChequePage.assertPageIsDisplayed()
       getJourneyFromDatabase(tdAll.journeyId) shouldBeLike tdAll.Cheque.AfterReferenceCheck.journeyReferenceChecked
     }
   }
@@ -48,7 +47,7 @@ class WeHaveConfirmedYourIdentityPageSpec extends ItSpec {
       EcospendStub.AuthStubs.stubEcospendAuth2xxSucceeded
       EcospendStub.BanksStubs.stubEcospendGetBanks2xx
       pages.yourIdentityIsConfirmedBankTransferPage.open()
-      pages.yourIdentityIsConfirmedBankTransferPage.assertPageIsDisplayed(JourneyType.BankTransfer)
+      pages.yourIdentityIsConfirmedBankTransferPage.assertPageIsDisplayed()
       pages.yourIdentityIsConfirmedBankTransferPage.clickSubmit()
       pages.enterTheNameOfYourBankAccountPage.assertPageIsDisplayed()
       EcospendStub.AuthStubs.verifyEcospendAccessToken()
@@ -58,7 +57,7 @@ class WeHaveConfirmedYourIdentityPageSpec extends ItSpec {
     "'Is your address up to date' page for cheque" in {
       upsertJourneyToDatabase(tdAll.Cheque.AfterReferenceCheck.journeyReferenceChecked)
       pages.yourIdentityIsConfirmedChequePage.open()
-      pages.yourIdentityIsConfirmedChequePage.assertPageIsDisplayed(JourneyType.Cheque)
+      pages.yourIdentityIsConfirmedChequePage.assertPageIsDisplayed()
       pages.yourIdentityIsConfirmedChequePage.clickSubmit()
       pages.isYourAddressUpToDate.assertPageIsDisplayed()
       getJourneyFromDatabase(tdAll.journeyId) shouldBeLike tdAll.Cheque.AfterReferenceCheck.journeyReferenceChecked

@@ -25,9 +25,8 @@ class YouCannotConfirmYourIdentityYetPage(baseUrl: String)(implicit webDriver: W
 ) {
 
   override def expectedH1: String = "You cannot confirm your identity yet"
-  override def expectedTitleContent: String = "You cannot confirm your identity yet"
+  override def expectedWelshH1: String = "Ni allwch gadarnhau pwy ydych eto"
 
-  def staticJourney: String = ""
   override def assertPageIsDisplayed(extraExpectations: ContentExpectation*): Unit = withPageClue {
 
     val contentExpectations: Seq[ContentExpectation] = Seq(ContentExpectation(
@@ -44,7 +43,8 @@ class YouCannotConfirmYourIdentityYetPage(baseUrl: String)(implicit webDriver: W
       baseUrl             = baseUrl,
       path                = path,
       h1                  = expectedH1,
-      title               = PageUtil.standardTitle(expectedTitleContent),
+      title               = PageUtil.standardTitle(expectedH1),
+      welshTest           = false,
       contentExpectations = contentExpectations: _*
     )
   }

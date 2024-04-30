@@ -16,7 +16,6 @@
 
 package pagespecs.pages
 
-import models.journeymodels.JourneyType
 import org.openqa.selenium.WebDriver
 import pagespecs.pagesupport.{ContentExpectation, Page, PageUtil}
 import testsupport.RichMatchers.convertToAnyShouldWrapper
@@ -27,11 +26,9 @@ class NoMoreAttemptsLeftToConfirmYourIdentityPage(baseUrl: String, pathForJourne
 ) {
 
   override def expectedH1: String = "We cannot confirm your identity"
-  override def expectedTitleContent: String = "no more attempts left to confirm your identity"
+  override def expectedWelshH1: String = "Ni allwn gadarnhau pwy ydych"
 
-  override def assertPageIsDisplayed(extraExpectations: ContentExpectation*): Unit = sys.error("Use another variant for asserting page")
-
-  def assertPageIsDisplayed(journeyType: JourneyType, extraExpectations: ContentExpectation*): Unit = withPageClue {
+  override def assertPageIsDisplayed(extraExpectations: ContentExpectation*): Unit = withPageClue {
 
     val contentExpectations: Seq[ContentExpectation] = Seq(ContentExpectation(
       atXpath       = PageUtil.Xpath.mainContent,
@@ -46,11 +43,12 @@ class NoMoreAttemptsLeftToConfirmYourIdentityPage(baseUrl: String, pathForJourne
     )) ++ extraExpectations
 
     PageUtil.assertPage(
+      baseUrl             = baseUrl,
       path                = path,
       h1                  = expectedH1,
-      title               = PageUtil.standardTitleWithJourneyType(expectedTitleContent, journeyType),
-      contentExpectations = contentExpectations: _*,
-      baseUrl             = baseUrl
+      title               = PageUtil.standardTitle(expectedH1),
+      welshTest           = false,
+      contentExpectations = contentExpectations: _*
     )
 
     contactUsHref() shouldBe "https://www.gov.uk/government/organisations/hm-revenue-customs/contact/income-tax-enquiries-for-individuals-pensioners-and-employees"

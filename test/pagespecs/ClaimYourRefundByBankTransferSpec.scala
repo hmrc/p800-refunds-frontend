@@ -50,7 +50,7 @@ class ClaimYourRefundByBankTransferSpec extends ItSpec {
       pages.claimYourRefundByBankTransferPage.assertPageIsDisplayed()
       pages.claimYourRefundByBankTransferPage.selectNo()
       pages.claimYourRefundByBankTransferPage.clickSubmit()
-      pages.weNeedYouToConfirmYourIdentityBankTransferPage.assertPageIsDisplayed(JourneyType.BankTransfer)
+      pages.weNeedYouToConfirmYourIdentityBankTransferPage.assertPageIsDisplayed()
       val expectedJourney = tdAll.Cheque.AfterReferenceCheck.journeyReferenceDidntMatchNino.copy(
         journeyType = Some(JourneyType.BankTransfer)
       )

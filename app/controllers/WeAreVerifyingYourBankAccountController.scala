@@ -89,7 +89,7 @@ class WeAreVerifyingYourBankAccountController @Inject() (
     }
     case (EventValue.NotReceived, ConsentStatus.Authorised) => Future.successful(
       (
-        Ok(views.weAreVerifyingYourBankAccountPage(journey, Some(consentStatus), Some(journey.getBankConsent.id), Some(journey.getBankConsent.bankReferenceId))),
+        Ok(views.weAreVerifyingYourBankAccountPage(Some(consentStatus), Some(journey.getBankConsent.id), Some(journey.getBankConsent.bankReferenceId))),
         journey
       )
     )

@@ -133,7 +133,7 @@ class ChooseAnotherWayToGetYourRefundPageForBankTransferJourneySpec extends ItSp
       pages.chooseAnotherWayToGetYourRefundPage.assertPageIsDisplayed()
       pages.chooseAnotherWayToGetYourRefundPage.PtaOrCheque.selectCheque()
       pages.chooseAnotherWayToGetYourRefundPage.clickSubmit()
-      pages.weNeedYouToConfirmYourIdentityChequePage.assertPageIsDisplayed(JourneyType.Cheque)
+      pages.weNeedYouToConfirmYourIdentityChequePage.assertPageIsDisplayed()
 
       val expectedJourney = tdAll.BankTransfer.AfterReferenceCheck.journeyReferenceDidntMatchNino.copy(
         journeyType = Some(JourneyType.Cheque)

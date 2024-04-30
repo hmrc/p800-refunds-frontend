@@ -48,8 +48,7 @@
     showBackLink: Boolean = true,
     customBeforeContentBlock: Option[Html] = None,
     hasErrors: Boolean = false,
-    customServiceName: Option[String] = None,
-    maybeJourneyType: Option[JourneyType] = None
+    customServiceName: Option[String] = None
 )(
     contentBlock: Html)(
     implicit request: RequestHeader
@@ -107,15 +106,7 @@
 
 @govTitle = @{serviceNameAndTitle + " - GOV.UK"}
 
-@titleWithJourneyType = @{
-    maybeJourneyType match {
-        case Some(JourneyType.BankTransfer) => s"${Messages.CommonMessages.`Bank transfer`.show} - $govTitle"
-        case Some(JourneyType.Cheque)       => s"${Messages.CommonMessages.`Cheque`.show} - $govTitle"
-        case None                           => s"$govTitle"
-    }
-}
-
-@documentTitle = @{if(hasErrors) { s"${Messages.CommonMessages.`Error: `.show} $titleWithJourneyType" } else { titleWithJourneyType }}
+@documentTitle = @{if(hasErrors) { s"${Messages.CommonMessages.`Error: `.show} $govTitle" } else { govTitle }}
 
 @header = @{
  hmrcStandardHeader(

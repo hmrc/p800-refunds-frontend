@@ -26,7 +26,7 @@ class WeCannotConfirmYourIdentityPage(baseUrl: String, pathForJourneyType: Strin
 ) {
 
   override def expectedH1: String = "We cannot confirm your identity"
-  override def expectedTitleContent: String = "cannot confirm your identity try again"
+  override def expectedWelshH1: String = "Ni allwn gadarnhau pwy ydych"
 
   override def assertPageIsDisplayed(extraExpectations: ContentExpectation*): Unit = sys.error("Use another variant for asserting page")
 
@@ -51,7 +51,8 @@ class WeCannotConfirmYourIdentityPage(baseUrl: String, pathForJourneyType: Strin
     PageUtil.assertPage(
       path                = path,
       h1                  = expectedH1,
-      title               = PageUtil.standardTitleWithJourneyType(expectedTitleContent, journeyType),
+      title               = PageUtil.standardTitle(expectedH1),
+      welshTest           = false,
       contentExpectations = contentExpectations: _*,
       baseUrl             = baseUrl
     )

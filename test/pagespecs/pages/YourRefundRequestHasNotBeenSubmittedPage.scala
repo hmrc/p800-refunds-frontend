@@ -25,9 +25,8 @@ class YourRefundRequestHasNotBeenSubmittedPage(baseUrl: String)(implicit webDriv
 ) {
 
   override def expectedH1: String = "Your refund request has not been submitted"
-  override def expectedTitleContent: String = "Your refund request has not been submitted"
+  override def expectedWelshH1: String = "Nid yw’ch cais am ad-daliad wedi’i gyflwyno"
 
-  def staticJourney: String = ""
   override def assertPageIsDisplayed(extraExpectations: ContentExpectation*): Unit = withPageClue {
 
     val contentExpectations: Seq[ContentExpectation] = Seq(ContentExpectation(
@@ -45,7 +44,8 @@ class YourRefundRequestHasNotBeenSubmittedPage(baseUrl: String)(implicit webDriv
       baseUrl             = baseUrl,
       path                = path,
       h1                  = expectedH1,
-      title               = PageUtil.standardTitle(expectedTitleContent),
+      title               = PageUtil.standardTitle(expectedH1),
+      welshTest           = false,
       contentExpectations = contentExpectations: _*
     )
   }
