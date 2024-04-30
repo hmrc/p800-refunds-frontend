@@ -26,7 +26,7 @@ class VerifyBankAccountPageSpec extends ItSpec {
   override def beforeEach(): Unit = {
     super.beforeEach()
     addJourneyIdToSession(tdAll.journeyId)
-    upsertJourneyToDatabase(tdAll.BankTransfer.journeyBankConsent)
+    upsertJourneyToDatabase(tdAll.BankTransfer.journeyBankAccountConsentSuccessfulNameMatch)
   }
 
   //HINT: Those tests work only because EventValue is NotReceived.

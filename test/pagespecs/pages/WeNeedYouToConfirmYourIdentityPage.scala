@@ -51,7 +51,7 @@ class WeNeedYouToConfirmYourIdentityPage(baseUrl: String, pathForJourneyType: St
           |reference
           |National Insurance number
           |We do this to protect your security.
-          |If you do not know your P800 reference, Sign in using your Government Gateway user ID to claim your refund.
+          |If you do not know your P800 reference, sign in using your Government Gateway user ID to claim your refund.
           |If you do not know your National Insurance number, you can get help to find it (opens in new tab).
           |""".stripMargin
     )) ++ extraExpectations

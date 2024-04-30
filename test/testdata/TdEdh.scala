@@ -38,9 +38,9 @@ trait TdEdh { dependencies: TdBase =>
       personType  = PersonType.Customer,
       person      = Some(Person(
         //TODO: according to the analysis all those fields come from the CitisenDetails API, which we don't call
-        surname                 = Surname(dependencies.surname),
-        firstForenameOrInitial  = Some(FirstForenameOrInitial(dependencies.firstForename)),
-        secondForenameOrInitial = None,
+        surname                 = Surname(dependencies.surnameGreg),
+        firstForenameOrInitial  = Some(FirstForenameOrInitial(dependencies.firstNameGreg)),
+        secondForenameOrInitial = Some(SecondForenameOrInitial(dependencies.secondForenameGreggson)),
         nino                    = nino,
         dateOfBirth             = DateOfBirth(`dateOfBirthFormatted YYYY-MM-DD`),
         title                   = Some(Title(dependencies.title)),

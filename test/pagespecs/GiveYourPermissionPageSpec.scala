@@ -46,6 +46,7 @@ class GiveYourPermissionPageSpec extends ItSpec {
   }
 
   "clicking 'Approve this refund' redirects to 'Verifying bank account' via 'Bank Stub Page'" in {
+    upsertJourneyToDatabase(tdAll.BankTransfer.journeySelectedBankWithSuccessfulMatch)
     EcospendStub.AuthStubs.stubEcospendAuth2xxSucceeded
     EcospendStub.ConsentStubs.stubConsent2xxSucceeded(tdAll.bankId)
     EcospendStub.AccountStub.stubAccountSummary2xxSucceeded(tdAll.consentId)
@@ -61,7 +62,7 @@ class GiveYourPermissionPageSpec extends ItSpec {
     pages.verifyBankAccountPage.assertPageIsDisplayed()
 
     EdhStub.verifyGetBankDetailsRiskResult(tdAll.claimId, tdAll.correlationId)
-    getJourneyFromDatabase(tdAll.journeyId) shouldBeLike tdAll.BankTransfer.journeyReceivedNotificationFromEcospendNotReceived
+    getJourneyFromDatabase(tdAll.journeyId) shouldBeLike tdAll.BankTransfer.journeyReceivedNotificationFromEcospendNotReceivedSuccessfulNameMatch
   }
 
   "clicking 'Choose another way to get my money' redirects to 'Choose another way to get my refund' page" in {
