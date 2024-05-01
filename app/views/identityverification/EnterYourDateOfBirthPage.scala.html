@@ -38,9 +38,8 @@
 }
 
 @layout(
-    pageTitle = Some(Messages.WhatIsYourDateOfBirth.`enter your date of birth`.show),
-    hasErrors = form.errors.nonEmpty,
-    maybeJourneyType = Some(request.journey.getJourneyType)
+    pageTitle = Some(Messages.WhatIsYourDateOfBirth.`What is your date of birth`.show),
+    hasErrors = form.errors.nonEmpty
 ) {
 
     @if(form.errors.nonEmpty) {

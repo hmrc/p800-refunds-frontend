@@ -88,7 +88,7 @@ class WeCannotConfirmYourIdentityPageSpec extends ItSpec {
     "'Choose another way to get your refund' for bank transfer" in {
       upsertJourneyToDatabase(tdAll.BankTransfer.AfterReferenceCheck.journeyReferenceDidntMatchNino)
       test(JourneyType.BankTransfer)
-      pages.chooseAnotherWayToReceiveYourRefundPage.assertPageIsDisplayed()
+      pages.chooseAnotherWayToGetYourRefundPage.assertPageIsDisplayed()
       getJourneyFromDatabase(tdAll.journeyId) shouldBeLike tdAll.BankTransfer.AfterReferenceCheck.journeyReferenceDidntMatchNino
     }
     "'Claim your refund by bank transfer' for cheque" in {

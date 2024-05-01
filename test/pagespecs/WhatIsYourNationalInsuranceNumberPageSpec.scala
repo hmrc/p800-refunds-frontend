@@ -44,7 +44,7 @@ class WhatIsYourNationalInsuranceNumberPageSpec extends ItSpec {
           case JourneyType.Cheque       => pages.enterYourNationalInsuranceNumberChequePage
         }
         page.open()
-        page.assertPageIsDisplayed(journeyType)
+        page.assertPageIsDisplayed()
       }
   }
 
@@ -76,7 +76,7 @@ class WhatIsYourNationalInsuranceNumberPageSpec extends ItSpec {
             case JourneyType.Cheque       => pages.enterYourNationalInsuranceNumberChequePage
           }
           page.open()
-          page.assertPageIsDisplayed(journeyType)
+          page.assertPageIsDisplayed()
           page.enterNationalInsuranceNumber(Nino(nino))
           page.clickSubmit()
         }
@@ -104,9 +104,9 @@ class WhatIsYourNationalInsuranceNumberPageSpec extends ItSpec {
           case JourneyType.Cheque       => pages.enterYourNationalInsuranceNumberChequePage
         }
         page.open()
-        page.assertPageIsDisplayed(journeyType)
+        page.assertPageIsDisplayed()
         page.clickSubmit()
-        page.assertPageShowsErrorEmptyInput(journeyType)
+        page.assertPageShowsErrorEmptyInput()
       }
   }
 
@@ -131,10 +131,10 @@ class WhatIsYourNationalInsuranceNumberPageSpec extends ItSpec {
             case JourneyType.Cheque       => pages.enterYourNationalInsuranceNumberChequePage
           }
           page.open()
-          page.assertPageIsDisplayed(journeyType)
+          page.assertPageIsDisplayed()
           page.enterNationalInsuranceNumber(Nino(nino))
           page.clickSubmit()
-          page.assertPageShowsErrorInvalid(journeyType)
+          page.assertPageShowsErrorInvalid()
         }
     }
   }
@@ -162,7 +162,7 @@ class WhatIsYourNationalInsuranceNumberPageSpec extends ItSpec {
           case JourneyType.Cheque       => pages.enterYourNationalInsuranceNumberChequePage
         }
         page.open()
-        page.assertPageIsDisplayed(journeyType)
+        page.assertPageIsDisplayed()
       }
 
   }

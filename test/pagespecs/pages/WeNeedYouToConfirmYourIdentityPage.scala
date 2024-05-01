@@ -16,7 +16,6 @@
 
 package pagespecs.pages
 
-import models.journeymodels.JourneyType
 import org.openqa.selenium.WebDriver
 import pagespecs.pagesupport.{ContentExpectation, Page, PageUtil}
 import testsupport.RichMatchers.convertToAnyShouldWrapper
@@ -27,24 +26,20 @@ class WeNeedYouToConfirmYourIdentityPage(baseUrl: String, pathForJourneyType: St
 ) {
 
   override def expectedH1: String = "We need you to confirm your identity"
-
-  override def expectedTitleContent: String = "add_me"
+  override def expectedWelshH1: String = "Mae angen i chi gadarnhau pwy ydych"
 
   def assertPageIsDisplayedForChequeJourney(): Unit =
-    assertPageIsDisplayed(JourneyType.Cheque)
+    assertPageIsDisplayed()
 
   def assertPageIsDisplayedForBankTransferJourney(): Unit =
     assertPageIsDisplayed(
-      JourneyType.BankTransfer,
       ContentExpectation(
         atXpath       = PageUtil.Xpath.mainContent,
         expectedLines = "date of birth"
       )
     )
 
-  override def assertPageIsDisplayed(extraExpectations: ContentExpectation*): Unit = sys.error("Use another variant for asserting page")
-
-  def assertPageIsDisplayed(journeyType: JourneyType, extraExpectations: ContentExpectation*): Unit = withPageClue {
+  override def assertPageIsDisplayed(extraExpectations: ContentExpectation*): Unit = withPageClue {
 
     val contentExpectations: Seq[ContentExpectation] = Seq(ContentExpectation(
       atXpath       = PageUtil.Xpath.mainContent,
@@ -65,7 +60,8 @@ class WeNeedYouToConfirmYourIdentityPage(baseUrl: String, pathForJourneyType: St
       baseUrl             = baseUrl,
       path                = path,
       h1                  = expectedH1,
-      title               = PageUtil.standardTitleWithJourneyType("confirm your identity", journeyType),
+      title               = PageUtil.standardTitle(expectedH1),
+      welshTest           = false,
       contentExpectations = contentExpectations: _*
     )
 

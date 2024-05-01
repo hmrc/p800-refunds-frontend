@@ -37,9 +37,8 @@
 }
 
 @layout(
-    pageTitle = Some(Messages.EnterP800ReferenceMessages.`enter your P800 reference`.show),
-    hasErrors = form.errors.nonEmpty,
-    maybeJourneyType = Some(request.journey.getJourneyType)
+    pageTitle = Some(Messages.EnterP800ReferenceMessages.`What is your P800 reference?`.show),
+    hasErrors = form.errors.nonEmpty
 ) {
 
     @if(form.errors.nonEmpty) {

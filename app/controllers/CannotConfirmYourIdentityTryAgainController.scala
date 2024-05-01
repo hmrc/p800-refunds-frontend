@@ -35,7 +35,7 @@ class CannotConfirmYourIdentityTryAgainController @Inject() (
   def getBankTransfer: Action[AnyContent] = actions.journeyInProgress { implicit request =>
     Ok(views.cannotConfirmYourIdentityTryAgainPage(
       chooseAnotherMethodCall    = routes.ChooseAnotherWayToGetYourRefundController.getBankTransfer,
-      chooseAnotherMethodMessage = Messages.WeCannotConfirmYourIdentity.`Choose another method`
+      chooseAnotherMethodMessage = Messages.WeCannotConfirmYourIdentity.`Choose another way to get my refund`
     ))
   }
 

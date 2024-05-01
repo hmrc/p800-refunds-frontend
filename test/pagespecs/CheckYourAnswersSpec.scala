@@ -57,7 +57,7 @@ class CheckYourAnswersSpec extends ItSpec {
         tdAll.nino
       )
       pages.checkYourAnswersBankTransferPage.clickChangeReference()
-      pages.whatIsYourP800ReferenceBankTransferPage.assertPageIsDisplayed(journeyType = JourneyType.BankTransfer)
+      pages.whatIsYourP800ReferenceBankTransferPage.assertPageIsDisplayed()
       val newReference = UserEnteredP800Reference("123455")
       pages.whatIsYourP800ReferenceBankTransferPage.enterP800Reference(newReference.value)
       pages.whatIsYourP800ReferenceBankTransferPage.clickSubmit()
@@ -75,7 +75,7 @@ class CheckYourAnswersSpec extends ItSpec {
       upsertJourneyToDatabase(tdAll.Cheque.journeyEnteredNino)
       pages.checkYourAnswersChequePage.open()
       pages.checkYourAnswersChequePage.clickChangeReference()
-      pages.whatIsYourP800ReferenceChequePage.assertPageIsDisplayed(journeyType = JourneyType.Cheque)
+      pages.whatIsYourP800ReferenceChequePage.assertPageIsDisplayed()
       val newReference = UserEnteredP800Reference("123456")
       pages.whatIsYourP800ReferenceChequePage.enterP800Reference(newReference.value)
       pages.whatIsYourP800ReferenceChequePage.clickSubmit()
@@ -119,7 +119,7 @@ class CheckYourAnswersSpec extends ItSpec {
       upsertJourneyToDatabase(tdAll.BankTransfer.journeyEnteredDateOfBirth)
       pages.checkYourAnswersBankTransferPage.open()
       pages.checkYourAnswersBankTransferPage.clickChangeNationalInsuranceNumber()
-      pages.enterYourNationalInsuranceNumberBankTransferPage.assertPageIsDisplayed(journeyType = JourneyType.BankTransfer)
+      pages.enterYourNationalInsuranceNumberBankTransferPage.assertPageIsDisplayed()
       val newNino = Nino("AB123123C")
       pages.enterYourNationalInsuranceNumberBankTransferPage.enterNationalInsuranceNumber(newNino)
       pages.enterYourNationalInsuranceNumberBankTransferPage.clickSubmit()
@@ -163,7 +163,7 @@ class CheckYourAnswersSpec extends ItSpec {
       )
 
       pages.checkYourAnswersBankTransferPage.clickSubmit()
-      pages.yourIdentityIsConfirmedBankTransferPage.assertPageIsDisplayed(JourneyType.BankTransfer)
+      pages.yourIdentityIsConfirmedBankTransferPage.assertPageIsDisplayed()
       VerifyP800ReferenceStub.verify(tdAll.correlationId)
       TraceIndividualStub.verifyTraceIndividual(tdAll.correlationId)
       getJourneyFromDatabase(tdAll.journeyId) shouldBeLike j
@@ -174,7 +174,7 @@ class CheckYourAnswersSpec extends ItSpec {
       val j = tdAll.Cheque.AfterReferenceCheck.journeyReferenceChecked
       VerifyP800ReferenceStub.p800ReferenceChecked(j.nino.value, tdAll.p800Reference, j.getP800ReferenceChecked(request = tdAll.fakeRequest))
       pages.checkYourAnswersChequePage.clickSubmit()
-      pages.yourIdentityIsConfirmedChequePage.assertPageIsDisplayed(JourneyType.Cheque)
+      pages.yourIdentityIsConfirmedChequePage.assertPageIsDisplayed()
       VerifyP800ReferenceStub.verify(tdAll.correlationId)
       getJourneyFromDatabase(tdAll.journeyId) shouldBeLike j
     }
@@ -196,7 +196,7 @@ class CheckYourAnswersSpec extends ItSpec {
       )
 
       pages.checkYourAnswersBankTransferPage.clickSubmit()
-      pages.yourIdentityIsConfirmedBankTransferPage.assertPageIsDisplayed(JourneyType.BankTransfer)
+      pages.yourIdentityIsConfirmedBankTransferPage.assertPageIsDisplayed()
       VerifyP800ReferenceStub.verify(tdAll.correlationId)
       TraceIndividualStub.verifyTraceIndividual(tdAll.correlationId)
       getJourneyFromDatabase(tdAll.journeyId) shouldBeLike j
@@ -282,7 +282,7 @@ class CheckYourAnswersSpec extends ItSpec {
       upsertFailedAttemptToDatabase(tdAll.attemptInfo(2))
       test(JourneyType.BankTransfer)
 
-      pages.noMoreAttemptsLeftToConfirmYourIdentityBankTransferPage.assertPageIsDisplayed(JourneyType.BankTransfer)
+      pages.noMoreAttemptsLeftToConfirmYourIdentityBankTransferPage.assertPageIsDisplayed()
       VerifyP800ReferenceStub.verify(tdAll.correlationId)
       getJourneyFromDatabase(tdAll.journeyId) shouldBeLike tdAll.BankTransfer.journeyLockedOutFromFailedAttempts
       getFailedAttemptCount() shouldBe Some(3)
@@ -296,7 +296,7 @@ class CheckYourAnswersSpec extends ItSpec {
       upsertFailedAttemptToDatabase(tdAll.attemptInfo(2))
       test(JourneyType.Cheque)
 
-      pages.noMoreAttemptsLeftToConfirmYourIdentityChequePage.assertPageIsDisplayed(JourneyType.Cheque)
+      pages.noMoreAttemptsLeftToConfirmYourIdentityChequePage.assertPageIsDisplayed()
       VerifyP800ReferenceStub.verify(tdAll.correlationId)
       getJourneyFromDatabase(tdAll.journeyId) shouldBeLike tdAll.Cheque.journeyLockedOutFromFailedAttempts
       getFailedAttemptCount() shouldBe Some(3)

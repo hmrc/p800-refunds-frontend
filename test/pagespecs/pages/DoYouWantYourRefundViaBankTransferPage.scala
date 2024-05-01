@@ -25,7 +25,7 @@ class DoYouWantYourRefundViaBankTransferPage(baseUrl: String)(implicit webDriver
 ) {
 
   override def expectedH1: String = "Do you want your refund by bank transfer?"
-  override def expectedTitleContent: String = "Do you want to refund by bank transfer?"
+  override def expectedWelshH1: String = "A ydych am gael eich ad-daliad drwy drosglwyddiad banc?"
 
   override def assertPageIsDisplayed(extraExpectations: ContentExpectation*): Unit = withPageClue {
     val contentExpectations: Seq[ContentExpectation] = Seq(
@@ -46,7 +46,8 @@ class DoYouWantYourRefundViaBankTransferPage(baseUrl: String)(implicit webDriver
       baseUrl             = baseUrl,
       path                = path,
       h1                  = expectedH1,
-      title               = PageUtil.standardTitle(expectedTitleContent),
+      title               = PageUtil.standardTitle(expectedH1),
+      welshTest           = false,
       contentExpectations = contentExpectations: _*
     )
   }
@@ -83,7 +84,8 @@ class DoYouWantYourRefundViaBankTransferPage(baseUrl: String)(implicit webDriver
       baseUrl             = baseUrl,
       path                = path,
       h1                  = expectedH1,
-      title               = PageUtil.standardErrorTitle(expectedTitleContent),
+      title               = PageUtil.standardErrorTitle(expectedH1),
+      welshTest           = false,
       contentExpectations = contentExpectations: _*
     )
   }

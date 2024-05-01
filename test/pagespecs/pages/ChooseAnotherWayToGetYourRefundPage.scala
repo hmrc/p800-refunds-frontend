@@ -16,17 +16,16 @@
 
 package pagespecs.pages
 
-import models.journeymodels.JourneyType
 import org.openqa.selenium.WebDriver
 import pagespecs.pagesupport.{ContentExpectation, Page, PageUtil}
 
-class ChooseAnotherWayToReceiveYourRefundPage(baseUrl: String)(implicit webDriver: WebDriver) extends Page(
+class ChooseAnotherWayToGetYourRefundPage(baseUrl: String)(implicit webDriver: WebDriver) extends Page(
   baseUrl = baseUrl,
   path    = s"/get-an-income-tax-refund/bank-transfer/choose-another-way-to-receive-your-refund"
 ) {
 
   override def expectedH1: String = "Choose another way to get your refund"
-  override def expectedTitleContent: String = "choose another way to get your refund"
+  override def expectedWelshH1: String = "Dewiswch ffordd arall o gael fy ad-daliad"
 
   override def assertPageIsDisplayed(errors: ContentExpectation*): Unit = withPageClue {
     val contentExpectations: Seq[ContentExpectation] = Seq(ContentExpectation(
@@ -43,14 +42,15 @@ class ChooseAnotherWayToReceiveYourRefundPage(baseUrl: String)(implicit webDrive
     )) ++ errors
 
     val expectedTitle =
-      if (errors.isEmpty) PageUtil.standardTitleWithJourneyType(expectedTitleContent, JourneyType.BankTransfer)
-      else PageUtil.standardErrorTitle(expectedTitleContent, JourneyType.BankTransfer)
+      if (errors.isEmpty) PageUtil.standardTitle(expectedH1)
+      else PageUtil.standardErrorTitle(expectedH1)
 
     PageUtil.assertPage(
       baseUrl             = baseUrl,
       path                = path,
       h1                  = expectedH1,
       title               = expectedTitle,
+      welshTest           = false,
       contentExpectations = contentExpectations: _*
     )
   }

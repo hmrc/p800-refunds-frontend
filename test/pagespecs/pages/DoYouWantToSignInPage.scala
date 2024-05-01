@@ -25,7 +25,7 @@ class DoYouWantToSignInPage(baseUrl: String)(implicit webDriver: WebDriver) exte
 ) {
 
   override def expectedH1: String = "Do you want to sign in?"
-  override def expectedTitleContent: String = "add_me"
+  override def expectedWelshH1 = "A ydych am fewngofnodi?"
 
   override def assertPageIsDisplayed(extraExpectations: ContentExpectation*): Unit = withPageClue {
     val contentExpectations: ContentExpectation = ContentExpectation(
@@ -34,6 +34,9 @@ class DoYouWantToSignInPage(baseUrl: String)(implicit webDriver: WebDriver) exte
         """
           |Do you want to sign in?
           |You’ll have fewer details to enter if you sign in using your Government Gateway user ID.
+          |Yes, sign in
+          |No, continue without signing in
+          |Continue
           |""".stripMargin
     )
 
@@ -42,6 +45,7 @@ class DoYouWantToSignInPage(baseUrl: String)(implicit webDriver: WebDriver) exte
       path                = path,
       h1                  = expectedH1,
       title               = PageUtil.standardTitle(expectedH1),
+      welshTest           = false,
       contentExpectations = contentExpectations
     )
   }
@@ -55,6 +59,9 @@ class DoYouWantToSignInPage(baseUrl: String)(implicit webDriver: WebDriver) exte
           |Select yes if you want to sign in to your tax account
           |Do you want to sign in?
           |You’ll have fewer details to enter if you sign in using your Government Gateway user ID.
+          |Yes, sign in
+          |No, continue without signing in
+          |Continue
           |""".stripMargin
     )
     PageUtil.assertPage(
@@ -62,6 +69,54 @@ class DoYouWantToSignInPage(baseUrl: String)(implicit webDriver: WebDriver) exte
       path                = path,
       h1                  = expectedH1,
       title               = PageUtil.standardErrorTitle(expectedH1),
+      welshTest           = false,
+      contentExpectations = errorContent
+    )
+  }
+
+  def assertPageIsDisplayedInWelsh(): Unit = withPageClue {
+    val contentExpectations: ContentExpectation = ContentExpectation(
+      atXpath       = PageUtil.Xpath.mainContent,
+      expectedLines =
+        """
+          |A ydych am fewngofnodi?
+          |Bydd gennych lai o fanylion i’w nodi os byddwch yn mewngofnodi gan ddefnyddio eich Dynodydd Defnyddiwr (ID) ar gyfer Porth y Llywodraeth.
+          |Iawn, mewngofnodi
+          |Na, ewch yn eich blaen heb fewngofnodi
+          |Yn eich blaen
+          |""".stripMargin
+    )
+
+    PageUtil.assertPage(
+      baseUrl             = baseUrl,
+      path                = path,
+      h1                  = expectedWelshH1,
+      title               = PageUtil.standardTitleInWelsh(expectedWelshH1),
+      welshTest           = true,
+      contentExpectations = contentExpectations
+    )
+  }
+
+  def assertPageShowsWithErrorsInWelsh(): Unit = withPageClue {
+    val errorContent: ContentExpectation = ContentExpectation(
+      atXpath       = PageUtil.Xpath.mainContent,
+      expectedLines =
+        """
+          |A ydych am fewngofnodi?
+          |Mae problem wedi codi
+          |Dewiswch ‘Iawn’ os hoffech fewngofnodi i’ch cyfrif treth
+          |Bydd gennych lai o fanylion i’w nodi os byddwch yn mewngofnodi gan ddefnyddio eich Dynodydd Defnyddiwr (ID) ar gyfer Porth y Llywodraeth.
+          |Iawn, mewngofnodi
+          |Na, ewch yn eich blaen heb fewngofnodi
+          |Yn eich blaen
+          |""".stripMargin
+    )
+    PageUtil.assertPage(
+      baseUrl             = baseUrl,
+      path                = path,
+      h1                  = expectedWelshH1,
+      title               = PageUtil.standardErrorTitleInWelsh(expectedWelshH1),
+      welshTest           = true,
       contentExpectations = errorContent
     )
   }

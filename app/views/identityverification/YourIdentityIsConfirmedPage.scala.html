@@ -30,8 +30,7 @@
 @import viewsHelpers.requestSupport._
 
 @layout(
-    pageTitle = Some(Messages.WeHaveConfirmedYourIdentity.`your identity is confirmed`.show),
-    maybeJourneyType = Some(request.journey.getJourneyType)
+    pageTitle = Some(Messages.WeHaveConfirmedYourIdentity.`We have confirmed your identity`.show)
 ) {
 
     <h1 class="govuk-heading-xl">@{Messages.WeHaveConfirmedYourIdentity.`We have confirmed your identity`.show}</h1>

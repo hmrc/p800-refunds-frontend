@@ -104,4 +104,22 @@ class DoYouWantToSignInPageSpec extends ItSpec {
     AuditConnectorStub.verifyNoAuditEvent("userLoginSelection")
   }
 
+  "Render page in Welsh" in {
+    pages.doYouWantToSignInPage.open()
+    pages.doYouWantToSignInPage.assertPageIsDisplayed()
+    pages.doYouWantToSignInPage.clickWelshLink()
+    pages.doYouWantToSignInPage.assertPageIsDisplayedInWelsh()
+  }
+
+  "Display error messages in welsh" in {
+    pages.doYouWantToSignInPage.open()
+    pages.doYouWantToSignInPage.assertPageIsDisplayed()
+    pages.doYouWantToSignInPage.clickWelshLink()
+    pages.doYouWantToSignInPage.clickSubmit()
+    pages.doYouWantToSignInPage.assertPageShowsWithErrorsInWelsh()
+    getJourneyFromDatabase(tdAll.journeyId) shouldBeLike tdAll.journeyStarted
+
+    AuditConnectorStub.verifyNoAuditEvent("userLoginSelection")
+  }
+
 }

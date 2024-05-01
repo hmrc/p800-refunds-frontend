@@ -44,7 +44,7 @@ class NoMoreAttemptsLeftToConfirmYourIdentityPageSpec extends ItSpec {
           case JourneyType.BankTransfer => pages.noMoreAttemptsLeftToConfirmYourIdentityBankTransferPage
         }
         page.open()
-        page.assertPageIsDisplayed(journeyType)
+        page.assertPageIsDisplayed()
       }
   }
 
@@ -66,7 +66,7 @@ class NoMoreAttemptsLeftToConfirmYourIdentityPageSpec extends ItSpec {
           case JourneyType.BankTransfer => pages.noMoreAttemptsLeftToConfirmYourIdentityBankTransferPage
         }
         page.open()
-        page.assertPageIsDisplayed(journeyType)
+        page.assertPageIsDisplayed()
         page.clickSignInToYourHmrcAccount()
         pages.ptaSignInPage.assertPageIsDisplayed()
       }

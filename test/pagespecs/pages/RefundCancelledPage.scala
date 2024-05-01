@@ -25,9 +25,8 @@ class RefundCancelledPage(baseUrl: String)(implicit webDriver: WebDriver) extend
 ) {
 
   override def expectedH1: String = "Refund cancelled"
-  override def expectedTitleContent: String = "Refund cancelled"
+  override def expectedWelshH1: String = "Ad-daliad wedi’i ganslo"
 
-  def staticJourney: String = ""
   override def assertPageIsDisplayed(extraExpectations: ContentExpectation*): Unit = withPageClue {
 
     val contentExpectations: Seq[ContentExpectation] = Seq(ContentExpectation(
@@ -46,7 +45,8 @@ class RefundCancelledPage(baseUrl: String)(implicit webDriver: WebDriver) extend
       baseUrl             = baseUrl,
       path                = path,
       h1                  = expectedH1,
-      title               = PageUtil.standardTitle(expectedTitleContent),
+      title               = PageUtil.standardTitle(expectedH1),
+      welshTest           = false,
       contentExpectations = contentExpectations: _*
     )
   }

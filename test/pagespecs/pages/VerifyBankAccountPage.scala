@@ -17,7 +17,6 @@
 package pagespecs.pages
 
 import models.ecospend.consent.{BankReferenceId, ConsentId, ConsentStatus}
-import models.journeymodels.JourneyType
 import org.openqa.selenium.WebDriver
 import pagespecs.pagesupport.{ContentExpectation, Page, PageUtil}
 
@@ -27,7 +26,7 @@ class VerifyBankAccountPage(baseUrl: String, consentStatus: ConsentStatus, conse
 ) {
 
   override def expectedH1: String = "We are verifying your bank account"
-  override def expectedTitleContent: String = "verifying your bank account"
+  override def expectedWelshH1: String = "Rydym yn gwirio’ch cyfrif banc"
 
   override def assertPageIsDisplayed(extraExpectations: ContentExpectation*): Unit = withPageClue {
 
@@ -44,7 +43,8 @@ class VerifyBankAccountPage(baseUrl: String, consentStatus: ConsentStatus, conse
       baseUrl             = baseUrl,
       path                = path,
       h1                  = expectedH1,
-      title               = PageUtil.standardTitleWithJourneyType(expectedTitleContent, JourneyType.BankTransfer),
+      title               = PageUtil.standardTitle(expectedH1),
+      welshTest           = false,
       contentExpectations = contentExpectations: _*
     )
   }

@@ -39,10 +39,9 @@
 @additionalScript = { <script src="@{controllers.routes.Assets.versioned("javascripts/print-dialogue.js")}" @{CSPNonce.attr}></script> }
 
 @layout(
-    pageTitle         = Some(Messages.CommonMessages.`request received`.show),
+    pageTitle         = Some(Messages.BankTransferRequestReceived.`Bank transfer request received`.show),
     showBackLink      = false,
-    additionalScripts = Some(additionalScript),
-    maybeJourneyType  = Some(request.journey.getJourneyType)
+    additionalScripts = Some(additionalScript)
 ) {
 
     @viewsHelpers.govukPanel(Panel(

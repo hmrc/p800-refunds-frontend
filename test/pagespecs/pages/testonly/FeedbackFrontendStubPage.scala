@@ -24,7 +24,7 @@ class FeedbackFrontendStubPage(baseUrl: String, pathForJourneyType: String)(impl
   path = s"/get-an-income-tax-refund/test-only/feedback/p800-refunds-${pathForJourneyType}"
 ) {
   override def expectedH1: String = "Feedback Service Stub"
-  override def expectedTitleContent: String = "don't care"
+  override def expectedWelshH1: String = "ADD_ME"
 
   override def assertPageIsDisplayed(extraExpectations: ContentExpectation*): Unit =
     sys.error("Use 'assertPageIsDisplayedForCheque' or 'assertPageIsDisplayedForBankTransfer' or other variants")

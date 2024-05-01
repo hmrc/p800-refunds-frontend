@@ -28,7 +28,6 @@
 )
 
 @(
-    journey: Journey,
     status: Option[ConsentStatus],
     consentId: Option[ConsentId],
     bankReferenceId: Option[BankReferenceId])(implicit
@@ -40,8 +39,7 @@
 @additionalScript = { <script src="@{controllers.routes.Assets.versioned("javascripts/verifying-bank-refresh.js")}" @{CSPNonce.attr}></script> }
 
 @layout(
-    pageTitle = Some(Messages.VerifyBankAccount.`verifying your bank account`.show),
-    maybeJourneyType = Some(journey.getJourneyType),
+    pageTitle = Some(Messages.VerifyBankAccount.`We are verifying your bank account`.show),
     additionalScripts = Some(additionalScript)
 ) {
 
@@ -50,6 +48,5 @@
     <p class="govuk-body">
         @{Html(Messages.VerifyBankAccount.`This usually takes a few seconds`(routes.WeAreVerifyingYourBankAccountController.get(status, consentId, bankReferenceId).url).show)}
     </p>
-
 
 }

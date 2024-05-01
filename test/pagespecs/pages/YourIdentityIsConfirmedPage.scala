@@ -16,7 +16,6 @@
 
 package pagespecs.pages
 
-import models.journeymodels.JourneyType
 import org.openqa.selenium.WebDriver
 import pagespecs.pagesupport.{ContentExpectation, Page, PageUtil}
 
@@ -26,11 +25,9 @@ class YourIdentityIsConfirmedPage(baseUrl: String, pathForJourneyType: String)(i
 ) {
 
   override def expectedH1: String = "We have confirmed your identity"
-  override def expectedTitleContent: String = "your identity is confirmed"
+  override def expectedWelshH1: String = "Rydym wedi cadarnhau pwy ydych"
 
-  override def assertPageIsDisplayed(extraExpectations: ContentExpectation*): Unit = sys.error("Use another variant for asserting page")
-
-  def assertPageIsDisplayed(journeyType: JourneyType, extraExpectations: ContentExpectation*): Unit = withPageClue {
+  override def assertPageIsDisplayed(extraExpectations: ContentExpectation*): Unit = withPageClue {
 
     val contentExpectations: Seq[ContentExpectation] = Seq(ContentExpectation(
       atXpath       = PageUtil.Xpath.mainContent,
@@ -45,7 +42,8 @@ class YourIdentityIsConfirmedPage(baseUrl: String, pathForJourneyType: String)(i
       baseUrl             = baseUrl,
       path                = path,
       h1                  = expectedH1,
-      title               = PageUtil.standardTitleWithJourneyType(expectedTitleContent, journeyType),
+      title               = PageUtil.standardTitle(expectedH1),
+      welshTest           = false,
       contentExpectations = contentExpectations: _*
     )
   }

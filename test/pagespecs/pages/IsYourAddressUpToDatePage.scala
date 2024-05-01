@@ -16,7 +16,6 @@
 
 package pagespecs.pages
 
-import models.journeymodels.JourneyType
 import org.openqa.selenium.WebDriver
 import pagespecs.pagesupport.{ContentExpectation, Page, PageUtil}
 
@@ -26,7 +25,7 @@ class IsYourAddressUpToDatePage(baseUrl: String)(implicit webDriver: WebDriver) 
 ) {
 
   override def expectedH1: String = "Is your address up to date?"
-  override def expectedTitleContent: String = "is your address up to date"
+  override def expectedWelshH1: String = "A yw’ch cyfeiriad yn gyfredol?"
 
   override def assertPageIsDisplayed(extraExpectations: ContentExpectation*): Unit = withPageClue {
 
@@ -46,7 +45,8 @@ class IsYourAddressUpToDatePage(baseUrl: String)(implicit webDriver: WebDriver) 
       baseUrl             = baseUrl,
       path                = path,
       h1                  = expectedH1,
-      title               = PageUtil.standardTitleWithJourneyType(expectedTitleContent, JourneyType.Cheque),
+      title               = PageUtil.standardTitle(expectedH1),
+      welshTest           = false,
       contentExpectations = contentExpectations: _*
     )
   }
@@ -83,7 +83,8 @@ class IsYourAddressUpToDatePage(baseUrl: String)(implicit webDriver: WebDriver) 
       baseUrl             = baseUrl,
       path                = path,
       h1                  = expectedH1,
-      title               = PageUtil.standardErrorTitle(expectedTitleContent, JourneyType.Cheque),
+      title               = PageUtil.standardErrorTitle(expectedH1),
+      welshTest           = false,
       contentExpectations = contentExpectations: _*
     )
   }

@@ -17,7 +17,6 @@
 package pagespecs.pages
 
 import models.Nino
-import models.journeymodels.JourneyType
 import org.openqa.selenium.WebDriver
 import org.scalatest.Assertion
 import pagespecs.pagesupport.{ContentExpectation, Page, PageUtil}
@@ -29,10 +28,7 @@ class EnterYourNationalInsuranceNumberPage(baseUrl: String, pathForJourneyType: 
 ) {
 
   override def expectedH1: String = "What is your National Insurance number?"
-
-  override def expectedTitleContent: String = "enter your National Insurance number"
-
-  override def assertPageIsDisplayed(extraExpectations: ContentExpectation*): Unit = sys.error("Use another variant for asserting page")
+  override def expectedWelshH1: String = "Beth yw eich rhif Yswiriant Gwladol?"
 
   def enterNationalInsuranceNumber(nationalInsuranceNumber: Nino): Unit =
     PageUtil.setTextFieldById("nationalInsuranceNumber", nationalInsuranceNumber.value)
@@ -50,7 +46,7 @@ class EnterYourNationalInsuranceNumberPage(baseUrl: String, pathForJourneyType: 
     )
   )
 
-  def assertPageIsDisplayed(journeyType: JourneyType, extraExpectations: ContentExpectation*): Unit = withPageClue {
+  override def assertPageIsDisplayed(extraExpectations: ContentExpectation*): Unit = withPageClue {
 
     val contentExpectations: Seq[ContentExpectation] = commonPageExpectations ++ extraExpectations
 
@@ -58,13 +54,14 @@ class EnterYourNationalInsuranceNumberPage(baseUrl: String, pathForJourneyType: 
       baseUrl             = baseUrl,
       path                = path,
       h1                  = expectedH1,
-      title               = PageUtil.standardTitleWithJourneyType(expectedTitleContent, journeyType),
+      title               = PageUtil.standardTitle(expectedH1),
+      welshTest           = false,
       contentExpectations = contentExpectations: _*
     )
 
   }
 
-  def assertPageShowsErrorEmptyInput(journeyType: JourneyType): Unit = withPageClue {
+  def assertPageShowsErrorEmptyInput(): Unit = withPageClue {
     val contentExpectations = Seq(
       ContentExpectation(
         atXpath       = PageUtil.Xpath.mainContent,
@@ -80,12 +77,13 @@ class EnterYourNationalInsuranceNumberPage(baseUrl: String, pathForJourneyType: 
       baseUrl             = baseUrl,
       path                = path,
       h1                  = expectedH1,
-      title               = PageUtil.standardErrorTitle(expectedTitleContent, journeyType),
+      title               = PageUtil.standardErrorTitle(expectedH1),
+      welshTest           = false,
       contentExpectations = contentExpectations: _*
     )
   }
 
-  def assertPageShowsErrorInvalid(journeyType: JourneyType): Unit = withPageClue {
+  def assertPageShowsErrorInvalid(): Unit = withPageClue {
     val contentExpectations = Seq(
       ContentExpectation(
         atXpath       = PageUtil.Xpath.mainContent,
@@ -101,7 +99,8 @@ class EnterYourNationalInsuranceNumberPage(baseUrl: String, pathForJourneyType: 
       baseUrl             = baseUrl,
       path                = path,
       h1                  = expectedH1,
-      title               = PageUtil.standardErrorTitle(expectedTitleContent, journeyType),
+      title               = PageUtil.standardErrorTitle(expectedH1),
+      welshTest           = false,
       contentExpectations = contentExpectations: _*
     )
   }
