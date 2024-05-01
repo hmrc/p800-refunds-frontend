@@ -49,7 +49,7 @@ class YourIdentityIsConfirmedPageSpec extends ItSpec {
       pages.yourIdentityIsConfirmedBankTransferPage.open()
       pages.yourIdentityIsConfirmedBankTransferPage.assertPageIsDisplayed()
       pages.yourIdentityIsConfirmedBankTransferPage.clickSubmit()
-      pages.enterTheNameOfYourBankAccountPage.assertPageIsDisplayed()
+      pages.enterNameOfYourBankAccountPage.assertPageIsDisplayed()
       EcospendStub.AuthStubs.verifyEcospendAccessToken()
       EcospendStub.BanksStubs.verifyEcospendGetBanks()
       getJourneyFromDatabase(tdAll.journeyId) shouldBeLike tdAll.BankTransfer.journeyAfterTracedIndividual

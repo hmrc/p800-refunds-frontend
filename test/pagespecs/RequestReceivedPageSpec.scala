@@ -114,9 +114,9 @@ class RequestReceivedPageSpec extends ItSpec {
     getJourneyFromDatabase(tdAll.journeyId) shouldBeLike tdAll.BankTransfer.journeyBankConsent
     EcospendStub.AuthStubs.stubEcospendAuth2xxSucceeded
     //setup the history in the browser:
-    pages.verifyBankAccountPage.open()
-    pages.verifyBankAccountPage.assertPageIsDisplayed()
-    pages.verifyBankAccountPage.clickRefreshThisPageLink()
+    pages.verifyingBankAccountPage.open()
+    pages.verifyingBankAccountPage.assertPageIsDisplayed()
+    pages.verifyingBankAccountPage.clickRefreshThisPageLink()
     pages.requestReceivedBankTransferPage.assertPageIsDisplayedForBankTransfer()
     pages.requestReceivedBankTransferPage.clickBackButtonInBrowser()
     pages.requestReceivedBankTransferPage.assertPageIsDisplayedForBankTransfer()
