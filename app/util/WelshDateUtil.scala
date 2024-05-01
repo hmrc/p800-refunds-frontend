@@ -54,8 +54,8 @@ object WelshDateUtil {
     // Try and update any reference of long month notation (i.e. January), if that fails try short month (i.e. Jan), if that fails just use English as fallback
     def welshMonth: String = {
         def updateString(d: String, m: Map[String, String]) = {
-          val monthToChange: Map[String, String] = m.filter(_._1 === d.filter(_.isLetter))
-          d.replace(monthToChange.headOption.fold(d)(_._1), monthToChange(d.filter(_.isLetter)))
+          val monthToChange: Map[String, String] = m.filter(_._1 === d.replace("am", "").replace("pm", "").filter(_.isLetter))
+          d.replace(monthToChange.headOption.fold(d)(_._1), monthToChange(d.replace("am", "").replace("pm", "").filter(_.isLetter)))
         }
       val longMonth: Try[String] = Try(updateString(date, months))
       longMonth.getOrElse(Try(updateString(date, shortMonths)).getOrElse(date))
