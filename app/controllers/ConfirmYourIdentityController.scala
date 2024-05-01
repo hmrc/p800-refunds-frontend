@@ -17,46 +17,46 @@
 package controllers
 
 import action.{Actions, JourneyRequest}
-import models.journeymodels.{Journey, JourneyType}
+import models.journeymodels.Journey
+import models.journeymodels.JourneyType.{BankTransfer, Cheque}
 import play.api.mvc._
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
+import util.Errors
 import views.Views
 
 import javax.inject.{Inject, Singleton}
 
 @Singleton
-class WeHaveConfirmedYourIdentityController @Inject() (
+class ConfirmYourIdentityController @Inject() (
     mcc:     MessagesControllerComponents,
     views:   Views,
     actions: Actions
 ) extends FrontendController(mcc) {
 
-  def getBankTransfer: Action[AnyContent] = actions.journeyInProgress { implicit request =>
-    getResult
+  def getCheque: Action[AnyContent] = actions.journeyInProgress { implicit request: JourneyRequest[_] =>
+    get
   }
 
-  def getCheque: Action[AnyContent] = actions.journeyInProgress { implicit request =>
-    getResult
+  def getBankTransfer: Action[AnyContent] = actions.journeyInProgress { implicit request: JourneyRequest[_] =>
+    get
   }
 
-  private def getResult(implicit request: JourneyRequest[_]) = {
-    Ok(views.yourIdentityIsConfirmedPage())
-  }
+  private def get(implicit request: JourneyRequest[_]): Result =
+    Ok(views.confirmYourIdentityPage(request.journey.getJourneyType))
 
   def post: Action[AnyContent] = actions.journeyInProgress { implicit request =>
-    val journey = request.journey
-    val nextCall: Call = journey.getJourneyType match {
-      case JourneyType.BankTransfer => controllers.routes.EnterTheNameOfYourBankController.get
-      case JourneyType.Cheque       => controllers.routes.IsYourAddressUpToDateController.get
+    request.journey.journeyType match {
+      case Some(BankTransfer) => Redirect(routes.EnterYourP800ReferenceController.getBankTransfer.url)
+      case Some(Cheque)       => Redirect(routes.EnterYourP800ReferenceController.getCheque.url)
+      case None               => Errors.throwServerErrorException("No journey type found in journey, this should never happen")
     }
-    Redirect(nextCall.url)
   }
 }
 
-object WeHaveConfirmedYourIdentityController {
+object ConfirmYourIdentityController {
   def redirectLocation(journey: Journey)(implicit request: Request[_]): Call = Journey.deriveRedirectByJourneyType(
     journeyType           = journey.getJourneyType,
-    chequeJourneyRedirect = controllers.routes.WeHaveConfirmedYourIdentityController.getCheque,
-    bankJourneyRedirect   = controllers.routes.WeHaveConfirmedYourIdentityController.getBankTransfer
+    chequeJourneyRedirect = controllers.routes.ConfirmYourIdentityController.getCheque,
+    bankJourneyRedirect   = controllers.routes.ConfirmYourIdentityController.getBankTransfer
   )
 }

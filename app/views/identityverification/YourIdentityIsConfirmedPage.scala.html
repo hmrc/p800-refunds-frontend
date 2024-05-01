@@ -30,12 +30,12 @@
 @import viewsHelpers.requestSupport._
 
 @layout(
-    pageTitle = Some(Messages.WeHaveConfirmedYourIdentity.`We have confirmed your identity`.show)
+    pageTitle = Some(Messages.YourIdentityIsConfirmed.`We have confirmed your identity`.show)
 ) {
 
-    <h1 class="govuk-heading-xl">@{Messages.WeHaveConfirmedYourIdentity.`We have confirmed your identity`.show}</h1>
+    <h1 class="govuk-heading-xl">@{Messages.YourIdentityIsConfirmed.`We have confirmed your identity`.show}</h1>
 
-    @viewsHelpers.formWithCsrf(action = controllers.routes.WeHaveConfirmedYourIdentityController.post) {
+    @viewsHelpers.formWithCsrf(action = controllers.routes.YourIdentityIsConfirmedController.post) {
         @viewsHelpers.govukButton(Button(
             content = Text(Messages.CommonMessages.`continue`.show),
             id = Some("submit")

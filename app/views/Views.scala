@@ -19,13 +19,11 @@ package views
 import javax.inject.Inject
 
 class Views @Inject() (
-    //TODO: remove once all pages are developed
-    val underConstructionPage:                       views.html.UnderConstructionPage,
     val doYouWantToSignInPage:                       views.html.DoYouWantToSignInPage,
-    val enterP800ReferencePage:                      views.html.EnterP800ReferencePage,
+    val enterYourP800ReferencePage:                  views.html.EnterYourP800ReferencePage,
     val checkYourAnswersPage:                        views.html.identityverification.CheckYourAnswersPage,
-    val chequeRequestReceivedPage:                   views.html.chequejourney.ChequeRequestReceivedPage,
-    val weNeedYouToConfirmYourIdentityPage:          views.html.identityverification.WeNeedYouToConfirmYourIdentityPage,
+    val requestReceivedChequePage:                   views.html.chequejourney.RequestReceivedPage,
+    val confirmYourIdentityPage:                     views.html.identityverification.ConfirmYourIdentityPage,
     val enterYourDateOfBirthPage:                    views.html.identityverification.EnterYourDateOfBirthPage,
     val enterYourNationalInsuranceNumberPage:        views.html.identityverification.EnterYourNationalInsuranceNumberPage,
     val yourIdentityIsConfirmedPage:                 views.html.identityverification.YourIdentityIsConfirmedPage,
@@ -33,12 +31,12 @@ class Views @Inject() (
     val noMoreAttemptsLeftToConfirmYourIdentityPage: views.html.identityverification.NoMoreAttemptsLeftToConfirmYourIdentityPage,
     val refundRequestNotSubmittedPage:               views.html.RefundRequestNotSubmittedPage,
     val giveYourPermissionPage:                      views.html.GiveYourPermissionPage,
-    val weAreVerifyingYourBankAccountPage:           views.html.WeAreVerifyingYourBankAccountPage,
+    val verifyingYourBankAccountPage:                views.html.VerifyingYourBankAccountPage,
     val doYouWantYourRefundViaBankTransferPage:      views.html.DoYouWantYourRefundViaBankTransferPage,
-    val chooseAnotherWayPtaOrChequePage:             views.html.chooseanotherway.PtaOrChequePage,
+    val chooseAnotherWayToReceiveYourRefundPage:     views.html.chooseanotherway.ChooseAnotherWayToReceiveYourRefundPage,
     val claimYourRefundByBankTransfer:               views.html.chooseanotherway.ClaimYourRefundByBankTransfer,
-    val enterTheNameOfYourBankPage:                  views.html.EnterTheNameOfYourBankPage,
-    val bankTransferRequestReceivedPage:             views.html.BankTransferRequestReceivedPage,
+    val enterNameOfYourBankPage:                     views.html.EnterNameOfYourBankPage,
+    val requestReceivedBankTransferPage:             views.html.banktransferjourney.RequestReceivedPage,
     val youCannotConfirmYourIdentityDetailsYet:      views.html.YouCannotConfirmYourIdentityYet,
     val yourRefundRequestHasNotBeenSubmitted:        views.html.YourRefundRequestHasNotBeenSubmitted,
     val isYourAddressUpToDatePage:                   views.html.chequejourney.IsYourAddressUpToDatePage,

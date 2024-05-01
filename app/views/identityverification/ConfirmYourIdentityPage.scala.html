@@ -35,45 +35,45 @@
 @import viewsHelpers.requestSupport._
 
 @layout(
-    pageTitle = Some(Messages.WeNeedToConfirmYourIdentity.`We need you to confirm your identity`.show)
+    pageTitle = Some(Messages.ConfirmYourIdentity.`We need you to confirm your identity`.show)
 ) {
 
-    <h1 class="govuk-heading-xl">@{Messages.WeNeedToConfirmYourIdentity.`We need you to confirm your identity`.show}</h1>
+    <h1 class="govuk-heading-xl">@{Messages.ConfirmYourIdentity.`We need you to confirm your identity`.show}</h1>
 
     <p class="govuk-body">
-        @{Messages.WeNeedToConfirmYourIdentity.`Before we pay your refund`.show}
+        @{Messages.ConfirmYourIdentity.`Before we pay your refund`.show}
     </p>
 
     <p class="govuk-body">
-        @{Messages.WeNeedToConfirmYourIdentity.`We will need to ask you for your`.show}
+        @{Messages.ConfirmYourIdentity.`We will need to ask you for your`.show}
     </p>
 
     <ul  class="govuk-list govuk-list--bullet">
-        <li>@{Messages.WeNeedToConfirmYourIdentity.`P800 reference`.show}</li>
-        <li>@{Messages.WeNeedToConfirmYourIdentity.`National Insurance number`.show}</li>
+        <li>@{Messages.ConfirmYourIdentity.`P800 reference`.show}</li>
+        <li>@{Messages.ConfirmYourIdentity.`National Insurance number`.show}</li>
 
         @{  journeyType match {
               case JourneyType.Cheque => Html("")
               case JourneyType.BankTransfer =>
-                <li>{Messages.WeNeedToConfirmYourIdentity.`date of birth`.show}</li>
+                <li>{Messages.ConfirmYourIdentity.`date of birth`.show}</li>
             }
         }
 
     </ul>
 
     <p class="govuk-body">
-        @{Messages.WeNeedToConfirmYourIdentity.`We do this to protect your security`.show}
+        @{Messages.ConfirmYourIdentity.`We do this to protect your security`.show}
     </p>
 
     <div class="govuk-inset-text">
-        <p class="govuk-body">@{Messages.WeNeedToConfirmYourIdentity.`If you do not know your P800 reference`.show} @{Html(Messages.WeNeedToConfirmYourIdentity.`sign in using your Government Gateway user ID to claim your refund.`(appConfig.personalTaxAccountSignInUrl).show)}
+        <p class="govuk-body">@{Messages.ConfirmYourIdentity.`If you do not know your P800 reference`.show} @{Html(Messages.ConfirmYourIdentity.`sign in using your Government Gateway user ID to claim your refund.`(appConfig.personalTaxAccountSignInUrl).show)}
         </p>
-        <p class="govuk-body">@{Messages.WeNeedToConfirmYourIdentity.`If you do not know your National Insurance number`.show} @{Html(Messages.WeNeedToConfirmYourIdentity.`get help to find it`(appConfig.nationalInsuranceNumberUrl).show)}
+        <p class="govuk-body">@{Messages.ConfirmYourIdentity.`If you do not know your National Insurance number`.show} @{Html(Messages.ConfirmYourIdentity.`get help to find it`(appConfig.nationalInsuranceNumberUrl).show)}
         </p>
     </div>
 
 
-    @viewsHelpers.formWithCsrf(action = routes.WeNeedYouToConfirmYourIdentityController.post) {
+    @viewsHelpers.formWithCsrf(action = routes.ConfirmYourIdentityController.post) {
         @viewsHelpers.govukButton(Button(
             content = Text(Messages.CommonMessages.`continue`.show),
             id = Some("submit"),

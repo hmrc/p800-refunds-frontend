@@ -20,7 +20,7 @@ import models.journeymodels.JourneyType
 import org.openqa.selenium.WebDriver
 import pagespecs.pagesupport.{ContentExpectation, Page, PageUtil}
 
-class WeCannotConfirmYourIdentityPage(baseUrl: String, pathForJourneyType: String)(implicit webDriver: WebDriver) extends Page(
+class CannotConfirmYourIdentityTryAgainPage(baseUrl: String, pathForJourneyType: String)(implicit webDriver: WebDriver) extends Page(
   baseUrl,
   path = s"/get-an-income-tax-refund/$pathForJourneyType/cannot-confirm-your-identity-try-again"
 ) {

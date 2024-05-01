@@ -21,7 +21,7 @@ import models.p800externalapi.EventValue
 import testsupport.ItSpec
 import testsupport.stubs.{CaseManagementStub, DateCalculatorStub, EcospendStub, EdhStub, MakeBacsRepaymentStub, NpsSuspendOverpaymentStub, P800RefundsExternalApiStub}
 
-class VerifyBankAccountPageSpec extends ItSpec {
+class VerifyingYourBankAccountPageSpec extends ItSpec {
 
   override def beforeEach(): Unit = {
     super.beforeEach()
@@ -32,7 +32,7 @@ class VerifyBankAccountPageSpec extends ItSpec {
   //HINT: Those tests work only because EventValue is NotReceived.
   //The page will keep refreshing due to javascript code in it, until the event is Valid or NotValid
 
-  "/verifying-bank-account renders the 'We are verifying your bank account' page" in {
+  "/verify-bank-account renders the 'We are verifying your bank account' page" in {
     EcospendStub.AuthStubs.stubEcospendAuth2xxSucceeded
     EcospendStub.AccountStub.stubAccountSummary2xxSucceeded(tdAll.consentId)
     P800RefundsExternalApiStub.isValid(tdAll.consentId, EventValue.NotReceived)

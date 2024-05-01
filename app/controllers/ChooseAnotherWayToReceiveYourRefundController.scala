@@ -33,7 +33,7 @@ import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class ChooseAnotherWayToGetYourRefundController @Inject() (
+class ChooseAnotherWayToReceiveYourRefundController @Inject() (
     mcc:            MessagesControllerComponents,
     views:          Views,
     actions:        Actions,
@@ -45,7 +45,7 @@ class ChooseAnotherWayToGetYourRefundController @Inject() (
   import requestSupport._
 
   def getBankTransfer: Action[AnyContent] = actions.journeyInProgress { implicit request: JourneyRequest[AnyContent] =>
-    Ok(views.chooseAnotherWayPtaOrChequePage(form = PtaOrChequeForm.form))
+    Ok(views.chooseAnotherWayToReceiveYourRefundPage(form = PtaOrChequeForm.form))
   }
 
   def postBankTransferViaPtaOrCheque: Action[AnyContent] = actions.journeyInProgress.async { implicit request =>
@@ -54,7 +54,7 @@ class ChooseAnotherWayToGetYourRefundController @Inject() (
 
     PtaOrChequeForm.form.bindFromRequest().fold(
       formWithErrors => Future.successful(
-        BadRequest(views.chooseAnotherWayPtaOrChequePage(form = formWithErrors))
+        BadRequest(views.chooseAnotherWayToReceiveYourRefundPage(form = formWithErrors))
       ),
       {
         case PtaOrChequeFormValue.BankTransferViaPta =>
@@ -70,7 +70,7 @@ class ChooseAnotherWayToGetYourRefundController @Inject() (
               if (journey.isIdentityVerified) {
                 Redirect(controllers.routes.IsYourAddressUpToDateController.get)
               } else {
-                Redirect(WeNeedYouToConfirmYourIdentityController.redirectLocation(updatedJourney))
+                Redirect(ConfirmYourIdentityController.redirectLocation(updatedJourney))
               }
             }
       }

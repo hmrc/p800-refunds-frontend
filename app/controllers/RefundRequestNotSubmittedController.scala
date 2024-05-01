@@ -56,7 +56,7 @@ class RefundRequestNotSubmittedController @Inject() (
     journeyService
       .upsert(request.journey.copy(hasFinished = HasFinished.No))
       //TODO: invalidate API calls
-      .map(_ => Redirect(controllers.routes.ChooseAnotherWayToGetYourRefundController.getBankTransfer))
+      .map(_ => Redirect(controllers.routes.ChooseAnotherWayToReceiveYourRefundController.getBankTransfer))
   }
 
 }

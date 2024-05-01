@@ -48,7 +48,7 @@
         @viewsHelpers.govukErrorSummary(ErrorSummary(errorList = form.errors.asTextErrorLinks, title = Text(Messages.CommonMessages.`There is a problem`.show)))
     }
 
-    @viewsHelpers.formWithCsrf(action = controllers.routes.EnterTheNameOfYourBankController.post) {
+    @viewsHelpers.formWithCsrf(action = controllers.routes.EnterNameOfYourBankController.post) {
         <h1 class="govuk-label-wrapper">
             <label class="govuk-label govuk-label--xl" for="selectedBankId">
                 @{Messages.WhatIsTheNameOfYourBankAccount.`What is the name of your bank?`.show}
@@ -80,7 +80,7 @@
             classes = "select-bank-button"
         ))
 
-        <a id="myAccountIsNotListed" role="button" class="govuk-button govuk-button--secondary select-bank-button" data-module="govuk-button" href="@controllers.routes.ChooseAnotherWayToGetYourRefundController.getBankTransfer.url">
+        <a id="myAccountIsNotListed" role="button" class="govuk-button govuk-button--secondary select-bank-button" data-module="govuk-button" href="@controllers.routes.ChooseAnotherWayToReceiveYourRefundController.getBankTransfer.url">
             @{Messages.WhatIsTheNameOfYourBankAccount.`My bank is not listed`.show}
         </a>
     }

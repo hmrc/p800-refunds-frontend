@@ -19,7 +19,7 @@ package pagespecs
 import models.journeymodels.JourneyType
 import testsupport.ItSpec
 
-class ClaimYourRefundByBankTransferSpec extends ItSpec {
+class ClaimYourRefundByBankTransferPageSpec extends ItSpec {
   override def beforeEach(): Unit = {
     super.beforeEach()
     addJourneyIdToSession(tdAll.journeyId)

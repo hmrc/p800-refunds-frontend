@@ -38,7 +38,7 @@ import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class WeAreVerifyingYourBankAccountController @Inject() (
+class VerifyingYourBankAccountController @Inject() (
     actions:                         Actions,
     ecospendService:                 EcospendService,
     journeyService:                  JourneyService,
@@ -111,7 +111,7 @@ class WeAreVerifyingYourBankAccountController @Inject() (
     }
     case (EventValue.NotReceived, ConsentStatus.Authorised, _) => Future.successful(
       (
-        Ok(views.weAreVerifyingYourBankAccountPage(Some(consentStatus), Some(journey.getBankConsent.id), Some(journey.getBankConsent.bankReferenceId))),
+        Ok(views.verifyingYourBankAccountPage(Some(consentStatus), Some(journey.getBankConsent.id), Some(journey.getBankConsent.bankReferenceId))),
         journey
       )
     )

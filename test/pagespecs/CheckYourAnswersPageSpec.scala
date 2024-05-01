@@ -23,7 +23,7 @@ import nps.models.TraceIndividualRequest
 import testsupport.ItSpec
 import testsupport.stubs.{TraceIndividualStub, VerifyP800ReferenceStub}
 
-class CheckYourAnswersSpec extends ItSpec {
+class CheckYourAnswersPageSpec extends ItSpec {
 
   "page renders correctly" - {
     "bank transfer" in {
@@ -219,7 +219,7 @@ class CheckYourAnswersSpec extends ItSpec {
         tdAll.nino
       )
       pages.checkYourAnswersBankTransferPage.clickSubmit()
-      pages.weCannotConfirmYourIdentityBankTransferPage.assertPageIsDisplayed(JourneyType.BankTransfer)
+      pages.cannotConfirmYourIdentityTryAgainBankTransferPage.assertPageIsDisplayed(JourneyType.BankTransfer)
       VerifyP800ReferenceStub.verify(tdAll.correlationId)
       getJourneyFromDatabase(tdAll.journeyId) shouldBeLike tdAll.BankTransfer.AfterReferenceCheck.journeyReferenceDidntMatchNino
       getFailedAttemptCount() shouldBe Some(1)
@@ -233,7 +233,7 @@ class CheckYourAnswersSpec extends ItSpec {
 
       pages.checkYourAnswersChequePage.open()
       pages.checkYourAnswersChequePage.clickSubmit()
-      pages.weCannotConfirmYourIdentityChequePage.assertPageIsDisplayed(JourneyType.Cheque)
+      pages.cannotConfirmYourIdentityTryAgainChequePage.assertPageIsDisplayed(JourneyType.Cheque)
 
       VerifyP800ReferenceStub.verify(tdAll.correlationId)
       getJourneyFromDatabase(tdAll.journeyId) shouldBeLike tdAll.Cheque.AfterReferenceCheck.journeyReferenceDidntMatchNino
@@ -249,7 +249,7 @@ class CheckYourAnswersSpec extends ItSpec {
 
       pages.checkYourAnswersBankTransferPage.open()
       pages.checkYourAnswersBankTransferPage.clickSubmit()
-      pages.weCannotConfirmYourIdentityBankTransferPage.assertPageIsDisplayed(JourneyType.BankTransfer)
+      pages.cannotConfirmYourIdentityTryAgainBankTransferPage.assertPageIsDisplayed(JourneyType.BankTransfer)
 
       VerifyP800ReferenceStub.verify(tdAll.correlationId)
       getJourneyFromDatabase(tdAll.journeyId) shouldBeLike j
@@ -264,7 +264,7 @@ class CheckYourAnswersSpec extends ItSpec {
 
       pages.checkYourAnswersChequePage.open()
       pages.checkYourAnswersChequePage.clickSubmit()
-      pages.weCannotConfirmYourIdentityChequePage.assertPageIsDisplayed(JourneyType.Cheque)
+      pages.cannotConfirmYourIdentityTryAgainChequePage.assertPageIsDisplayed(JourneyType.Cheque)
 
       VerifyP800ReferenceStub.verify(tdAll.correlationId)
       getJourneyFromDatabase(tdAll.journeyId) shouldBeLike j

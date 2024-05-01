@@ -19,7 +19,7 @@ package pagespecs
 import testsupport.ItSpec
 import testsupport.stubs.EcospendStub
 
-class WeHaveConfirmedYourIdentityPageSpec extends ItSpec {
+class YourIdentityIsConfirmedPageSpec extends ItSpec {
 
   override def beforeEach(): Unit = {
     super.beforeEach()

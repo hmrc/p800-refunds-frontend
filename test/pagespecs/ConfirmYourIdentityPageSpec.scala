@@ -19,7 +19,7 @@ package pagespecs
 import models.journeymodels.JourneyType
 import testsupport.ItSpec
 
-class WeNeedYouToConfirmYourIdentityPageSpec extends ItSpec {
+class ConfirmYourIdentityPageSpec extends ItSpec {
 
   private val journeyBankTransfer = tdAll.BankTransfer.journeySelectedType
   private val journeyCheque = tdAll.Cheque.journeySelectedType
