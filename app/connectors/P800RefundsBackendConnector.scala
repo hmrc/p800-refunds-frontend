@@ -51,9 +51,9 @@ class P800RefundsBackendConnector @Inject() (
       )
   }
 
-  def traceIndividual(traceIndividualRequest: TraceIndividualRequest, correlationId: CorrelationId)(implicit requestHeader: RequestHeader): Future[TraceIndividualResponse] = {
+  def traceIndividual(traceIndividualRequest: TraceIndividualRequest, correlationId: CorrelationId)(implicit requestHeader: RequestHeader): Future[TracedIndividual] = {
     httpClient
-      .POST[TraceIndividualRequest, TraceIndividualResponse](
+      .POST[TraceIndividualRequest, TracedIndividual](
         url     = s"$baseUrl/nps/trace-individual",
         body    = traceIndividualRequest,
         headers = makeHeaders(correlationId)

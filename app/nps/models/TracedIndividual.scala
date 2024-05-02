@@ -22,7 +22,7 @@ import play.api.libs.json.{Json, OFormat}
 /**
  * We're storing only few fields which will be actually used
  */
-final case class TraceIndividualResponse(
+final case class TracedIndividual(
     title:           Option[String],
     firstForename:   Option[String],
     secondForename:  Option[String],
@@ -32,7 +32,7 @@ final case class TraceIndividualResponse(
     addressPostcode: Postcode
 )
 
-object TraceIndividualResponse {
+object TracedIndividual {
   @SuppressWarnings(Array("org.wartremover.warts.Any"))
-  implicit val format: OFormat[TraceIndividualResponse] = Json.format[TraceIndividualResponse]
+  implicit val format: OFormat[TracedIndividual] = Json.format[TracedIndividual]
 }

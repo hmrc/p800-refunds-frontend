@@ -22,7 +22,7 @@ import language.Messages
 import models.dateofbirth.DateOfBirth
 import models.journeymodels._
 import models.{Nino, UserEnteredP800Reference}
-import nps.models.{TraceIndividualRequest, TraceIndividualResponse, ValidateReferenceResult}
+import nps.models.{TraceIndividualRequest, TracedIndividual, ValidateReferenceResult}
 import play.api.mvc._
 import requests.RequestSupport
 import services.{FailedVerificationAttemptService, JourneyService}
@@ -99,7 +99,7 @@ class CheckYourAnswersController @Inject() (
     .async { implicit request =>
       val journey: Journey = request.journey
       for {
-        maybeTraceIndividualResponse: Option[TraceIndividualResponse] <- journey.getJourneyType match {
+        maybeTraceIndividualResponse: Option[TracedIndividual] <- journey.getJourneyType match {
           case JourneyType.BankTransfer =>
             p800RefundsBackendConnector.traceIndividual(
               traceIndividualRequest = TraceIndividualRequest(
