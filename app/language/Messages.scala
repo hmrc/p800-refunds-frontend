@@ -637,8 +637,8 @@ object Messages {
     )
 
     def youHavePreviously(date: String): Message = Message(
-      english = s"""You have previously entered information that does not match our records too many times. For security reasons you have been locked out. You can try again after <b>$date.</b>""",
-      welsh   = s"""Rydych wedi nodi gwybodaeth yn flaenorol sydd ddim yn cyd-fynd â’n cofnodion gormod o weithiau. Am resymau diogelwch, rydych wedi cael eich cloi allan. Gallwch roi cynnig arall arni ar ôl <b>$date</b>."""
+      english = s"""You have previously entered information that does not match our records too many times. For security reasons you have been locked out. You can try again after <b>$date</b>.""",
+      welsh   = s"""Rydych wedi nodi gwybodaeth yn flaenorol sydd ddim yn cyd-fynd â’n cofnodion gormod o weithiau. Am resymau diogelwch, rydych wedi cael eich cloi allan. Gallwch roi cynnig arall arni ar ôl <b>${date.welshMonth}</b>."""
     )
 
     def alternatively(linkSignIn: String, linkContact: String): Message = Message(
