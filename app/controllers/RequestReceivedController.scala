@@ -67,7 +67,7 @@ class RequestReceivedController @Inject() (
 
   private def getResultBankTransfer(journey: Journey)(implicit request: JourneyRequest[_]): Future[Result] = {
     dateCalculatorService.getFutureDate().map { futureDate =>
-      Ok(views.bankTransferRequestReceivedPage(
+      Ok(views.requestReceivedBankTransferPage(
         journey.getP800Reference.sanitiseReference,
         journey.getAmount,
         futureDate
@@ -77,7 +77,7 @@ class RequestReceivedController @Inject() (
 
   private def getResultCheque(journey: Journey)(implicit request: JourneyRequest[_]): Future[Result] = {
     val chequeArrivalByDate: LocalDate = LocalDate.now(clock).plusWeeks(appConfig.JourneyVariables.chequeFutureDateAddition)
-    Future.successful(Ok(views.chequeRequestReceivedPage(
+    Future.successful(Ok(views.requestReceivedChequePage(
       p800Reference       = journey.getP800Reference.sanitiseReference,
       refundAmountInPence = journey.getAmount,
       chequeArriveBy      = chequeArrivalByDate

@@ -52,7 +52,7 @@ class EnterYourP800ReferenceController @Inject() (
   }
 
   private def getResult(maybeP800Reference: Option[UserEnteredP800Reference])(implicit request: JourneyRequest[_]): Result = {
-    Ok(views.enterP800ReferencePage(
+    Ok(views.enterYourP800ReferencePage(
       form = maybeP800Reference.fold(
         EnterP800ReferenceForm.form
       )(
@@ -84,7 +84,7 @@ class EnterYourP800ReferenceController @Inject() (
       .form
       .bindFromRequest()
       .fold(
-        formWithErrors => Future.successful(BadRequest(views.enterP800ReferencePage(
+        formWithErrors => Future.successful(BadRequest(views.enterYourP800ReferencePage(
           form = formWithErrors
         ))),
         p800Reference => {

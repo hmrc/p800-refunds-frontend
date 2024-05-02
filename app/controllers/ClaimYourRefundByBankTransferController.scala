@@ -64,7 +64,7 @@ class ClaimYourRefundByBankTransferController @Inject() (
         case DoYouWantToSignInFormValue.No =>
           journeyService
             .upsert(journey.copy(journeyType = Some(JourneyType.BankTransfer)))
-            .map(updatedJourney => Redirect(WeNeedYouToConfirmYourIdentityController.redirectLocation(updatedJourney)))
+            .map(updatedJourney => Redirect(ConfirmYourIdentityController.redirectLocation(updatedJourney)))
       }
     )
   }

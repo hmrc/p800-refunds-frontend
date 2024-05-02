@@ -34,7 +34,7 @@ class CannotConfirmYourIdentityTryAgainController @Inject() (
 
   def getBankTransfer: Action[AnyContent] = actions.journeyInProgress { implicit request =>
     Ok(views.cannotConfirmYourIdentityTryAgainPage(
-      chooseAnotherMethodCall    = routes.ChooseAnotherWayToGetYourRefundController.getBankTransfer,
+      chooseAnotherMethodCall    = routes.ChooseAnotherWayToReceiveYourRefundController.getBankTransfer,
       chooseAnotherMethodMessage = Messages.WeCannotConfirmYourIdentity.`Choose another way to get my refund`
     ))
   }
@@ -54,7 +54,7 @@ class CannotConfirmYourIdentityTryAgainController @Inject() (
     val journey = journeyRequest.journey
     Redirect(journey.getJourneyType match {
       case JourneyType.Cheque       => routes.ClaimYourRefundByBankTransferController.get
-      case JourneyType.BankTransfer => routes.ChooseAnotherWayToGetYourRefundController.getBankTransfer
+      case JourneyType.BankTransfer => routes.ChooseAnotherWayToReceiveYourRefundController.getBankTransfer
     })
   }
 

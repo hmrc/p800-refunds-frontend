@@ -34,18 +34,18 @@ class WhatIsTheNameOfYourBankAccountPageSpec extends ItSpec {
   }
 
   "/what-is-the-name-of-your-bank-account renders the what is the name of your bank account page" in {
-    pages.enterTheNameOfYourBankAccountPage.open()
-    pages.enterTheNameOfYourBankAccountPage.assertPageIsDisplayed()
+    pages.enterNameOfYourBankAccountPage.open()
+    pages.enterNameOfYourBankAccountPage.assertPageIsDisplayed()
 
     EcospendStub.AuthStubs.verifyEcospendAccessToken()
     EcospendStub.BanksStubs.verifyEcospendGetBanks()
   }
 
   "Clicking 'Continue' after selecing a bank name redirects to 'Give your permission' page" in {
-    pages.enterTheNameOfYourBankAccountPage.open()
-    pages.enterTheNameOfYourBankAccountPage.assertPageIsDisplayed()
-    pages.enterTheNameOfYourBankAccountPage.selectBankAccount(tdAll.bankId)
-    pages.enterTheNameOfYourBankAccountPage.clickSubmit()
+    pages.enterNameOfYourBankAccountPage.open()
+    pages.enterNameOfYourBankAccountPage.assertPageIsDisplayed()
+    pages.enterNameOfYourBankAccountPage.selectBankAccount(tdAll.bankId)
+    pages.enterNameOfYourBankAccountPage.clickSubmit()
     pages.giveYourPermissionPage.assertPageIsDisplayed()
 
     EcospendStub.AuthStubs.verifyEcospendAccessToken(numberOfRequests = 2)
@@ -53,20 +53,20 @@ class WhatIsTheNameOfYourBankAccountPageSpec extends ItSpec {
   }
 
   "Clicking 'My account is not listed' redirects to 'Choose another option' page" in {
-    pages.enterTheNameOfYourBankAccountPage.open()
-    pages.enterTheNameOfYourBankAccountPage.assertPageIsDisplayed()
-    pages.enterTheNameOfYourBankAccountPage.clickMyAccountIsNotListed()
-    pages.chooseAnotherWayToGetYourRefundPage.assertPageIsDisplayed()
+    pages.enterNameOfYourBankAccountPage.open()
+    pages.enterNameOfYourBankAccountPage.assertPageIsDisplayed()
+    pages.enterNameOfYourBankAccountPage.clickMyAccountIsNotListed()
+    pages.chooseAnotherWayToReceiveYourRefundPage.assertPageIsDisplayed()
 
     EcospendStub.AuthStubs.verifyEcospendAccessToken()
     EcospendStub.BanksStubs.verifyEcospendGetBanks()
   }
 
   "Clicking 'Continue' without selecting a bank shows error" in {
-    pages.enterTheNameOfYourBankAccountPage.open()
-    pages.enterTheNameOfYourBankAccountPage.assertPageIsDisplayed()
-    pages.enterTheNameOfYourBankAccountPage.clickSubmit()
-    pages.enterTheNameOfYourBankAccountPage.assertPageShowsError() // should fail?
+    pages.enterNameOfYourBankAccountPage.open()
+    pages.enterNameOfYourBankAccountPage.assertPageIsDisplayed()
+    pages.enterNameOfYourBankAccountPage.clickSubmit()
+    pages.enterNameOfYourBankAccountPage.assertPageShowsError() // should fail?
 
     EcospendStub.AuthStubs.verifyEcospendAccessToken(numberOfRequests = 2)
     EcospendStub.BanksStubs.verifyEcospendGetBanks(numberOfRequests = 2)

@@ -253,7 +253,7 @@ object Messages {
 
   }
 
-  object WeNeedToConfirmYourIdentity {
+  object ConfirmYourIdentity {
     val `We need you to confirm your identity`: Message = Message(
       english = "We need you to confirm your identity",
       welsh   = "Mae angen i chi gadarnhau pwy ydych"
@@ -332,7 +332,7 @@ object Messages {
     )
   }
 
-  object WhatIsYourDateOfBirth {
+  object EnterYourDateOfBirth {
     val `What is your date of birth`: Message = Message(
       english = "What is your date of birth?",
       welsh   = "Beth yw’ch dyddiad geni?"
@@ -380,7 +380,7 @@ object Messages {
 
   }
 
-  object WeHaveConfirmedYourIdentity {
+  object YourIdentityIsConfirmed {
     val `We have confirmed your identity`: Message = Message(
       english = "We have confirmed your identity",
       welsh   = "Rydym wedi cadarnhau pwy ydych"
@@ -637,8 +637,8 @@ object Messages {
     )
 
     def youHavePreviously(date: String): Message = Message(
-      english = s"""You have previously entered information that does not match our records too many times. For security reasons you have been locked out. You can try again after <b>$date.</b>""",
-      welsh   = s"""Rydych wedi nodi gwybodaeth yn flaenorol sydd ddim yn cyd-fynd â’n cofnodion gormod o weithiau. Am resymau diogelwch, rydych wedi cael eich cloi allan. Gallwch roi cynnig arall arni ar ôl <b>$date</b>."""
+      english = s"""You have previously entered information that does not match our records too many times. For security reasons you have been locked out. You can try again after <b>$date</b>.""",
+      welsh   = s"""Rydych wedi nodi gwybodaeth yn flaenorol sydd ddim yn cyd-fynd â’n cofnodion gormod o weithiau. Am resymau diogelwch, rydych wedi cael eich cloi allan. Gallwch roi cynnig arall arni ar ôl <b>${date.welshMonth}</b>."""
     )
 
     def alternatively(linkSignIn: String, linkContact: String): Message = Message(

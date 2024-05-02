@@ -120,7 +120,7 @@ class TestOnlyController @Inject() (
 
   private def redirectUrl(journey: Journey, status: ConsentStatus)(implicit request: JourneyRequest[_]): String = {
     val bankConsent: BankConsentResponse = journey.getBankConsent
-    controllers.routes.WeAreVerifyingYourBankAccountController.get(Some(status), Some(bankConsent.id), Some(bankConsent.bankReferenceId)).url
+    controllers.routes.VerifyingYourBankAccountController.get(Some(status), Some(bankConsent.id), Some(bankConsent.bankReferenceId)).url
   }
 
   private def showJourney(journeyId: JourneyId): Future[Result] = {

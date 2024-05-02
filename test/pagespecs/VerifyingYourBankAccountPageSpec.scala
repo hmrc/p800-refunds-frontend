@@ -21,7 +21,7 @@ import models.p800externalapi.EventValue
 import testsupport.ItSpec
 import testsupport.stubs.{CaseManagementStub, DateCalculatorStub, EcospendStub, EdhStub, MakeBacsRepaymentStub, NpsSuspendOverpaymentStub, P800RefundsExternalApiStub}
 
-class VerifyBankAccountPageSpec extends ItSpec {
+class VerifyingYourBankAccountPageSpec extends ItSpec {
 
   override def beforeEach(): Unit = {
     super.beforeEach()
@@ -32,7 +32,7 @@ class VerifyBankAccountPageSpec extends ItSpec {
   //HINT: Those tests work only because EventValue is NotReceived.
   //The page will keep refreshing due to javascript code in it, until the event is Valid or NotValid
 
-  "/verifying-bank-account renders the 'We are verifying your bank account' page" in {
+  "/verify-bank-account renders the 'We are verifying your bank account' page" in {
     EcospendStub.AuthStubs.stubEcospendAuth2xxSucceeded
     EcospendStub.AccountStub.stubAccountSummary2xxSucceeded(tdAll.consentId)
     P800RefundsExternalApiStub.isValid(tdAll.consentId, EventValue.NotReceived)
@@ -42,8 +42,8 @@ class VerifyBankAccountPageSpec extends ItSpec {
       response = tdAll.claimOverpaymentResponse
     )
     EdhStub.getBankDetailsRiskResult(tdAll.getBankDetailsRiskResultRequest, tdAll.getBankDetailsRiskResultResponse)
-    pages.verifyBankAccountPage.open()
-    pages.verifyBankAccountPage.assertPageIsDisplayed()
+    pages.verifyingBankAccountPage.open()
+    pages.verifyingBankAccountPage.assertPageIsDisplayed()
     EdhStub.verifyGetBankDetailsRiskResult(tdAll.claimId, tdAll.correlationId)
     P800RefundsExternalApiStub.verifyIsValid(tdAll.consentId)
     MakeBacsRepaymentStub.verifyNone(tdAll.nino)
@@ -60,10 +60,10 @@ class VerifyBankAccountPageSpec extends ItSpec {
     )
     EdhStub.getBankDetailsRiskResult(tdAll.getBankDetailsRiskResultRequest, tdAll.getBankDetailsRiskResultResponse)
 
-    pages.verifyBankAccountPage.open()
-    pages.verifyBankAccountPage.assertPageIsDisplayed()
-    pages.verifyBankAccountPage.clickRefreshThisPageLink()
-    pages.verifyBankAccountPage.assertPageIsDisplayed()
+    pages.verifyingBankAccountPage.open()
+    pages.verifyingBankAccountPage.assertPageIsDisplayed()
+    pages.verifyingBankAccountPage.clickRefreshThisPageLink()
+    pages.verifyingBankAccountPage.assertPageIsDisplayed()
     EdhStub.verifyGetBankDetailsRiskResult(tdAll.claimId, tdAll.correlationId)
     P800RefundsExternalApiStub.verifyIsValid(tdAll.consentId, 2)
     MakeBacsRepaymentStub.verifyNone(tdAll.nino)
@@ -81,8 +81,8 @@ class VerifyBankAccountPageSpec extends ItSpec {
       response = tdAll.claimOverpaymentResponse
     )
 
-    pages.verifyBankAccountPage.open()
-    pages.verifyBankAccountPage.assertPageIsDisplayed()
+    pages.verifyingBankAccountPage.open()
+    pages.verifyingBankAccountPage.assertPageIsDisplayed()
     EdhStub.verifyGetBankDetailsRiskResult(tdAll.claimId, tdAll.correlationId)
     MakeBacsRepaymentStub.verifyNone(tdAll.nino)
     P800RefundsExternalApiStub.isValid(tdAll.consentId, EventValue.Valid)
@@ -91,7 +91,7 @@ class VerifyBankAccountPageSpec extends ItSpec {
       request  = tdAll.claimOverpaymentRequest,
       response = tdAll.claimOverpaymentResponse
     )
-    pages.verifyBankAccountPage.clickRefreshThisPageLink()
+    pages.verifyingBankAccountPage.clickRefreshThisPageLink()
     pages.requestReceivedBankTransferPage.assertPageIsDisplayedForBankTransfer()
     DateCalculatorStub.verifyAddWorkingDays()
     MakeBacsRepaymentStub.verify(tdAll.nino, tdAll.correlationId)
@@ -106,8 +106,8 @@ class VerifyBankAccountPageSpec extends ItSpec {
       nino = tdAll.nino
     )
 
-    pages.verifyBankAccountPage.open()
-    pages.verifyBankAccountPage.assertPageIsDisplayedWithTechnicalDifficultiesError()
+    pages.verifyingBankAccountPage.open()
+    pages.verifyingBankAccountPage.assertPageIsDisplayedWithTechnicalDifficultiesError()
     EdhStub.verifyGetBankDetailsRiskResult(tdAll.claimId, tdAll.correlationId)
     MakeBacsRepaymentStub.verify(tdAll.nino, tdAll.correlationId)
   }
@@ -120,8 +120,8 @@ class VerifyBankAccountPageSpec extends ItSpec {
     MakeBacsRepaymentStub.`refundAlreadyTaken 422`(
       nino = tdAll.nino
     )
-    pages.verifyBankAccountPage.open()
-    pages.verifyBankAccountPage.assertPageIsDisplayedWithTechnicalDifficultiesError()
+    pages.verifyingBankAccountPage.open()
+    pages.verifyingBankAccountPage.assertPageIsDisplayedWithTechnicalDifficultiesError()
     EdhStub.verifyGetBankDetailsRiskResult(tdAll.claimId, tdAll.correlationId)
     MakeBacsRepaymentStub.verify(tdAll.nino, tdAll.correlationId)
   }
@@ -135,8 +135,8 @@ class VerifyBankAccountPageSpec extends ItSpec {
       nino = tdAll.nino
     )
 
-    pages.verifyBankAccountPage.open()
-    pages.verifyBankAccountPage.assertPageIsDisplayedWithTechnicalDifficultiesError()
+    pages.verifyingBankAccountPage.open()
+    pages.verifyingBankAccountPage.assertPageIsDisplayedWithTechnicalDifficultiesError()
     EdhStub.verifyGetBankDetailsRiskResult(tdAll.claimId, tdAll.correlationId)
     MakeBacsRepaymentStub.verify(tdAll.nino, tdAll.correlationId)
   }
@@ -152,8 +152,8 @@ class VerifyBankAccountPageSpec extends ItSpec {
       response = tdAll.claimOverpaymentResponse
     )
 
-    pages.verifyBankAccountPage.open()
-    pages.verifyBankAccountPage.assertPageIsDisplayed()
+    pages.verifyingBankAccountPage.open()
+    pages.verifyingBankAccountPage.assertPageIsDisplayed()
     EdhStub.verifyGetBankDetailsRiskResult(tdAll.claimId, tdAll.correlationId)
 
     P800RefundsExternalApiStub.isValid(tdAll.consentId, EventValue.NotValid)
@@ -163,7 +163,7 @@ class VerifyBankAccountPageSpec extends ItSpec {
       response = tdAll.claimOverpaymentResponse
     )
 
-    pages.verifyBankAccountPage.clickRefreshThisPageLink()
+    pages.verifyingBankAccountPage.clickRefreshThisPageLink()
     pages.refundRequestNotSubmittedPage.assertPageIsDisplayed()
     P800RefundsExternalApiStub.verifyIsValid(tdAll.consentId, 2)
   }
@@ -175,12 +175,12 @@ class VerifyBankAccountPageSpec extends ItSpec {
     P800RefundsExternalApiStub.isValid(tdAll.consentId, EventValue.NotReceived)
     EdhStub.getBankDetailsRiskResult(tdAll.getBankDetailsRiskResultRequest, tdAll.getBankDetailsRiskResultResponse)
 
-    pages.verifyBankAccountPage.open()
-    pages.verifyBankAccountPage.assertPageIsDisplayed()
+    pages.verifyingBankAccountPage.open()
+    pages.verifyingBankAccountPage.assertPageIsDisplayed()
     EcospendStub.AccountStub.accountSummaryValidate(numberOfRequests = 1, tdAll.consentId)
 
-    pages.verifyBankAccountPage.clickRefreshThisPageLink()
-    pages.verifyBankAccountPage.assertPageIsDisplayed()
+    pages.verifyingBankAccountPage.clickRefreshThisPageLink()
+    pages.verifyingBankAccountPage.assertPageIsDisplayed()
     EcospendStub.AccountStub.accountSummaryValidate(numberOfRequests = 1, tdAll.consentId)
     EdhStub.verifyGetBankDetailsRiskResult(tdAll.claimId, tdAll.correlationId, numberOfRequests = 1)
   }
@@ -191,8 +191,8 @@ class VerifyBankAccountPageSpec extends ItSpec {
     P800RefundsExternalApiStub.isValid(tdAll.consentId, EventValue.Valid)
     EdhStub.getBankDetailsRiskResult5xx(tdAll.getBankDetailsRiskResultRequest)
 
-    pages.verifyBankAccountPage.open()
-    pages.verifyBankAccountPage.assertPageIsDisplayedWithTechnicalDifficultiesError()
+    pages.verifyingBankAccountPage.open()
+    pages.verifyingBankAccountPage.assertPageIsDisplayedWithTechnicalDifficultiesError()
     EdhStub.verifyGetBankDetailsRiskResult(tdAll.claimId, tdAll.correlationId)
     MakeBacsRepaymentStub.verifyNone(tdAll.nino)
   }
@@ -211,7 +211,7 @@ class VerifyBankAccountPageSpec extends ItSpec {
     CaseManagementStub.notifyCaseManagement2xx(tdAll.clientUId, tdAll.caseManagementRequest)
     NpsSuspendOverpaymentStub.suspendOverpayment(tdAll.nino, tdAll.suspendOverpaymentRequest)
 
-    pages.verifyBankAccountPage.open()
+    pages.verifyingBankAccountPage.open()
     pages.requestReceivedBankTransferPage.assertPageIsDisplayedForBankTransfer()
 
     EdhStub.verifyGetBankDetailsRiskResult(tdAll.claimId, tdAll.correlationId)
@@ -230,8 +230,8 @@ class VerifyBankAccountPageSpec extends ItSpec {
     EdhStub.getBankDetailsRiskResult(tdAll.getBankDetailsRiskResultRequest, doNotPay)
     CaseManagementStub.notifyCaseManagement4xx(tdAll.clientUId, tdAll.caseManagementRequest)
 
-    pages.verifyBankAccountPage.open()
-    pages.verifyBankAccountPage.assertPageIsDisplayedWithTechnicalDifficultiesError()
+    pages.verifyingBankAccountPage.open()
+    pages.verifyingBankAccountPage.assertPageIsDisplayedWithTechnicalDifficultiesError()
 
     EdhStub.verifyGetBankDetailsRiskResult(tdAll.claimId, tdAll.correlationId)
     CaseManagementStub.verifyNotifyCaseManagement(tdAll.clientUId, tdAll.correlationId)

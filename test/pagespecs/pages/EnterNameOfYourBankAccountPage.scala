@@ -20,7 +20,7 @@ import models.ecospend.BankId
 import org.openqa.selenium.WebDriver
 import pagespecs.pagesupport.{ContentExpectation, Page, PageUtil}
 
-class EnterTheNameOfYourBankAccountPage(baseUrl: String)(implicit webDriver: WebDriver) extends Page(
+class EnterNameOfYourBankAccountPage(baseUrl: String)(implicit webDriver: WebDriver) extends Page(
   baseUrl,
   path = "/get-an-income-tax-refund/bank-transfer/enter-name-of-your-bank"
 ) {

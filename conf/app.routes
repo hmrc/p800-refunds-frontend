@@ -16,9 +16,9 @@ POST        /do-you-want-to-sign-in                                        contr
 GET         /do-you-want-your-refund-via-bank-transfer                     controllers.DoYouWantYourRefundViaBankTransferController.get
 POST        /do-you-want-your-refund-via-bank-transfer                     controllers.DoYouWantYourRefundViaBankTransferController.post
 
-GET         /bank-transfer/confirm-your-identity                           controllers.WeNeedYouToConfirmYourIdentityController.getBankTransfer
-GET         /cheque/confirm-your-identity                                  controllers.WeNeedYouToConfirmYourIdentityController.getCheque
-POST        /confirm-your-identity                                         controllers.WeNeedYouToConfirmYourIdentityController.post
+GET         /bank-transfer/confirm-your-identity                           controllers.ConfirmYourIdentityController.getBankTransfer
+GET         /cheque/confirm-your-identity                                  controllers.ConfirmYourIdentityController.getCheque
+POST        /confirm-your-identity                                         controllers.ConfirmYourIdentityController.post
 
 GET         /bank-transfer/enter-your-p800-reference                       controllers.EnterYourP800ReferenceController.getBankTransfer
 POST        /bank-transfer/enter-your-p800-reference                       controllers.EnterYourP800ReferenceController.postBankTransfer
@@ -40,9 +40,9 @@ GET         /check-your-answers/change-p800-reference                      contr
 GET         /check-your-answers/change-national-insurance-number           controllers.CheckYourAnswersController.changeNationalInsuranceNumber
 GET         /check-your-answers/change-date-of-birth                       controllers.CheckYourAnswersController.changeDateOfBirth
 
-GET         /bank-transfer/your-identity-is-confirmed                      controllers.WeHaveConfirmedYourIdentityController.getBankTransfer
-GET         /cheque/your-identity-is-confirmed                             controllers.WeHaveConfirmedYourIdentityController.getCheque
-POST        /your-identity-is-confirmed                                    controllers.WeHaveConfirmedYourIdentityController.post
+GET         /bank-transfer/your-identity-is-confirmed                      controllers.YourIdentityIsConfirmedController.getBankTransfer
+GET         /cheque/your-identity-is-confirmed                             controllers.YourIdentityIsConfirmedController.getCheque
+POST        /your-identity-is-confirmed                                    controllers.YourIdentityIsConfirmedController.post
 
 GET         /bank-transfer/cannot-confirm-your-identity-try-again          controllers.CannotConfirmYourIdentityTryAgainController.getBankTransfer
 GET         /cheque/cannot-confirm-your-identity-try-again                 controllers.CannotConfirmYourIdentityTryAgainController.getCheque
@@ -52,18 +52,18 @@ GET         /cannot-confirm-your-identity-try-again/choose-another-method  contr
 GET         /bank-transfer/no-more-attempts-left-to-confirm-your-identity  controllers.NoMoreAttemptsLeftToConfirmYourIdentityController.getBankTransfer
 GET         /cheque/no-more-attempts-left-to-confirm-your-identity         controllers.NoMoreAttemptsLeftToConfirmYourIdentityController.getCheque
 
-GET         /bank-transfer/choose-another-way-to-receive-your-refund       controllers.ChooseAnotherWayToGetYourRefundController.getBankTransfer
-POST        /bank-transfer/choose-another-way-to-receive-your-refund       controllers.ChooseAnotherWayToGetYourRefundController.postBankTransferViaPtaOrCheque
+GET         /bank-transfer/choose-another-way-to-receive-your-refund       controllers.ChooseAnotherWayToReceiveYourRefundController.getBankTransfer
+POST        /bank-transfer/choose-another-way-to-receive-your-refund       controllers.ChooseAnotherWayToReceiveYourRefundController.postBankTransferViaPtaOrCheque
 GET         /cheque/claim-your-refund-by-bank-transfer                     controllers.ClaimYourRefundByBankTransferController.get
 POST        /cheque/claim-your-refund-by-bank-transfer                     controllers.ClaimYourRefundByBankTransferController.post
 
-GET         /bank-transfer/enter-name-of-your-bank                         controllers.EnterTheNameOfYourBankController.get
-POST        /bank-transfer/enter-name-of-your-bank                         controllers.EnterTheNameOfYourBankController.post
+GET         /bank-transfer/enter-name-of-your-bank                         controllers.EnterNameOfYourBankController.get
+POST        /bank-transfer/enter-name-of-your-bank                         controllers.EnterNameOfYourBankController.post
 
 GET         /bank-transfer/give-your-permission                            controllers.GiveYourPermissionController.get
 POST        /bank-transfer/give-your-permission                            controllers.GiveYourPermissionController.post
 
-GET         /bank-transfer/verifying-your-bank-account                     controllers.WeAreVerifyingYourBankAccountController.get(status: Option[models.ecospend.consent.ConsentStatus], consent_id: Option[ConsentId], bank_reference_id: Option[models.ecospend.consent.BankReferenceId])
+GET         /bank-transfer/verifying-your-bank-account                     controllers.VerifyingYourBankAccountController.get(status: Option[models.ecospend.consent.ConsentStatus], consent_id: Option[ConsentId], bank_reference_id: Option[models.ecospend.consent.BankReferenceId])
 
 GET         /bank-transfer/request-received                                controllers.RequestReceivedController.getBankTransfer
 GET         /cheque/request-received                                       controllers.RequestReceivedController.getCheque

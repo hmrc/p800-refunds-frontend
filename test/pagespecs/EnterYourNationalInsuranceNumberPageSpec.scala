@@ -20,7 +20,7 @@ import models.Nino
 import models.journeymodels.JourneyType
 import testsupport.ItSpec
 
-class WhatIsYourNationalInsuranceNumberPageSpec extends ItSpec {
+class EnterYourNationalInsuranceNumberPageSpec extends ItSpec {
 
   override def beforeEach(): Unit = {
     super.beforeEach()

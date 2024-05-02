@@ -31,7 +31,8 @@ class UpdateYourAddressController @Inject() (
 ) extends FrontendController(mcc) {
 
   def get: Action[AnyContent] = actions.journeyInProgress { implicit request: JourneyRequest[_] =>
-    Ok(views.updateYourAddressPage())
+    Ok(views.
+      updateYourAddressPage())
   }
 
 }

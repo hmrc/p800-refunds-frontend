@@ -50,7 +50,7 @@
 
     <p class="govuk-body">@{Messages.ChooseAnotherWayToGetYourRefund.`You can claim your refund by bank transfer or cheque...`.show}</p>
 
-    @viewsHelpers.formWithCsrf(action = controllers.routes.ChooseAnotherWayToGetYourRefundController.postBankTransferViaPtaOrCheque) {
+    @viewsHelpers.formWithCsrf(action = controllers.routes.ChooseAnotherWayToReceiveYourRefundController.postBankTransferViaPtaOrCheque) {
         @viewsHelpers.govukRadios(Radios(
             fieldset = Some(Fieldset(
                 legend = Some(Legend(
