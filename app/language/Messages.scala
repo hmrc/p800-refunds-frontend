@@ -364,12 +364,12 @@ object Messages {
 
       def `Date of birth must be on or before`(sixteenYearsAgo: String): Message = Message(
         english = s"Date of birth must be on or before $sixteenYearsAgo",
-        welsh   = s"Mae’n rhaid i’r dyddiad geni fod ar neu ar ôl ${sixteenYearsAgo.welshMonth}"
+        welsh   = s"Mae’n rhaid i’r dyddiad geni fod ar neu cyn ${sixteenYearsAgo.welshMonth}"
       )
 
       def `Date of birth must be on or after`(oneHundredAndTenYearsAgo: String): Message = Message(
         english = s"Date of birth must be on or after $oneHundredAndTenYearsAgo",
-        welsh   = s"Mae’n rhaid i’r dyddiad geni fod ar neu cyn ${oneHundredAndTenYearsAgo.welshMonth}"
+        welsh   = s"Mae’n rhaid i’r dyddiad geni fod ar neu ar ôl ${oneHundredAndTenYearsAgo.welshMonth}"
       )
 
       def `Date of birth must include a ...`(incompleteFields: Message): Message = Message(
