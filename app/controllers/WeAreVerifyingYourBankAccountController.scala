@@ -67,7 +67,7 @@ class WeAreVerifyingYourBankAccountController @Inject() (
     } yield result
   }
 
-  def doAnyNamesFromPartiesListMatch(individualResponse: TraceIndividualResponse, bankAccountPartyList: List[BankAccountParty])
+  def doAnyNamesFromPartiesListMatch(individualResponse: TracedIndividual, bankAccountPartyList: List[BankAccountParty])
     (implicit request: JourneyRequest[_]): Boolean = {
     val matchingResponseList: Seq[NameMatchingResponse] = bankAccountPartyList.map { party =>
       NameMatchingService.fuzzyNameMatching(

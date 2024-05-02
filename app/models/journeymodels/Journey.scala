@@ -23,7 +23,7 @@ import models.ecospend.account.BankAccountSummary
 import models.ecospend.consent.BankConsentResponse
 import models.p800externalapi.EventValue
 import models.{AmountInPence, CorrelationId, Nino, UserEnteredP800Reference}
-import nps.models.{ValidateReferenceResult, TraceIndividualResponse}
+import nps.models.{ValidateReferenceResult, TracedIndividual}
 import play.api.libs.json.OFormat
 import play.api.mvc.RequestHeader
 import util.Errors
@@ -42,7 +42,7 @@ final case class Journey(
     dateOfBirth:   Option[DateOfBirth],
     // below, API Responses only
     referenceCheckResult:          Option[ValidateReferenceResult], //reset this field upon changes of dependant fields
-    traceIndividualResponse:       Option[TraceIndividualResponse], //reset this field upon changes of dependant fields
+    traceIndividualResponse:       Option[TracedIndividual], //reset this field upon changes of dependant fields
     bankDescription:               Option[BankDescription],
     bankConsentResponse:           Option[BankConsentResponse],
     bankAccountSummary:            Option[BankAccountSummary],
@@ -82,7 +82,7 @@ final case class Journey(
         traceIndividualResponse = None
       )
 
-  def update(maybeTraceIndividualResponse: Option[TraceIndividualResponse]): Journey =
+  def update(maybeTraceIndividualResponse: Option[TracedIndividual]): Journey =
     this
       .copy(
         traceIndividualResponse = maybeTraceIndividualResponse,
@@ -149,7 +149,7 @@ final case class Journey(
 
   def getBankAccountSummary(implicit request: RequestHeader): BankAccountSummary = bankAccountSummary.getOrElse(Errors.throwBadRequestException(s"Expected 'bankAccountSummary' to be defined but it was None [${journeyId.toString}] "))
 
-  def getTraceIndividualResponse(implicit request: RequestHeader): TraceIndividualResponse = traceIndividualResponse.getOrElse(Errors.throwServerErrorException(s"Expected 'traceIndividualResponse' to be defined but it was None [${journeyId.toString}] "))
+  def getTraceIndividualResponse(implicit request: RequestHeader): TracedIndividual = traceIndividualResponse.getOrElse(Errors.throwServerErrorException(s"Expected 'traceIndividualResponse' to be defined but it was None [${journeyId.toString}] "))
 
   def getReferenceCheckResult(implicit request: RequestHeader): ValidateReferenceResult = referenceCheckResult.getOrElse(Errors.throwServerErrorException(s"Expected 'referenceCheckResult' to be defined but it was None [${journeyId.toString}] "))
 

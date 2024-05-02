@@ -89,7 +89,7 @@ trait TdBase {
   lazy val secondForenameGreggson = "Greggory"
   lazy val surnameGreg = "Greggson"
 
-  lazy val traceIndividualResponse = TraceIndividualResponse(
+  lazy val traceIndividualResponse = TracedIndividual(
     title           = Some(title),
     firstForename   = Some(firstForename),
     secondForename  = None,
@@ -99,7 +99,7 @@ trait TdBase {
     addressPostcode = Postcode("BN12 4XL")
   )
 
-  lazy val traceIndividualResponseSuccessFulNameMatch: TraceIndividualResponse = TraceIndividualResponse(
+  lazy val traceIndividualResponseSuccessFulNameMatch: TracedIndividual = TracedIndividual(
     title           = Some(title),
     firstForename   = Some("Greg"),
     secondForename  = Some("Greggory"),
