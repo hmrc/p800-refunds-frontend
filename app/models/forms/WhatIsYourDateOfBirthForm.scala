@@ -60,13 +60,13 @@ object WhatIsYourDateOfBirthForm {
       yearFromForm:                     String
   )(implicit language: Language): Either[Seq[FormError], A] = {
     val errorMessageOrFormInput: Either[Message, A] = (dayFromForm.isEmpty, monthFromForm.isEmpty, yearFromForm.isEmpty) match {
-      case (true, true, true)    => Left(Messages.WhatIsYourDateOfBirth.Errors.`Enter your date of birth`)
-      case (false, true, true)   => Left(Messages.WhatIsYourDateOfBirth.Errors.`Date of birth must include a ...`(Message("month and year", "mis a blwyddyn")))
-      case (true, false, false)  => Left(Messages.WhatIsYourDateOfBirth.Errors.`Date of birth must include a ...`(Message("day", "diwrnod")))
-      case (true, false, true)   => Left(Messages.WhatIsYourDateOfBirth.Errors.`Date of birth must include a ...`(Message("day and year", "diwrnod a blwyddyn")))
-      case (true, true, false)   => Left(Messages.WhatIsYourDateOfBirth.Errors.`Date of birth must include a ...`(Message("day and month", "diwrnod a mis")))
-      case (false, true, false)  => Left(Messages.WhatIsYourDateOfBirth.Errors.`Date of birth must include a ...`(Message("month", "mis")))
-      case (false, false, true)  => Left(Messages.WhatIsYourDateOfBirth.Errors.`Date of birth must include a ...`(Message("year", "blwyddyn")))
+      case (true, true, true)    => Left(Messages.EnterYourDateOfBirth.Errors.`Enter your date of birth`)
+      case (false, true, true)   => Left(Messages.EnterYourDateOfBirth.Errors.`Date of birth must include a ...`(Message("month and year", "mis a blwyddyn")))
+      case (true, false, false)  => Left(Messages.EnterYourDateOfBirth.Errors.`Date of birth must include a ...`(Message("day", "diwrnod")))
+      case (true, false, true)   => Left(Messages.EnterYourDateOfBirth.Errors.`Date of birth must include a ...`(Message("day and year", "diwrnod a blwyddyn")))
+      case (true, true, false)   => Left(Messages.EnterYourDateOfBirth.Errors.`Date of birth must include a ...`(Message("day and month", "diwrnod a mis")))
+      case (false, true, false)  => Left(Messages.EnterYourDateOfBirth.Errors.`Date of birth must include a ...`(Message("month", "mis")))
+      case (false, false, true)  => Left(Messages.EnterYourDateOfBirth.Errors.`Date of birth must include a ...`(Message("year", "blwyddyn")))
       case (false, false, false) => Right(valueFromFormToKeepIfNotAllEmpty)
     }
     errorMessageOrFormInput.fold((errorMessage: Message) => createFormError(key, errorMessage), Right(_))
@@ -83,9 +83,9 @@ object WhatIsYourDateOfBirthForm {
       data.get(key) match {
         case Some(value) if value.isEmpty => checkIfFormValuesAreEmpty[DayOfMonth](key, DayOfMonth(value), dayFromForm, monthFromForm, yearFromForm)
         case Some(value) => Try(value.toInt) match {
-          case Failure(_) => createFormError(key, Messages.WhatIsYourDateOfBirth.Errors.`You must enter a real date`)
+          case Failure(_) => createFormError(key, Messages.EnterYourDateOfBirth.Errors.`You must enter a real date`)
           case Success(value) =>
-            if (value < 1 || value > 31) createFormError(key, Messages.WhatIsYourDateOfBirth.Errors.`You must enter a real date`)
+            if (value < 1 || value > 31) createFormError(key, Messages.EnterYourDateOfBirth.Errors.`You must enter a real date`)
             else Right(DayOfMonth(value.toString))
         }
         case None => checkIfFormValuesAreEmpty[DayOfMonth](key, DayOfMonth(""), dayFromForm, monthFromForm, yearFromForm)
@@ -108,9 +108,9 @@ object WhatIsYourDateOfBirthForm {
         case Some(value) => Try(value.toInt) match {
           case Failure(_) =>
             if (monthStringIsValidMonth(value)) Right(Month(value))
-            else createFormError(key, Messages.WhatIsYourDateOfBirth.Errors.`You must enter a real date`)
+            else createFormError(key, Messages.EnterYourDateOfBirth.Errors.`You must enter a real date`)
           case Success(value) =>
-            if (value < 1 || value > 12) createFormError(key, Messages.WhatIsYourDateOfBirth.Errors.`You must enter a real date`)
+            if (value < 1 || value > 12) createFormError(key, Messages.EnterYourDateOfBirth.Errors.`You must enter a real date`)
             else Right(Month(value.toString))
         }
         case None => checkIfFormValuesAreEmpty[Month](key, Month(""), dayFromForm, monthFromForm, yearFromForm)
@@ -132,10 +132,10 @@ object WhatIsYourDateOfBirthForm {
         case Some(value) if value.isEmpty => checkIfFormValuesAreEmpty[Year](key, Year(value), dayFromForm, monthFromForm, yearFromForm)
         case Some(value) => Try(value.toInt) match {
           case Failure(_) =>
-            createFormError(key, Messages.WhatIsYourDateOfBirth.Errors.`Enter a year which contains 4 numbers`)
+            createFormError(key, Messages.EnterYourDateOfBirth.Errors.`Enter a year which contains 4 numbers`)
           case Success(value) =>
             val yearAsFourIntegers: String = """[0-9]{4}""".r.regex
-            if (!value.toString.matches(yearAsFourIntegers)) createFormError(key, Messages.WhatIsYourDateOfBirth.Errors.`Enter a year which contains 4 numbers`)
+            if (!value.toString.matches(yearAsFourIntegers)) createFormError(key, Messages.EnterYourDateOfBirth.Errors.`Enter a year which contains 4 numbers`)
             else Right(Year(value.toString))
         }
         case None => checkIfFormValuesAreEmpty[Year](key, Year(""), dayFromForm, monthFromForm, yearFromForm)
@@ -157,7 +157,7 @@ object WhatIsYourDateOfBirthForm {
     monthIntoInt match {
       case Some(validMonth) =>
         Try(java.time.LocalDate.of(date.year.value.toInt, validMonth, date.dayOfMonth.value.toInt)).fold(
-          _ => Invalid(Messages.WhatIsYourDateOfBirth.Errors.`You must enter a real date`.show),
+          _ => Invalid(Messages.EnterYourDateOfBirth.Errors.`You must enter a real date`.show),
           validDate => {
 
             val dateNow: LocalDate = LocalDate.now()
@@ -165,18 +165,18 @@ object WhatIsYourDateOfBirthForm {
             val dateFor110Years: LocalDate = dateNow.minusYears(110L)
 
             if (validDate.isAfter(dateNow))
-              Invalid(Messages.WhatIsYourDateOfBirth.Errors.`Date of birth must be in the past`.show)
+              Invalid(Messages.EnterYourDateOfBirth.Errors.`Date of birth must be in the past`.show)
 
             else if (validDate.isAfter(dateFor16Years))
-              Invalid(Messages.WhatIsYourDateOfBirth.Errors.`Date of birth must be on or before`(dateFor16Years.format(DateTimeFormatsUtil.gdsDateTimeFormatter)).show)
+              Invalid(Messages.EnterYourDateOfBirth.Errors.`Date of birth must be on or before`(dateFor16Years.format(DateTimeFormatsUtil.gdsDateTimeFormatter)).show)
 
             else if (validDate.isBefore(dateFor110Years))
-              Invalid(Messages.WhatIsYourDateOfBirth.Errors.`Date of birth must be on or after`(dateFor110Years.format(DateTimeFormatsUtil.gdsDateTimeFormatter)).show)
+              Invalid(Messages.EnterYourDateOfBirth.Errors.`Date of birth must be on or after`(dateFor110Years.format(DateTimeFormatsUtil.gdsDateTimeFormatter)).show)
 
             else Valid
           }
         )
-      case None => Invalid(Messages.WhatIsYourDateOfBirth.Errors.`You must enter a real date`.show)
+      case None => Invalid(Messages.EnterYourDateOfBirth.Errors.`You must enter a real date`.show)
     }
   }
 

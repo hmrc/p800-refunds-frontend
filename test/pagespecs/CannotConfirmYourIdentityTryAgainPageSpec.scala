@@ -19,7 +19,7 @@ package pagespecs
 import models.journeymodels.JourneyType
 import testsupport.ItSpec
 
-class WeCannotConfirmYourIdentityPageSpec extends ItSpec {
+class CannotConfirmYourIdentityTryAgainPageSpec extends ItSpec {
 
   override def beforeEach(): Unit = {
     super.beforeEach()
@@ -40,8 +40,8 @@ class WeCannotConfirmYourIdentityPageSpec extends ItSpec {
 
       def test(journeyType: JourneyType): Unit = {
         val page = journeyType match {
-          case JourneyType.Cheque       => pages.weCannotConfirmYourIdentityChequePage
-          case JourneyType.BankTransfer => pages.weCannotConfirmYourIdentityBankTransferPage
+          case JourneyType.Cheque       => pages.cannotConfirmYourIdentityTryAgainChequePage
+          case JourneyType.BankTransfer => pages.cannotConfirmYourIdentityTryAgainBankTransferPage
         }
         page.open()
         page.assertPageIsDisplayed(journeyType)
@@ -62,8 +62,8 @@ class WeCannotConfirmYourIdentityPageSpec extends ItSpec {
 
       def test(journeyType: JourneyType): Unit = {
         val weCannotConfirmYourIdentityPage = journeyType match {
-          case JourneyType.Cheque       => pages.weCannotConfirmYourIdentityChequePage
-          case JourneyType.BankTransfer => pages.weCannotConfirmYourIdentityBankTransferPage
+          case JourneyType.Cheque       => pages.cannotConfirmYourIdentityTryAgainChequePage
+          case JourneyType.BankTransfer => pages.cannotConfirmYourIdentityTryAgainBankTransferPage
         }
         weCannotConfirmYourIdentityPage.open()
         weCannotConfirmYourIdentityPage.assertPageIsDisplayed(journeyType)
@@ -88,7 +88,7 @@ class WeCannotConfirmYourIdentityPageSpec extends ItSpec {
     "'Choose another way to get your refund' for bank transfer" in {
       upsertJourneyToDatabase(tdAll.BankTransfer.AfterReferenceCheck.journeyReferenceDidntMatchNino)
       test(JourneyType.BankTransfer)
-      pages.chooseAnotherWayToGetYourRefundPage.assertPageIsDisplayed()
+      pages.chooseAnotherWayToReceiveYourRefundPage.assertPageIsDisplayed()
       getJourneyFromDatabase(tdAll.journeyId) shouldBeLike tdAll.BankTransfer.AfterReferenceCheck.journeyReferenceDidntMatchNino
     }
     "'Claim your refund by bank transfer' for cheque" in {
@@ -100,8 +100,8 @@ class WeCannotConfirmYourIdentityPageSpec extends ItSpec {
 
       def test(journeyType: JourneyType): Unit = {
         val page = journeyType match {
-          case JourneyType.Cheque       => pages.weCannotConfirmYourIdentityChequePage
-          case JourneyType.BankTransfer => pages.weCannotConfirmYourIdentityBankTransferPage
+          case JourneyType.Cheque       => pages.cannotConfirmYourIdentityTryAgainChequePage
+          case JourneyType.BankTransfer => pages.cannotConfirmYourIdentityTryAgainBankTransferPage
         }
         page.open()
         page.assertPageIsDisplayed(journeyType)

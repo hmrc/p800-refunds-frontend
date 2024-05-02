@@ -19,7 +19,7 @@ package pagespecs
 import testsupport.ItSpec
 import testsupport.stubs.EcospendStub
 
-class WeHaveConfirmedYourIdentityPageSpec extends ItSpec {
+class YourIdentityIsConfirmedPageSpec extends ItSpec {
 
   override def beforeEach(): Unit = {
     super.beforeEach()
@@ -49,7 +49,7 @@ class WeHaveConfirmedYourIdentityPageSpec extends ItSpec {
       pages.yourIdentityIsConfirmedBankTransferPage.open()
       pages.yourIdentityIsConfirmedBankTransferPage.assertPageIsDisplayed()
       pages.yourIdentityIsConfirmedBankTransferPage.clickSubmit()
-      pages.enterTheNameOfYourBankAccountPage.assertPageIsDisplayed()
+      pages.enterNameOfYourBankAccountPage.assertPageIsDisplayed()
       EcospendStub.AuthStubs.verifyEcospendAccessToken()
       EcospendStub.BanksStubs.verifyEcospendGetBanks()
       getJourneyFromDatabase(tdAll.journeyId) shouldBeLike tdAll.BankTransfer.journeyAfterTracedIndividual

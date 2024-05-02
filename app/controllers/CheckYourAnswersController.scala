@@ -111,7 +111,7 @@ class CheckYourAnswersController @Inject() (
           case JourneyType.Cheque => Future.successful(None)
         }
         journey <- journeyService.upsert(journey.update(maybeTraceIndividualResponse = maybeTraceIndividualResponse))
-      } yield Redirect(controllers.WeHaveConfirmedYourIdentityController.redirectLocation(journey))
+      } yield Redirect(controllers.YourIdentityIsConfirmedController.redirectLocation(journey))
 
     }
 

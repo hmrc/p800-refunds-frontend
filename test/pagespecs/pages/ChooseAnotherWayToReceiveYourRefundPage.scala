@@ -19,7 +19,7 @@ package pagespecs.pages
 import org.openqa.selenium.WebDriver
 import pagespecs.pagesupport.{ContentExpectation, Page, PageUtil}
 
-class ChooseAnotherWayToGetYourRefundPage(baseUrl: String)(implicit webDriver: WebDriver) extends Page(
+class ChooseAnotherWayToReceiveYourRefundPage(baseUrl: String)(implicit webDriver: WebDriver) extends Page(
   baseUrl = baseUrl,
   path    = s"/get-an-income-tax-refund/bank-transfer/choose-another-way-to-receive-your-refund"
 ) {

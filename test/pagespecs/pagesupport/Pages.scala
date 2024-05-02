@@ -32,8 +32,8 @@ class Pages(baseUrl: String)(implicit webDriver: WebDriver) {
   val doYouWantToSignInPage = new DoYouWantToSignInPage(baseUrl = baseUrl)
   val doYouWantYourRefundViaBankTransferPage = new DoYouWantYourRefundViaBankTransferPage(baseUrl = baseUrl)
 
-  val weNeedYouToConfirmYourIdentityBankTransferPage = new WeNeedYouToConfirmYourIdentityPage(baseUrl            = baseUrl, pathForJourneyType = bankTransferRelativeUrl)
-  val weNeedYouToConfirmYourIdentityChequePage = new WeNeedYouToConfirmYourIdentityPage(baseUrl            = baseUrl, pathForJourneyType = chequeRelativeUrl)
+  val weNeedYouToConfirmYourIdentityBankTransferPage = new ConfirmYourIdentityPage(baseUrl            = baseUrl, pathForJourneyType = bankTransferRelativeUrl)
+  val weNeedYouToConfirmYourIdentityChequePage = new ConfirmYourIdentityPage(baseUrl            = baseUrl, pathForJourneyType = chequeRelativeUrl)
 
   val whatIsYourP800ReferenceBankTransferPage = new EnterYourP800ReferencePage(baseUrl            = baseUrl, pathForJourneyType = bankTransferRelativeUrl)
   val whatIsYourP800ReferenceChequePage = new EnterYourP800ReferencePage(baseUrl            = baseUrl, pathForJourneyType = chequeRelativeUrl)
@@ -50,17 +50,17 @@ class Pages(baseUrl: String)(implicit webDriver: WebDriver) {
   val yourIdentityIsConfirmedBankTransferPage = new YourIdentityIsConfirmedPage(baseUrl            = baseUrl, pathForJourneyType = bankTransferRelativeUrl)
   val yourIdentityIsConfirmedChequePage = new YourIdentityIsConfirmedPage(baseUrl            = baseUrl, pathForJourneyType = chequeRelativeUrl)
 
-  val weCannotConfirmYourIdentityBankTransferPage = new WeCannotConfirmYourIdentityPage(baseUrl            = baseUrl, pathForJourneyType = bankTransferRelativeUrl)
-  val weCannotConfirmYourIdentityChequePage = new WeCannotConfirmYourIdentityPage(baseUrl            = baseUrl, pathForJourneyType = chequeRelativeUrl)
+  val cannotConfirmYourIdentityTryAgainBankTransferPage = new CannotConfirmYourIdentityTryAgainPage(baseUrl            = baseUrl, pathForJourneyType = bankTransferRelativeUrl)
+  val cannotConfirmYourIdentityTryAgainChequePage = new CannotConfirmYourIdentityTryAgainPage(baseUrl            = baseUrl, pathForJourneyType = chequeRelativeUrl)
 
   val noMoreAttemptsLeftToConfirmYourIdentityBankTransferPage = new NoMoreAttemptsLeftToConfirmYourIdentityPage(baseUrl            = baseUrl, pathForJourneyType = bankTransferRelativeUrl)
   val noMoreAttemptsLeftToConfirmYourIdentityChequePage = new NoMoreAttemptsLeftToConfirmYourIdentityPage(baseUrl            = baseUrl, pathForJourneyType = chequeRelativeUrl)
 
   val refundRequestNotSubmittedPage = new RefundRequestNotSubmittedPage(baseUrl = baseUrl)
-  val verifyBankAccountPage = new VerifyBankAccountPage(baseUrl       = baseUrl, consentStatus = ConsentStatus.Authorised, TdAll.tdAll.consentId, TdAll.tdAll.bankReferenceId)
+  val verifyingBankAccountPage = new VerifyingBankAccountPage(baseUrl       = baseUrl, consentStatus = ConsentStatus.Authorised, TdAll.tdAll.consentId, TdAll.tdAll.bankReferenceId)
 
   //bank transfer specific page
-  val chooseAnotherWayToGetYourRefundPage = new ChooseAnotherWayToGetYourRefundPage(baseUrl = baseUrl)
+  val chooseAnotherWayToReceiveYourRefundPage = new ChooseAnotherWayToReceiveYourRefundPage(baseUrl = baseUrl)
   //cheque specific page
   val claimYourRefundByBankTransferPage = new ClaimYourRefundByBankTransferPage(baseUrl = baseUrl)
 
@@ -78,7 +78,7 @@ class Pages(baseUrl: String)(implicit webDriver: WebDriver) {
   val isYourAddressUpToDate = new IsYourAddressUpToDatePage(baseUrl = baseUrl)
   val updateYourAddressPage = new UpdateYourAddressPage(baseUrl = baseUrl)
 
-  val enterTheNameOfYourBankAccountPage = new EnterTheNameOfYourBankAccountPage(baseUrl = baseUrl)
+  val enterNameOfYourBankAccountPage = new EnterNameOfYourBankAccountPage(baseUrl = baseUrl)
 
   val requestReceivedBankTransferPage = new RequestReceivedPage(baseUrl            = baseUrl, pathForJourneyType = bankTransferRelativeUrl)
   val requestReceivedChequePage = new RequestReceivedPage(baseUrl            = baseUrl, pathForJourneyType = chequeRelativeUrl)

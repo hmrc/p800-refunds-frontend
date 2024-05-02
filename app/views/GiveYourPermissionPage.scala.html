@@ -39,7 +39,7 @@
         @{Html(Messages.GiveYourPermission.`By choosing approve`(
             bankName = bankName,
             amount = amountInPence,
-            changeBankLink = controllers.routes.EnterTheNameOfYourBankController.get.url
+            changeBankLink = controllers.routes.EnterNameOfYourBankController.get.url
         ).show)}
     </p>
 
@@ -70,7 +70,7 @@
                     content = Text(Messages.GiveYourPermission.`Approve this refund`.show),
                     id      = Some("approve-this-refund")
                 ))
-            <a id="choose-another-way" class="govuk-link" href="@routes.ChooseAnotherWayToGetYourRefundController.getBankTransfer.url">
+            <a id="choose-another-way" class="govuk-link" href="@routes.ChooseAnotherWayToReceiveYourRefundController.getBankTransfer.url">
                 @{Messages.GiveYourPermission.`Choose another way to get my money`.show}
             </a>
         </div>

@@ -253,7 +253,7 @@ object Messages {
 
   }
 
-  object WeNeedToConfirmYourIdentity {
+  object ConfirmYourIdentity {
     val `We need you to confirm your identity`: Message = Message(
       english = "We need you to confirm your identity",
       welsh   = "Mae angen i chi gadarnhau pwy ydych"
@@ -332,7 +332,7 @@ object Messages {
     )
   }
 
-  object WhatIsYourDateOfBirth {
+  object EnterYourDateOfBirth {
     val `What is your date of birth`: Message = Message(
       english = "What is your date of birth?",
       welsh   = "Beth yw’ch dyddiad geni?"
@@ -380,7 +380,7 @@ object Messages {
 
   }
 
-  object WeHaveConfirmedYourIdentity {
+  object YourIdentityIsConfirmed {
     val `We have confirmed your identity`: Message = Message(
       english = "We have confirmed your identity",
       welsh   = "Rydym wedi cadarnhau pwy ydych"

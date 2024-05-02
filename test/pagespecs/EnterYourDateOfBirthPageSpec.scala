@@ -22,7 +22,7 @@ import testsupport.ItSpec
 
 import java.time.{LocalDate, LocalDateTime}
 
-class WhatIsYourDateOfBirthPageSpec extends ItSpec {
+class EnterYourDateOfBirthPageSpec extends ItSpec {
 
   override def beforeEach(): Unit = {
     super.beforeEach()

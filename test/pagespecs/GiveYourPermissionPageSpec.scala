@@ -41,7 +41,7 @@ class GiveYourPermissionPageSpec extends ItSpec {
     pages.giveYourPermissionPage.open()
     pages.giveYourPermissionPage.assertPageIsDisplayed()
     pages.giveYourPermissionPage.clickChangeBank()
-    pages.enterTheNameOfYourBankAccountPage.assertPageIsDisplayed()
+    pages.enterNameOfYourBankAccountPage.assertPageIsDisplayed()
     getJourneyFromDatabase(tdAll.journeyId) shouldBeLike tdAll.BankTransfer.journeySelectedBank
   }
 
@@ -59,7 +59,7 @@ class GiveYourPermissionPageSpec extends ItSpec {
     pages.bankStubPage.assertPageIsDisplayed()
     pages.bankStubPage.selectAuthorised()
     pages.bankStubPage.clickSubmit()
-    pages.verifyBankAccountPage.assertPageIsDisplayed()
+    pages.verifyingBankAccountPage.assertPageIsDisplayed()
 
     EdhStub.verifyGetBankDetailsRiskResult(tdAll.claimId, tdAll.correlationId)
     getJourneyFromDatabase(tdAll.journeyId) shouldBeLike tdAll.BankTransfer.journeyReceivedNotificationFromEcospendNotReceivedSuccessfulNameMatch
@@ -69,7 +69,7 @@ class GiveYourPermissionPageSpec extends ItSpec {
     pages.giveYourPermissionPage.open()
     pages.giveYourPermissionPage.assertPageIsDisplayed()
     pages.giveYourPermissionPage.clickChooseAnotherWayToGetMyMoney()
-    pages.chooseAnotherWayToGetYourRefundPage.assertPageIsDisplayed()
+    pages.chooseAnotherWayToReceiveYourRefundPage.assertPageIsDisplayed()
     getJourneyFromDatabase(tdAll.journeyId) shouldBeLike tdAll.BankTransfer.journeySelectedBank
   }
 }

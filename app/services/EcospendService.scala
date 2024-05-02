@@ -54,7 +54,7 @@ class EcospendService @Inject() (
 
   private def bankConsentRequestFromJourney(journey: Journey)(implicit request: JourneyRequest[_]): BankConsentRequest = {
     val redirectUrl: Uri = Uri(appConfig.platformFrontendHost +
-      controllers.routes.WeAreVerifyingYourBankAccountController.get(None, None, None).toString)
+      controllers.routes.VerifyingYourBankAccountController.get(None, None, None).toString)
 
     JourneyLogger.info(s"Creating consent with [redirectUrl: ${redirectUrl.toString}]")
 
