@@ -540,6 +540,46 @@ object Messages {
 
     private val formatter = DateTimeFormatter.ofPattern("d MMMM yyyy", Locale.UK)
 
+    val `Print If you do not receive your refund you can call or write...`: Message = Message(
+      english = "If you do not receive your refund you can write to us or call the Income Tax helpline. You will need your P800 reference.",
+      welsh   = "Os nad ydych yn cael eich ad-daliad, gallwch ysgrifennu atom neu ffonio’r llinell gymorth Treth Incwm. Bydd angen eich cyfeirnod P800 arnoch."
+    )
+
+    val `Telephone:`: Message = Message(
+      english = "Telephone:",
+      welsh   = "Eich cyfeirnod P800:"
+    )
+
+    val `0300 200 3300`: Message = Message(
+      english = "0300 200 3300",
+      welsh   = "0300 200 330"
+    )
+
+    val `Outside UK:`: Message = Message(
+      english = "Outside UK:",
+      welsh   = "Eich cyfeirnod P800:"
+    )
+
+    val `+44 135 535 9022`: Message = Message(
+      english = "+44 135 535 9022",
+      welsh   = "+44 135 535 9022"
+    )
+
+    val `Opening times:`: Message = Message(
+      english = "Opening times:",
+      welsh   = "Eich cyfeirnod P800:"
+    )
+
+    val `Monday to Friday: 8am to 6pm`: Message = Message(
+      english = "Monday to Friday: 8am to 6pm",
+      welsh   = "Eich cyfeirnod P800:"
+    )
+
+    val `Closed on weekends and bank holidays.`: Message = Message(
+      english = "Closed on weekends and bank holidays.",
+      welsh   = "Eich cyfeirnod P800:"
+    )
+
     def `Your refund of £x.xx will now be processed and paid by...`(amountInPence: AmountInPence, date: LocalDate): Message = Message(
       english = s"Your refund of <strong>${amountInPence.gdsFormatInPounds}</strong> will now be paid by <strong>${date.format(formatter)}</strong>.",
       welsh   = s"Bydd eich ad-daliad o <strong>${amountInPence.gdsFormatInPounds}</strong> yn cael ei dalu erbyn <strong>${date.format(formatter).welshMonth}</strong>."

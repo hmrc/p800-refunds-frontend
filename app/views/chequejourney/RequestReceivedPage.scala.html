@@ -61,15 +61,15 @@
         </a>
     </p>
 
-    <h2 class="govuk-heading-s">
+    <h2 class="govuk-heading-s govuk-!-display-none-print">
         @{Messages.ChequeRequestReceived.`What happens next`.show}
     </h2>
 
-    <p class="govuk-body">
+    <p class="govuk-body govuk-!-display-none-print">
         @{Html(Messages.ChequeRequestReceived.`If you do not receive your refund you can call or write...`(appConfig.generalEnquiriesUrl).show)}
     </p>
 
-    <div class="govuk-body">
+    <div class="govuk-body govuk-!-display-none-print">
         <a class="govuk-link" id="survey-link" href="@{controllers.routes.FeedbackController.get}">  @{Messages.ChequeRequestReceived.`What do you think`.show}
         </a> @{Messages.ChequeRequestReceived.`takes 30 seconds`.show}
     </div>
