@@ -30,6 +30,8 @@ import uk.gov.hmrc.govukfrontend.views.Aliases.{HtmlContent, Key, SummaryListRow
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryList
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import util.JourneyLogger
+import util.SafeEquals._
+import util.WelshDateUtil._
 import views.Views
 
 import java.time.format.DateTimeFormatter
@@ -192,7 +194,7 @@ class CheckYourAnswersController @Inject() (
     buildSummaryListRow(
       Messages.CheckYourAnswersMessages.`Date of birth`.show,
       id    = "date-of-birth",
-      value = dateOfBirth.format(`dd MMMM yyyy`),
+      value = if (requestSupport.language.code === "cy") dateOfBirth.format(`dd MMMM yyyy`).welshMonth else dateOfBirth.format(`dd MMMM yyyy`),
       call  = controllers.routes.CheckYourAnswersController.changeDateOfBirth
     )
   }

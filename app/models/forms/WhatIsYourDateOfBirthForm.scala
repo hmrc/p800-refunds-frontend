@@ -61,12 +61,12 @@ object WhatIsYourDateOfBirthForm {
   )(implicit language: Language): Either[Seq[FormError], A] = {
     val errorMessageOrFormInput: Either[Message, A] = (dayFromForm.isEmpty, monthFromForm.isEmpty, yearFromForm.isEmpty) match {
       case (true, true, true)    => Left(Messages.EnterYourDateOfBirth.Errors.`Enter your date of birth`)
-      case (false, true, true)   => Left(Messages.EnterYourDateOfBirth.Errors.`Date of birth must include a ...`("month and year"))
-      case (true, false, false)  => Left(Messages.EnterYourDateOfBirth.Errors.`Date of birth must include a ...`("day"))
-      case (true, false, true)   => Left(Messages.EnterYourDateOfBirth.Errors.`Date of birth must include a ...`("day and year"))
-      case (true, true, false)   => Left(Messages.EnterYourDateOfBirth.Errors.`Date of birth must include a ...`("day and month"))
-      case (false, true, false)  => Left(Messages.EnterYourDateOfBirth.Errors.`Date of birth must include a ...`("month"))
-      case (false, false, true)  => Left(Messages.EnterYourDateOfBirth.Errors.`Date of birth must include a ...`("year"))
+      case (false, true, true)   => Left(Messages.EnterYourDateOfBirth.Errors.`Date of birth must include a ...`(Message("month and year", "mis a blwyddyn")))
+      case (true, false, false)  => Left(Messages.EnterYourDateOfBirth.Errors.`Date of birth must include a ...`(Message("day", "diwrnod")))
+      case (true, false, true)   => Left(Messages.EnterYourDateOfBirth.Errors.`Date of birth must include a ...`(Message("day and year", "diwrnod a blwyddyn")))
+      case (true, true, false)   => Left(Messages.EnterYourDateOfBirth.Errors.`Date of birth must include a ...`(Message("day and month", "diwrnod a mis")))
+      case (false, true, false)  => Left(Messages.EnterYourDateOfBirth.Errors.`Date of birth must include a ...`(Message("month", "mis")))
+      case (false, false, true)  => Left(Messages.EnterYourDateOfBirth.Errors.`Date of birth must include a ...`(Message("year", "blwyddyn")))
       case (false, false, false) => Right(valueFromFormToKeepIfNotAllEmpty)
     }
     errorMessageOrFormInput.fold((errorMessage: Message) => createFormError(key, errorMessage), Right(_))

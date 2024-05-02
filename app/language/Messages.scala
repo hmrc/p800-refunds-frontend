@@ -19,6 +19,8 @@ package language
 import models.AmountInPence
 import models.ecospend.BankFriendlyName
 
+import util.WelshDateUtil._
+
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import java.util.Locale
@@ -362,17 +364,17 @@ object Messages {
 
       def `Date of birth must be on or before`(sixteenYearsAgo: String): Message = Message(
         english = s"Date of birth must be on or before $sixteenYearsAgo",
-        welsh   = s"Mae’n rhaid i’r dyddiad geni fod ar neu ar ôl $sixteenYearsAgo" //todo jake welsh date
+        welsh   = s"Mae’n rhaid i’r dyddiad geni fod ar neu ar ôl ${sixteenYearsAgo.welshMonth}"
       )
 
       def `Date of birth must be on or after`(oneHundredAndTenYearsAgo: String): Message = Message(
         english = s"Date of birth must be on or after $oneHundredAndTenYearsAgo",
-        welsh   = s"Mae’n rhaid i’r dyddiad geni fod ar neu cyn $oneHundredAndTenYearsAgo" //todo jake welsh date
+        welsh   = s"Mae’n rhaid i’r dyddiad geni fod ar neu cyn ${oneHundredAndTenYearsAgo.welshMonth}"
       )
 
-      def `Date of birth must include a ...`(incompleteFields: String): Message = Message(
-        english = s"Date of birth must include a $incompleteFields",
-        welsh   = s"Mae’n rhaid i’r dyddiad gynnwys $incompleteFields" //todo jake welsh date
+      def `Date of birth must include a ...`(incompleteFields: Message): Message = Message(
+        english = s"Date of birth must include a ${incompleteFields.english}",
+        welsh   = s"Mae’n rhaid i’r dyddiad gynnwys ${incompleteFields.welsh.getOrElse(incompleteFields.english)}"
       )
     }
 
@@ -463,7 +465,7 @@ object Messages {
 
     def `Your refund of £x.xx will arrive in the post by DATE.`(amountInPence: AmountInPence, chequeArriveByDate: LocalDate): Message = Message(
       english = s"Your refund of <strong>${amountInPence.gdsFormatInPounds}</strong> will arrive in the post by <strong>${chequeArriveByDate.format(formatter)}</strong>.",
-      welsh   = s"Bydd eich ad-daliad o <strong>${amountInPence.gdsFormatInPounds}</strong> yn cyrraedd drwy’r post erbyn <strong>${chequeArriveByDate.format(formatter)}</strong>." //todo jake welsh dates
+      welsh   = s"Bydd eich ad-daliad o <strong>${amountInPence.gdsFormatInPounds}</strong> yn cyrraedd drwy’r post erbyn <strong>${chequeArriveByDate.format(formatter).welshMonth}</strong>."
     )
 
     val `Print this page`: Message = Message(
@@ -540,7 +542,7 @@ object Messages {
 
     def `Your refund of £x.xx will now be processed and paid by...`(amountInPence: AmountInPence, date: LocalDate): Message = Message(
       english = s"Your refund of <strong>${amountInPence.gdsFormatInPounds}</strong> will now be paid by <strong>${date.format(formatter)}</strong>.",
-      welsh   = s"Bydd eich ad-daliad o <strong>${amountInPence.gdsFormatInPounds}</strong> yn cael ei dalu erbyn <strong>${date.format(formatter)}</strong>." //todo jake welsh date
+      welsh   = s"Bydd eich ad-daliad o <strong>${amountInPence.gdsFormatInPounds}</strong> yn cael ei dalu erbyn <strong>${date.format(formatter).welshMonth}</strong>."
     )
 
     val `Print this page`: Message = Message(
