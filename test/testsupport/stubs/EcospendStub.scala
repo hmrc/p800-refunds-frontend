@@ -216,10 +216,10 @@ object EcospendStub {
     private val consentIdHeaderKey: String = "consent_id"
     private val developmentConsentIdHeaderKey: String = "consent-id"
 
-    def stubAccountSummary2xxSucceeded(consentId: ConsentId): StubMapping =
+    def stubAccountSummary2xxSucceeded(consentId: ConsentId, fullName: String = "Greg Greggory Greggson"): StubMapping =
       WireMockHelpers.Get.stubForGetWithResponseBody(
         url             = accountSummaryUrl,
-        responseBody    = validateBankAccountSummaryResponseJson(consentId),
+        responseBody    = validateBankAccountSummaryResponseJson(consentId, fullName),
         requiredHeaders = Seq(
           consentIdHeaderKey -> matching(consentId.value),
           developmentConsentIdHeaderKey -> matching(consentId.value)
@@ -236,7 +236,7 @@ object EcospendStub {
         numberOfRequests
       )
 
-    def validateBankAccountSummaryResponseJson(consentId: ConsentId): String =
+    def validateBankAccountSummaryResponseJson(consentId: ConsentId, fullName: String): String =
       //language=JSON
       s"""[{
           "id" : "${consentId.value}",
@@ -253,7 +253,7 @@ object EcospendStub {
           "last_update_time" : "2059-11-25T16:33:51.88",
           "parties" : [ {
             "name" : "Greg Greggson",
-            "full_legal_name" : "Greg Greggory Greggson"
+            "full_legal_name" : "$fullName"
           }, {
             "name" : "Margaret Greggson",
             "full_legal_name" : "Margaretta Greggson"
