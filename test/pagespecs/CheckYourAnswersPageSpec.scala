@@ -16,11 +16,13 @@
 
 package pagespecs
 
-import models.{Nino, P800Reference, UserEnteredP800Reference}
 import models.dateofbirth.{DateOfBirth, DayOfMonth, Month, Year}
 import models.journeymodels.{Journey, JourneyType}
+import models.{Nino, P800Reference, UserEnteredP800Reference}
 import nps.models.TraceIndividualRequest
+import play.api.libs.json.{Json, JsObject}
 import testsupport.ItSpec
+import testsupport.stubs.AuditConnectorStub
 import testsupport.stubs.{TraceIndividualStub, VerifyP800ReferenceStub}
 
 class CheckYourAnswersPageSpec extends ItSpec {
@@ -167,6 +169,44 @@ class CheckYourAnswersPageSpec extends ItSpec {
       VerifyP800ReferenceStub.verify(tdAll.correlationId)
       TraceIndividualStub.verifyTraceIndividual(tdAll.correlationId)
       getJourneyFromDatabase(tdAll.journeyId) shouldBeLike j
+
+      AuditConnectorStub.verifyEventAudited(
+        "ValidateUserDetails",
+        Json.parse(
+          //format=JSON
+          """
+          {
+            "outcome": {
+              "isSuccessful": true,
+              "lockout": false,
+              "reasons": []
+            },
+            "userEnteredDetails": {
+              "repaymentMethod": {
+                "BankTransfer": {}
+              },
+              "p800Reference": 12345678,
+              "nino": "LM001014C",
+              "dob": {
+                "dayOfMonth": "1",
+                "month": "1",
+                "year": "2000"
+              }
+            },
+            "repaymentAmount": 1234,
+            "repaymentInformation": {
+              "reconciliationIdentifier": 123,
+              "paymentNumber": 12345678,
+              "payeNumber": "PayeNumber-123",
+              "taxDistrictNumber": 717,
+              "associatedPayableNumber": 1234,
+              "customerAccountNumber": "customerAccountNumber-1234",
+              "currentOptimisticLock": 15
+            }
+          }
+          """.stripMargin
+        ).as[JsObject]
+      )
     }
     "cheque" in {
       upsertJourneyToDatabase(tdAll.Cheque.journeyEnteredNino)
@@ -177,6 +217,39 @@ class CheckYourAnswersPageSpec extends ItSpec {
       pages.yourIdentityIsConfirmedChequePage.assertPageIsDisplayed()
       VerifyP800ReferenceStub.verify(tdAll.correlationId)
       getJourneyFromDatabase(tdAll.journeyId) shouldBeLike j
+
+      AuditConnectorStub.verifyEventAudited(
+        "ValidateUserDetails",
+        Json.parse(
+          //format=JSON
+          """
+          {
+            "outcome": {
+              "isSuccessful": true,
+              "lockout": false,
+              "reasons": []
+            },
+            "userEnteredDetails": {
+              "repaymentMethod": {
+                "Cheque": {}
+              },
+              "p800Reference": 12345678,
+              "nino": "LM001014C"
+            },
+            "repaymentAmount": 1234,
+            "repaymentInformation": {
+              "reconciliationIdentifier": 123,
+              "paymentNumber": 12345678,
+              "payeNumber": "PayeNumber-123",
+              "taxDistrictNumber": 717,
+              "associatedPayableNumber": 1234,
+              "customerAccountNumber": "customerAccountNumber-1234",
+              "currentOptimisticLock": 15
+            }
+          }
+          """.stripMargin
+        ).as[JsObject]
+      )
     }
 
     "with p800 reference getting sanitised before being sent, if user decides to put leading 0's, or any of the other bizarre 'allowed' characters" in {
@@ -223,6 +296,36 @@ class CheckYourAnswersPageSpec extends ItSpec {
       VerifyP800ReferenceStub.verify(tdAll.correlationId)
       getJourneyFromDatabase(tdAll.journeyId) shouldBeLike tdAll.BankTransfer.AfterReferenceCheck.journeyReferenceDidntMatchNino
       getFailedAttemptCount() shouldBe Some(1)
+
+      AuditConnectorStub.verifyEventAudited(
+        "ValidateUserDetails",
+        Json.parse(
+          //format=JSON
+          """
+          {
+            "outcome": {
+              "isSuccessful": false,
+              "attemptsOnRecord": 1,
+              "lockout": false,
+              "apiResponsibleForFailure": "p800 reference check",
+              "reasons": []
+            },
+            "userEnteredDetails": {
+              "repaymentMethod": {
+                "BankTransfer": {}
+              },
+              "p800Reference": 12345678,
+              "nino": "LM001014C",
+              "dob": {
+                "dayOfMonth": "1",
+                "month": "1",
+                "year": "2000"
+              }
+            }
+          }
+          """.stripMargin
+        ).as[JsObject]
+      )
     }
 
     "cheque - failed attempts repo is empty" in {
@@ -238,6 +341,31 @@ class CheckYourAnswersPageSpec extends ItSpec {
       VerifyP800ReferenceStub.verify(tdAll.correlationId)
       getJourneyFromDatabase(tdAll.journeyId) shouldBeLike tdAll.Cheque.AfterReferenceCheck.journeyReferenceDidntMatchNino
       getFailedAttemptCount() shouldBe Some(1)
+
+      AuditConnectorStub.verifyEventAudited(
+        "ValidateUserDetails",
+        Json.parse(
+          //format=JSON
+          """
+          {
+            "outcome": {
+              "isSuccessful": false,
+              "attemptsOnRecord": 1,
+              "lockout": false,
+              "apiResponsibleForFailure": "p800 reference check",
+              "reasons": []
+            },
+            "userEnteredDetails": {
+              "repaymentMethod": {
+                "Cheque": {}
+              },
+              "p800Reference": 12345678,
+              "nino": "LM001014C"
+            }
+          }
+          """.stripMargin
+        ).as[JsObject]
+      )
     }
 
     "bank transfer - user already failed 1 time" in {
@@ -286,6 +414,35 @@ class CheckYourAnswersPageSpec extends ItSpec {
       VerifyP800ReferenceStub.verify(tdAll.correlationId)
       getJourneyFromDatabase(tdAll.journeyId) shouldBeLike tdAll.BankTransfer.journeyLockedOutFromFailedAttempts
       getFailedAttemptCount() shouldBe Some(3)
+
+      AuditConnectorStub.verifyEventAudited(
+        "ValidateUserDetails",
+        Json.parse(
+          //format=JSON
+          """
+          {
+            "outcome": {
+              "isSuccessful": false,
+              "attemptsOnRecord": 3,
+              "lockout": true,
+              "reasons": []
+            },
+            "userEnteredDetails": {
+              "repaymentMethod": {
+                "BankTransfer": {}
+              },
+              "p800Reference": 12345678,
+              "nino": "LM001014C",
+              "dob": {
+                "dayOfMonth": "1",
+                "month": "1",
+                "year": "2000"
+              }
+            }
+          }
+          """.stripMargin
+        ).as[JsObject]
+      )
     }
 
     "cheque - when user has 2 existing failed attempts, 3rd attempt also fails" in {
@@ -300,6 +457,30 @@ class CheckYourAnswersPageSpec extends ItSpec {
       VerifyP800ReferenceStub.verify(tdAll.correlationId)
       getJourneyFromDatabase(tdAll.journeyId) shouldBeLike tdAll.Cheque.journeyLockedOutFromFailedAttempts
       getFailedAttemptCount() shouldBe Some(3)
+
+      AuditConnectorStub.verifyEventAudited(
+        "ValidateUserDetails",
+        Json.parse(
+          //format=JSON
+          """
+          {
+            "outcome": {
+              "isSuccessful": false,
+              "attemptsOnRecord": 3,
+              "lockout": true,
+              "reasons": []
+            },
+            "userEnteredDetails": {
+              "repaymentMethod": {
+                "Cheque": {}
+              },
+              "p800Reference": 12345678,
+              "nino": "LM001014C"
+            }
+          }
+          """.stripMargin
+        ).as[JsObject]
+      )
     }
 
       def test(journeyType: JourneyType): Unit = {
@@ -323,6 +504,35 @@ class CheckYourAnswersPageSpec extends ItSpec {
       getJourneyFromDatabase(tdAll.journeyId) shouldBeLike tdAll.BankTransfer.AfterReferenceCheck.journeyRefundAlreadyTaken
       VerifyP800ReferenceStub.verify(tdAll.correlationId)
       TraceIndividualStub.verifyNoneTraceIndividual()
+
+      AuditConnectorStub.verifyEventAudited(
+        "ValidateUserDetails",
+        Json.parse(
+          //format=JSON
+          """
+          {
+            "outcome": {
+              "isSuccessful": false,
+              "lockout": false,
+              "apiResponsibleForFailure": "p800 reference check",
+              "reasons": []
+            },
+            "userEnteredDetails": {
+              "repaymentMethod": {
+                "BankTransfer": {}
+              },
+              "p800Reference": 12345678,
+              "nino": "LM001014C",
+              "dob": {
+                "dayOfMonth": "1",
+                "month": "1",
+                "year": "2000"
+              }
+            }
+          }
+          """.stripMargin
+        ).as[JsObject]
+      )
     }
     "cheque" in {
       val j: Journey = tdAll.Cheque.journeyEnteredNino
@@ -334,6 +544,30 @@ class CheckYourAnswersPageSpec extends ItSpec {
       getJourneyFromDatabase(tdAll.journeyId) shouldBeLike tdAll.Cheque.AfterReferenceCheck.journeyRefundAlreadyTaken
       VerifyP800ReferenceStub.verify(tdAll.correlationId)
       TraceIndividualStub.verifyNoneTraceIndividual()
+
+      AuditConnectorStub.verifyEventAudited(
+        "ValidateUserDetails",
+        Json.parse(
+          //format=JSON
+          """
+          {
+            "outcome": {
+              "isSuccessful": false,
+              "lockout": false,
+              "apiResponsibleForFailure": "p800 reference check",
+              "reasons": []
+            },
+            "userEnteredDetails": {
+              "repaymentMethod": {
+                "Cheque": {}
+              },
+              "p800Reference": 12345678,
+              "nino": "LM001014C"
+            }
+          }
+          """.stripMargin
+        ).as[JsObject]
+      )
     }
 
       def test(journeyType: JourneyType): Unit = {

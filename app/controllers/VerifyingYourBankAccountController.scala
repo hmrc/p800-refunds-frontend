@@ -92,14 +92,14 @@ class VerifyingYourBankAccountController @Inject() (
       JourneyLogger.info(s"User failed consent flow. [ConsentStatus: Failed]")
       (
         Redirect(routes.RefundRequestNotSubmittedController.get),
-        journey
+        journey.copy(hasFinished = HasFinished.YesRefundNotSubmitted)
       )
     }
     case (_, ConsentStatus.Canceled, _) => Future.successful {
       JourneyLogger.info(s"User Canceled consent flow. [ConsentStatus: Canceled]")
       (
         Redirect(routes.RefundRequestNotSubmittedController.get),
-        journey
+        journey.copy(hasFinished = HasFinished.YesRefundNotSubmitted)
       )
     }
     case (_, _, false) => Future.successful {

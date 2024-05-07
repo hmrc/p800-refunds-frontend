@@ -17,6 +17,7 @@
 package pagespecs
 
 import edh.GetBankDetailsRiskResultResponse
+import models.ecospend.consent.ConsentStatus
 import models.p800externalapi.EventValue
 import testsupport.ItSpec
 import testsupport.stubs.{CaseManagementStub, DateCalculatorStub, EcospendStub, EdhStub, MakeBacsRepaymentStub, NpsSuspendOverpaymentStub, P800RefundsExternalApiStub}
@@ -31,6 +32,59 @@ class VerifyingYourBankAccountPageSpec extends ItSpec {
 
   //HINT: Those tests work only because EventValue is NotReceived.
   //The page will keep refreshing due to javascript code in it, until the event is Valid or NotValid
+
+  "/verify-bank-account renders the 'Refund Request not Submitted' page when the Consent Status is Failed" in {
+    val verifyingBankAccountConsentFailed = pages.verifyingBankAccountPageConsent(ConsentStatus.Failed)
+    EcospendStub.AuthStubs.stubEcospendAuth2xxSucceeded
+    EcospendStub.AccountStub.stubAccountSummary2xxSucceeded(tdAll.consentId)
+    P800RefundsExternalApiStub.isValid(tdAll.consentId, EventValue.NotReceived)
+    MakeBacsRepaymentStub.`makeBacsRepayment 200 OK`(
+      nino     = tdAll.nino,
+      request  = tdAll.claimOverpaymentRequest,
+      response = tdAll.claimOverpaymentResponse
+    )
+    EdhStub.getBankDetailsRiskResult(tdAll.getBankDetailsRiskResultRequest, tdAll.getBankDetailsRiskResultResponse)
+    verifyingBankAccountConsentFailed.open()
+    pages.refundRequestNotSubmittedPage.assertPageIsDisplayed()
+    EdhStub.verifyGetBankDetailsRiskResult(tdAll.claimId, tdAll.correlationId)
+    P800RefundsExternalApiStub.verifyIsValid(tdAll.consentId)
+    MakeBacsRepaymentStub.verifyNone(tdAll.nino)
+  }
+
+  "/verify-bank-account renders the 'Refund Request not Submitted' page when the Consent Status is Canceled" in {
+    val verifyingBankAccountConsentCanceled = pages.verifyingBankAccountPageConsent(ConsentStatus.Canceled)
+    EcospendStub.AuthStubs.stubEcospendAuth2xxSucceeded
+    EcospendStub.AccountStub.stubAccountSummary2xxSucceeded(tdAll.consentId)
+    P800RefundsExternalApiStub.isValid(tdAll.consentId, EventValue.NotReceived)
+    MakeBacsRepaymentStub.`makeBacsRepayment 200 OK`(
+      nino     = tdAll.nino,
+      request  = tdAll.claimOverpaymentRequest,
+      response = tdAll.claimOverpaymentResponse
+    )
+    EdhStub.getBankDetailsRiskResult(tdAll.getBankDetailsRiskResultRequest, tdAll.getBankDetailsRiskResultResponse)
+    verifyingBankAccountConsentCanceled.open()
+    pages.refundRequestNotSubmittedPage.assertPageIsDisplayed()
+    EdhStub.verifyGetBankDetailsRiskResult(tdAll.claimId, tdAll.correlationId)
+    P800RefundsExternalApiStub.verifyIsValid(tdAll.consentId)
+    MakeBacsRepaymentStub.verifyNone(tdAll.nino)
+  }
+
+  "/verify-bank-account renders the 'Refund Request not Submitted' page when the Name Matching Fails" in {
+    EcospendStub.AuthStubs.stubEcospendAuth2xxSucceeded
+    EcospendStub.AccountStub.stubAccountSummary2xxSucceeded(tdAll.consentId, "fail name")
+    P800RefundsExternalApiStub.isValid(tdAll.consentId, EventValue.NotReceived)
+    MakeBacsRepaymentStub.`makeBacsRepayment 200 OK`(
+      nino     = tdAll.nino,
+      request  = tdAll.claimOverpaymentRequest,
+      response = tdAll.claimOverpaymentResponse
+    )
+    EdhStub.getBankDetailsRiskResult(tdAll.getBankDetailsRiskResultRequest, tdAll.getBankDetailsRiskResultResponse)
+    pages.verifyingBankAccountPage.open()
+    pages.refundRequestNotSubmittedPage.assertPageIsDisplayed()
+    EdhStub.verifyGetBankDetailsRiskResult(tdAll.claimId, tdAll.correlationId)
+    P800RefundsExternalApiStub.verifyIsValid(tdAll.consentId)
+    MakeBacsRepaymentStub.verifyNone(tdAll.nino)
+  }
 
   "/verify-bank-account renders the 'We are verifying your bank account' page" in {
     EcospendStub.AuthStubs.stubEcospendAuth2xxSucceeded

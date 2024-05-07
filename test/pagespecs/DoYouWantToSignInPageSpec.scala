@@ -40,7 +40,7 @@ class DoYouWantToSignInPageSpec extends ItSpec {
       "userLoginSelection",
       Json.parse(
         //format=JSON
-        s"""
+        """
          {
            "login": true,
            "ipAddressLockedout": false
@@ -62,7 +62,7 @@ class DoYouWantToSignInPageSpec extends ItSpec {
       "userLoginSelection",
       Json.parse(
         //format=JSON
-        s"""
+        """
          {
            "login": false,
            "ipAddressLockedout": false
@@ -84,7 +84,7 @@ class DoYouWantToSignInPageSpec extends ItSpec {
       "userLoginSelection",
       Json.parse(
         //format=JSON
-        s"""
+        """
          {
            "login": false,
            "ipAddressLockedout": true

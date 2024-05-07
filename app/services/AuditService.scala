@@ -16,18 +16,28 @@
 
 package services
 
-import models.audit.{AuditDetail, UserLoginSelection, Login, IpAddressLockedout}
+import models.AmountInPence
+import models.audit._
+import models.journeymodels.Journey
+import nps.models.{ValidateReferenceResult, TracedIndividual}
 import play.api.libs.json.{Json, Writes}
+import play.api.mvc.RequestHeader
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.audit.AuditExtensions._
 import uk.gov.hmrc.play.audit.http.connector.AuditConnector
 import uk.gov.hmrc.play.audit.model.ExtendedDataEvent
+import models.attemptmodels.{AttemptInfo, NumberOfAttempts}
+import config.AppConfig
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.ExecutionContext
+import models.journeymodels.JourneyType
 
 @Singleton
-class AuditService @Inject() (auditConnector: AuditConnector)(implicit ec: ExecutionContext) {
+class AuditService @Inject() (
+    auditConnector: AuditConnector,
+    appConfig:      AppConfig
+)(implicit ec: ExecutionContext) {
 
   private val auditSource: String = "p800-refunds-frontend"
 
@@ -47,4 +57,88 @@ class AuditService @Inject() (auditConnector: AuditConnector)(implicit ec: Execu
       login              = login,
       ipAddressLockedout = ipAddressLockedout
     ))
+
+  def auditValidateUserDetails(journey: Journey, attemptInfo: Option[AttemptInfo], isSuccessful: Boolean)(implicit requestHeader: RequestHeader, hc: HeaderCarrier): Unit =
+    audit(toValidateUserDetails(journey, attemptInfo, IsSuccessful(isSuccessful)))
+
+  private def toValidateUserDetails(journey: Journey, attemptInfo: Option[AttemptInfo], isSuccessful: IsSuccessful)(implicit requestHeader: RequestHeader): ValidateUserDetails =
+    ValidateUserDetails(
+      outcome              = toOutcome(journey, attemptInfo, isSuccessful),
+      userEnteredDetails   = toUserEnteredDetails(journey),
+      repaymentAmount      = journey.referenceCheckResult.fold[Option[AmountInPence]](None) {
+        case p800ReferenceChecked: ValidateReferenceResult.P800ReferenceChecked => Some(AmountInPence(p800ReferenceChecked.paymentAmount))
+        case _ => None
+      },
+      repaymentInformation = journey.referenceCheckResult.fold[Option[RepaymentInformation]](None) {
+        case p800ReferenceChecked: ValidateReferenceResult.P800ReferenceChecked => Some(toRepaymentInformation(p800ReferenceChecked))
+        case _ => None
+      },
+      name                 = toName(journey.traceIndividualResponse),
+      address              = toAddress(journey.traceIndividualResponse)
+    )
+
+  private def toOutcome(journey: Journey, maybeAttemptInfo: Option[AttemptInfo], isSuccessful: IsSuccessful)(implicit requestHeader: RequestHeader): Outcome = {
+    val p800ReferenceCheck: String = "p800 reference check"
+    val traceIndividual: String = "trace indvidual"
+    val lockedOut = LockedOut(maybeAttemptInfo.fold(false)(AttemptInfo.shouldBeLockedOut(_, appConfig.FailedAttemptRepo.failedAttemptRepoMaxAttempts)))
+
+    Outcome(
+      isSuccessful             = isSuccessful,
+      attemptsOnRecord         = maybeAttemptInfo.fold[Option[NumberOfAttempts]](None) { attemptInfo => Some(attemptInfo.numberOfFailedAttempts) },
+      lockout                  = lockedOut,
+      apiResponsibleForFailure =
+        if (isSuccessful.value) {
+          None
+        } else {
+          journey.getJourneyType match {
+            case JourneyType.Cheque => Some(p800ReferenceCheck)
+            case JourneyType.BankTransfer =>
+              Some(journey.referenceCheckResult.fold[String](p800ReferenceCheck) {
+                case _: ValidateReferenceResult.P800ReferenceChecked => traceIndividual
+                case _ => p800ReferenceCheck
+              })
+          }
+        },
+      reasons                  = Seq()
+    )
+  }
+
+  private def toUserEnteredDetails(journey: Journey)(implicit requestHeader: RequestHeader): UserEnteredDetails =
+    UserEnteredDetails(
+      repaymentMethod = journey.getJourneyType,
+      p800Reference   = journey.getP800Reference.sanitiseReference,
+      nino            = journey.getNino,
+      dob             = journey.dateOfBirth
+    )
+
+  private def toRepaymentInformation(p800ReferenceChecked: ValidateReferenceResult.P800ReferenceChecked): RepaymentInformation =
+    RepaymentInformation(
+      reconciliationIdentifier = p800ReferenceChecked.reconciliationIdentifier,
+      paymentNumber            = p800ReferenceChecked.paymentNumber,
+      payeNumber               = p800ReferenceChecked.payeNumber,
+      taxDistrictNumber        = p800ReferenceChecked.taxDistrictNumber,
+      associatedPayableNumber  = p800ReferenceChecked.associatedPayableNumber,
+      customerAccountNumber    = p800ReferenceChecked.customerAccountNumber,
+      currentOptimisticLock    = p800ReferenceChecked.currentOptimisticLock
+    )
+
+  private def toName(maybeTracedIndividual: Option[TracedIndividual]): Option[Name] =
+    maybeTracedIndividual.fold[Option[Name]](None) { traceIndividualResponse =>
+      Some(Name(
+        title          = traceIndividualResponse.title,
+        firstForename  = traceIndividualResponse.firstForename,
+        secondForename = traceIndividualResponse.secondForename,
+        surname        = traceIndividualResponse.surname
+      ))
+    }
+
+  private def toAddress(maybeTracedIndividual: Option[TracedIndividual]): Option[Address] =
+    maybeTracedIndividual.fold[Option[Address]](None) { traceIndividualResponse =>
+      Some(Address(
+        addressLine1    = traceIndividualResponse.addressLine1,
+        addressLine2    = traceIndividualResponse.addressLine2,
+        addressPostcode = traceIndividualResponse.addressPostcode
+      ))
+    }
+
 }

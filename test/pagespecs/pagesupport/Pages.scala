@@ -58,6 +58,7 @@ class Pages(baseUrl: String)(implicit webDriver: WebDriver) {
 
   val refundRequestNotSubmittedPage = new RefundRequestNotSubmittedPage(baseUrl = baseUrl)
   val verifyingBankAccountPage = new VerifyingBankAccountPage(baseUrl       = baseUrl, consentStatus = ConsentStatus.Authorised, TdAll.tdAll.consentId, TdAll.tdAll.bankReferenceId)
+  def verifyingBankAccountPageConsent(consentStatusInput: ConsentStatus = ConsentStatus.Authorised) = new VerifyingBankAccountPage(baseUrl       = baseUrl, consentStatus = consentStatusInput, TdAll.tdAll.consentId, TdAll.tdAll.bankReferenceId)
 
   //bank transfer specific page
   val chooseAnotherWayToReceiveYourRefundPage = new ChooseAnotherWayToReceiveYourRefundPage(baseUrl = baseUrl)
