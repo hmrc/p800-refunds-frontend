@@ -22,7 +22,7 @@ import play.api.libs.json.{Json, OFormat}
 final case class MakeBacsRepaymentRequest(
     paymentNumber:            P800Reference,
     currentOptimisticLock:    CurrentOptimisticLock,
-    reconciliationIdentifier: ReconciliationIdentifier,
+    reconciliationIdentifier: Option[ReconciliationIdentifier],
     associatedPayableNumber:  AssociatedPayableNumber,
     payeeBankAccountNumber:   PayeeBankAccountNumber,
     payeeBankSortCode:        PayeeBankSortCode,
