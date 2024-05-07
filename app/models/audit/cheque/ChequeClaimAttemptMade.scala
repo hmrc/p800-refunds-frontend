@@ -36,9 +36,9 @@ final case class RepaymentInformation(
     paymentNumber:            P800Reference,
     customerAccountNumber:    CustomerAccountNumber,
     associatedPayableNumber:  AssociatedPayableNumber,
-    reconciliationIdentifier: ReconciliationIdentifier,
-    payeNumber:               PayeNumber,
-    taxDistrictNumber:        TaxDistrictNumber
+    reconciliationIdentifier: Option[ReconciliationIdentifier],
+    payeNumber:               Option[PayeNumber],
+    taxDistrictNumber:        Option[TaxDistrictNumber]
 )
 
 object ChequeClaimAttemptMade {
