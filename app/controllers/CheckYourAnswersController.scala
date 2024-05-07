@@ -25,7 +25,7 @@ import models.{Nino, UserEnteredP800Reference}
 import nps.models.{TraceIndividualRequest, TracedIndividual, ValidateReferenceResult}
 import play.api.mvc._
 import requests.RequestSupport
-import services.{FailedVerificationAttemptService, JourneyService}
+import services.{AuditService, FailedVerificationAttemptService, JourneyService}
 import uk.gov.hmrc.govukfrontend.views.Aliases.{HtmlContent, Key, SummaryListRow, Value}
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryList
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
@@ -42,6 +42,7 @@ import scala.concurrent.{ExecutionContext, Future}
 class CheckYourAnswersController @Inject() (
     mcc:                              MessagesControllerComponents,
     requestSupport:                   RequestSupport,
+    auditService:                     AuditService,
     journeyService:                   JourneyService,
     views:                            Views,
     actions:                          Actions,
@@ -110,8 +111,12 @@ class CheckYourAnswersController @Inject() (
             ).map(Some(_))
           case JourneyType.Cheque => Future.successful(None)
         }
+        attemptInfo <- failedVerificationAttemptService.find()
         journey <- journeyService.upsert(journey.update(maybeTraceIndividualResponse = maybeTraceIndividualResponse))
-      } yield Redirect(controllers.YourIdentityIsConfirmedController.redirectLocation(journey))
+      } yield {
+        auditService.auditValidateUserDetails(journey      = journey, attemptInfo = attemptInfo, isSuccessful = true)(request, hc)
+        Redirect(controllers.YourIdentityIsConfirmedController.redirectLocation(journey))
+      }
 
     }
 
@@ -140,20 +145,27 @@ class CheckYourAnswersController @Inject() (
         case ValidateReferenceResult.RefundAlreadyTaken =>
           journeyService
             .upsert(r.journey.update(HasFinished.YesRefundAlreadyTaken))
-            .map { _ =>
+            .map { j =>
               JourneyLogger.info("NPS indicate that refund has already been claimed")
+              auditService.auditValidateUserDetails(journey      = j, attemptInfo = None, isSuccessful = false)(request, hc)
               Some(Redirect(routes.ThereIsAProblemController.get))
             }
         case ValidateReferenceResult.ReferenceDidntMatchNino =>
           for {
-            shouldBeLockedOut <- failedVerificationAttemptService.updateNumberOfFailedAttempts()
+            (shouldBeLockedOut, attemptInfo) <- failedVerificationAttemptService.updateNumberOfFailedAttempts()
             result <- if (shouldBeLockedOut) {
               journeyService
                 .upsert(r.journey.copy(hasFinished = HasFinished.YesLockedOut))
-                .map(j => Some(Redirect(controllers.NoMoreAttemptsLeftToConfirmYourIdentityController.redirectLocation(j))))
+                .map { j =>
+                  auditService.auditValidateUserDetails(journey      = j, attemptInfo = Some(attemptInfo), isSuccessful = false)(request, hc)
+                  Some(Redirect(controllers.NoMoreAttemptsLeftToConfirmYourIdentityController.redirectLocation(j)))
+                }
             } else journeyService
               .upsert(r.journey)
-              .map(j => Some(Redirect(controllers.CannotConfirmYourIdentityTryAgainController.redirectLocation(j))))
+              .map { j =>
+                auditService.auditValidateUserDetails(journey      = j, attemptInfo = Some(attemptInfo), isSuccessful = false)(request, hc)
+                Some(Redirect(controllers.CannotConfirmYourIdentityTryAgainController.redirectLocation(j)))
+              }
           } yield result
       }
     }

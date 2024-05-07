@@ -51,12 +51,12 @@ class FailedVerificationAttemptService @Inject() (
   /**
    * Returns if user should be locked out after update.
    */
-  def updateNumberOfFailedAttempts()(implicit requestHeader: RequestHeader): Future[Boolean] = {
+  def updateNumberOfFailedAttempts()(implicit requestHeader: RequestHeader): Future[(Boolean, AttemptInfo)] = {
     for {
       maybeAttemptInfo <- failedVerificationAttemptRepo.findByIpAddress(trueClientIpAddress)
       newAttemptInfo: AttemptInfo = maybeAttemptInfo.fold(AttemptInfo.newAttemptInfo(trueClientIpAddress))(a => a.incrementAttemptNumberByOne)
       attemptInfoAfterUpsert: AttemptInfo <- failedVerificationAttemptRepo.upsert(newAttemptInfo).map(_ => newAttemptInfo)
-    } yield AttemptInfo.shouldBeLockedOut(attemptInfoAfterUpsert, appConfig.FailedAttemptRepo.failedAttemptRepoMaxAttempts)
+    } yield (AttemptInfo.shouldBeLockedOut(attemptInfoAfterUpsert, appConfig.FailedAttemptRepo.failedAttemptRepoMaxAttempts), attemptInfoAfterUpsert)
   }
 
   def drop(): Future[Unit] = failedVerificationAttemptRepo.drop()
