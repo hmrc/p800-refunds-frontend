@@ -34,10 +34,10 @@ object ValidateReferenceResult {
   //TODO case object RefundSuspended extends ReferenceCheckResult
 
   final case class P800ReferenceChecked(
-      reconciliationIdentifier: ReconciliationIdentifier,
+      reconciliationIdentifier: Option[ReconciliationIdentifier],
       paymentNumber:            P800Reference,
-      payeNumber:               PayeNumber,
-      taxDistrictNumber:        TaxDistrictNumber,
+      payeNumber:               Option[PayeNumber],
+      taxDistrictNumber:        Option[TaxDistrictNumber],
       paymentAmount:            BigDecimal,
       associatedPayableNumber:  AssociatedPayableNumber,
       customerAccountNumber:    CustomerAccountNumber,

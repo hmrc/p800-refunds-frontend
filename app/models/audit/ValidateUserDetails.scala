@@ -80,10 +80,10 @@ object UserEnteredDetails {
 }
 
 final case class RepaymentInformation(
-    reconciliationIdentifier: ReconciliationIdentifier,
+    reconciliationIdentifier: Option[ReconciliationIdentifier],
     paymentNumber:            P800Reference,
-    payeNumber:               PayeNumber,
-    taxDistrictNumber:        TaxDistrictNumber,
+    payeNumber:               Option[PayeNumber],
+    taxDistrictNumber:        Option[TaxDistrictNumber],
     associatedPayableNumber:  AssociatedPayableNumber,
     customerAccountNumber:    CustomerAccountNumber,
     currentOptimisticLock:    CurrentOptimisticLock

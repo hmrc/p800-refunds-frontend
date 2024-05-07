@@ -289,9 +289,9 @@ class VerifyingYourBankAccountController @Inject() (
         accountExists         = None,
         subjectHasDeceased    = None,
         nonConsented          = None,
-        reconciliationId      = Some(journey.getP800ReferenceChecked.reconciliationIdentifier),
-        taxDistrictNumber     = Some(journey.getP800ReferenceChecked.taxDistrictNumber),
-        payeNumber            = Some(journey.getP800ReferenceChecked.payeNumber)
+        reconciliationId      = journey.getP800ReferenceChecked.reconciliationIdentifier,
+        taxDistrictNumber     = journey.getP800ReferenceChecked.taxDistrictNumber,
+        payeNumber            = journey.getP800ReferenceChecked.payeNumber
       )
 
       r.validate.fold(())(validationProblem =>

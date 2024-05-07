@@ -71,10 +71,10 @@ trait TdBase {
 
   lazy val associatedPayableNumber: AssociatedPayableNumber = AssociatedPayableNumber(1234)
   lazy val p800ReferenceChecked: P800ReferenceChecked = ValidateReferenceResult.P800ReferenceChecked(
-    reconciliationIdentifier = reconciliationIdentifier,
+    reconciliationIdentifier = Some(reconciliationIdentifier),
     paymentNumber            = p800Reference,
-    payeNumber               = PayeNumber("PayeNumber-123"),
-    taxDistrictNumber        = TaxDistrictNumber(717),
+    payeNumber               = Some(PayeNumber("PayeNumber-123")),
+    taxDistrictNumber        = Some(TaxDistrictNumber(717)),
     paymentAmount            = paymentAmount,
     associatedPayableNumber  = associatedPayableNumber,
     customerAccountNumber    = CustomerAccountNumber("customerAccountNumber-1234"),
@@ -191,7 +191,7 @@ trait TdBase {
   lazy val suspendOverpaymentRequest: SuspendOverpaymentRequest = SuspendOverpaymentRequest(
     paymentNumber            = p800Reference,
     currentOptimisticLock    = currentOptimisticLock,
-    reconciliationIdentifier = reconciliationIdentifier,
+    reconciliationIdentifier = Some(reconciliationIdentifier),
     associatedPayableNumber  = associatedPayableNumber,
     payeeBankAccountNumber   = payeeBankAccountNumber,
     payeeBankSortCode        = payeeBankSortCode,
@@ -202,7 +202,7 @@ trait TdBase {
   lazy val claimOverpaymentRequest: MakeBacsRepaymentRequest = MakeBacsRepaymentRequest(
     paymentNumber            = p800Reference,
     currentOptimisticLock    = currentOptimisticLock,
-    reconciliationIdentifier = reconciliationIdentifier,
+    reconciliationIdentifier = Some(reconciliationIdentifier),
     associatedPayableNumber  = associatedPayableNumber,
     payeeBankAccountNumber   = payeeBankAccountNumber,
     payeeBankSortCode        = payeeBankSortCode,
