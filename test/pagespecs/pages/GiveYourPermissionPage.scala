@@ -24,8 +24,8 @@ class GiveYourPermissionPage(baseUrl: String)(implicit webDriver: WebDriver) ext
   path = "/get-an-income-tax-refund/bank-transfer/give-your-permission"
 ) {
 
-  override def expectedH1: String = "Give your permission"
-  override def expectedWelshH1: String = "Rhoi’ch caniatâd"
+  override def expectedH1: String = "Give your consent"
+  override def expectedWelshH1: String = "Rhowch eich caniatâd"
 
   override def assertPageIsDisplayed(errors: ContentExpectation*): Unit = withPageClue {
     val contentExpectations: Seq[ContentExpectation] = Seq(ContentExpectation(
