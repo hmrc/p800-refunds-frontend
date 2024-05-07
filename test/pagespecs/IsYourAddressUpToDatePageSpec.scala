@@ -18,8 +18,9 @@ package pagespecs
 
 import models.journeymodels.Journey
 import nps.models.IssuePayableOrderRequest
+import play.api.libs.json.{JsObject, Json}
 import testsupport.ItSpec
-import testsupport.stubs.NpsIssuePayableOrderStub
+import testsupport.stubs.{AuditConnectorStub, NpsIssuePayableOrderStub}
 
 class IsYourAddressUpToDatePageSpec extends ItSpec {
 
@@ -39,7 +40,7 @@ class IsYourAddressUpToDatePageSpec extends ItSpec {
     }
 
     "selecting 'Yes' and submitting redirects to" - {
-      "'Cheque Request received' page when API calls succeed" in {
+      "'Cheque Request received' page when API calls succeed, auditing ChequeClaimAttemptMade" in {
         NpsIssuePayableOrderStub.`issuePayableOrder 200`(
           journey.nino.value,
           tdAll.p800Reference,
@@ -57,10 +58,34 @@ class IsYourAddressUpToDatePageSpec extends ItSpec {
 
         pages.requestReceivedChequePage.assertPageIsDisplayedForCheque()
         NpsIssuePayableOrderStub.verify(journey.nino.value, tdAll.p800Reference, tdAll.correlationId)
+        AuditConnectorStub.verifyEventAudited(
+          AuditConnectorStub.chequeClaimAttemptMadeAuditType,
+          Json.parse(
+            //language=JSON
+            s"""
+                {
+                  "userEnteredDetails": {
+                    "p800Reference" : 12345678,
+                    "nino" : "LM001014C"
+                  },
+                  "repaymentAmount": 12.34,
+                  "isSuccessful": true,
+                  "repaymentInformation": {
+                    "paymentNumber": 12345678,
+                    "customerAccountNumber": "customerAccountNumber-1234",
+                    "associatedPayableNumber": 1234,
+                    "reconciliationIdentifier": 123,
+                    "payeNumber": "PayeNumber-123",
+                    "taxDistrictNumber": 717
+                  }
+                }
+            """.stripMargin
+          ).as[JsObject]
+        )
         getJourneyFromDatabase(journey.journeyId) shouldBeLike tdAll.Cheque.journeyClaimedOverpayment
       }
 
-      "'Technical difficulties' when API call fails we don't update the journey state" in {
+      "'Technical difficulties' when API call fails we don't update the journey state, auditing ChequeClaimAttemptMade" in {
         NpsIssuePayableOrderStub.`issuePayableOrder 5xx refundAlreadyTaken`(
           journey.nino.value,
           tdAll.p800Reference,
@@ -78,6 +103,31 @@ class IsYourAddressUpToDatePageSpec extends ItSpec {
 
         pages.isYourAddressUpToDate.assertPageIsDisplayedWithTechnicalDifficultiesError()
         NpsIssuePayableOrderStub.verify(journey.nino.value, tdAll.p800Reference, tdAll.correlationId)
+        AuditConnectorStub.verifyEventAudited(
+          AuditConnectorStub.chequeClaimAttemptMadeAuditType,
+          Json.parse(
+            //language=JSON
+            s"""
+                {
+                  "userEnteredDetails": {
+                    "p800Reference" : 12345678,
+                    "nino" : "LM001014C"
+                  },
+                  "repaymentAmount": 12.34,
+                  "isSuccessful": false,
+                  "repaymentInformation": {
+                    "paymentNumber": 12345678,
+                    "customerAccountNumber": "customerAccountNumber-1234",
+                    "associatedPayableNumber": 1234,
+                    "reconciliationIdentifier": 123,
+                    "payeNumber": "PayeNumber-123",
+                    "taxDistrictNumber": 717
+                  }
+                }
+            """.stripMargin
+          ).as[JsObject]
+        )
+
         getJourneyFromDatabase(journey.journeyId) shouldBeLike journey withClue "journey was not updated"
       }
     }
@@ -90,6 +140,7 @@ class IsYourAddressUpToDatePageSpec extends ItSpec {
 
       pages.updateYourAddressPage.assertPageIsDisplayed()
       NpsIssuePayableOrderStub.verifyNone(journey.nino.value, journey.p800Reference.value.sanitiseReference)
+      AuditConnectorStub.verifyNoAuditEvent(AuditConnectorStub.chequeClaimAttemptMadeAuditType)
       getJourneyFromDatabase(tdAll.journeyId) shouldBeLike tdAll.Cheque.AfterReferenceCheck.journeyReferenceChecked
     }
 
@@ -100,6 +151,7 @@ class IsYourAddressUpToDatePageSpec extends ItSpec {
       pages.isYourAddressUpToDate.assertPageIsDisplayedWithError()
 
       NpsIssuePayableOrderStub.verifyNone(journey.nino.value, journey.p800Reference.value.sanitiseReference)
+      AuditConnectorStub.verifyNoAuditEvent(AuditConnectorStub.chequeClaimAttemptMadeAuditType)
       getJourneyFromDatabase(tdAll.journeyId) shouldBeLike tdAll.Cheque.AfterReferenceCheck.journeyReferenceChecked
     }
 

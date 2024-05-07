@@ -19,7 +19,7 @@ package services
 import models.AmountInPence
 import models.audit._
 import models.journeymodels.Journey
-import nps.models.{ValidateReferenceResult, TracedIndividual}
+import nps.models.{TracedIndividual, ValidateReferenceResult}
 import play.api.libs.json.{Json, Writes}
 import play.api.mvc.RequestHeader
 import uk.gov.hmrc.http.HeaderCarrier
@@ -28,6 +28,7 @@ import uk.gov.hmrc.play.audit.http.connector.AuditConnector
 import uk.gov.hmrc.play.audit.model.ExtendedDataEvent
 import models.attemptmodels.{AttemptInfo, NumberOfAttempts}
 import config.AppConfig
+import models.audit.cheque.ChequeClaimAttemptMade
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.ExecutionContext
@@ -60,6 +61,10 @@ class AuditService @Inject() (
 
   def auditValidateUserDetails(journey: Journey, attemptInfo: Option[AttemptInfo], isSuccessful: Boolean)(implicit requestHeader: RequestHeader, hc: HeaderCarrier): Unit =
     audit(toValidateUserDetails(journey, attemptInfo, IsSuccessful(isSuccessful)))
+
+  def auditChequeClaimAttemptMade(journey: Journey, isSuccessful: IsSuccessful)(implicit requestHeader: RequestHeader, hc: HeaderCarrier): Unit = {
+    audit(toChequeClaimAttemptMade(journey, isSuccessful))
+  }
 
   private def toValidateUserDetails(journey: Journey, attemptInfo: Option[AttemptInfo], isSuccessful: IsSuccessful)(implicit requestHeader: RequestHeader): ValidateUserDetails =
     ValidateUserDetails(
@@ -140,5 +145,25 @@ class AuditService @Inject() (
         addressPostcode = traceIndividualResponse.addressPostcode
       ))
     }
+
+  private def toChequeClaimAttemptMade(journey: Journey, isSuccessful: IsSuccessful)(implicit requestHeader: RequestHeader): ChequeClaimAttemptMade = {
+    val referenceCheckResult: ValidateReferenceResult.P800ReferenceChecked = journey.getP800ReferenceChecked
+    ChequeClaimAttemptMade(
+      userEnteredDetails   = models.audit.cheque.UserEnteredDetails(
+        p800Reference = referenceCheckResult.paymentNumber,
+        nino          = journey.getNino
+      ),
+      repaymentAmount      = models.audit.cheque.RepaymentAmount(referenceCheckResult.paymentAmount),
+      isSuccessful         = isSuccessful,
+      repaymentInformation = models.audit.cheque.RepaymentInformation(
+        paymentNumber            = referenceCheckResult.paymentNumber,
+        customerAccountNumber    = referenceCheckResult.customerAccountNumber,
+        associatedPayableNumber  = referenceCheckResult.associatedPayableNumber,
+        reconciliationIdentifier = referenceCheckResult.reconciliationIdentifier,
+        payeNumber               = referenceCheckResult.payeNumber,
+        taxDistrictNumber        = referenceCheckResult.taxDistrictNumber
+      )
+    )
+  }
 
 }

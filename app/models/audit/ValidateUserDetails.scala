@@ -53,13 +53,6 @@ object Outcome {
   implicit val format: OFormat[Outcome] = Json.format[Outcome]
 }
 
-final case class IsSuccessful(value: Boolean) extends AnyVal
-
-object IsSuccessful {
-  @SuppressWarnings(Array("org.wartremover.warts.Any"))
-  implicit val format: Format[IsSuccessful] = Json.valueFormat[IsSuccessful]
-}
-
 final case class LockedOut(value: Boolean) extends AnyVal
 
 object LockedOut {

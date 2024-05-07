@@ -14,12 +14,13 @@
  * limitations under the License.
  */
 
-package nps.models
+package models.audit
 
 import play.api.libs.json.{Format, Json}
 
-final case class AssociatedPayableNumber(value: Int) extends AnyVal
+final case class IsSuccessful(value: Boolean) extends AnyVal
 
-object AssociatedPayableNumber {
-  implicit val format: Format[AssociatedPayableNumber] = Json.valueFormat[AssociatedPayableNumber]
+object IsSuccessful {
+  @SuppressWarnings(Array("org.wartremover.warts.Any"))
+  implicit val format: Format[IsSuccessful] = Json.valueFormat[IsSuccessful]
 }

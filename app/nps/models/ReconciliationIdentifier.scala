@@ -18,7 +18,7 @@ package nps.models
 
 import play.api.libs.json.{Format, Json}
 
-final case class ReconciliationIdentifier(value: Int)
+final case class ReconciliationIdentifier(value: Int) extends AnyVal
 
 object ReconciliationIdentifier {
   implicit val format: Format[ReconciliationIdentifier] = Json.valueFormat[ReconciliationIdentifier]
