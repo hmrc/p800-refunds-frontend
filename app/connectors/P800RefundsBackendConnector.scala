@@ -20,10 +20,13 @@ import casemanagement.{CaseManagementRequest, ClientUId}
 import com.google.inject.{Inject, Singleton}
 import config.AppConfig
 import edh.{ClaimId, GetBankDetailsRiskResultRequest, GetBankDetailsRiskResultResponse}
+import models.audit.IsSuccessful
+import models.journeymodels.Journey
 import models.{CorrelationId, Nino, P800Reference}
 import nps.models._
 import play.api.mvc.RequestHeader
 import requests.RequestSupport.hc
+import services.AuditService
 import uk.gov.hmrc.http.HttpReads.Implicits._
 import uk.gov.hmrc.http.{HttpClient, HttpReads, HttpResponse, UpstreamErrorResponse}
 import util.{HttpResponseUtils, JourneyLogger}
@@ -32,8 +35,9 @@ import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class P800RefundsBackendConnector @Inject() (
-    appConfig:  AppConfig,
-    httpClient: HttpClient
+    appConfig:    AppConfig,
+    auditService: AuditService,
+    httpClient:   HttpClient
 )(implicit executionContext: ExecutionContext) {
 
   private val baseUrl: String = appConfig.P800RefundsBackend.p800RefundsBackendBaseUrl + "/p800-refunds-backend"
@@ -94,7 +98,7 @@ class P800RefundsBackendConnector @Inject() (
       p800Reference:            P800Reference,
       issuePayableOrderRequest: IssuePayableOrderRequest,
       correlationId:            CorrelationId
-  )(implicit requestHeader: RequestHeader): Future[Unit] = {
+  )(journey: Journey)(implicit requestHeader: RequestHeader): Future[Unit] = {
     JourneyLogger.info("Issuing payable order")
 
     implicit val readUnit: HttpReads[Unit] = HttpResponseUtils.httpReadsUnit
@@ -103,7 +107,10 @@ class P800RefundsBackendConnector @Inject() (
       url     = s"$baseUrl/nps/issue-payable-order/${nino.value}/${p800Reference.value.toString}",
       body    = issuePayableOrderRequest,
       headers = makeHeaders(correlationId)
-    )
+    ).recoverWith { _ =>
+        auditService.auditChequeClaimAttemptMade(journey, isSuccessful = IsSuccessful(false))(requestHeader, hc)
+        throw new RuntimeException("Error when submitting Cheque issue payable order")
+      }
   }
 
   private def getBankDetailsRiskResultUrl(claimId: ClaimId): String = baseUrl +

@@ -18,7 +18,7 @@ package nps.models
 
 import play.api.libs.json.{Format, Json}
 
-final case class CustomerAccountNumber(value: String)
+final case class CustomerAccountNumber(value: String) extends AnyVal
 
 object CustomerAccountNumber {
   implicit val format: Format[CustomerAccountNumber] = Json.valueFormat[CustomerAccountNumber]

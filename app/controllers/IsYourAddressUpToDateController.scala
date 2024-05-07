@@ -21,10 +21,11 @@ import models.forms.IsYourAddressUpToDateForm
 import models.forms.enumsforforms.IsYourAddressUpToDateFormValue
 import models.journeymodels.{HasFinished, Journey, JourneyType}
 import connectors.P800RefundsBackendConnector
+import models.audit.IsSuccessful
 import nps.models.IssuePayableOrderRequest
 import play.api.mvc._
 import requests.RequestSupport
-import services.JourneyService
+import services.{AuditService, JourneyService}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import util.Errors
 import util.SafeEquals.EqualsOps
@@ -36,6 +37,7 @@ import scala.concurrent.{ExecutionContext, Future}
 @Singleton
 class IsYourAddressUpToDateController @Inject() (
     actions:                     Actions,
+    auditService:                AuditService,
     p800RefundsBackendConnector: P800RefundsBackendConnector,
     journeyService:              JourneyService,
     mcc:                         MessagesControllerComponents,
@@ -69,10 +71,11 @@ class IsYourAddressUpToDateController @Inject() (
                 currentOptimisticLock   = journey.getP800ReferenceChecked.currentOptimisticLock
               ),
               correlationId            = journey.correlationId
-            )
+            )(journey)
             _ <- journeyService.upsert(
               journey.copy(hasFinished = HasFinished.YesSucceeded)
             )
+            _ = auditService.auditChequeClaimAttemptMade(journey, IsSuccessful(true))(journeyRequest.request, hc)
           } yield Redirect(controllers.routes.RequestReceivedController.getCheque)
 
         case IsYourAddressUpToDateFormValue.No =>

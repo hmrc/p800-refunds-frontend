@@ -45,5 +45,7 @@ object AuditConnectorStub {
           equalToJson(s"""{ "auditType": "${auditType}" }""", true, true)
         )
     )
+    
+  val chequeClaimAttemptMadeAuditType: String = "ChequeClaimAttemptMade"
 
 }
