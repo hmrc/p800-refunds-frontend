@@ -16,6 +16,7 @@
 
 package services
 
+import models.audit.{NameMatchOutcome, NameMatchingAudit, RawNpsName}
 import models.namematching._
 import org.apache.commons.text.similarity.LevenshteinDetailedDistance
 import play.api.mvc.RequestHeader
@@ -31,7 +32,7 @@ object NameMatchingService {
       npsOptSecondName: Option[String],
       npsSurname:       String,
       ecospendName:     String
-  )(implicit request: RequestHeader): NameMatchingResponse = {
+  )(implicit request: RequestHeader): (NameMatchingResponse, NameMatchingAudit) = {
 
     val sanitisedNpsName = sanitiseFullName(s"${npsOptFirstName.getOrElse("")} ${npsOptSecondName.getOrElse("")} $npsSurname")
     val sanitisedEcospendName = sanitiseFullName(ecospendName)
@@ -47,17 +48,55 @@ object NameMatchingService {
     val doSurnamesMatch = npsSurnameFromSeq.mkString === ecoSurname
 
     (doSanitisedNamesMatch, doSurnamesMatch) match {
-      case (true, _) => BasicSuccessfulNameMatch
+      case (true, _) => (
+        BasicSuccessfulNameMatch,
+        NameMatchingAudit(
+          NameMatchOutcome(isSuccessful = true, BasicSuccessfulNameMatch.auditString),
+          RawNpsName(npsOptFirstName, npsOptSecondName, npsSurname),
+          ecospendName,
+          sanitisedNpsName,
+          fullEcospendName
+        )
+      )
       case (false, false) =>
         JourneyLogger.info(s"Failed Surname Match")
-        FailedBasicNameMatch
+        (
+          FailedSurnameMatch,
+          NameMatchingAudit(
+            NameMatchOutcome(isSuccessful = false, FailedSurnameMatch.auditString),
+            RawNpsName(npsOptFirstName, npsOptSecondName, npsSurname),
+            ecospendName,
+            sanitisedNpsName,
+            fullEcospendName
+          )
+        )
       case (false, true) =>
         val comparisonResult = compareFirstAndMiddleNames(npsListWithoutSurname, ecoListWithoutSurname)
         if (comparisonResult.didNamesMatch) {
           JourneyLogger.info(s"Successful First and Middle name Match")
-          FirstAndMiddleNameSuccessfulNameMatch
+          (
+            FirstAndMiddleNameSuccessfulNameMatch,
+            NameMatchingAudit(
+              NameMatchOutcome(isSuccessful = true, FirstAndMiddleNameSuccessfulNameMatch.auditString),
+              RawNpsName(npsOptFirstName, npsOptSecondName, npsSurname),
+              ecospendName,
+              s"${comparisonResult.npsNameWithInitials} ${npsSurnameFromSeq.mkString}",
+              s"${comparisonResult.ecospendNameWithInitials} $ecoSurname"
+            )
+          )
         } else {
-          isWithinLevenshteinDistance(comparisonResult.npsNameWithInitials, comparisonResult.ecospendNameWithInitials)
+          val (matchingResponse, levenshteinDistance, isSuccessful) = isWithinLevenshteinDistance(comparisonResult.npsNameWithInitials, comparisonResult.ecospendNameWithInitials)
+          (
+            matchingResponse,
+            NameMatchingAudit(
+              NameMatchOutcome(isSuccessful = isSuccessful, matchingResponse.auditString),
+              RawNpsName(npsOptFirstName, npsOptSecondName, npsSurname),
+              ecospendName,
+              s"${comparisonResult.npsNameWithInitials} ${npsSurnameFromSeq.mkString}",
+              s"${comparisonResult.ecospendNameWithInitials} $ecoSurname",
+              Some(levenshteinDistance)
+            )
+          )
         }
     }
   }
@@ -120,14 +159,14 @@ object NameMatchingService {
   }
 
   @SuppressWarnings(Array("org.wartremover.warts.AutoUnboxing"))
-  def isWithinLevenshteinDistance(name: String, comparisonName: String)(implicit request: RequestHeader): NameMatchingResponse = {
+  def isWithinLevenshteinDistance(name: String, comparisonName: String)(implicit request: RequestHeader): (NameMatchingResponse, Int, Boolean) = {
     val distance = LevenshteinDetailedDistance.getDefaultInstance.apply(name, comparisonName)
     if (distance.getDistance <= 1) {
       JourneyLogger.info("Successful Levenshtein Match")
-      LevenshteinSuccessfulNameMatch
+      (LevenshteinSuccessfulNameMatch, distance.getDistance, true)
     } else {
       JourneyLogger.info("Failed Levenshtein Match")
-      FailedComprehensiveNameMatch
+      (FailedComprehensiveNameMatch, distance.getDistance, false)
     }
   }
 }
