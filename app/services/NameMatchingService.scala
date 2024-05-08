@@ -53,9 +53,9 @@ object NameMatchingService {
         NameMatchingAudit(
           NameMatchOutcome(isSuccessful = true, BasicSuccessfulNameMatch.auditString),
           RawNpsName(npsOptFirstName, npsOptSecondName, npsSurname),
-          ecospendName,
-          sanitisedNpsName,
-          fullEcospendName
+          Some(ecospendName),
+          Some(sanitisedNpsName),
+          Some(fullEcospendName)
         )
       )
       case (false, false) =>
@@ -65,9 +65,9 @@ object NameMatchingService {
           NameMatchingAudit(
             NameMatchOutcome(isSuccessful = false, FailedSurnameMatch.auditString),
             RawNpsName(npsOptFirstName, npsOptSecondName, npsSurname),
-            ecospendName,
-            sanitisedNpsName,
-            fullEcospendName
+            Some(ecospendName),
+            Some(sanitisedNpsName),
+            Some(fullEcospendName)
           )
         )
       case (false, true) =>
@@ -79,9 +79,9 @@ object NameMatchingService {
             NameMatchingAudit(
               NameMatchOutcome(isSuccessful = true, FirstAndMiddleNameSuccessfulNameMatch.auditString),
               RawNpsName(npsOptFirstName, npsOptSecondName, npsSurname),
-              ecospendName,
-              s"${comparisonResult.npsNameWithInitials} ${npsSurnameFromSeq.mkString}",
-              s"${comparisonResult.ecospendNameWithInitials} $ecoSurname"
+              Some(ecospendName),
+              Some(s"${comparisonResult.npsNameWithInitials} ${npsSurnameFromSeq.mkString}"),
+              Some(s"${comparisonResult.ecospendNameWithInitials} $ecoSurname")
             )
           )
         } else {
@@ -91,9 +91,9 @@ object NameMatchingService {
             NameMatchingAudit(
               NameMatchOutcome(isSuccessful = isSuccessful, matchingResponse.auditString),
               RawNpsName(npsOptFirstName, npsOptSecondName, npsSurname),
-              ecospendName,
-              s"${comparisonResult.npsNameWithInitials} ${npsSurnameFromSeq.mkString}",
-              s"${comparisonResult.ecospendNameWithInitials} $ecoSurname",
+              Some(ecospendName),
+              Some(s"${comparisonResult.npsNameWithInitials} ${npsSurnameFromSeq.mkString}"),
+              Some(s"${comparisonResult.ecospendNameWithInitials} $ecoSurname"),
               Some(levenshteinDistance)
             )
           )

@@ -23,42 +23,42 @@ object TdAudit {
   val failedSurnameAudit: NameMatchingAudit = NameMatchingAudit(
     NameMatchOutcome(isSuccessful = false, "surname failed match"),
     RawNpsName(Some("Jennifer"), None, "Married"),
-    "Jennifer Maiden-Name",
-    "jennifer married",
-    "jennifer maiden name"
+    Some("Jennifer Maiden-Name"),
+    Some("jennifer married"),
+    Some("jennifer maiden name")
   )
 
   val failedComprehensiveAudit: NameMatchingAudit = NameMatchingAudit(
     NameMatchOutcome(isSuccessful = false, "comprehensive failed match"),
     RawNpsName(Some("K"), Some("J"), "Turner"),
-    "Jennifer Kate Turner",
-    "k j turner",
-    "j k turner",
+    Some("Jennifer Kate Turner"),
+    Some("k j turner"),
+    Some("j k turner"),
     Some(2)
   )
 
   val successfulBasicAudit: NameMatchingAudit = NameMatchingAudit(
     NameMatchOutcome(isSuccessful = true, "basic name match"),
     RawNpsName(Some("T"), None, "Patel"),
-    "T Patel",
-    "t patel",
-    "t patel"
+    Some("T Patel"),
+    Some("t patel"),
+    Some("t patel")
   )
 
   val successfulFirstMiddleAudit: NameMatchingAudit = NameMatchingAudit(
     NameMatchOutcome(isSuccessful = true, "First and middle name match"),
     RawNpsName(Some("Paul"), Some("James"), "Rubens"),
-    "Paul James John Rubens",
-    "paul james rubens",
-    "paul james rubens"
+    Some("Paul James John Rubens"),
+    Some("paul james rubens"),
+    Some("paul james rubens")
   )
 
   val successfulLevenshteinAudit: NameMatchingAudit = NameMatchingAudit(
     NameMatchOutcome(isSuccessful = true, "Levenshtein name match"),
     RawNpsName(Some("Paula"), Some("James"), "Rubens"),
-    "Paul James Rubens",
-    "paula james rubens",
-    "paul james rubens",
+    Some("Paul James Rubens"),
+    Some("paula james rubens"),
+    Some("paul james rubens"),
     Some(1)
   )
 }

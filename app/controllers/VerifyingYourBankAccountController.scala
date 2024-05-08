@@ -79,9 +79,9 @@ class VerifyingYourBankAccountController @Inject() (
           individualResponse.secondForename,
           individualResponse.surname
         ),
-        "n/a",
-        "n/a",
-        "n/a"
+        rawBankName         = None,
+        transformedNpsName  = None,
+        transformedBankName = None
       )
       auditService.auditNameMatching(emptyListAudit)
       false

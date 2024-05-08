@@ -41,9 +41,9 @@ final case class NameMatchOutcome(isSuccessful: Boolean, category: String)
 final case class NameMatchingAudit(
     outcome:             NameMatchOutcome,
     rawNpsName:          RawNpsName,
-    rawBankName:         String,
-    transformedNpsName:  String,
-    transformedBankName: String,
+    rawBankName:         Option[String],
+    transformedNpsName:  Option[String],
+    transformedBankName: Option[String],
     levenshteinDistance: Option[Int]      = None
 ) extends AuditDetail {
   override val auditType: String = "FuzzyNameMatchingEvent"
