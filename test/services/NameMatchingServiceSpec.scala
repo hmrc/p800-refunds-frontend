@@ -30,6 +30,7 @@ class NameMatchingServiceSpec extends UnitSpec with TdRequest {
     ("Jennifer"     , ""            , "Married"       , "Jennifer Maiden-Name"      , FailedBasicNameMatch), //Different married vs maiden names
     ("K"            , "J"           , "Turner"        , "Jennifer Kate Turner"      , FailedComprehensiveNameMatch), //Wrong initials
     ("P"            , ""            , "Turner"        , "Jane Turner"               , FailedComprehensiveNameMatch), //Wrong initial
+    ("Paul"         , ""            , "Turner"        , "J Turner"                  , FailedComprehensiveNameMatch), //Wrong initial
     (""             , "P"           , "Turner"        , "Jane Turner"               , FailedComprehensiveNameMatch), //Wrong initial
     ("P"            , "J"           , "Turner"        , "Pauline Kate Turner"       , FailedComprehensiveNameMatch), //Wrong initial
     ("Tom"          , ""            , "Griffith"      , "Thomas Griffith"           , FailedComprehensiveNameMatch), //Tom is not Thomas
