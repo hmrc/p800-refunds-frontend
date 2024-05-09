@@ -182,16 +182,10 @@ class CheckYourAnswersPageSpec extends ItSpec {
               "reasons": []
             },
             "userEnteredDetails": {
-              "repaymentMethod": {
-                "BankTransfer": {}
-              },
+              "repaymentMethod": "bank",
               "p800Reference": 12345678,
               "nino": "LM001014C",
-              "dob": {
-                "dayOfMonth": "1",
-                "month": "1",
-                "year": "2000"
-              }
+              "dob": "2000-01-01"
             },
             "repaymentAmount": 1234,
             "repaymentInformation": {
@@ -230,9 +224,7 @@ class CheckYourAnswersPageSpec extends ItSpec {
               "reasons": []
             },
             "userEnteredDetails": {
-              "repaymentMethod": {
-                "Cheque": {}
-              },
+              "repaymentMethod": "cheque",
               "p800Reference": 12345678,
               "nino": "LM001014C"
             },
@@ -311,16 +303,10 @@ class CheckYourAnswersPageSpec extends ItSpec {
               "reasons": []
             },
             "userEnteredDetails": {
-              "repaymentMethod": {
-                "BankTransfer": {}
-              },
+              "repaymentMethod": "bank",
               "p800Reference": 12345678,
               "nino": "LM001014C",
-              "dob": {
-                "dayOfMonth": "1",
-                "month": "1",
-                "year": "2000"
-              }
+              "dob": "2000-01-01"
             }
           }
           """.stripMargin
@@ -356,9 +342,7 @@ class CheckYourAnswersPageSpec extends ItSpec {
               "reasons": []
             },
             "userEnteredDetails": {
-              "repaymentMethod": {
-                "Cheque": {}
-              },
+              "repaymentMethod": "cheque",
               "p800Reference": 12345678,
               "nino": "LM001014C"
             }
@@ -428,16 +412,10 @@ class CheckYourAnswersPageSpec extends ItSpec {
               "reasons": []
             },
             "userEnteredDetails": {
-              "repaymentMethod": {
-                "BankTransfer": {}
-              },
+              "repaymentMethod": "bank",
               "p800Reference": 12345678,
               "nino": "LM001014C",
-              "dob": {
-                "dayOfMonth": "1",
-                "month": "1",
-                "year": "2000"
-              }
+              "dob": "2000-01-01"
             }
           }
           """.stripMargin
@@ -471,9 +449,7 @@ class CheckYourAnswersPageSpec extends ItSpec {
               "reasons": []
             },
             "userEnteredDetails": {
-              "repaymentMethod": {
-                "Cheque": {}
-              },
+              "repaymentMethod": "cheque",
               "p800Reference": 12345678,
               "nino": "LM001014C"
             }
@@ -518,16 +494,10 @@ class CheckYourAnswersPageSpec extends ItSpec {
               "reasons": []
             },
             "userEnteredDetails": {
-              "repaymentMethod": {
-                "BankTransfer": {}
-              },
+              "repaymentMethod": "bank",
               "p800Reference": 12345678,
               "nino": "LM001014C",
-              "dob": {
-                "dayOfMonth": "1",
-                "month": "1",
-                "year": "2000"
-              }
+              "dob": "2000-01-01"
             }
           }
           """.stripMargin
@@ -558,9 +528,7 @@ class CheckYourAnswersPageSpec extends ItSpec {
               "reasons": []
             },
             "userEnteredDetails": {
-              "repaymentMethod": {
-                "Cheque": {}
-              },
+              "repaymentMethod": "cheque",
               "p800Reference": 12345678,
               "nino": "LM001014C"
             }

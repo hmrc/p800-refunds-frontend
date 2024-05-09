@@ -22,7 +22,7 @@ import models.journeymodels.JourneyType
 import models.attemptmodels.NumberOfAttempts
 import models.{AmountInPence, P800Reference, Nino}
 import nps.models.{ReconciliationIdentifier, PayeNumber, TaxDistrictNumber, AssociatedPayableNumber, CustomerAccountNumber, CurrentOptimisticLock}
-import play.api.libs.json.{Json, OFormat, Format}
+import play.api.libs.json.{Json, OWrites, Writes, JsString}
 
 final case class ValidateUserDetails(
     outcome:              Outcome,
@@ -37,7 +37,7 @@ final case class ValidateUserDetails(
 
 object ValidateUserDetails {
   @SuppressWarnings(Array("org.wartremover.warts.Any"))
-  implicit val format: OFormat[ValidateUserDetails] = Json.format[ValidateUserDetails]
+  implicit val writes: OWrites[ValidateUserDetails] = Json.writes[ValidateUserDetails]
 }
 
 final case class Outcome(
@@ -50,14 +50,14 @@ final case class Outcome(
 
 object Outcome {
   @SuppressWarnings(Array("org.wartremover.warts.Any"))
-  implicit val format: OFormat[Outcome] = Json.format[Outcome]
+  implicit val writes: OWrites[Outcome] = Json.writes[Outcome]
 }
 
 final case class LockedOut(value: Boolean) extends AnyVal
 
 object LockedOut {
   @SuppressWarnings(Array("org.wartremover.warts.Any"))
-  implicit val format: Format[LockedOut] = Json.valueFormat[LockedOut]
+  implicit val writes: Writes[LockedOut] = Json.valueWrites[LockedOut]
 }
 
 final case class UserEnteredDetails(
@@ -68,8 +68,15 @@ final case class UserEnteredDetails(
 )
 
 object UserEnteredDetails {
+  implicit val journeyTypeWrites: Writes[JourneyType] = Writes(journeyType => journeyType match {
+    case JourneyType.BankTransfer => JsString("bank")
+    case JourneyType.Cheque       => JsString("cheque")
+  })
+
+  implicit val dateOfBirthWrites: Writes[DateOfBirth] = Writes(dateOfBirth => JsString(dateOfBirth.`formatYYYY-MM-DD`))
+
   @SuppressWarnings(Array("org.wartremover.warts.Any"))
-  implicit val format: OFormat[UserEnteredDetails] = Json.format[UserEnteredDetails]
+  implicit val writes: OWrites[UserEnteredDetails] = Json.writes[UserEnteredDetails]
 }
 
 final case class RepaymentInformation(
@@ -84,7 +91,7 @@ final case class RepaymentInformation(
 
 object RepaymentInformation {
   @SuppressWarnings(Array("org.wartremover.warts.Any"))
-  implicit val format: OFormat[RepaymentInformation] = Json.format[RepaymentInformation]
+  implicit val writes: OWrites[RepaymentInformation] = Json.writes[RepaymentInformation]
 }
 
 final case class Name(
@@ -96,7 +103,7 @@ final case class Name(
 
 object Name {
   @SuppressWarnings(Array("org.wartremover.warts.Any"))
-  implicit val format: OFormat[Name] = Json.format[Name]
+  implicit val writes: OWrites[Name] = Json.writes[Name]
 }
 
 final case class Address(
@@ -107,6 +114,6 @@ final case class Address(
 
 object Address {
   @SuppressWarnings(Array("org.wartremover.warts.Any"))
-  implicit val format: OFormat[Address] = Json.format[Address]
+  implicit val writes: OWrites[Address] = Json.writes[Address]
 }
 
