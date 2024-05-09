@@ -18,21 +18,38 @@ package models.namematching
 
 sealed trait NameMatchingResponse {
   val isSuccess: Boolean
+  val auditString: String
 }
 
 sealed class SuccessfulMatch extends NameMatchingResponse {
   val isSuccess = true
+  override val auditString: String = "" //will get overwritten
 }
 
 sealed class FailedMatch extends NameMatchingResponse {
   val isSuccess = false
+  override val auditString: String = "" //will get overwritten
+
 }
 
-case object BasicSuccessfulNameMatch extends SuccessfulMatch
-case object FirstAndMiddleNameSuccessfulNameMatch extends SuccessfulMatch
-case object LevenshteinSuccessfulNameMatch extends SuccessfulMatch
+case object BasicSuccessfulNameMatch extends SuccessfulMatch {
+  override val auditString = "basic name match"
 
-case object FailedBasicNameMatch extends FailedMatch
-case object FailedComprehensiveNameMatch extends FailedMatch
+}
+case object FirstAndMiddleNameSuccessfulNameMatch extends SuccessfulMatch {
+  override val auditString = "First and middle name match"
+}
+
+case object LevenshteinSuccessfulNameMatch extends SuccessfulMatch {
+  override val auditString = "Levenshtein name match"
+}
+
+case object FailedSurnameMatch extends FailedMatch {
+  override val auditString = "surname failed match"
+}
+
+case object FailedComprehensiveNameMatch extends FailedMatch {
+  override val auditString = "comprehensive failed match"
+}
 
 final case class ComparisonResult(didNamesMatch: Boolean, npsNameWithInitials: String, ecospendNameWithInitials: String)

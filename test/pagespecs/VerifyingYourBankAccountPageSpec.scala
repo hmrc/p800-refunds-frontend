@@ -86,6 +86,23 @@ class VerifyingYourBankAccountPageSpec extends ItSpec {
     MakeBacsRepaymentStub.verifyNone(tdAll.nino)
   }
 
+  "/verify-bank-account renders the 'Refund Request not Submitted' page when the parties list is empty" in {
+    EcospendStub.AuthStubs.stubEcospendAuth2xxSucceeded
+    EcospendStub.AccountStub.stubAccountSummaryEmptyPartiesList2xxSucceeded(tdAll.consentId)
+    P800RefundsExternalApiStub.isValid(tdAll.consentId, EventValue.NotReceived)
+    MakeBacsRepaymentStub.`makeBacsRepayment 200 OK`(
+      nino     = tdAll.nino,
+      request  = tdAll.claimOverpaymentRequest,
+      response = tdAll.claimOverpaymentResponse
+    )
+    EdhStub.getBankDetailsRiskResult(tdAll.getBankDetailsRiskResultRequest, tdAll.getBankDetailsRiskResultResponse)
+    pages.verifyingBankAccountPage.open()
+    pages.refundRequestNotSubmittedPage.assertPageIsDisplayed()
+    EdhStub.verifyGetBankDetailsRiskResult(tdAll.claimId, tdAll.correlationId)
+    P800RefundsExternalApiStub.verifyIsValid(tdAll.consentId)
+    MakeBacsRepaymentStub.verifyNone(tdAll.nino)
+  }
+
   "/verify-bank-account renders the 'We are verifying your bank account' page" in {
     EcospendStub.AuthStubs.stubEcospendAuth2xxSucceeded
     EcospendStub.AccountStub.stubAccountSummary2xxSucceeded(tdAll.consentId)

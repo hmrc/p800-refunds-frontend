@@ -16,22 +16,24 @@
 
 package services
 
+import models.audit.NameMatchingAudit
 import models.namematching._
 import play.api.mvc.RequestHeader
+import testdata.TdAudit._
 import testdata.TdRequest
 import testsupport.UnitSpec
 
 class NameMatchingServiceSpec extends UnitSpec with TdRequest {
   implicit val requestHeader: RequestHeader = fakeRequest
-  implicit def stringToOption(name: String): Option[String] = Some(name)
+  implicit def stringToOption(name: String): Option[String] = if (name === "") None else Some(name)
 
   // format: OFF
   val testScenarios = Seq(
-    ("Jennifer"     , ""            , "Married"       , "Jennifer Maiden-Name"      , FailedBasicNameMatch), //Different married vs maiden names
+    ("Jennifer"     , ""            , "Married"       , "Jennifer Maiden-Name"      , FailedSurnameMatch), //Different married vs maiden names
     ("K"            , "J"           , "Turner"        , "Jennifer Kate Turner"      , FailedComprehensiveNameMatch), //Wrong initials
     ("Tom"          , ""            , "Griffith"      , "Thomas Griffith"           , FailedComprehensiveNameMatch), //Tom is not Thomas
-    ("A"            , ""            , "Shone"         , "T Patel"                   , FailedBasicNameMatch), //Different Surname
-    ("Paul"         , "James"       , "Rubens"        , "Paul James Robins"         , FailedBasicNameMatch), //Different Surname but same first/middle name
+    ("A"            , ""            , "Shone"         , "T Patel"                   , FailedSurnameMatch), //Different Surname
+    ("Paul"         , "James"       , "Rubens"        , "Paul James Robins"         , FailedSurnameMatch), //Different Surname but same first/middle name
     ("James"        , "Paul"        , "Rubens"        , "Paul James John Rubens"    , FailedComprehensiveNameMatch), //First and Middle name in wrong order
     ("Tina"         , ""            , "Patel"         , "Tara Patel"                , FailedComprehensiveNameMatch), //First names don't match even if same initials
     ("Paulie"       , "James"       , "Rubens"        , "Paul James Rubens"         , FailedComprehensiveNameMatch), //Levenshtein distance of two
@@ -52,6 +54,14 @@ class NameMatchingServiceSpec extends UnitSpec with TdRequest {
     ("Paul"         , "James"       , "Rubens"        , "Paul James John Rubens"    , FirstAndMiddleNameSuccessfulNameMatch), //Multiple middle names in Ecospendd but not NPS
     ("Paula"        , "James"       , "Rubens"        , "Paul James Rubens"         , LevenshteinSuccessfulNameMatch) //Levenshtein distance of one
   )
+
+  val auditTestScenarios = Seq(
+    ("Jennifer"     , ""            , "Married"       , "Jennifer Maiden-Name"      , failedSurnameAudit),
+    ("K"            , "J"           , "Turner"        , "Jennifer Kate Turner"      , failedComprehensiveAudit),
+    ("T"            , ""            , "Patel"         , "T Patel"                   , successfulBasicAudit),
+    ("Paul"         , "James"       , "Rubens"        , "Paul James John Rubens"    , successfulFirstMiddleAudit),
+    ("Paula"        , "James"       , "Rubens"        , "Paul James Rubens"         , successfulLevenshteinAudit)
+  )
   // format: ON
 
   testScenarios.foreach{ tuple =>
@@ -59,12 +69,22 @@ class NameMatchingServiceSpec extends UnitSpec with TdRequest {
     val npsFullName = s"$npsFirstName $npsSecondName $npsSurname"
 
     s"fuzzy matching should return ${expectedOutput.toString} for NpsName:$npsFullName & EcospendName:$ecoName" in {
-      val result = NameMatchingService.fuzzyNameMatching(npsFirstName, npsSecondName, npsSurname, ecoName)
-      result shouldBe expectedOutput
+      val (matchingResult, _) = NameMatchingService.fuzzyNameMatching(npsFirstName, npsSecondName, npsSurname, ecoName)
+      matchingResult shouldBe expectedOutput
     }
   }
 
-  "sanitiseFullName should return the name in sanitsed name in lower case" in {
+  auditTestScenarios.foreach{ tuple =>
+    val (npsFirstName, npsSecondName, npsSurname, ecoName, expectedOutput: NameMatchingAudit) = tuple
+    val npsFullName = s"$npsFirstName $npsSecondName $npsSurname"
+
+    s"The AuditEvent should be for a ${expectedOutput.outcome.category} for NpsName:$npsFullName & EcospendName:$ecoName" in {
+      val (_, matchingAuditEvent) = NameMatchingService.fuzzyNameMatching(npsFirstName, npsSecondName, npsSurname, ecoName)
+      matchingAuditEvent shouldBe expectedOutput
+    }
+  }
+
+  "sanitiseFullName should return the name in sanitised name in lower case" in {
     val result = NameMatchingService.sanitiseFullName(" JÍngle-Song Blonde ")
     result shouldBe "jingle song blonde"
   }
@@ -96,22 +116,22 @@ class NameMatchingServiceSpec extends UnitSpec with TdRequest {
 
   "isWithinLevenshteinDistance should return LevenshteinSuccessfulNameMatch for a distance of 0 if the names are the same" in {
     val result = NameMatchingService.isWithinLevenshteinDistance("Antony Ode Kino", "Antony Ode Kino")
-    result shouldBe LevenshteinSuccessfulNameMatch
+    result shouldBe (LevenshteinSuccessfulNameMatch, 0, true)
   }
 
   "isWithinLevenshteinDistance should return LevenshteinSuccessfulNameMatch for a distance of 1" in {
     val result = NameMatchingService.isWithinLevenshteinDistance("Antony Ode Kina", "Antony Ode Kino")
-    result shouldBe LevenshteinSuccessfulNameMatch
+    result shouldBe (LevenshteinSuccessfulNameMatch, 1, true)
   }
 
-  "isWithinLevenshteinDistance should return FailedNameMatch for a distance 2" in {
+  "isWithinLevenshteinDistance should return FailedComprehensiveNameMatch for a distance 2" in {
     val result = NameMatchingService.isWithinLevenshteinDistance("Hello", "Hela")
-    result shouldBe FailedComprehensiveNameMatch
+    result shouldBe (FailedComprehensiveNameMatch, 2, false)
   }
 
-  "isWithinLevenshteinDistance should return FailedNameMatch when same letter appears multiple times" in {
+  "isWithinLevenshteinDistance should return FailedComprehensiveNameMatch when same letter appears multiple times" in {
     val result = NameMatchingService.isWithinLevenshteinDistance("oooo", "o")
-    result shouldBe FailedComprehensiveNameMatch
+    result shouldBe (FailedComprehensiveNameMatch, 3, false)
   }
 
   "compareFirstAndMiddleNames should return 'didNamesMatch = false' if the first names are different but share the same initial" in {

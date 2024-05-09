@@ -20,6 +20,7 @@ import models.AmountInPence
 import models.audit._
 import models.journeymodels.Journey
 import nps.models.{TracedIndividual, ValidateReferenceResult}
+import models.audit.{AuditDetail, IpAddressLockedout, Login, NameMatchingAudit, UserLoginSelection}
 import play.api.libs.json.{Json, Writes}
 import play.api.mvc.RequestHeader
 import uk.gov.hmrc.http.HeaderCarrier
@@ -166,4 +167,7 @@ class AuditService @Inject() (
     )
   }
 
+  def auditNameMatching(nameMatchingAudit: NameMatchingAudit)(implicit hc: HeaderCarrier): Unit = {
+    audit(nameMatchingAudit)
+  }
 }
