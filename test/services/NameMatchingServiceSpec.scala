@@ -29,16 +29,27 @@ class NameMatchingServiceSpec extends UnitSpec with TdRequest {
   val testScenarios = Seq(
     ("Jennifer"     , ""            , "Married"       , "Jennifer Maiden-Name"      , FailedBasicNameMatch), //Different married vs maiden names
     ("K"            , "J"           , "Turner"        , "Jennifer Kate Turner"      , FailedComprehensiveNameMatch), //Wrong initials
+    ("P"            , ""            , "Turner"        , "Jane Turner"               , FailedComprehensiveNameMatch), //Wrong initial
+    (""             , "P"           , "Turner"        , "Jane Turner"               , FailedComprehensiveNameMatch), //Wrong initial
+    ("P"            , "J"           , "Turner"        , "Pauline Kate Turner"       , FailedComprehensiveNameMatch), //Wrong initial
     ("Tom"          , ""            , "Griffith"      , "Thomas Griffith"           , FailedComprehensiveNameMatch), //Tom is not Thomas
+    ("Tom"          , "Michael"     , "Griffith"      , "Thomas Michael Griffith"   , FailedComprehensiveNameMatch), //Tom is not Thomas
+    ("Tom"          , "Douglas"     , "Nelson"        , "Thomas Fred Nelson"        , FailedComprehensiveNameMatch), //Douglas is not Fred
+    ("James"        , "Paul John"   , "Rubens"        , "James Paul Peter Rubens"   , FailedComprehensiveNameMatch), //John is not Peter
     ("A"            , ""            , "Shone"         , "T Patel"                   , FailedBasicNameMatch), //Different Surname
     ("Paul"         , "James"       , "Rubens"        , "Paul James Robins"         , FailedBasicNameMatch), //Different Surname but same first/middle name
+    (""             , ""            , "Rubens"        , "Paul James Rubens"         , FailedComprehensiveNameMatch), //Missing first/middle name
+    ("Paul"         , "James"       , "Rubens"        , ""                          , FailedBasicNameMatch), //Missing name
     ("James"        , "Paul"        , "Rubens"        , "Paul James John Rubens"    , FailedComprehensiveNameMatch), //First and Middle name in wrong order
     ("Tina"         , ""            , "Patel"         , "Tara Patel"                , FailedComprehensiveNameMatch), //First names don't match even if same initials
     ("Paulie"       , "James"       , "Rubens"        , "Paul James Rubens"         , FailedComprehensiveNameMatch), //Levenshtein distance of two
     ("T"            , ""            , "Patel"         , "T Patel"                   , BasicSuccessfulNameMatch), //First names match since both are initials
     ("O'Riley"      , ""            , "Masterson"     , "ORiley Masterson"          , BasicSuccessfulNameMatch), //Apostrophes are not a problem
     ("Sõnekâëí"     , "  Francis  " , "Akpawe   "     , "Sonekaei Francis Akpawe"   , BasicSuccessfulNameMatch), //Removes diacritics and spaces
+    ("Sonekaei"     , "Francis"     , "Akpawe   "     , "Sõnekâëí  Francis  Akpawe" , BasicSuccessfulNameMatch), //Removes diacritics and spaces
     ("Paul"         , "James"       , "Rubens"        , "Paul James Rubens"         , BasicSuccessfulNameMatch), //Exact name match
+    ("paul"         , "james"       , "rubens"        , "Paul James Rubens"         , BasicSuccessfulNameMatch), //Lowercase name match
+    ("Paul"         , "James"       , "Rubens"        , "paul james rubens"         , BasicSuccessfulNameMatch), //Lowercase name match
     ("Paul"         , "James"       , "Rubens-Smith"  , "Paul James Rubens Smith"   , BasicSuccessfulNameMatch), //Spaces vs Hyphens in the surname
     ("Paul"         , "James"       , "Rubens Smith"  , "Paul James Rubens-Smith"   , BasicSuccessfulNameMatch), //Spaces vs Hyphens in the surname (swapped for ecospend)
     ("Paul"         , "James"       , "Odd-Hyphen"    , "Paul James Odd‒‑—–-Hyphen" , BasicSuccessfulNameMatch), //Using different hyphen types
@@ -46,6 +57,7 @@ class NameMatchingServiceSpec extends UnitSpec with TdRequest {
     ("P"            , ""            , "Rubens"        , "Paul James Rubens"         , FirstAndMiddleNameSuccessfulNameMatch), //Initials check for the first name and no middle name
     ("P"            , "J"           , "Rubens"        , "Paul James Rubens"         , FirstAndMiddleNameSuccessfulNameMatch), //Initials check for the first and middle name
     ("P"            , "J."          , "Rubens"        , "Paul James Rubens"         , FirstAndMiddleNameSuccessfulNameMatch), //Initials with a fullstop
+    (""             , "P"           , "Rubens"        , "Paul Rubens"               , FirstAndMiddleNameSuccessfulNameMatch), //Initials match when no first name
     ("P"            , "James"       , "Rubens"        , "Paul James Rubens"         , FirstAndMiddleNameSuccessfulNameMatch), //Mix of initials for first name and a full middle name
     ("Paul"         , "J"           , "Rubens"        , "Paul James Rubens"         , FirstAndMiddleNameSuccessfulNameMatch), //Mix of initials for middle name and a full first name
     ("Paul"         , "James John"  , "Rubens"        , "Paul James Rubens"         , FirstAndMiddleNameSuccessfulNameMatch), //Multiple middle names in NPS but not Ecospend
