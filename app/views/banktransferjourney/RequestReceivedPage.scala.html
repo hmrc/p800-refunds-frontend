@@ -21,6 +21,7 @@
 @import views.html.helper.CSPNonce
 @import action.JourneyRequest
 @import java.time.LocalDate
+@import language.Languages
 
 @this(
     layout: Layout,
@@ -76,10 +77,13 @@
         <strong>@{Messages.BankTransferRequestReceived.`0300 200 3300`.show}</strong>
     </p>
 
+    @if(language == Languages.English) {
     <p class="govuk-body print">
         @{Messages.BankTransferRequestReceived.`Outside UK:`.show}<br />
         <strong>@{Messages.BankTransferRequestReceived.`+44 135 535 9022`.show}</strong>
     </p>
+    }
+
 
     <p class="govuk-body print">
     @{Messages.BankTransferRequestReceived.`Opening times:`.show} @{Messages.BankTransferRequestReceived.`Monday to Friday: 8am to 6pm`.show}

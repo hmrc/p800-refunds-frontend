@@ -21,6 +21,7 @@
 @import views.html.helper.CSPNonce
 @import views.html.templates.Layout
 @import action.JourneyRequest
+@import language.Languages
 
 @this(
     layout: Layout,
@@ -55,15 +56,43 @@
         @{Html(Messages.ChequeRequestReceived.`Your refund of £x.xx will arrive in the post by DATE.`(refundAmountInPence, chequeArriveBy).show)}
     </p>
 
-    <p class="govuk-body js-visible">
+    <p class="govuk-body js-visible govuk-!-display-none-print">
         <a id="print-page" class="govuk-link" href="#print-dialogue">
             @{Messages.ChequeRequestReceived.`Print this page`.show}
         </a>
     </p>
 
-    <h2 class="govuk-heading-s govuk-!-display-none-print">
+    <h2 class="govuk-heading-s">
         @{Messages.ChequeRequestReceived.`What happens next`.show}
     </h2>
+
+
+    <p class="govuk-body print">
+    @{Messages.ChequeRequestReceived.`Print If you do not receive your refund you can call or write...`.show}
+    </p>
+
+    <p class="govuk-body print">
+        @{Messages.ChequeRequestReceived.`Telephone:`.show}<br />
+        <strong>@{Messages.ChequeRequestReceived.`0300 200 3300`.show}</strong>
+    </p>
+
+    @if(language == Languages.English) {
+        <p class="govuk-body print">
+            @{Messages.ChequeRequestReceived.`Outside UK:`.show}<br />
+            <strong>@{Messages.ChequeRequestReceived.`+44 135 535 9022`.show}</strong>
+        </p>
+    }
+
+
+    <p class="govuk-body print">
+        @{Messages.ChequeRequestReceived.`Opening times:`.show} @{Messages.ChequeRequestReceived.`Monday to Friday: 8am to 6pm`.show}
+    </p>
+
+
+    <p class="govuk-body print">
+    @{Messages.ChequeRequestReceived.`Closed on weekends and bank holidays.`.show}
+    </p>
+
 
     <p class="govuk-body govuk-!-display-none-print">
         @{Html(Messages.ChequeRequestReceived.`If you do not receive your refund you can call or write...`(appConfig.generalEnquiriesUrl).show)}
