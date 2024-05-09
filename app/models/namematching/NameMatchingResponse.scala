@@ -37,19 +37,23 @@ case object BasicSuccessfulNameMatch extends SuccessfulMatch {
 
 }
 case object FirstAndMiddleNameSuccessfulNameMatch extends SuccessfulMatch {
-  override val auditString = "First and middle name match"
+  override val auditString = "first and middle name match"
 }
 
 case object LevenshteinSuccessfulNameMatch extends SuccessfulMatch {
-  override val auditString = "Levenshtein name match"
+  override val auditString = "levenshtein name match"
 }
 
 case object FailedSurnameMatch extends FailedMatch {
   override val auditString = "surname failed match"
 }
 
+case object FailedFirstAndMiddleNameMatch extends FailedMatch {
+  override val auditString = "first and middle name failed match"
+}
+
 case object FailedComprehensiveNameMatch extends FailedMatch {
   override val auditString = "comprehensive failed match"
 }
 
-final case class ComparisonResult(didNamesMatch: Boolean, npsNameWithInitials: String, ecospendNameWithInitials: String)
+final case class ComparisonResult(didNamesMatch: Boolean, validForLevenshtein: Boolean, npsNameWithInitials: String, ecospendNameWithInitials: String)

@@ -29,11 +29,19 @@ class NameMatchingServiceSpec extends UnitSpec with TdRequest {
 
   // format: OFF
   val testScenarios = Seq(
+    ("Jennifer"     , ""            , ""              , ""                          , FailedSurnameMatch), //Empty string surnames
     ("Jennifer"     , ""            , "Married"       , "Jennifer Maiden-Name"      , FailedSurnameMatch), //Different married vs maiden names
-    ("K"            , "J"           , "Turner"        , "Jennifer Kate Turner"      , FailedComprehensiveNameMatch), //Wrong initials
-    ("Tom"          , ""            , "Griffith"      , "Thomas Griffith"           , FailedComprehensiveNameMatch), //Tom is not Thomas
+    ("Paul"         , "James"       , "Rubens"        , ""                          , FailedSurnameMatch), //Missing name
     ("A"            , ""            , "Shone"         , "T Patel"                   , FailedSurnameMatch), //Different Surname
     ("Paul"         , "James"       , "Rubens"        , "Paul James Robins"         , FailedSurnameMatch), //Different Surname but same first/middle name
+    ("P"            , ""            , "Turner"        , "Jane Turner"               , FailedFirstAndMiddleNameMatch), //Wrong initial (only one initial present)
+    (""             , "P"           , "Turner"        , "Jane Turner"               , FailedFirstAndMiddleNameMatch), //Wrong initial
+    (""             , ""            , "Rubens"        , "Paul James Rubens"         , FailedFirstAndMiddleNameMatch), //Missing first/middle name
+    ("K"            , "J"           , "Turner"        , "Jennifer Kate Turner"      , FailedComprehensiveNameMatch), //Wrong initials (more than one initial)
+    ("Tom"          , ""            , "Griffith"      , "Thomas Griffith"           , FailedComprehensiveNameMatch), //Tom is not Thomas
+    ("Tom"          , "Michael"     , "Griffith"      , "Thomas Michael Griffith"   , FailedComprehensiveNameMatch), //Tom is not Thomas (middle name included)
+    ("Tom"          , "Douglas"     , "Nelson"        , "Thomas Fred Nelson"        , FailedComprehensiveNameMatch), //Douglas is not Fred
+    ("James"        , "Paul John"   , "Rubens"        , "James Paul Peter Rubens"   , FailedComprehensiveNameMatch), //Multiple middle names, some don't match
     ("James"        , "Paul"        , "Rubens"        , "Paul James John Rubens"    , FailedComprehensiveNameMatch), //First and Middle name in wrong order
     ("Tina"         , ""            , "Patel"         , "Tara Patel"                , FailedComprehensiveNameMatch), //First names don't match even if same initials
     ("Paulie"       , "James"       , "Rubens"        , "Paul James Rubens"         , FailedComprehensiveNameMatch), //Levenshtein distance of two
@@ -48,16 +56,19 @@ class NameMatchingServiceSpec extends UnitSpec with TdRequest {
     ("P"            , ""            , "Rubens"        , "Paul James Rubens"         , FirstAndMiddleNameSuccessfulNameMatch), //Initials check for the first name and no middle name
     ("P"            , "J"           , "Rubens"        , "Paul James Rubens"         , FirstAndMiddleNameSuccessfulNameMatch), //Initials check for the first and middle name
     ("P"            , "J."          , "Rubens"        , "Paul James Rubens"         , FirstAndMiddleNameSuccessfulNameMatch), //Initials with a fullstop
+    (""             , "P"           , "Rubens"        , "Paul Rubens"               , FirstAndMiddleNameSuccessfulNameMatch), //Initials match when no first name
     ("P"            , "James"       , "Rubens"        , "Paul James Rubens"         , FirstAndMiddleNameSuccessfulNameMatch), //Mix of initials for first name and a full middle name
     ("Paul"         , "J"           , "Rubens"        , "Paul James Rubens"         , FirstAndMiddleNameSuccessfulNameMatch), //Mix of initials for middle name and a full first name
     ("Paul"         , "James John"  , "Rubens"        , "Paul James Rubens"         , FirstAndMiddleNameSuccessfulNameMatch), //Multiple middle names in NPS but not Ecospend
     ("Paul"         , "James"       , "Rubens"        , "Paul James John Rubens"    , FirstAndMiddleNameSuccessfulNameMatch), //Multiple middle names in Ecospendd but not NPS
-    ("Paula"        , "James"       , "Rubens"        , "Paul James Rubens"         , LevenshteinSuccessfulNameMatch) //Levenshtein distance of one
+    ("Paula"        , "James"       , "Rubens"        , "Paul James Rubens"         , LevenshteinSuccessfulNameMatch), //Levenshtein distance of one
+    ("P"            , "J"           , "Turner"        , "Pauline Kate Turner"       , LevenshteinSuccessfulNameMatch), //Multiple initials, valid for Levenshtein
   )
 
   val auditTestScenarios = Seq(
     ("Jennifer"     , ""            , "Married"       , "Jennifer Maiden-Name"      , failedSurnameAudit),
-    ("K"            , "J"           , "Turner"        , "Jennifer Kate Turner"      , failedComprehensiveAudit),
+    ("K"            , ""            , "Turner"        , "Jennifer Turner"           , failedFirstAndMiddleNameAudit),
+    ("Kate"         , "Jenny"       , "Turner"        , "Jennifer Kate Turner"      , failedComprehensiveAudit),
     ("T"            , ""            , "Patel"         , "T Patel"                   , successfulBasicAudit),
     ("Paul"         , "James"       , "Rubens"        , "Paul James John Rubens"    , successfulFirstMiddleAudit),
     ("Paula"        , "James"       , "Rubens"        , "Paul James Rubens"         , successfulLevenshteinAudit)
@@ -134,10 +145,11 @@ class NameMatchingServiceSpec extends UnitSpec with TdRequest {
     result shouldBe (FailedComprehensiveNameMatch, 3, false)
   }
 
-  "compareFirstAndMiddleNames should return 'didNamesMatch = false' if the first names are different but share the same initial" in {
+  "compareFirstAndMiddleNames should return 'didNamesMatch = true' if the first names are different but share the same initial" in {
     val result = NameMatchingService.compareFirstAndMiddleNames(Seq("Jane", "Kasveko"), Seq("Josie", "Kasveko"))
     val expectedOutcome = ComparisonResult(
       didNamesMatch            = false,
+      validForLevenshtein      = true,
       npsNameWithInitials      = "Jane Kasveko",
       ecospendNameWithInitials = "Josie Kasveko"
     )
@@ -153,6 +165,7 @@ class NameMatchingServiceSpec extends UnitSpec with TdRequest {
 
     val expectedOutcome = ComparisonResult(
       didNamesMatch            = false,
+      validForLevenshtein      = true,
       npsNameWithInitials      = "Lowe Jane Kasveko",
       ecospendNameWithInitials = "Lowe Josie Kasveko"
     )
@@ -168,6 +181,7 @@ class NameMatchingServiceSpec extends UnitSpec with TdRequest {
 
     val expectedOutcome = ComparisonResult(
       didNamesMatch            = true,
+      validForLevenshtein      = false,
       npsNameWithInitials      = "Lowe J Kasveko",
       ecospendNameWithInitials = "Lowe J Kasveko"
     )
@@ -179,8 +193,25 @@ class NameMatchingServiceSpec extends UnitSpec with TdRequest {
     val result = NameMatchingService.compareFirstAndMiddleNames(Seq("J"), Seq("J"))
     val expectedOutcome = ComparisonResult(
       didNamesMatch            = true,
+      validForLevenshtein      = false,
       npsNameWithInitials      = "J",
       ecospendNameWithInitials = "J"
+    )
+
+    result shouldBe expectedOutcome
+  }
+
+  "compareFirstAndMiddleNames should return 'validForLevenshtein = false' when the name is only one character long" in {
+    val result = NameMatchingService.compareFirstAndMiddleNames(
+      Seq("A"),
+      Seq("Odie")
+    )
+
+    val expectedOutcome = ComparisonResult(
+      didNamesMatch            = false,
+      validForLevenshtein      = false,
+      npsNameWithInitials      = "A",
+      ecospendNameWithInitials = "O"
     )
 
     result shouldBe expectedOutcome
@@ -194,6 +225,7 @@ class NameMatchingServiceSpec extends UnitSpec with TdRequest {
 
     val expectedOutcome = ComparisonResult(
       didNamesMatch            = false,
+      validForLevenshtein      = true,
       npsNameWithInitials      = "A Kinte J Kasveko",
       ecospendNameWithInitials = "O Kinte J Kasveko"
     )

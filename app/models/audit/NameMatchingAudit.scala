@@ -44,7 +44,8 @@ final case class NameMatchingAudit(
     rawBankName:         Option[String],
     transformedNpsName:  Option[String],
     transformedBankName: Option[String],
-    levenshteinDistance: Option[Int]      = None
+    levenshteinDistance: Option[Int]      = None,
+    partiesArrayUsed:    Boolean          = true
 ) extends AuditDetail {
   override val auditType: String = "FuzzyNameMatchingEvent"
 }

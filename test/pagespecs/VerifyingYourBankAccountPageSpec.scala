@@ -87,8 +87,60 @@ class VerifyingYourBankAccountPageSpec extends ItSpec {
   }
 
   "/verify-bank-account renders the 'Refund Request not Submitted' page when the parties list is empty" in {
+    val responseBody =
+      //language=JSON
+      s"""[{
+          "id" : "${tdAll.consentId.value}",
+          "bank_id" : "obie-barclays-personal",
+          "type" : "Personal",
+          "sub_type" : "CurrentAccount",
+          "currency" : "GBP",
+          "account_format" : "SortCode",
+          "account_identification" : "44556610002333",
+          "calculated_owner_name" : "Mr Greg Greggson",
+          "account_owner_name" : "Greggson Gregory ",
+          "display_name" : "bank account display name",
+          "balance" : 123.7,
+          "last_update_time" : "2059-11-25T16:33:51.88",
+          "parties" : []
+        }]""".stripMargin
+
     EcospendStub.AuthStubs.stubEcospendAuth2xxSucceeded
-    EcospendStub.AccountStub.stubAccountSummaryEmptyPartiesList2xxSucceeded(tdAll.consentId)
+    EcospendStub.AccountStub.stubAccountSummaryWithJson2xxSucceeded(tdAll.consentId, responseBody)
+    P800RefundsExternalApiStub.isValid(tdAll.consentId, EventValue.NotReceived)
+    MakeBacsRepaymentStub.`makeBacsRepayment 200 OK`(
+      nino     = tdAll.nino,
+      request  = tdAll.claimOverpaymentRequest,
+      response = tdAll.claimOverpaymentResponse
+    )
+    EdhStub.getBankDetailsRiskResult(tdAll.getBankDetailsRiskResultRequest, tdAll.getBankDetailsRiskResultResponse)
+    pages.verifyingBankAccountPage.open()
+    pages.refundRequestNotSubmittedPage.assertPageIsDisplayed()
+    EdhStub.verifyGetBankDetailsRiskResult(tdAll.claimId, tdAll.correlationId)
+    P800RefundsExternalApiStub.verifyIsValid(tdAll.consentId)
+    MakeBacsRepaymentStub.verifyNone(tdAll.nino)
+  }
+
+  "/verify-bank-account renders the 'Refund Request not Submitted' page when the parties list & account name is empty" in {
+    val responseBody =
+      //language=JSON
+      s"""[{
+          "id" : "${tdAll.consentId.value}",
+          "bank_id" : "obie-barclays-personal",
+          "type" : "Personal",
+          "sub_type" : "CurrentAccount",
+          "currency" : "GBP",
+          "account_format" : "SortCode",
+          "account_identification" : "44556610002333",
+          "calculated_owner_name" : "Mr Greg Greggson",
+          "display_name" : "bank account display name",
+          "balance" : 123.7,
+          "last_update_time" : "2059-11-25T16:33:51.88",
+          "parties" : []
+        }]""".stripMargin
+
+    EcospendStub.AuthStubs.stubEcospendAuth2xxSucceeded
+    EcospendStub.AccountStub.stubAccountSummaryWithJson2xxSucceeded(tdAll.consentId, responseBody)
     P800RefundsExternalApiStub.isValid(tdAll.consentId, EventValue.NotReceived)
     MakeBacsRepaymentStub.`makeBacsRepayment 200 OK`(
       nino     = tdAll.nino,

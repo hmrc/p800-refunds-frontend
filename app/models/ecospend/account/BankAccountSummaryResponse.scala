@@ -41,7 +41,7 @@ final case class BankAccountSummary(
     accountFormat:         BankAccountFormat,
     accountIdentification: BankAccountIdentification,
     calculatedOwnerName:   CalculatedOwnerName,
-    accountOwnerName:      BankAccountOwnerName,
+    accountOwnerName:      Option[BankAccountOwnerName],
     displayName:           BankAccountDisplayName,
     balance:               Double,
     lastUpdateTime:        LocalDateTime,

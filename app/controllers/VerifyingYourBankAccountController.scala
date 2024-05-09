@@ -21,7 +21,7 @@ import casemanagement._
 import connectors.{P800RefundsBackendConnector, P800RefundsExternalApiConnector}
 import edh._
 import models.audit.{NameMatchOutcome, NameMatchingAudit, RawNpsName}
-import models.ecospend.account.{BankAccountParty, BankAccountSummary}
+import models.ecospend.account.{BankAccountOwnerName, BankAccountSummary}
 import models.ecospend.consent.{BankReferenceId, ConsentId, ConsentStatus}
 import models.journeymodels._
 import models.namematching.NameMatchingResponse
@@ -62,41 +62,67 @@ class VerifyingYourBankAccountController @Inject() (
       isValidEventValue: EventValue <- obtainIsValid(journey)
       bankAccountSummary: BankAccountSummary <- obtainBankAccountSummary(journey)
       bankDetailsRiskResultResponse: GetBankDetailsRiskResultResponse <- obtainGetBankDetailsRiskResultResponse(journey, bankAccountSummary)
-      didAnyNameMatch = doAnyNamesFromPartiesListMatch(journey.getTraceIndividualResponse, bankAccountSummary.parties)
+      didAnyNameMatch = doAnyNamesFromPartiesListMatch(journey.getTraceIndividualResponse, bankAccountSummary)
       newJourney = journey.update(isValidEventValue, bankAccountSummary, bankDetailsRiskResultResponse)
       (result, newJourney) <- next(newJourney, isValidEventValue, bankDetailsRiskResultResponse, bankAccountSummary, consentStatus, didAnyNameMatch)
       _ <- journeyService.upsert(newJourney)
     } yield result
   }
 
-  def doAnyNamesFromPartiesListMatch(individualResponse: TracedIndividual, bankAccountPartyList: List[BankAccountParty])
-    (implicit request: JourneyRequest[_]): Boolean = {
-    if (bankAccountPartyList.isEmpty) {
-      val emptyListAudit = NameMatchingAudit(
-        NameMatchOutcome(isSuccessful = false, "empty parties list"),
-        RawNpsName(
-          individualResponse.firstForename,
-          individualResponse.secondForename,
-          individualResponse.surname
-        ),
-        rawBankName         = None,
-        transformedNpsName  = None,
-        transformedBankName = None
-      )
-      auditService.auditNameMatching(emptyListAudit)
-      false
-    } else {
-      val matchingResponseList: Seq[NameMatchingResponse] = bankAccountPartyList.map { party =>
-        val (matchingResponse, nameMatchAuditEvent) = NameMatchingService.fuzzyNameMatching(
-          individualResponse.firstForename,
-          individualResponse.secondForename,
-          individualResponse.surname,
-          party.fullLegalName.value
+  def doAnyNamesFromPartiesListMatch(
+      individualResponse: TracedIndividual,
+      bankAccountSummary: BankAccountSummary
+  )(implicit request: JourneyRequest[_]): Boolean = {
+
+    (bankAccountSummary.parties.isEmpty, bankAccountSummary.accountOwnerName.isEmpty) match {
+      case (true, true) =>
+        JourneyLogger.warn("No parties list or account owner name present")
+        val emptyListAudit = NameMatchingAudit(
+          NameMatchOutcome(isSuccessful = false, "no names returned from ecospend"),
+          RawNpsName(
+            individualResponse.firstForename,
+            individualResponse.secondForename,
+            individualResponse.surname
+          ),
+          rawBankName         = None,
+          transformedNpsName  = None,
+          transformedBankName = None
         )
-        auditService.auditNameMatching(nameMatchAuditEvent)
-        matchingResponse
-      }
-      matchingResponseList.exists(_.isSuccess)
+        auditService.auditNameMatching(emptyListAudit)
+        false
+
+      case (true, false) =>
+        JourneyLogger.info("No parties list, falling back to account owner name")
+        val accountName = bankAccountSummary.accountOwnerName.getOrElse(BankAccountOwnerName("fallback name error")).value
+        val jointAccountNamesSplit = accountName.split(",").toSeq
+
+        val matchingResponseList = jointAccountNamesSplit.map { accountName =>
+          val (matchingResponse, nameMatchAuditEvent) = NameMatchingService.fuzzyNameMatching(
+            individualResponse.firstForename,
+            individualResponse.secondForename,
+            individualResponse.surname,
+            accountName
+          )
+          auditService.auditNameMatching(nameMatchAuditEvent.copy(partiesArrayUsed = false))
+          matchingResponse
+        }
+
+        matchingResponseList.exists(_.isSuccess)
+
+      case (false, _) =>
+        //There is a parties list to iterate through
+        val matchingResponseList: Seq[NameMatchingResponse] = bankAccountSummary.parties.map { party =>
+          val (matchingResponse, nameMatchAuditEvent) = NameMatchingService.fuzzyNameMatching(
+            individualResponse.firstForename,
+            individualResponse.secondForename,
+            individualResponse.surname,
+            party.fullLegalName.value
+          )
+
+          auditService.auditNameMatching(nameMatchAuditEvent)
+          matchingResponse
+        }
+        matchingResponseList.exists(_.isSuccess)
     }
   }
 
