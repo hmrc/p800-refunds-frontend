@@ -496,6 +496,46 @@ object Messages {
         s"""Os nad ydych yn cael eich ad-daliad, gallwch <a id="general-enquiries-link" target="_blank" class="govuk-link" href="$generalEnquiriesLink">
            |ysgrifennu atom neu ffonio’r llinell gymorth Treth Incwm (yn agor tab newydd)</a>. Bydd angen eich cyfeirnod P800 arnoch.""".stripMargin
     )
+
+    val `Print If you do not receive your refund you can call or write...`: Message = Message(
+      english = "If you do not receive your refund you can write to us or call the Income Tax helpline. You will need your P800 reference.",
+      welsh   = "Os na fydd eich ad-daliad yn eich cyrraedd, ffoniwch Wasanaeth Cwsmeriaid Cymraeg CThEF. Bydd angen eich cyfeirnod P800 arnoch. "
+    )
+
+    val `Telephone:`: Message = Message(
+      english = "Telephone:",
+      welsh   = "Ffôn:"
+    )
+
+    val `0300 200 3300`: Message = Message(
+      english = "0300 200 3300",
+      welsh   = "0300 200 1900"
+    )
+
+    val `Outside UK:`: Message = Message(
+      english = "Outside UK:",
+      welsh   = ""
+    )
+
+    val `+44 135 535 9022`: Message = Message(
+      english = "+44 135 535 9022",
+      welsh   = ""
+    )
+
+    val `Opening times:`: Message = Message(
+      english = "Opening times:",
+      welsh   = "Oriau agor:"
+    )
+
+    val `Monday to Friday: 8am to 6pm`: Message = Message(
+      english = "Monday to Friday: 8am to 6pm",
+      welsh   = "Dydd Llun i ddydd Gwener: 8:30am i 5pm"
+    )
+
+    val `Closed on weekends and bank holidays.`: Message = Message(
+      english = "Closed on weekends and bank holidays.",
+      welsh   = "Ar gau ar benwythnosau a gwyliau banc."
+    )
   }
 
   object DoYouWantYourRefundViaBankTransfer {
@@ -539,6 +579,46 @@ object Messages {
     )
 
     private val formatter = DateTimeFormatter.ofPattern("d MMMM yyyy", Locale.UK)
+
+    val `Print If you do not receive your refund you can call or write...`: Message = Message(
+      english = "If you do not receive your refund you can write to us or call the Income Tax helpline. You will need your P800 reference.",
+      welsh   = "Os na fydd eich ad-daliad yn eich cyrraedd, ffoniwch Wasanaeth Cwsmeriaid Cymraeg CThEF. Bydd angen eich cyfeirnod P800 arnoch. "
+    )
+
+    val `Telephone:`: Message = Message(
+      english = "Telephone:",
+      welsh   = "Ffôn:"
+    )
+
+    val `0300 200 3300`: Message = Message(
+      english = "0300 200 3300",
+      welsh   = "0300 200 1900"
+    )
+
+    val `Outside UK:`: Message = Message(
+      english = "Outside UK:",
+      welsh   = ""
+    )
+
+    val `+44 135 535 9022`: Message = Message(
+      english = "+44 135 535 9022",
+      welsh   = ""
+    )
+
+    val `Opening times:`: Message = Message(
+      english = "Opening times:",
+      welsh   = "Oriau agor:"
+    )
+
+    val `Monday to Friday: 8am to 6pm`: Message = Message(
+      english = "Monday to Friday: 8am to 6pm",
+      welsh   = "Dydd Llun i ddydd Gwener: 8:30am i 5pm"
+    )
+
+    val `Closed on weekends and bank holidays.`: Message = Message(
+      english = "Closed on weekends and bank holidays.",
+      welsh   = "Ar gau ar benwythnosau a gwyliau banc."
+    )
 
     def `Your refund of £x.xx will now be processed and paid by...`(amountInPence: AmountInPence, date: LocalDate): Message = Message(
       english = s"Your refund of <strong>${amountInPence.gdsFormatInPounds}</strong> will now be paid by <strong>${date.format(formatter)}</strong>.",

@@ -12,3 +12,13 @@ a#choose-another-method-link {
 #selectedBankId.govuk-input--error {border-color: #d4351c}
 #myAccountIsNotListed {margin-left:15px}
 
+.print {
+  display: none;
+}
+
+@media print {
+  .print {
+    display: unset
+  }
+}
+

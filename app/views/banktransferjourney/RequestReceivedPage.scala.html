@@ -21,6 +21,7 @@
 @import views.html.helper.CSPNonce
 @import action.JourneyRequest
 @import java.time.LocalDate
+@import language.Languages
 
 @this(
     layout: Layout,
@@ -55,7 +56,7 @@
         @{Html(Messages.BankTransferRequestReceived.`Your refund of £x.xx will now be processed and paid by...`(refundAmountInPence, date).show)}
     </p>
 
-    <p class="govuk-body js-visible">
+    <p class="govuk-body js-visible govuk-!-display-none-print">
         <a id="print-page" class="govuk-link" href="#print-dialogue">
             @{Messages.BankTransferRequestReceived.`Print this page`.show}
         </a>
@@ -65,11 +66,40 @@
         @{Messages.BankTransferRequestReceived.`What happens next`.show}
     </h2>
 
-    <p class="govuk-body">
+
+
+    <p class="govuk-body print">
+        @{Messages.BankTransferRequestReceived.`Print If you do not receive your refund you can call or write...`.show}
+    </p>
+
+    <p class="govuk-body print">
+        @{Messages.BankTransferRequestReceived.`Telephone:`.show}<br />
+        <strong>@{Messages.BankTransferRequestReceived.`0300 200 3300`.show}</strong>
+    </p>
+
+    @if(language == Languages.English) {
+    <p class="govuk-body print">
+        @{Messages.BankTransferRequestReceived.`Outside UK:`.show}<br />
+        <strong>@{Messages.BankTransferRequestReceived.`+44 135 535 9022`.show}</strong>
+    </p>
+    }
+
+
+    <p class="govuk-body print">
+    @{Messages.BankTransferRequestReceived.`Opening times:`.show} @{Messages.BankTransferRequestReceived.`Monday to Friday: 8am to 6pm`.show}
+    </p>
+
+
+    <p class="govuk-body print">
+    @{Messages.BankTransferRequestReceived.`Closed on weekends and bank holidays.`.show}
+    </p>
+
+
+    <p class="govuk-body govuk-!-display-none-print">
         @{Html(Messages.BankTransferRequestReceived.`If you do not receive your refund you can call or write...`(appConfig.generalEnquiriesUrl).show)}
     </p>
 
-    <div class="govuk-body">
+    <div class="govuk-body govuk-!-display-none-print">
         <a class="govuk-link" id="survey-link" href="@{controllers.routes.FeedbackController.get}">  @{Messages.BankTransferRequestReceived.`What do you think`.show}
         </a> @{Messages.BankTransferRequestReceived.`takes 30 seconds`.show}
     </div>
