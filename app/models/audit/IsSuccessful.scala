@@ -21,6 +21,9 @@ import play.api.libs.json.{Format, Json}
 final case class IsSuccessful(value: Boolean) extends AnyVal
 
 object IsSuccessful {
+  val yes: IsSuccessful = IsSuccessful(true)
+  val no: IsSuccessful = IsSuccessful(false)
+
   @SuppressWarnings(Array("org.wartremover.warts.Any"))
   implicit val format: Format[IsSuccessful] = Json.valueFormat[IsSuccessful]
 }
