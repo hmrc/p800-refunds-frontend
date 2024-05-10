@@ -226,10 +226,10 @@ object EcospendStub {
         ) ++ ecospendHeaders
       )
 
-    def stubAccountSummaryEmptyPartiesList2xxSucceeded(consentId: ConsentId): StubMapping =
+    def stubAccountSummaryWithJson2xxSucceeded(consentId: ConsentId, responseBodyJson: String): StubMapping =
       WireMockHelpers.Get.stubForGetWithResponseBody(
         url             = accountSummaryUrl,
-        responseBody    = validateBankAccountSummaryEmptyPartiesListResponseJson(consentId),
+        responseBody    = responseBodyJson,
         requiredHeaders = Seq(
           consentIdHeaderKey -> matching(consentId.value),
           developmentConsentIdHeaderKey -> matching(consentId.value)
@@ -268,24 +268,6 @@ object EcospendStub {
             "name" : "Margaret Greggson",
             "full_legal_name" : "Margaretta Greggson"
           } ]
-        }]""".stripMargin
-
-    def validateBankAccountSummaryEmptyPartiesListResponseJson(consentId: ConsentId): String =
-      //language=JSON
-      s"""[{
-          "id" : "${consentId.value}",
-          "bank_id" : "obie-barclays-personal",
-          "type" : "Personal",
-          "sub_type" : "CurrentAccount",
-          "currency" : "GBP",
-          "account_format" : "SortCode",
-          "account_identification" : "44556610002333",
-          "calculated_owner_name" : "Mr Greg Greggson",
-          "account_owner_name" : "Greggson Gregory ",
-          "display_name" : "bank account display name",
-          "balance" : 123.7,
-          "last_update_time" : "2059-11-25T16:33:51.88",
-          "parties" : []
         }]""".stripMargin
   }
 }

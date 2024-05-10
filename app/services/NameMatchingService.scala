@@ -84,7 +84,7 @@ object NameMatchingService {
               Some(s"${comparisonResult.ecospendNameWithInitials} $ecoSurname")
             )
           )
-        } else {
+        } else if (comparisonResult.validForLevenshtein) {
           val (matchingResponse, levenshteinDistance, isSuccessful) = isWithinLevenshteinDistance(comparisonResult.npsNameWithInitials, comparisonResult.ecospendNameWithInitials)
           (
             matchingResponse,
@@ -95,6 +95,18 @@ object NameMatchingService {
               Some(s"${comparisonResult.npsNameWithInitials} ${npsSurnameFromSeq.mkString}"),
               Some(s"${comparisonResult.ecospendNameWithInitials} $ecoSurname"),
               Some(levenshteinDistance)
+            )
+          )
+        } else {
+          JourneyLogger.info(s"Failed First and Middle name Match")
+          (
+            FailedFirstAndMiddleNameMatch,
+            NameMatchingAudit(
+              NameMatchOutcome(isSuccessful = false, FailedFirstAndMiddleNameMatch.auditString),
+              RawNpsName(npsOptFirstName, npsOptSecondName, npsSurname),
+              Some(ecospendName),
+              Some(s"${comparisonResult.npsNameWithInitials} ${npsSurnameFromSeq.mkString}"),
+              Some(s"${comparisonResult.ecospendNameWithInitials} $ecoSurname")
             )
           )
         }
@@ -117,17 +129,24 @@ object NameMatchingService {
     val npsNameWithInitials = pairedList.map(_._1).mkString(" ")
     val ecospendNameWithInitials = pairedList.map(_._2).mkString(" ")
     val namesWithInitialsMatch = npsNameWithInitials === ecospendNameWithInitials
+    val nameIsLongerThanOneCharacter = npsNameWithInitials.length > 1 && ecospendNameWithInitials.length > 1
+    val namesAreEmptyStrings = npsNameWithInitials.isEmpty && ecospendNameWithInitials.isEmpty
 
-    if (namesWithInitialsMatch) {
-      ComparisonResult(didNamesMatch = true, npsNameWithInitials, ecospendNameWithInitials)
+    if (namesWithInitialsMatch && !namesAreEmptyStrings) {
+      //Names matched
+      ComparisonResult(didNamesMatch       = true, validForLevenshtein = false, npsNameWithInitials, ecospendNameWithInitials)
+    } else if (nameIsLongerThanOneCharacter) {
+      //Names didn't match and there is more than just an initial (Valid for Levenshtein)
+      ComparisonResult(didNamesMatch       = false, validForLevenshtein = true, npsNameWithInitials, ecospendNameWithInitials)
     } else {
-      ComparisonResult(didNamesMatch = false, npsNameWithInitials, ecospendNameWithInitials)
+      //Didn't match and only an initial (Invalid for Levenshtein)
+      ComparisonResult(didNamesMatch       = false, validForLevenshtein = false, npsNameWithInitials, ecospendNameWithInitials)
     }
   }
 
   def splitEcospendSurname(npsSurname: String, ecospendNamesList: Seq[String]): (Seq[String], String) = {
     //By looking at the structure of the NPS surname, we can identify the structure of the Ecospend name to learn where the first/middle name ends and the surname begins.
-    //This is necessary for surnames split but spaces not hyphens.
+    //This is necessary for surnames split by spaces not hyphens.
     val npsSurnameLength = processSpacesApostrophesAndHyphens(npsSurname)
       .split(" ")
       .toSeq

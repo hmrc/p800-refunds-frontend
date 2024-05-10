@@ -42,7 +42,7 @@ class BankAccountSummaryResponseSpec extends UnitSpec {
       accountFormat         = BankAccountFormat.SortCode,
       accountIdentification = BankAccountIdentification("44556610002333"),
       calculatedOwnerName   = CalculatedOwnerName("Greg Greggson"),
-      accountOwnerName      = BankAccountOwnerName("Greg Greggson"),
+      accountOwnerName      = Some(BankAccountOwnerName("Greg Greggson")),
       displayName           = BankAccountDisplayName("bank account display name"),
       balance               = 123.7,
       lastUpdateTime        = localDateTime,
@@ -96,7 +96,7 @@ class BankAccountSummaryResponseSpec extends UnitSpec {
       accountFormat         = BankAccountFormat.SortCode,
       accountIdentification = BankAccountIdentification("44556610002333"),
       calculatedOwnerName   = CalculatedOwnerName("Greg Greggson"),
-      accountOwnerName      = BankAccountOwnerName("Greg Greggson"),
+      accountOwnerName      = Some(BankAccountOwnerName("Greg Greggson")),
       displayName           = BankAccountDisplayName("bank account display name"),
       balance               = 123.7,
       lastUpdateTime        = localDateTime,
@@ -109,7 +109,7 @@ class BankAccountSummaryResponseSpec extends UnitSpec {
     implicitly[Reads[BankAccountSummaryResponse]].reads(testJson) shouldBe JsSuccess(expectedCaseClass)
   }
 
-  "Deserialise from Ecospend example JSON with an empty parties list" in {
+  "Deserialise from Ecospend example JSON with an empty parties list or account owner name" in {
     val testJson = Json.parse(
       //language=JSON
       """
@@ -123,7 +123,6 @@ class BankAccountSummaryResponseSpec extends UnitSpec {
             "account_format": "SortCode",
             "account_identification": "44556610002333",
             "calculated_owner_name": "Greg Greggson",
-            "account_owner_name": "Greg Greggson",
             "display_name": "bank account display name",
             "balance": 123.7,
             "last_update_time": "2024-02-13T12:52:45.081236",
@@ -143,7 +142,7 @@ class BankAccountSummaryResponseSpec extends UnitSpec {
       accountFormat         = BankAccountFormat.SortCode,
       accountIdentification = BankAccountIdentification("44556610002333"),
       calculatedOwnerName   = CalculatedOwnerName("Greg Greggson"),
-      accountOwnerName      = BankAccountOwnerName("Greg Greggson"),
+      accountOwnerName      = None,
       displayName           = BankAccountDisplayName("bank account display name"),
       balance               = 123.7,
       lastUpdateTime        = localDateTime,

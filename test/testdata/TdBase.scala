@@ -168,7 +168,7 @@ trait TdBase {
     accountFormat         = BankAccountFormat.SortCode,
     accountIdentification = BankAccountIdentification(sortCode + bankAccountNumber),
     calculatedOwnerName   = CalculatedOwnerName("Mr Greg Greggson"),
-    accountOwnerName      = BankAccountOwnerName("Greggson Gregory "),
+    accountOwnerName      = Some(BankAccountOwnerName("Greggson Gregory ")),
     displayName           = BankAccountDisplayName("bank account display name"),
     balance               = 123.7,
     lastUpdateTime        = localDateTime,
