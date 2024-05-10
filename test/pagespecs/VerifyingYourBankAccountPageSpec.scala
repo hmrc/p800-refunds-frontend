@@ -19,7 +19,9 @@ package pagespecs
 import edh.GetBankDetailsRiskResultResponse
 import models.ecospend.consent.ConsentStatus
 import models.p800externalapi.EventValue
+import play.api.libs.json.{Json, JsObject}
 import testsupport.ItSpec
+import testsupport.stubs.AuditConnectorStub
 import testsupport.stubs.{CaseManagementStub, DateCalculatorStub, EcospendStub, EdhStub, MakeBacsRepaymentStub, NpsSuspendOverpaymentStub, P800RefundsExternalApiStub}
 
 class VerifyingYourBankAccountPageSpec extends ItSpec {
@@ -84,6 +86,53 @@ class VerifyingYourBankAccountPageSpec extends ItSpec {
     EdhStub.verifyGetBankDetailsRiskResult(tdAll.claimId, tdAll.correlationId)
     P800RefundsExternalApiStub.verifyIsValid(tdAll.consentId)
     MakeBacsRepaymentStub.verifyNone(tdAll.nino)
+    AuditConnectorStub.verifyEventAudited(
+      "BankClaimAttemptMade",
+      Json.parse("""
+      {
+        "outcome": {
+          "isSuccessful": false,
+          "actionsOutcome": {
+            "ecospendFraudCheckIsSuccessful": true,
+            "fuzzyNameMatchingIsSuccessful": false,
+            "hmrcFraudCheckIsSuccessful": false,
+            "claimOverpaymentIsSuccessful": false
+          }
+        },
+        "userEnteredDetails": {
+          "chosenBank": "Barclays Personal",
+          "p800Reference": 12345678,
+          "nino": "LM001014C",
+          "dob": {
+            "dayOfMonth": "1",
+            "month": "1",
+            "year": "2000"
+          }
+        },
+        "repaymentAmount": 1234,
+        "repaymentInformation": {
+          "reconciliationIdentifier": 123,
+          "paymentNumber": 12345678,
+          "payeNumber": "PayeNumber-123",
+          "taxDistrictNumber": 717,
+          "associatedPayableNumber": 1234,
+          "customerAccountNumber": "customerAccountNumber-1234",
+          "currentOptimisticLock": 15
+        },
+        "name": {
+          "title": "Sir",
+          "firstForename": "Greg",
+          "secondForename": "Greggory",
+          "surname": "Greggson"
+        },
+        "address": {
+          "addressLine1": "Flat 1 Rose House",
+          "addressLine2": "Worthing",
+          "addressPostcode": "BN12 4XL"
+        }
+      }
+      """).as[JsObject]
+    )
   }
 
   "/verify-bank-account renders the 'Refund Request not Submitted' page when the parties list is empty" in {
@@ -226,6 +275,7 @@ class VerifyingYourBankAccountPageSpec extends ItSpec {
     EdhStub.verifyGetBankDetailsRiskResult(tdAll.claimId, tdAll.correlationId)
     P800RefundsExternalApiStub.verifyIsValid(tdAll.consentId, 2)
     MakeBacsRepaymentStub.verifyNone(tdAll.nino)
+    AuditConnectorStub.verifyNoAuditEvent("BankClaimAttemptMade")
   }
 
   "redirect to bank transfer 'Request received' page when verification call returns Successful" in {
@@ -254,50 +304,54 @@ class VerifyingYourBankAccountPageSpec extends ItSpec {
     pages.requestReceivedBankTransferPage.assertPageIsDisplayedForBankTransfer()
     DateCalculatorStub.verifyAddWorkingDays()
     MakeBacsRepaymentStub.verify(tdAll.nino, tdAll.correlationId)
-  }
 
-  "Show technical difficulties error page when claim overpayment call returns 'Suspended'" in {
-    EcospendStub.AuthStubs.stubEcospendAuth2xxSucceeded
-    EcospendStub.AccountStub.stubAccountSummary2xxSucceeded(tdAll.consentId)
-    P800RefundsExternalApiStub.isValid(tdAll.consentId, EventValue.Valid)
-    EdhStub.getBankDetailsRiskResult(tdAll.getBankDetailsRiskResultRequest, tdAll.getBankDetailsRiskResultResponse)
-    MakeBacsRepaymentStub.`refundSuspended 422`(
-      nino = tdAll.nino
+    AuditConnectorStub.verifyEventAudited(
+      "BankClaimAttemptMade",
+      Json.parse("""
+      {
+        "outcome": {
+          "isSuccessful": true,
+          "actionsOutcome": {
+            "ecospendFraudCheckIsSuccessful": true,
+            "fuzzyNameMatchingIsSuccessful": true,
+            "hmrcFraudCheckIsSuccessful": true,
+            "claimOverpaymentIsSuccessful": true
+          }
+        },
+        "userEnteredDetails": {
+          "chosenBank": "Barclays Personal",
+          "p800Reference": 12345678,
+          "nino": "LM001014C",
+          "dob": {
+            "dayOfMonth": "1",
+            "month": "1",
+            "year": "2000"
+          }
+        },
+        "repaymentAmount": 1234,
+        "repaymentInformation": {
+          "reconciliationIdentifier": 123,
+          "paymentNumber": 12345678,
+          "payeNumber": "PayeNumber-123",
+          "taxDistrictNumber": 717,
+          "associatedPayableNumber": 1234,
+          "customerAccountNumber": "customerAccountNumber-1234",
+          "currentOptimisticLock": 15
+        },
+        "name": {
+          "title": "Sir",
+          "firstForename": "Greg",
+          "secondForename": "Greggory",
+          "surname": "Greggson"
+        },
+        "address": {
+          "addressLine1": "Flat 1 Rose House",
+          "addressLine2": "Worthing",
+          "addressPostcode": "BN12 4XL"
+        }
+      }
+      """).as[JsObject]
     )
-
-    pages.verifyingBankAccountPage.open()
-    pages.verifyingBankAccountPage.assertPageIsDisplayedWithTechnicalDifficultiesError()
-    EdhStub.verifyGetBankDetailsRiskResult(tdAll.claimId, tdAll.correlationId)
-    MakeBacsRepaymentStub.verify(tdAll.nino, tdAll.correlationId)
-  }
-
-  "Show technical difficulties error page when claim overpayment call returns 'Already Taken'" in {
-    EcospendStub.AuthStubs.stubEcospendAuth2xxSucceeded
-    EcospendStub.AccountStub.stubAccountSummary2xxSucceeded(tdAll.consentId)
-    P800RefundsExternalApiStub.isValid(tdAll.consentId, EventValue.Valid)
-    EdhStub.getBankDetailsRiskResult(tdAll.getBankDetailsRiskResultRequest, tdAll.getBankDetailsRiskResultResponse)
-    MakeBacsRepaymentStub.`refundAlreadyTaken 422`(
-      nino = tdAll.nino
-    )
-    pages.verifyingBankAccountPage.open()
-    pages.verifyingBankAccountPage.assertPageIsDisplayedWithTechnicalDifficultiesError()
-    EdhStub.verifyGetBankDetailsRiskResult(tdAll.claimId, tdAll.correlationId)
-    MakeBacsRepaymentStub.verify(tdAll.nino, tdAll.correlationId)
-  }
-
-  "Show technical difficulties error page when claim overpayments call returns 500 error" in {
-    EcospendStub.AuthStubs.stubEcospendAuth2xxSucceeded
-    EcospendStub.AccountStub.stubAccountSummary2xxSucceeded(tdAll.consentId)
-    P800RefundsExternalApiStub.isValid(tdAll.consentId, EventValue.Valid)
-    EdhStub.getBankDetailsRiskResult(tdAll.getBankDetailsRiskResultRequest, tdAll.getBankDetailsRiskResultResponse)
-    MakeBacsRepaymentStub.`internalServerError 500`(
-      nino = tdAll.nino
-    )
-
-    pages.verifyingBankAccountPage.open()
-    pages.verifyingBankAccountPage.assertPageIsDisplayedWithTechnicalDifficultiesError()
-    EdhStub.verifyGetBankDetailsRiskResult(tdAll.claimId, tdAll.correlationId)
-    MakeBacsRepaymentStub.verify(tdAll.nino, tdAll.correlationId)
   }
 
   "redirect to 'Request not submitted' page when verification call returns NotValid" in {
@@ -325,6 +379,53 @@ class VerifyingYourBankAccountPageSpec extends ItSpec {
     pages.verifyingBankAccountPage.clickRefreshThisPageLink()
     pages.refundRequestNotSubmittedPage.assertPageIsDisplayed()
     P800RefundsExternalApiStub.verifyIsValid(tdAll.consentId, 2)
+    AuditConnectorStub.verifyEventAudited(
+      "BankClaimAttemptMade",
+      Json.parse("""
+      {
+        "outcome": {
+          "isSuccessful": false,
+          "actionsOutcome": {
+            "ecospendFraudCheckIsSuccessful": false,
+            "fuzzyNameMatchingIsSuccessful": false,
+            "hmrcFraudCheckIsSuccessful": false,
+            "claimOverpaymentIsSuccessful": false
+          }
+        },
+        "userEnteredDetails": {
+          "chosenBank": "Barclays Personal",
+          "p800Reference": 12345678,
+          "nino": "LM001014C",
+          "dob": {
+            "dayOfMonth": "1",
+            "month": "1",
+            "year": "2000"
+          }
+        },
+        "repaymentAmount": 1234,
+        "repaymentInformation": {
+          "reconciliationIdentifier": 123,
+          "paymentNumber": 12345678,
+          "payeNumber": "PayeNumber-123",
+          "taxDistrictNumber": 717,
+          "associatedPayableNumber": 1234,
+          "customerAccountNumber": "customerAccountNumber-1234",
+          "currentOptimisticLock": 15
+        },
+        "name": {
+          "title": "Sir",
+          "firstForename": "Greg",
+          "secondForename": "Greggory",
+          "surname": "Greggson"
+        },
+        "address": {
+          "addressLine1": "Flat 1 Rose House",
+          "addressLine2": "Worthing",
+          "addressPostcode": "BN12 4XL"
+        }
+      }
+      """).as[JsObject]
+    )
   }
 
   "refreshing the page does not re-send the account summary request, nor edh request" in {
@@ -342,18 +443,7 @@ class VerifyingYourBankAccountPageSpec extends ItSpec {
     pages.verifyingBankAccountPage.assertPageIsDisplayed()
     EcospendStub.AccountStub.accountSummaryValidate(numberOfRequests = 1, tdAll.consentId)
     EdhStub.verifyGetBankDetailsRiskResult(tdAll.claimId, tdAll.correlationId, numberOfRequests = 1)
-  }
-
-  "Show technical difficulties error page when EDH endpoint fails" in {
-    EcospendStub.AuthStubs.stubEcospendAuth2xxSucceeded
-    EcospendStub.AccountStub.stubAccountSummary2xxSucceeded(tdAll.consentId)
-    P800RefundsExternalApiStub.isValid(tdAll.consentId, EventValue.Valid)
-    EdhStub.getBankDetailsRiskResult5xx(tdAll.getBankDetailsRiskResultRequest)
-
-    pages.verifyingBankAccountPage.open()
-    pages.verifyingBankAccountPage.assertPageIsDisplayedWithTechnicalDifficultiesError()
-    EdhStub.verifyGetBankDetailsRiskResult(tdAll.claimId, tdAll.correlationId)
-    MakeBacsRepaymentStub.verifyNone(tdAll.nino)
+    AuditConnectorStub.verifyNoAuditEvent("BankClaimAttemptMade")
   }
 
   "redirect to 'Request received' page when EDH call results in nextAction=DoNotPay" in {
@@ -378,6 +468,114 @@ class VerifyingYourBankAccountPageSpec extends ItSpec {
     NpsSuspendOverpaymentStub.verify(tdAll.nino, tdAll.correlationId)
     P800RefundsExternalApiStub.verifyIsValid(tdAll.consentId)
     MakeBacsRepaymentStub.verifyNone(tdAll.nino)
+    AuditConnectorStub.verifyEventAudited(
+      "BankClaimAttemptMade",
+      Json.parse("""
+      {
+        "outcome": {
+          "isSuccessful": false,
+          "actionsOutcome": {
+            "ecospendFraudCheckIsSuccessful": true,
+            "fuzzyNameMatchingIsSuccessful": true,
+            "hmrcFraudCheckIsSuccessful": false,
+            "claimOverpaymentIsSuccessful": false
+          }
+        },
+        "userEnteredDetails": {
+          "chosenBank": "Barclays Personal",
+          "p800Reference": 12345678,
+          "nino": "LM001014C",
+          "dob": {
+            "dayOfMonth": "1",
+            "month": "1",
+            "year": "2000"
+          }
+        },
+        "repaymentAmount": 1234,
+        "repaymentInformation": {
+          "reconciliationIdentifier": 123,
+          "paymentNumber": 12345678,
+          "payeNumber": "PayeNumber-123",
+          "taxDistrictNumber": 717,
+          "associatedPayableNumber": 1234,
+          "customerAccountNumber": "customerAccountNumber-1234",
+          "currentOptimisticLock": 15
+        },
+        "name": {
+          "title": "Sir",
+          "firstForename": "Greg",
+          "secondForename": "Greggory",
+          "surname": "Greggson"
+        },
+        "address": {
+          "addressLine1": "Flat 1 Rose House",
+          "addressLine2": "Worthing",
+          "addressPostcode": "BN12 4XL"
+        }
+      }
+      """).as[JsObject]
+    )
+  }
+
+  "Show technical difficulties error page when claim overpayment call returns 'Suspended'" in {
+    EcospendStub.AuthStubs.stubEcospendAuth2xxSucceeded
+    EcospendStub.AccountStub.stubAccountSummary2xxSucceeded(tdAll.consentId)
+    P800RefundsExternalApiStub.isValid(tdAll.consentId, EventValue.Valid)
+    EdhStub.getBankDetailsRiskResult(tdAll.getBankDetailsRiskResultRequest, tdAll.getBankDetailsRiskResultResponse)
+    MakeBacsRepaymentStub.`refundSuspended 422`(
+      nino = tdAll.nino
+    )
+
+    pages.verifyingBankAccountPage.open()
+    pages.verifyingBankAccountPage.assertPageIsDisplayedWithTechnicalDifficultiesError()
+    EdhStub.verifyGetBankDetailsRiskResult(tdAll.claimId, tdAll.correlationId)
+    MakeBacsRepaymentStub.verify(tdAll.nino, tdAll.correlationId)
+
+    AuditConnectorStub.verifyNoAuditEvent("BankClaimAttemptMade")
+  }
+
+  "Show technical difficulties error page when claim overpayment call returns 'Already Taken'" in {
+    EcospendStub.AuthStubs.stubEcospendAuth2xxSucceeded
+    EcospendStub.AccountStub.stubAccountSummary2xxSucceeded(tdAll.consentId)
+    P800RefundsExternalApiStub.isValid(tdAll.consentId, EventValue.Valid)
+    EdhStub.getBankDetailsRiskResult(tdAll.getBankDetailsRiskResultRequest, tdAll.getBankDetailsRiskResultResponse)
+    MakeBacsRepaymentStub.`refundAlreadyTaken 422`(
+      nino = tdAll.nino
+    )
+    pages.verifyingBankAccountPage.open()
+    pages.verifyingBankAccountPage.assertPageIsDisplayedWithTechnicalDifficultiesError()
+    EdhStub.verifyGetBankDetailsRiskResult(tdAll.claimId, tdAll.correlationId)
+    MakeBacsRepaymentStub.verify(tdAll.nino, tdAll.correlationId)
+    AuditConnectorStub.verifyNoAuditEvent("BankClaimAttemptMade")
+  }
+
+  "Show technical difficulties error page when claim overpayments call returns 500 error" in {
+    EcospendStub.AuthStubs.stubEcospendAuth2xxSucceeded
+    EcospendStub.AccountStub.stubAccountSummary2xxSucceeded(tdAll.consentId)
+    P800RefundsExternalApiStub.isValid(tdAll.consentId, EventValue.Valid)
+    EdhStub.getBankDetailsRiskResult(tdAll.getBankDetailsRiskResultRequest, tdAll.getBankDetailsRiskResultResponse)
+    MakeBacsRepaymentStub.`internalServerError 500`(
+      nino = tdAll.nino
+    )
+
+    pages.verifyingBankAccountPage.open()
+    pages.verifyingBankAccountPage.assertPageIsDisplayedWithTechnicalDifficultiesError()
+    EdhStub.verifyGetBankDetailsRiskResult(tdAll.claimId, tdAll.correlationId)
+    MakeBacsRepaymentStub.verify(tdAll.nino, tdAll.correlationId)
+    AuditConnectorStub.verifyNoAuditEvent("BankClaimAttemptMade")
+  }
+
+  "Show technical difficulties error page when EDH endpoint fails" in {
+    EcospendStub.AuthStubs.stubEcospendAuth2xxSucceeded
+    EcospendStub.AccountStub.stubAccountSummary2xxSucceeded(tdAll.consentId)
+    P800RefundsExternalApiStub.isValid(tdAll.consentId, EventValue.Valid)
+    EdhStub.getBankDetailsRiskResult5xx(tdAll.getBankDetailsRiskResultRequest)
+
+    pages.verifyingBankAccountPage.open()
+    pages.verifyingBankAccountPage.assertPageIsDisplayedWithTechnicalDifficultiesError()
+    EdhStub.verifyGetBankDetailsRiskResult(tdAll.claimId, tdAll.correlationId)
+    MakeBacsRepaymentStub.verifyNone(tdAll.nino)
+    AuditConnectorStub.verifyNoAuditEvent("BankClaimAttemptMade")
   }
 
   "Show technical difficulties page when 'Notify case management' call fails" in {
@@ -396,6 +594,7 @@ class VerifyingYourBankAccountPageSpec extends ItSpec {
     CaseManagementStub.verifyNotifyCaseManagement(tdAll.clientUId, tdAll.correlationId)
     P800RefundsExternalApiStub.verifyIsValid(tdAll.consentId)
     MakeBacsRepaymentStub.verifyNone(tdAll.nino)
+    AuditConnectorStub.verifyNoAuditEvent("BankClaimAttemptMade")
   }
 
 }

@@ -17,11 +17,10 @@
 package models.audit
 
 import edh.Postcode
+import models.attemptmodels.NumberOfAttempts
 import models.dateofbirth.DateOfBirth
 import models.journeymodels.JourneyType
-import models.attemptmodels.NumberOfAttempts
 import models.{AmountInPence, P800Reference, Nino}
-import nps.models.{ReconciliationIdentifier, PayeNumber, TaxDistrictNumber, AssociatedPayableNumber, CustomerAccountNumber, CurrentOptimisticLock}
 import play.api.libs.json.{Json, OWrites, Writes, JsString}
 
 final case class ValidateUserDetails(
@@ -77,21 +76,6 @@ object UserEnteredDetails {
 
   @SuppressWarnings(Array("org.wartremover.warts.Any"))
   implicit val writes: OWrites[UserEnteredDetails] = Json.writes[UserEnteredDetails]
-}
-
-final case class RepaymentInformation(
-    reconciliationIdentifier: Option[ReconciliationIdentifier],
-    paymentNumber:            P800Reference,
-    payeNumber:               Option[PayeNumber],
-    taxDistrictNumber:        Option[TaxDistrictNumber],
-    associatedPayableNumber:  AssociatedPayableNumber,
-    customerAccountNumber:    CustomerAccountNumber,
-    currentOptimisticLock:    CurrentOptimisticLock
-)
-
-object RepaymentInformation {
-  @SuppressWarnings(Array("org.wartremover.warts.Any"))
-  implicit val writes: OWrites[RepaymentInformation] = Json.writes[RepaymentInformation]
 }
 
 final case class Name(

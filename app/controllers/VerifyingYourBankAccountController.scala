@@ -20,7 +20,7 @@ import action.{Actions, JourneyRequest}
 import casemanagement._
 import connectors.{P800RefundsBackendConnector, P800RefundsExternalApiConnector}
 import edh._
-import models.audit.{NameMatchOutcome, NameMatchingAudit, RawNpsName}
+import models.audit.{NameMatchOutcome, NameMatchingAudit, RawNpsName, ActionsOutcome, IsSuccessful}
 import models.ecospend.account.{BankAccountOwnerName, BankAccountSummary}
 import models.ecospend.consent.{BankReferenceId, ConsentId, ConsentStatus}
 import models.journeymodels._
@@ -149,6 +149,13 @@ class VerifyingYourBankAccountController @Inject() (
     }
     case (_, _, false) => Future.successful {
       JourneyLogger.info(s"Ecospend names failed matching against NPS name")
+      auditService.auditBankClaimAttempt(journey, ActionsOutcome(
+        ecospendFraudCheckIsSuccessful = IsSuccessful(true),
+        fuzzyNameMatchingIsSuccessful  = IsSuccessful(false),
+        hmrcFraudCheckIsSuccessful     = IsSuccessful(false),
+        claimOverpaymentIsSuccessful   = IsSuccessful(false)
+      ))
+
       (
         Redirect(routes.RefundRequestNotSubmittedController.get),
         journey.copy(hasFinished = HasFinished.YesRefundNotSubmitted)
@@ -162,6 +169,13 @@ class VerifyingYourBankAccountController @Inject() (
     )
     case (EventValue.NotValid, ConsentStatus.Authorised, _) => Future.successful {
       JourneyLogger.info(s"Account assessment failed.")
+      auditService.auditBankClaimAttempt(journey, ActionsOutcome(
+        ecospendFraudCheckIsSuccessful = IsSuccessful(false),
+        fuzzyNameMatchingIsSuccessful  = IsSuccessful(false),
+        hmrcFraudCheckIsSuccessful     = IsSuccessful(false),
+        claimOverpaymentIsSuccessful   = IsSuccessful(false)
+      ))
+
       (
         Redirect(routes.RefundRequestNotSubmittedController.get),
         journey.update(HasFinished.YesRefundNotSubmitted)
@@ -193,14 +207,30 @@ class VerifyingYourBankAccountController @Inject() (
     for {
       _ <- notifyCaseManagement(journey)
       _ <- p800RefundsBackendConnector.suspendOverpayment(journey.getNino, suspendOverpaymentRequest, journey.correlationId)
-    } yield (
-      Redirect(routes.RequestReceivedController.getBankTransfer),
-      journey.update(hasFinished = HasFinished.YesSentToCaseManagement)
-    )
+    } yield {
+      auditService.auditBankClaimAttempt(journey, ActionsOutcome(
+        ecospendFraudCheckIsSuccessful = IsSuccessful(true),
+        fuzzyNameMatchingIsSuccessful  = IsSuccessful(true),
+        hmrcFraudCheckIsSuccessful     = IsSuccessful(false),
+        claimOverpaymentIsSuccessful   = IsSuccessful(false)
+      ))
+
+      (
+        Redirect(routes.RequestReceivedController.getBankTransfer),
+        journey.update(hasFinished = HasFinished.YesSentToCaseManagement)
+      )
+    }
   }
 
   private def handlePay(journey: Journey, bankAccountSummary: BankAccountSummary)(implicit request: RequestHeader): Future[(Result, Journey)] = {
     makeBacsRepayment(journey, bankAccountSummary).map{ _ =>
+      auditService.auditBankClaimAttempt(journey, ActionsOutcome(
+        ecospendFraudCheckIsSuccessful = IsSuccessful(true),
+        fuzzyNameMatchingIsSuccessful  = IsSuccessful(true),
+        hmrcFraudCheckIsSuccessful     = IsSuccessful(true),
+        claimOverpaymentIsSuccessful   = IsSuccessful(true)
+      ))
+
       (
         Redirect(routes.RequestReceivedController.getBankTransfer),
         journey.update(hasFinished = HasFinished.YesSucceeded)

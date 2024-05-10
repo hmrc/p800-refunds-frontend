@@ -16,20 +16,21 @@
 
 package services
 
+import config.AppConfig
 import models.AmountInPence
+import models.attemptmodels.{AttemptInfo, NumberOfAttempts}
 import models.audit._
+import models.audit.cheque.ChequeClaimAttemptMade
+import models.audit.{AuditDetail, IpAddressLockedout, Login, NameMatchingAudit, UserLoginSelection}
+import models.ecospend.BankFriendlyName
 import models.journeymodels.Journey
 import nps.models.{TracedIndividual, ValidateReferenceResult}
-import models.audit.{AuditDetail, IpAddressLockedout, Login, NameMatchingAudit, UserLoginSelection}
 import play.api.libs.json.{Json, Writes}
 import play.api.mvc.RequestHeader
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.audit.AuditExtensions._
 import uk.gov.hmrc.play.audit.http.connector.AuditConnector
 import uk.gov.hmrc.play.audit.model.ExtendedDataEvent
-import models.attemptmodels.{AttemptInfo, NumberOfAttempts}
-import config.AppConfig
-import models.audit.cheque.ChequeClaimAttemptMade
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.ExecutionContext
@@ -66,6 +67,9 @@ class AuditService @Inject() (
   def auditChequeClaimAttemptMade(journey: Journey, isSuccessful: IsSuccessful)(implicit requestHeader: RequestHeader, hc: HeaderCarrier): Unit = {
     audit(toChequeClaimAttemptMade(journey, isSuccessful))
   }
+
+  def auditBankClaimAttempt(journey: Journey, actionsOutcome: ActionsOutcome)(implicit requestHeader: RequestHeader, hc: HeaderCarrier): Unit =
+    audit(toBankClaimAttempt(journey, actionsOutcome))
 
   private def toValidateUserDetails(journey: Journey, attemptInfo: Option[AttemptInfo], isSuccessful: IsSuccessful)(implicit requestHeader: RequestHeader): ValidateUserDetails =
     ValidateUserDetails(
@@ -126,6 +130,40 @@ class AuditService @Inject() (
       associatedPayableNumber  = p800ReferenceChecked.associatedPayableNumber,
       customerAccountNumber    = p800ReferenceChecked.customerAccountNumber,
       currentOptimisticLock    = p800ReferenceChecked.currentOptimisticLock
+    )
+
+  private def toBankClaimAttempt(journey: Journey, actionsOutcome: ActionsOutcome)(implicit requestHeader: RequestHeader): BankClaimAttempt =
+    BankClaimAttempt(
+      outcome              = toBankClaimOutcome(actionsOutcome),
+      userEnteredDetails   = toBankClaimUserEnteredDetails(journey),
+      repaymentAmount      = journey.referenceCheckResult.fold[Option[AmountInPence]](None) {
+        case p800ReferenceChecked: ValidateReferenceResult.P800ReferenceChecked => Some(AmountInPence(p800ReferenceChecked.paymentAmount))
+        case _ => None
+      },
+      repaymentInformation = journey.referenceCheckResult.fold[Option[RepaymentInformation]](None) {
+        case p800ReferenceChecked: ValidateReferenceResult.P800ReferenceChecked => Some(toRepaymentInformation(p800ReferenceChecked))
+        case _ => None
+      },
+      name                 = toName(journey.traceIndividualResponse),
+      address              = toAddress(journey.traceIndividualResponse)
+    )
+
+  private def toBankClaimOutcome(actionsOutcome: ActionsOutcome): BankClaimOutcome =
+    BankClaimOutcome(
+      isSuccessful   = actionsOutcome.overallResult,
+      actionsOutcome = actionsOutcome,
+      failureReasons = None
+    )
+
+  private def toBankClaimUserEnteredDetails(journey: Journey)(implicit requestHeader: RequestHeader): BankClaimUserEnteredDetails =
+    BankClaimUserEnteredDetails(
+      repaymentMethod = journey.getJourneyType,
+      chosenBank      = journey.bankDescription.fold[Option[BankFriendlyName]](None){ bankDescription =>
+        Some(bankDescription.friendlyName)
+      },
+      p800Reference   = journey.getP800Reference.sanitiseReference,
+      nino            = journey.getNino,
+      dob             = journey.dateOfBirth
     )
 
   private def toName(maybeTracedIndividual: Option[TracedIndividual]): Option[Name] =
