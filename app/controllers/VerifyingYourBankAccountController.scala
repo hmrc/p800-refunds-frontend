@@ -150,10 +150,10 @@ class VerifyingYourBankAccountController @Inject() (
     case (_, _, false) => Future.successful {
       JourneyLogger.info(s"Ecospend names failed matching against NPS name")
       auditService.auditBankClaimAttempt(journey, ActionsOutcome(
-        ecospendFraudCheckIsSuccessful = IsSuccessful(true),
-        fuzzyNameMatchingIsSuccessful  = IsSuccessful(false),
-        hmrcFraudCheckIsSuccessful     = IsSuccessful(false),
-        claimOverpaymentIsSuccessful   = IsSuccessful(false)
+        ecospendFraudCheckIsSuccessful = IsSuccessful.yes,
+        fuzzyNameMatchingIsSuccessful  = IsSuccessful.no,
+        hmrcFraudCheckIsSuccessful     = IsSuccessful.no,
+        claimOverpaymentIsSuccessful   = IsSuccessful.no
       ))
 
       (
@@ -170,10 +170,10 @@ class VerifyingYourBankAccountController @Inject() (
     case (EventValue.NotValid, ConsentStatus.Authorised, _) => Future.successful {
       JourneyLogger.info(s"Account assessment failed.")
       auditService.auditBankClaimAttempt(journey, ActionsOutcome(
-        ecospendFraudCheckIsSuccessful = IsSuccessful(false),
-        fuzzyNameMatchingIsSuccessful  = IsSuccessful(false),
-        hmrcFraudCheckIsSuccessful     = IsSuccessful(false),
-        claimOverpaymentIsSuccessful   = IsSuccessful(false)
+        ecospendFraudCheckIsSuccessful = IsSuccessful.no,
+        fuzzyNameMatchingIsSuccessful  = IsSuccessful.no,
+        hmrcFraudCheckIsSuccessful     = IsSuccessful.no,
+        claimOverpaymentIsSuccessful   = IsSuccessful.no
       ))
 
       (
@@ -209,10 +209,10 @@ class VerifyingYourBankAccountController @Inject() (
       _ <- p800RefundsBackendConnector.suspendOverpayment(journey.getNino, suspendOverpaymentRequest, journey.correlationId)
     } yield {
       auditService.auditBankClaimAttempt(journey, ActionsOutcome(
-        ecospendFraudCheckIsSuccessful = IsSuccessful(true),
-        fuzzyNameMatchingIsSuccessful  = IsSuccessful(true),
-        hmrcFraudCheckIsSuccessful     = IsSuccessful(false),
-        claimOverpaymentIsSuccessful   = IsSuccessful(false)
+        ecospendFraudCheckIsSuccessful = IsSuccessful.yes,
+        fuzzyNameMatchingIsSuccessful  = IsSuccessful.yes,
+        hmrcFraudCheckIsSuccessful     = IsSuccessful.no,
+        claimOverpaymentIsSuccessful   = IsSuccessful.no
       ))
 
       (
@@ -225,10 +225,10 @@ class VerifyingYourBankAccountController @Inject() (
   private def handlePay(journey: Journey, bankAccountSummary: BankAccountSummary)(implicit request: RequestHeader): Future[(Result, Journey)] = {
     makeBacsRepayment(journey, bankAccountSummary).map{ _ =>
       auditService.auditBankClaimAttempt(journey, ActionsOutcome(
-        ecospendFraudCheckIsSuccessful = IsSuccessful(true),
-        fuzzyNameMatchingIsSuccessful  = IsSuccessful(true),
-        hmrcFraudCheckIsSuccessful     = IsSuccessful(true),
-        claimOverpaymentIsSuccessful   = IsSuccessful(true)
+        ecospendFraudCheckIsSuccessful = IsSuccessful.yes,
+        fuzzyNameMatchingIsSuccessful  = IsSuccessful.yes,
+        hmrcFraudCheckIsSuccessful     = IsSuccessful.yes,
+        claimOverpaymentIsSuccessful   = IsSuccessful.yes
       ))
 
       (
