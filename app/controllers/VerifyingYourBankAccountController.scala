@@ -86,7 +86,8 @@ class VerifyingYourBankAccountController @Inject() (
           ),
           rawBankName         = None,
           transformedNpsName  = None,
-          transformedBankName = None
+          transformedBankName = None,
+          partiesArrayUsed = false
         )
         auditService.auditNameMatching(emptyListAudit)
         false
@@ -94,35 +95,33 @@ class VerifyingYourBankAccountController @Inject() (
       case (true, false) =>
         JourneyLogger.info("No parties list, falling back to account owner name")
         val accountName = bankAccountSummary.accountOwnerName.getOrElse(BankAccountOwnerName("fallback name error")).value
-        val jointAccountNamesSplit = accountName.split(",").toSeq
+        val jointAccountNamesSplit = accountName.split(",").toSeq //For joint accounts, account owner names can be comma-delimited strings
 
-        val matchingResponseList = jointAccountNamesSplit.map { accountName =>
-          val (matchingResponse, nameMatchAuditEvent) = NameMatchingService.fuzzyNameMatching(
+        val matchingResponseList: Seq[(NameMatchingResponse, NameMatchingAudit)] = jointAccountNamesSplit.map { accountName =>
+          NameMatchingService.fuzzyNameMatching(
             individualResponse.firstForename,
             individualResponse.secondForename,
             individualResponse.surname,
             accountName
           )
-          auditService.auditNameMatching(nameMatchAuditEvent.copy(partiesArrayUsed = false))
-          matchingResponse
         }
 
-        matchingResponseList.exists(_.isSuccess)
+        matchingResponseList.foreach(nameAudit => auditService.auditNameMatching(nameAudit._2.copy(partiesArrayUsed = false)))
+        matchingResponseList.exists(_._1.isSuccess)
 
       case (false, _) =>
         //There is a parties list to iterate through
-        val matchingResponseList: Seq[NameMatchingResponse] = bankAccountSummary.parties.map { party =>
-          val (matchingResponse, nameMatchAuditEvent) = NameMatchingService.fuzzyNameMatching(
+        val matchingResponseList: Seq[(NameMatchingResponse, NameMatchingAudit)] = bankAccountSummary.parties.map { party =>
+          NameMatchingService.fuzzyNameMatching(
             individualResponse.firstForename,
             individualResponse.secondForename,
             individualResponse.surname,
             party.fullLegalName.value
           )
-
-          auditService.auditNameMatching(nameMatchAuditEvent)
-          matchingResponse
         }
-        matchingResponseList.exists(_.isSuccess)
+
+        matchingResponseList.foreach(nameAudit => auditService.auditNameMatching(nameAudit._2))
+        matchingResponseList.exists(_._1.isSuccess)
     }
   }
 

@@ -98,7 +98,7 @@ object NameMatchingService {
             )
           )
         } else {
-          JourneyLogger.info(s"Failed initials Match")
+          JourneyLogger.info(s"Failed First and Middle name Match")
           (
             FailedFirstAndMiddleNameMatch,
             NameMatchingAudit(
@@ -146,7 +146,7 @@ object NameMatchingService {
 
   def splitEcospendSurname(npsSurname: String, ecospendNamesList: Seq[String]): (Seq[String], String) = {
     //By looking at the structure of the NPS surname, we can identify the structure of the Ecospend name to learn where the first/middle name ends and the surname begins.
-    //This is necessary for surnames split but spaces not hyphens.
+    //This is necessary for surnames split by spaces not hyphens.
     val npsSurnameLength = processSpacesApostrophesAndHyphens(npsSurname)
       .split(" ")
       .toSeq
