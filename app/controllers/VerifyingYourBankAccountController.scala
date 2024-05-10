@@ -87,7 +87,7 @@ class VerifyingYourBankAccountController @Inject() (
           rawBankName         = None,
           transformedNpsName  = None,
           transformedBankName = None,
-          partiesArrayUsed = false
+          partiesArrayUsed    = false
         )
         auditService.auditNameMatching(emptyListAudit)
         false
