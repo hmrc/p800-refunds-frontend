@@ -35,6 +35,7 @@ import play.api.{Application, Mode}
 import play.core.server.ServerConfig
 import repository.{FailedVerificationAttemptRepo, JourneyRepo}
 import testdata.TdAll
+import testsupport.stubs.AuditConnectorStub
 import testsupport.wiremock.WireMockSupport
 
 import java.time.{Clock, Instant, ZoneId}
@@ -101,6 +102,7 @@ trait ItSpec extends AnyFreeSpecLike
 
   override def beforeEach(): Unit = {
     super.beforeEach()
+    AuditConnectorStub.stubImplicitAuditEvents()
     webDriver.manage().deleteAllCookies()
     clearDownFailedAttemptDatabase() // we need to clear this as IPAddress stays the same between tests.
   }
