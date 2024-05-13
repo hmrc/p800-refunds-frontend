@@ -24,7 +24,7 @@ object AppDependencies {
      * https://github.com/julienrf/play-json-derived-codecs/pull/94
      */
     "org.julienrf"      %% "play-json-derived-codecs"    % "10.1.0" excludeAll(ExclusionRule().withOrganization("com.typesafe.play")),
-    "io.scalaland"      %% "chimney"                     % "0.8.5",
+    "com.softwaremill.quicklens" %% "quicklens"          % "1.9.7",
     "org.webjars"        %  "jquery"                     % "3.7.1",
     "org.webjars.npm"    %  "accessible-autocomplete"    % "2.0.4",
     "org.apache.commons" % "commons-text"                % "1.12.0"

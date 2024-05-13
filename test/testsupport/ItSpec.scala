@@ -17,6 +17,7 @@
 package testsupport
 
 import com.google.inject.AbstractModule
+import crypto.JourneyCrypto
 import edh.{ClaimId, ClaimIdGenerator}
 import models.attemptmodels.{AttemptInfo, IpAddress}
 import models.journeymodels.{Journey, JourneyId}
@@ -116,12 +117,14 @@ trait ItSpec extends AnyFreeSpecLike
 
   def upsertJourneyToDatabase(journey: Journey): Unit = {
     val journeyRepo: JourneyRepo = app.injector.instanceOf[JourneyRepo]
-    journeyRepo.upsert(journey).futureValue
+    val encryptedJourney: Journey = app.injector.instanceOf[JourneyCrypto].encryptJourney(journey)
+    journeyRepo.upsert(encryptedJourney).futureValue
   }
 
   def getJourneyFromDatabase(journeyId: JourneyId): Journey = {
     val journeyRepo: JourneyRepo = app.injector.instanceOf[JourneyRepo]
-    journeyRepo.findById(journeyId).futureValue.value
+    val journey = journeyRepo.findById(journeyId).futureValue.value
+    app.injector.instanceOf[JourneyCrypto].decryptJourney(journey)
   }
 
   def upsertFailedAttemptToDatabase(attemptInfo: AttemptInfo): Unit = {
