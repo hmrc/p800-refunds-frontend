@@ -16,6 +16,7 @@
 
 package services
 
+import crypto.JourneyCrypto
 import models.journeymodels.{Journey, JourneyId}
 import play.api.mvc.Request
 import repository.JourneyRepo
@@ -27,13 +28,13 @@ import scala.concurrent.{ExecutionContext, Future}
 @Singleton
 class JourneyService @Inject() (
     journeyRepo:    JourneyRepo,
-    journeyFactory: JourneyFactory
+    journeyFactory: JourneyFactory,
+    journeyCrypto:  JourneyCrypto
 )(implicit ec: ExecutionContext) {
 
   def newJourney()(implicit request: Request[_]): Future[Journey] = {
     val journey: Journey = journeyFactory.makeNewJourney()
-    journeyRepo
-      .upsert(journey)
+    upsert(journey)
       .map{ _ =>
         JourneyLogger.info(s"Started new journey [journeyId:${journey.id.value}]")
         journey
@@ -41,13 +42,18 @@ class JourneyService @Inject() (
   }
 
   def get(journeyId: JourneyId)(implicit request: Request[_]): Future[Journey] = find(journeyId).map { maybeJourney =>
-    maybeJourney.getOrElse(throw new RuntimeException(s"Expected journey to be found ${request.path} [journeyId:${journeyId.value}]"))
+    maybeJourney
+      .getOrElse(throw new RuntimeException(s"Expected journey to be found ${request.path} [journeyId:${journeyId.value}]"))
   }
 
   def upsert[J <: Journey](journey: J)(implicit request: Request[_]): Future[J] = {
     JourneyLogger.info(s"Upserting new journey [${journey.journeyType.toString}] [${journey.journeyId.toString}]")
-    journeyRepo.upsert(journey).map(_ => journey)
+    val encrypted = journeyCrypto.encryptJourney(journey)
+    journeyRepo.upsert(encrypted).map(_ => journey)
   }
 
-  def find(journeyId: JourneyId): Future[Option[Journey]] = journeyRepo.findById(journeyId)
+  def find(journeyId: JourneyId): Future[Option[Journey]] =
+    journeyRepo
+      .findById(journeyId)
+      .map(_.map(journeyCrypto.decryptJourney))
 }
