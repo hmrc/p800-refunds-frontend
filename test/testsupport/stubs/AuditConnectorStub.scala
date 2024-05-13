@@ -18,6 +18,7 @@ package testsupport.stubs
 
 import com.github.tomakehurst.wiremock.client.WireMock._
 import play.api.libs.json.JsObject
+import play.mvc.Http.Status
 
 object AuditConnectorStub {
 
@@ -48,4 +49,15 @@ object AuditConnectorStub {
 
   val chequeClaimAttemptMadeAuditType: String = "ChequeClaimAttemptMade"
 
+  /*
+   * Helper method to stop wiremock 'stub not found'
+   * being spammed into the logs when testing.
+   * Just creates a basic stub for implicit requests.
+   */
+  def stubImplicitAuditEvents(): Unit = {
+    stubFor(post(urlEqualTo(s"$auditUrl")).withRequestBody(equalToJson(s"""{"auditType": "RequestReceived"}""", true, true)).willReturn(aResponse().withStatus(Status.OK)))
+    stubFor(post(urlEqualTo(s"$auditUrl")).withRequestBody(equalToJson(s"""{"auditType": "OutboundCall"}""", true, true)).willReturn(aResponse().withStatus(Status.OK)))
+    stubFor(post(urlEqualTo(s"$auditUrl/merged")).willReturn(aResponse().withStatus(Status.OK)))
+    ()
+  }
 }
