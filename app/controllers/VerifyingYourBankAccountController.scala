@@ -78,7 +78,7 @@ class VerifyingYourBankAccountController @Inject() (
       case (true, true) =>
         JourneyLogger.warn("No parties list or account owner name present")
         val emptyListAudit = NameMatchingAudit(
-          NameMatchOutcome(isSuccessful = false, "no names returned from ecospend"),
+          NameMatchOutcome(isSuccessful = false, "no names returned from the bank"),
           RawNpsName(
             individualResponse.firstForename,
             individualResponse.secondForename,
