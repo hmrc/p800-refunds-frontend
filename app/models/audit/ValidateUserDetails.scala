@@ -43,7 +43,7 @@ final case class Outcome(
     isSuccessful:             IsSuccessful,
     attemptsOnRecord:         Option[NumberOfAttempts],
     lockout:                  LockedOut,
-    apiResponsibleForFailure: Option[String],
+    apiResponsibleForFailure: Option[ApiResponsibleForFailure],
     reasons:                  Seq[String]
 )
 
@@ -57,6 +57,18 @@ final case class LockedOut(value: Boolean) extends AnyVal
 object LockedOut {
   @SuppressWarnings(Array("org.wartremover.warts.Any"))
   implicit val writes: Writes[LockedOut] = Json.valueWrites[LockedOut]
+}
+
+sealed trait ApiResponsibleForFailure
+
+object ApiResponsibleForFailure {
+  case object P800ReferenceCheck extends ApiResponsibleForFailure
+  case object TraceIndividual extends ApiResponsibleForFailure
+
+  implicit val writes: Writes[ApiResponsibleForFailure] = Writes(_ match {
+    case P800ReferenceCheck => JsString("p800 reference check")
+    case TraceIndividual    => JsString("p800 reference check")
+  })
 }
 
 final case class UserEnteredDetails(

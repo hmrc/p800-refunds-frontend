@@ -300,7 +300,9 @@ class CheckYourAnswersPageSpec extends ItSpec {
               "attemptsOnRecord": 1,
               "lockout": false,
               "apiResponsibleForFailure": "p800 reference check",
-              "reasons": []
+              "reasons": [
+                "NPS indicated that the reference did not match the NINO"
+              ]
             },
             "userEnteredDetails": {
               "repaymentMethod": "bank",
@@ -339,7 +341,9 @@ class CheckYourAnswersPageSpec extends ItSpec {
               "attemptsOnRecord": 1,
               "lockout": false,
               "apiResponsibleForFailure": "p800 reference check",
-              "reasons": []
+              "reasons": [
+                "NPS indicated that the reference did not match the NINO"
+              ]
             },
             "userEnteredDetails": {
               "repaymentMethod": "cheque",
@@ -409,7 +413,11 @@ class CheckYourAnswersPageSpec extends ItSpec {
               "isSuccessful": false,
               "attemptsOnRecord": 3,
               "lockout": true,
-              "reasons": []
+              "apiResponsibleForFailure": "p800 reference check",
+              "reasons": [
+                "Max attempts reached. User is locked out.",
+                "NPS indicated that the reference did not match the NINO"
+              ]
             },
             "userEnteredDetails": {
               "repaymentMethod": "bank",
@@ -446,7 +454,11 @@ class CheckYourAnswersPageSpec extends ItSpec {
               "isSuccessful": false,
               "attemptsOnRecord": 3,
               "lockout": true,
-              "reasons": []
+              "apiResponsibleForFailure": "p800 reference check",
+              "reasons": [
+                "Max attempts reached. User is locked out.",
+                "NPS indicated that the reference did not match the NINO"
+              ]
             },
             "userEnteredDetails": {
               "repaymentMethod": "cheque",
@@ -491,7 +503,9 @@ class CheckYourAnswersPageSpec extends ItSpec {
               "isSuccessful": false,
               "lockout": false,
               "apiResponsibleForFailure": "p800 reference check",
-              "reasons": []
+              "reasons": [
+                "NPS indicated that refund has already been claimed"
+              ]
             },
             "userEnteredDetails": {
               "repaymentMethod": "bank",
@@ -525,7 +539,9 @@ class CheckYourAnswersPageSpec extends ItSpec {
               "isSuccessful": false,
               "lockout": false,
               "apiResponsibleForFailure": "p800 reference check",
-              "reasons": []
+              "reasons": [
+                "NPS indicated that refund has already been claimed"
+              ]
             },
             "userEnteredDetails": {
               "repaymentMethod": "cheque",

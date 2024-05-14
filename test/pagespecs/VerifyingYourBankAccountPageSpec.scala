@@ -88,47 +88,50 @@ class VerifyingYourBankAccountPageSpec extends ItSpec {
     MakeBacsRepaymentStub.verifyNone(tdAll.nino)
     AuditConnectorStub.verifyEventAudited(
       "BankClaimAttemptMade",
-      Json.parse("""
-      {
-        "outcome": {
-          "isSuccessful": false,
-          "actionsOutcome": {
-            "fuzzyNameMatchingIsSuccessful": false
+      Json.parse(
+        //format=JSON
+        """
+        {
+          "outcome": {
+            "isSuccessful": false,
+            "actionsOutcome": {
+              "fuzzyNameMatchingIsSuccessful": false
+            }
+          },
+          "userEnteredDetails": {
+            "chosenBank": "Barclays Personal",
+            "p800Reference": 12345678,
+            "nino": "LM001014C",
+            "dob": {
+              "dayOfMonth": "1",
+              "month": "1",
+              "year": "2000"
+            }
+          },
+          "repaymentAmount": 1234,
+          "repaymentInformation": {
+            "reconciliationIdentifier": 123,
+            "paymentNumber": 12345678,
+            "payeNumber": "PayeNumber-123",
+            "taxDistrictNumber": 717,
+            "associatedPayableNumber": 1234,
+            "customerAccountNumber": "customerAccountNumber-1234",
+            "currentOptimisticLock": 15
+          },
+          "name": {
+            "title": "Sir",
+            "firstForename": "Greg",
+            "secondForename": "Greggory",
+            "surname": "Greggson"
+          },
+          "address": {
+            "addressLine1": "Flat 1 Rose House",
+            "addressLine2": "Worthing",
+            "addressPostcode": "BN12 4XL"
           }
-        },
-        "userEnteredDetails": {
-          "chosenBank": "Barclays Personal",
-          "p800Reference": 12345678,
-          "nino": "LM001014C",
-          "dob": {
-            "dayOfMonth": "1",
-            "month": "1",
-            "year": "2000"
-          }
-        },
-        "repaymentAmount": 1234,
-        "repaymentInformation": {
-          "reconciliationIdentifier": 123,
-          "paymentNumber": 12345678,
-          "payeNumber": "PayeNumber-123",
-          "taxDistrictNumber": 717,
-          "associatedPayableNumber": 1234,
-          "customerAccountNumber": "customerAccountNumber-1234",
-          "currentOptimisticLock": 15
-        },
-        "name": {
-          "title": "Sir",
-          "firstForename": "Greg",
-          "secondForename": "Greggory",
-          "surname": "Greggson"
-        },
-        "address": {
-          "addressLine1": "Flat 1 Rose House",
-          "addressLine2": "Worthing",
-          "addressPostcode": "BN12 4XL"
         }
-      }
-      """).as[JsObject]
+        """.stripMargin
+      ).as[JsObject]
     )
   }
 
@@ -304,50 +307,53 @@ class VerifyingYourBankAccountPageSpec extends ItSpec {
 
     AuditConnectorStub.verifyEventAudited(
       "BankClaimAttemptMade",
-      Json.parse("""
-      {
-        "outcome": {
-          "isSuccessful": true,
-          "actionsOutcome": {
-            "ecospendFraudCheckIsSuccessful": true,
-            "fuzzyNameMatchingIsSuccessful": true,
-            "hmrcFraudCheckIsSuccessful": true,
-            "claimOverpaymentIsSuccessful": true
+      Json.parse(
+        //format=JSON
+        """
+        {
+          "outcome": {
+            "isSuccessful": true,
+            "actionsOutcome": {
+              "ecospendFraudCheckIsSuccessful": true,
+              "fuzzyNameMatchingIsSuccessful": true,
+              "hmrcFraudCheckIsSuccessful": true,
+              "claimOverpaymentIsSuccessful": true
+            }
+          },
+          "userEnteredDetails": {
+            "chosenBank": "Barclays Personal",
+            "p800Reference": 12345678,
+            "nino": "LM001014C",
+            "dob": {
+              "dayOfMonth": "1",
+              "month": "1",
+              "year": "2000"
+            }
+          },
+          "repaymentAmount": 1234,
+          "repaymentInformation": {
+            "reconciliationIdentifier": 123,
+            "paymentNumber": 12345678,
+            "payeNumber": "PayeNumber-123",
+            "taxDistrictNumber": 717,
+            "associatedPayableNumber": 1234,
+            "customerAccountNumber": "customerAccountNumber-1234",
+            "currentOptimisticLock": 15
+          },
+          "name": {
+            "title": "Sir",
+            "firstForename": "Greg",
+            "secondForename": "Greggory",
+            "surname": "Greggson"
+          },
+          "address": {
+            "addressLine1": "Flat 1 Rose House",
+            "addressLine2": "Worthing",
+            "addressPostcode": "BN12 4XL"
           }
-        },
-        "userEnteredDetails": {
-          "chosenBank": "Barclays Personal",
-          "p800Reference": 12345678,
-          "nino": "LM001014C",
-          "dob": {
-            "dayOfMonth": "1",
-            "month": "1",
-            "year": "2000"
-          }
-        },
-        "repaymentAmount": 1234,
-        "repaymentInformation": {
-          "reconciliationIdentifier": 123,
-          "paymentNumber": 12345678,
-          "payeNumber": "PayeNumber-123",
-          "taxDistrictNumber": 717,
-          "associatedPayableNumber": 1234,
-          "customerAccountNumber": "customerAccountNumber-1234",
-          "currentOptimisticLock": 15
-        },
-        "name": {
-          "title": "Sir",
-          "firstForename": "Greg",
-          "secondForename": "Greggory",
-          "surname": "Greggson"
-        },
-        "address": {
-          "addressLine1": "Flat 1 Rose House",
-          "addressLine2": "Worthing",
-          "addressPostcode": "BN12 4XL"
         }
-      }
-      """).as[JsObject]
+        """.stripMargin
+      ).as[JsObject]
     )
   }
 
@@ -378,47 +384,50 @@ class VerifyingYourBankAccountPageSpec extends ItSpec {
     P800RefundsExternalApiStub.verifyIsValid(tdAll.consentId, 2)
     AuditConnectorStub.verifyEventAudited(
       "BankClaimAttemptMade",
-      Json.parse("""
-      {
-        "outcome": {
-          "isSuccessful": false,
-          "actionsOutcome": {
-            "ecospendFraudCheckIsSuccessful": false
+      Json.parse(
+        //format=JSON
+        """
+        {
+          "outcome": {
+            "isSuccessful": false,
+            "actionsOutcome": {
+              "ecospendFraudCheckIsSuccessful": false
+            }
+          },
+          "userEnteredDetails": {
+            "chosenBank": "Barclays Personal",
+            "p800Reference": 12345678,
+            "nino": "LM001014C",
+            "dob": {
+              "dayOfMonth": "1",
+              "month": "1",
+              "year": "2000"
+            }
+          },
+          "repaymentAmount": 1234,
+          "repaymentInformation": {
+            "reconciliationIdentifier": 123,
+            "paymentNumber": 12345678,
+            "payeNumber": "PayeNumber-123",
+            "taxDistrictNumber": 717,
+            "associatedPayableNumber": 1234,
+            "customerAccountNumber": "customerAccountNumber-1234",
+            "currentOptimisticLock": 15
+          },
+          "name": {
+            "title": "Sir",
+            "firstForename": "Greg",
+            "secondForename": "Greggory",
+            "surname": "Greggson"
+          },
+          "address": {
+            "addressLine1": "Flat 1 Rose House",
+            "addressLine2": "Worthing",
+            "addressPostcode": "BN12 4XL"
           }
-        },
-        "userEnteredDetails": {
-          "chosenBank": "Barclays Personal",
-          "p800Reference": 12345678,
-          "nino": "LM001014C",
-          "dob": {
-            "dayOfMonth": "1",
-            "month": "1",
-            "year": "2000"
-          }
-        },
-        "repaymentAmount": 1234,
-        "repaymentInformation": {
-          "reconciliationIdentifier": 123,
-          "paymentNumber": 12345678,
-          "payeNumber": "PayeNumber-123",
-          "taxDistrictNumber": 717,
-          "associatedPayableNumber": 1234,
-          "customerAccountNumber": "customerAccountNumber-1234",
-          "currentOptimisticLock": 15
-        },
-        "name": {
-          "title": "Sir",
-          "firstForename": "Greg",
-          "secondForename": "Greggory",
-          "surname": "Greggson"
-        },
-        "address": {
-          "addressLine1": "Flat 1 Rose House",
-          "addressLine2": "Worthing",
-          "addressPostcode": "BN12 4XL"
         }
-      }
-      """).as[JsObject]
+        """.stripMargin
+      ).as[JsObject]
     )
   }
 
@@ -464,49 +473,52 @@ class VerifyingYourBankAccountPageSpec extends ItSpec {
     MakeBacsRepaymentStub.verifyNone(tdAll.nino)
     AuditConnectorStub.verifyEventAudited(
       "BankClaimAttemptMade",
-      Json.parse("""
-      {
-        "outcome": {
-          "isSuccessful": false,
-          "actionsOutcome": {
-            "ecospendFraudCheckIsSuccessful": true,
-            "fuzzyNameMatchingIsSuccessful": true,
-            "hmrcFraudCheckIsSuccessful": true
+      Json.parse(
+        //format=JSON
+        """
+        {
+          "outcome": {
+            "isSuccessful": false,
+            "actionsOutcome": {
+              "ecospendFraudCheckIsSuccessful": true,
+              "fuzzyNameMatchingIsSuccessful": true,
+              "hmrcFraudCheckIsSuccessful": true
+            }
+          },
+          "userEnteredDetails": {
+            "chosenBank": "Barclays Personal",
+            "p800Reference": 12345678,
+            "nino": "LM001014C",
+            "dob": {
+              "dayOfMonth": "1",
+              "month": "1",
+              "year": "2000"
+            }
+          },
+          "repaymentAmount": 1234,
+          "repaymentInformation": {
+            "reconciliationIdentifier": 123,
+            "paymentNumber": 12345678,
+            "payeNumber": "PayeNumber-123",
+            "taxDistrictNumber": 717,
+            "associatedPayableNumber": 1234,
+            "customerAccountNumber": "customerAccountNumber-1234",
+            "currentOptimisticLock": 15
+          },
+          "name": {
+            "title": "Sir",
+            "firstForename": "Greg",
+            "secondForename": "Greggory",
+            "surname": "Greggson"
+          },
+          "address": {
+            "addressLine1": "Flat 1 Rose House",
+            "addressLine2": "Worthing",
+            "addressPostcode": "BN12 4XL"
           }
-        },
-        "userEnteredDetails": {
-          "chosenBank": "Barclays Personal",
-          "p800Reference": 12345678,
-          "nino": "LM001014C",
-          "dob": {
-            "dayOfMonth": "1",
-            "month": "1",
-            "year": "2000"
-          }
-        },
-        "repaymentAmount": 1234,
-        "repaymentInformation": {
-          "reconciliationIdentifier": 123,
-          "paymentNumber": 12345678,
-          "payeNumber": "PayeNumber-123",
-          "taxDistrictNumber": 717,
-          "associatedPayableNumber": 1234,
-          "customerAccountNumber": "customerAccountNumber-1234",
-          "currentOptimisticLock": 15
-        },
-        "name": {
-          "title": "Sir",
-          "firstForename": "Greg",
-          "secondForename": "Greggory",
-          "surname": "Greggson"
-        },
-        "address": {
-          "addressLine1": "Flat 1 Rose House",
-          "addressLine2": "Worthing",
-          "addressPostcode": "BN12 4XL"
         }
-      }
-      """).as[JsObject]
+        """.stripMargin
+      ).as[JsObject]
     )
   }
 
@@ -526,54 +538,57 @@ class VerifyingYourBankAccountPageSpec extends ItSpec {
 
     AuditConnectorStub.verifyEventAudited(
       "BankClaimAttemptMade",
-      Json.parse("""
-      {
-        "outcome": {
-          "isSuccessful": false,
-          "actionsOutcome": {
-            "ecospendFraudCheckIsSuccessful": true,
-            "fuzzyNameMatchingIsSuccessful": true,
-            "hmrcFraudCheckIsSuccessful": true,
-            "claimOverpaymentIsSuccessful": false
+      Json.parse(
+        //format=JSON
+        """
+        {
+          "outcome": {
+            "isSuccessful": false,
+            "actionsOutcome": {
+              "ecospendFraudCheckIsSuccessful": true,
+              "fuzzyNameMatchingIsSuccessful": true,
+              "hmrcFraudCheckIsSuccessful": true,
+              "claimOverpaymentIsSuccessful": false
+            },
+            "failureReasons": [
+              "POST of 'http://localhost:11112/p800-refunds-backend/nps/make-bacs-repayment/LM001014C' returned 422. Response body: '\n          {\n           \"failures\" : [\n             {\"reason\" : \"Reference \", \"code\": \"63480\"}\n           ]\n          }\n          '"
+            ]
           },
-          "failureReasons": [
-            "POST of 'http://localhost:11112/p800-refunds-backend/nps/make-bacs-repayment/LM001014C' returned 422. Response body: '\n          {\n           \"failures\" : [\n             {\"reason\" : \"Reference \", \"code\": \"63480\"}\n           ]\n          }\n          '"
-          ]
-        },
-        "userEnteredDetails": {
-          "repaymentMethod": "bank",
-          "chosenBank": "Barclays Personal",
-          "p800Reference": 12345678,
-          "nino": "LM001014C",
-          "dob": {
-            "dayOfMonth": "1",
-            "month": "1",
-            "year": "2000"
+          "userEnteredDetails": {
+            "repaymentMethod": "bank",
+            "chosenBank": "Barclays Personal",
+            "p800Reference": 12345678,
+            "nino": "LM001014C",
+            "dob": {
+              "dayOfMonth": "1",
+              "month": "1",
+              "year": "2000"
+            }
+          },
+          "repaymentAmount": 1234,
+          "repaymentInformation": {
+            "reconciliationIdentifier": 123,
+            "paymentNumber": 12345678,
+            "payeNumber": "PayeNumber-123",
+            "taxDistrictNumber": 717,
+            "associatedPayableNumber": 1234,
+            "customerAccountNumber": "customerAccountNumber-1234",
+            "currentOptimisticLock": 15
+          },
+          "name": {
+            "title": "Sir",
+            "firstForename": "Greg",
+            "secondForename": "Greggory",
+            "surname": "Greggson"
+          },
+          "address": {
+            "addressLine1": "Flat 1 Rose House",
+            "addressLine2": "Worthing",
+            "addressPostcode": "BN12 4XL"
           }
-        },
-        "repaymentAmount": 1234,
-        "repaymentInformation": {
-          "reconciliationIdentifier": 123,
-          "paymentNumber": 12345678,
-          "payeNumber": "PayeNumber-123",
-          "taxDistrictNumber": 717,
-          "associatedPayableNumber": 1234,
-          "customerAccountNumber": "customerAccountNumber-1234",
-          "currentOptimisticLock": 15
-        },
-        "name": {
-          "title": "Sir",
-          "firstForename": "Greg",
-          "secondForename": "Greggory",
-          "surname": "Greggson"
-        },
-        "address": {
-          "addressLine1": "Flat 1 Rose House",
-          "addressLine2": "Worthing",
-          "addressPostcode": "BN12 4XL"
         }
-      }
-      """).as[JsObject]
+        """.stripMargin
+      ).as[JsObject]
     )
   }
 
@@ -591,54 +606,57 @@ class VerifyingYourBankAccountPageSpec extends ItSpec {
     MakeBacsRepaymentStub.verify(tdAll.nino, tdAll.correlationId)
     AuditConnectorStub.verifyEventAudited(
       "BankClaimAttemptMade",
-      Json.parse("""
-      {
-        "outcome": {
-          "isSuccessful": false,
-          "actionsOutcome": {
-            "ecospendFraudCheckIsSuccessful": true,
-            "fuzzyNameMatchingIsSuccessful": true,
-            "hmrcFraudCheckIsSuccessful": true,
-            "claimOverpaymentIsSuccessful": false
+      Json.parse(
+        //format=JSON
+        """
+        {
+          "outcome": {
+            "isSuccessful": false,
+            "actionsOutcome": {
+              "ecospendFraudCheckIsSuccessful": true,
+              "fuzzyNameMatchingIsSuccessful": true,
+              "hmrcFraudCheckIsSuccessful": true,
+              "claimOverpaymentIsSuccessful": false
+            },
+            "failureReasons": [
+              "POST of 'http://localhost:11112/p800-refunds-backend/nps/make-bacs-repayment/LM001014C' returned 422. Response body: '\n          {\n           \"failures\" : [\n             {\"reason\" : \"Reference \", \"code\": \"63480\"}\n           ]\n          }\n          '"
+            ]
           },
-          "failureReasons": [
-            "POST of 'http://localhost:11112/p800-refunds-backend/nps/make-bacs-repayment/LM001014C' returned 422. Response body: '\n          {\n           \"failures\" : [\n             {\"reason\" : \"Reference \", \"code\": \"63480\"}\n           ]\n          }\n          '"
-          ]
-        },
-        "userEnteredDetails": {
-          "repaymentMethod": "bank",
-          "chosenBank": "Barclays Personal",
-          "p800Reference": 12345678,
-          "nino": "LM001014C",
-          "dob": {
-            "dayOfMonth": "1",
-            "month": "1",
-            "year": "2000"
+          "userEnteredDetails": {
+            "repaymentMethod": "bank",
+            "chosenBank": "Barclays Personal",
+            "p800Reference": 12345678,
+            "nino": "LM001014C",
+            "dob": {
+              "dayOfMonth": "1",
+              "month": "1",
+              "year": "2000"
+            }
+          },
+          "repaymentAmount": 1234,
+          "repaymentInformation": {
+            "reconciliationIdentifier": 123,
+            "paymentNumber": 12345678,
+            "payeNumber": "PayeNumber-123",
+            "taxDistrictNumber": 717,
+            "associatedPayableNumber": 1234,
+            "customerAccountNumber": "customerAccountNumber-1234",
+            "currentOptimisticLock": 15
+          },
+          "name": {
+            "title": "Sir",
+            "firstForename": "Greg",
+            "secondForename": "Greggory",
+            "surname": "Greggson"
+          },
+          "address": {
+            "addressLine1": "Flat 1 Rose House",
+            "addressLine2": "Worthing",
+            "addressPostcode": "BN12 4XL"
           }
-        },
-        "repaymentAmount": 1234,
-        "repaymentInformation": {
-          "reconciliationIdentifier": 123,
-          "paymentNumber": 12345678,
-          "payeNumber": "PayeNumber-123",
-          "taxDistrictNumber": 717,
-          "associatedPayableNumber": 1234,
-          "customerAccountNumber": "customerAccountNumber-1234",
-          "currentOptimisticLock": 15
-        },
-        "name": {
-          "title": "Sir",
-          "firstForename": "Greg",
-          "secondForename": "Greggory",
-          "surname": "Greggson"
-        },
-        "address": {
-          "addressLine1": "Flat 1 Rose House",
-          "addressLine2": "Worthing",
-          "addressPostcode": "BN12 4XL"
         }
-      }
-      """).as[JsObject]
+        """.stripMargin
+      ).as[JsObject]
     )
   }
 
@@ -657,8 +675,10 @@ class VerifyingYourBankAccountPageSpec extends ItSpec {
     MakeBacsRepaymentStub.verify(tdAll.nino, tdAll.correlationId)
     AuditConnectorStub.verifyEventAudited(
       "BankClaimAttemptMade",
-      Json.parse("""
-      {
+      Json.parse(
+        //format=JSON
+        """
+        {
           "outcome": {
             "isSuccessful": false,
             "actionsOutcome": {
@@ -704,7 +724,8 @@ class VerifyingYourBankAccountPageSpec extends ItSpec {
             "addressPostcode": "BN12 4XL"
           }
         }
-        """).as[JsObject]
+        """.stripMargin
+      ).as[JsObject]
     )
   }
 
@@ -720,52 +741,55 @@ class VerifyingYourBankAccountPageSpec extends ItSpec {
     MakeBacsRepaymentStub.verifyNone(tdAll.nino)
     AuditConnectorStub.verifyEventAudited(
       "BankClaimAttemptMade",
-      Json.parse("""
-      {
-        "outcome": {
-          "isSuccessful": false,
-          "actionsOutcome": {
-            "ecospendFraudCheckIsSuccessful": true,
-            "hmrcFraudCheckIsSuccessful": false
+      Json.parse(
+        //format=JSON
+        """
+        {
+          "outcome": {
+            "isSuccessful": false,
+            "actionsOutcome": {
+              "ecospendFraudCheckIsSuccessful": true,
+              "hmrcFraudCheckIsSuccessful": false
+            },
+            "failureReasons": [
+              "POST of 'http://localhost:11112/p800-refunds-backend/risking/claims/a3d35e50-ea17-4865-a2d2-38b0069b2665/bank-details' returned 503. Response body: '{\"reason\" : \"Dependent systems are currently not responding\"}'"
+            ]
           },
-          "failureReasons": [
-            "POST of 'http://localhost:11112/p800-refunds-backend/risking/claims/a3d35e50-ea17-4865-a2d2-38b0069b2665/bank-details' returned 503. Response body: '{\"reason\" : \"Dependent systems are currently not responding\"}'"
-          ]
-        },
-        "userEnteredDetails": {
-          "repaymentMethod": "bank",
-          "chosenBank": "Barclays Personal",
-          "p800Reference": 12345678,
-          "nino": "LM001014C",
-          "dob": {
-            "dayOfMonth": "1",
-            "month": "1",
-            "year": "2000"
+          "userEnteredDetails": {
+            "repaymentMethod": "bank",
+            "chosenBank": "Barclays Personal",
+            "p800Reference": 12345678,
+            "nino": "LM001014C",
+            "dob": {
+              "dayOfMonth": "1",
+              "month": "1",
+              "year": "2000"
+            }
+          },
+          "repaymentAmount": 1234,
+          "repaymentInformation": {
+            "reconciliationIdentifier": 123,
+            "paymentNumber": 12345678,
+            "payeNumber": "PayeNumber-123",
+            "taxDistrictNumber": 717,
+            "associatedPayableNumber": 1234,
+            "customerAccountNumber": "customerAccountNumber-1234",
+            "currentOptimisticLock": 15
+          },
+          "name": {
+            "title": "Sir",
+            "firstForename": "Greg",
+            "secondForename": "Greggory",
+            "surname": "Greggson"
+          },
+          "address": {
+            "addressLine1": "Flat 1 Rose House",
+            "addressLine2": "Worthing",
+            "addressPostcode": "BN12 4XL"
           }
-        },
-        "repaymentAmount": 1234,
-        "repaymentInformation": {
-          "reconciliationIdentifier": 123,
-          "paymentNumber": 12345678,
-          "payeNumber": "PayeNumber-123",
-          "taxDistrictNumber": 717,
-          "associatedPayableNumber": 1234,
-          "customerAccountNumber": "customerAccountNumber-1234",
-          "currentOptimisticLock": 15
-        },
-        "name": {
-          "title": "Sir",
-          "firstForename": "Greg",
-          "secondForename": "Greggory",
-          "surname": "Greggson"
-        },
-        "address": {
-          "addressLine1": "Flat 1 Rose House",
-          "addressLine2": "Worthing",
-          "addressPostcode": "BN12 4XL"
         }
-      }
-      """).as[JsObject]
+        """.stripMargin
+      ).as[JsObject]
     )
   }
 
