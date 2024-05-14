@@ -540,7 +540,7 @@ object Messages {
     )
 
     val `Print If you do not receive your refund you can call or write...`: Message = Message(
-      english = "If you do not receive your refund you can write to us or call the Income Tax helpline. You will need your P800 reference.",
+      english = "If you do not receive your refund you can call the Income Tax helpline. You will need your P800 reference.",
       welsh   = "Os na fydd eich ad-daliad yn eich cyrraedd, ffoniwch Wasanaeth Cwsmeriaid Cymraeg CThEF. Bydd angen eich cyfeirnod P800 arnoch. "
     )
 
@@ -623,7 +623,7 @@ object Messages {
     private val formatter = DateTimeFormatter.ofPattern("d MMMM yyyy", Locale.UK)
 
     val `Print If you do not receive your refund you can call or write...`: Message = Message(
-      english = "If you do not receive your refund you can write to us or call the Income Tax helpline. You will need your P800 reference.",
+      english = "If you do not receive your refund you can call the Income Tax helpline. You will need your P800 reference.",
       welsh   = "Os na fydd eich ad-daliad yn eich cyrraedd, ffoniwch Wasanaeth Cwsmeriaid Cymraeg CThEF. Bydd angen eich cyfeirnod P800 arnoch. "
     )
 
