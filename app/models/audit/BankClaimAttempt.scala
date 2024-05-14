@@ -40,7 +40,7 @@ object BankClaimAttempt {
 
 final case class BankClaimOutcome(
     isSuccessful:   IsSuccessful,
-    actionsOutcome: ActionsOutcome,
+    actionsOutcome: BankActionsOutcome,
     failureReasons: Option[Seq[String]]
 )
 
@@ -49,23 +49,23 @@ object BankClaimOutcome {
   implicit val writes: OWrites[BankClaimOutcome] = Json.writes[BankClaimOutcome]
 }
 
-final case class ActionsOutcome(
-    ecospendFraudCheckIsSuccessful: IsSuccessful,
-    fuzzyNameMatchingIsSuccessful:  IsSuccessful,
-    hmrcFraudCheckIsSuccessful:     IsSuccessful,
-    claimOverpaymentIsSuccessful:   IsSuccessful
+final case class BankActionsOutcome(
+    ecospendFraudCheckIsSuccessful: Option[IsSuccessful] = None,
+    fuzzyNameMatchingIsSuccessful:  Option[IsSuccessful] = None,
+    hmrcFraudCheckIsSuccessful:     Option[IsSuccessful] = None,
+    claimOverpaymentIsSuccessful:   Option[IsSuccessful] = None
 ) {
   def overallResult: IsSuccessful = IsSuccessful(
-    ecospendFraudCheckIsSuccessful.value &&
-      fuzzyNameMatchingIsSuccessful.value &&
-      hmrcFraudCheckIsSuccessful.value &&
-      claimOverpaymentIsSuccessful.value
+    ecospendFraudCheckIsSuccessful.map(_.value).getOrElse(false) &&
+      fuzzyNameMatchingIsSuccessful.map(_.value).getOrElse(false) &&
+      hmrcFraudCheckIsSuccessful.map(_.value).getOrElse(false) &&
+      claimOverpaymentIsSuccessful.map(_.value).getOrElse(false)
   )
 }
 
-object ActionsOutcome {
+object BankActionsOutcome {
   @SuppressWarnings(Array("org.wartremover.warts.Any"))
-  implicit val writes: OWrites[ActionsOutcome] = Json.writes[ActionsOutcome]
+  implicit val writes: OWrites[BankActionsOutcome] = Json.writes[BankActionsOutcome]
 }
 
 final case class BankClaimUserEnteredDetails(

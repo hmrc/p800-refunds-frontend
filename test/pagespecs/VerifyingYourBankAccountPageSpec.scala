@@ -93,10 +93,7 @@ class VerifyingYourBankAccountPageSpec extends ItSpec {
         "outcome": {
           "isSuccessful": false,
           "actionsOutcome": {
-            "ecospendFraudCheckIsSuccessful": true,
-            "fuzzyNameMatchingIsSuccessful": false,
-            "hmrcFraudCheckIsSuccessful": false,
-            "claimOverpaymentIsSuccessful": false
+            "fuzzyNameMatchingIsSuccessful": false
           }
         },
         "userEnteredDetails": {
@@ -386,10 +383,7 @@ class VerifyingYourBankAccountPageSpec extends ItSpec {
         "outcome": {
           "isSuccessful": false,
           "actionsOutcome": {
-            "ecospendFraudCheckIsSuccessful": false,
-            "fuzzyNameMatchingIsSuccessful": false,
-            "hmrcFraudCheckIsSuccessful": false,
-            "claimOverpaymentIsSuccessful": false
+            "ecospendFraudCheckIsSuccessful": false
           }
         },
         "userEnteredDetails": {
@@ -477,8 +471,7 @@ class VerifyingYourBankAccountPageSpec extends ItSpec {
           "actionsOutcome": {
             "ecospendFraudCheckIsSuccessful": true,
             "fuzzyNameMatchingIsSuccessful": true,
-            "hmrcFraudCheckIsSuccessful": false,
-            "claimOverpaymentIsSuccessful": false
+            "hmrcFraudCheckIsSuccessful": true
           }
         },
         "userEnteredDetails": {
@@ -531,7 +524,57 @@ class VerifyingYourBankAccountPageSpec extends ItSpec {
     EdhStub.verifyGetBankDetailsRiskResult(tdAll.claimId, tdAll.correlationId)
     MakeBacsRepaymentStub.verify(tdAll.nino, tdAll.correlationId)
 
-    AuditConnectorStub.verifyNoAuditEvent("BankClaimAttemptMade")
+    AuditConnectorStub.verifyEventAudited(
+      "BankClaimAttemptMade",
+      Json.parse("""
+      {
+        "outcome": {
+          "isSuccessful": false,
+          "actionsOutcome": {
+            "ecospendFraudCheckIsSuccessful": true,
+            "fuzzyNameMatchingIsSuccessful": true,
+            "hmrcFraudCheckIsSuccessful": true,
+            "claimOverpaymentIsSuccessful": false
+          },
+          "failureReasons": [
+            "POST of 'http://localhost:11112/p800-refunds-backend/nps/make-bacs-repayment/LM001014C' returned 422. Response body: '\n          {\n           \"failures\" : [\n             {\"reason\" : \"Reference \", \"code\": \"63480\"}\n           ]\n          }\n          '"
+          ]
+        },
+        "userEnteredDetails": {
+          "repaymentMethod": "bank",
+          "chosenBank": "Barclays Personal",
+          "p800Reference": 12345678,
+          "nino": "LM001014C",
+          "dob": {
+            "dayOfMonth": "1",
+            "month": "1",
+            "year": "2000"
+          }
+        },
+        "repaymentAmount": 1234,
+        "repaymentInformation": {
+          "reconciliationIdentifier": 123,
+          "paymentNumber": 12345678,
+          "payeNumber": "PayeNumber-123",
+          "taxDistrictNumber": 717,
+          "associatedPayableNumber": 1234,
+          "customerAccountNumber": "customerAccountNumber-1234",
+          "currentOptimisticLock": 15
+        },
+        "name": {
+          "title": "Sir",
+          "firstForename": "Greg",
+          "secondForename": "Greggory",
+          "surname": "Greggson"
+        },
+        "address": {
+          "addressLine1": "Flat 1 Rose House",
+          "addressLine2": "Worthing",
+          "addressPostcode": "BN12 4XL"
+        }
+      }
+      """).as[JsObject]
+    )
   }
 
   "Show technical difficulties error page when claim overpayment call returns 'Already Taken'" in {
@@ -546,7 +589,57 @@ class VerifyingYourBankAccountPageSpec extends ItSpec {
     pages.verifyingBankAccountPage.assertPageIsDisplayedWithTechnicalDifficultiesError()
     EdhStub.verifyGetBankDetailsRiskResult(tdAll.claimId, tdAll.correlationId)
     MakeBacsRepaymentStub.verify(tdAll.nino, tdAll.correlationId)
-    AuditConnectorStub.verifyNoAuditEvent("BankClaimAttemptMade")
+    AuditConnectorStub.verifyEventAudited(
+      "BankClaimAttemptMade",
+      Json.parse("""
+      {
+        "outcome": {
+          "isSuccessful": false,
+          "actionsOutcome": {
+            "ecospendFraudCheckIsSuccessful": true,
+            "fuzzyNameMatchingIsSuccessful": true,
+            "hmrcFraudCheckIsSuccessful": true,
+            "claimOverpaymentIsSuccessful": false
+          },
+          "failureReasons": [
+            "POST of 'http://localhost:11112/p800-refunds-backend/nps/make-bacs-repayment/LM001014C' returned 422. Response body: '\n          {\n           \"failures\" : [\n             {\"reason\" : \"Reference \", \"code\": \"63480\"}\n           ]\n          }\n          '"
+          ]
+        },
+        "userEnteredDetails": {
+          "repaymentMethod": "bank",
+          "chosenBank": "Barclays Personal",
+          "p800Reference": 12345678,
+          "nino": "LM001014C",
+          "dob": {
+            "dayOfMonth": "1",
+            "month": "1",
+            "year": "2000"
+          }
+        },
+        "repaymentAmount": 1234,
+        "repaymentInformation": {
+          "reconciliationIdentifier": 123,
+          "paymentNumber": 12345678,
+          "payeNumber": "PayeNumber-123",
+          "taxDistrictNumber": 717,
+          "associatedPayableNumber": 1234,
+          "customerAccountNumber": "customerAccountNumber-1234",
+          "currentOptimisticLock": 15
+        },
+        "name": {
+          "title": "Sir",
+          "firstForename": "Greg",
+          "secondForename": "Greggory",
+          "surname": "Greggson"
+        },
+        "address": {
+          "addressLine1": "Flat 1 Rose House",
+          "addressLine2": "Worthing",
+          "addressPostcode": "BN12 4XL"
+        }
+      }
+      """).as[JsObject]
+    )
   }
 
   "Show technical difficulties error page when claim overpayments call returns 500 error" in {
@@ -562,7 +655,57 @@ class VerifyingYourBankAccountPageSpec extends ItSpec {
     pages.verifyingBankAccountPage.assertPageIsDisplayedWithTechnicalDifficultiesError()
     EdhStub.verifyGetBankDetailsRiskResult(tdAll.claimId, tdAll.correlationId)
     MakeBacsRepaymentStub.verify(tdAll.nino, tdAll.correlationId)
-    AuditConnectorStub.verifyNoAuditEvent("BankClaimAttemptMade")
+    AuditConnectorStub.verifyEventAudited(
+      "BankClaimAttemptMade",
+      Json.parse("""
+      {
+          "outcome": {
+            "isSuccessful": false,
+            "actionsOutcome": {
+              "ecospendFraudCheckIsSuccessful": true,
+              "fuzzyNameMatchingIsSuccessful": true,
+              "hmrcFraudCheckIsSuccessful": true,
+              "claimOverpaymentIsSuccessful": false
+            },
+            "failureReasons": [
+              "POST of 'http://localhost:11112/p800-refunds-backend/nps/make-bacs-repayment/LM001014C' returned 500. Response body: ''"
+            ]
+          },
+          "userEnteredDetails": {
+            "repaymentMethod": "bank",
+            "chosenBank": "Barclays Personal",
+            "p800Reference": 12345678,
+            "nino": "LM001014C",
+            "dob": {
+              "dayOfMonth": "1",
+              "month": "1",
+              "year": "2000"
+            }
+          },
+          "repaymentAmount": 1234,
+          "repaymentInformation": {
+            "reconciliationIdentifier": 123,
+            "paymentNumber": 12345678,
+            "payeNumber": "PayeNumber-123",
+            "taxDistrictNumber": 717,
+            "associatedPayableNumber": 1234,
+            "customerAccountNumber": "customerAccountNumber-1234",
+            "currentOptimisticLock": 15
+          },
+          "name": {
+            "title": "Sir",
+            "firstForename": "Greg",
+            "secondForename": "Greggory",
+            "surname": "Greggson"
+          },
+          "address": {
+            "addressLine1": "Flat 1 Rose House",
+            "addressLine2": "Worthing",
+            "addressPostcode": "BN12 4XL"
+          }
+        }
+        """).as[JsObject]
+    )
   }
 
   "Show technical difficulties error page when EDH endpoint fails" in {
@@ -575,7 +718,55 @@ class VerifyingYourBankAccountPageSpec extends ItSpec {
     pages.verifyingBankAccountPage.assertPageIsDisplayedWithTechnicalDifficultiesError()
     EdhStub.verifyGetBankDetailsRiskResult(tdAll.claimId, tdAll.correlationId)
     MakeBacsRepaymentStub.verifyNone(tdAll.nino)
-    AuditConnectorStub.verifyNoAuditEvent("BankClaimAttemptMade")
+    AuditConnectorStub.verifyEventAudited(
+      "BankClaimAttemptMade",
+      Json.parse("""
+      {
+        "outcome": {
+          "isSuccessful": false,
+          "actionsOutcome": {
+            "ecospendFraudCheckIsSuccessful": true,
+            "hmrcFraudCheckIsSuccessful": false
+          },
+          "failureReasons": [
+            "POST of 'http://localhost:11112/p800-refunds-backend/risking/claims/a3d35e50-ea17-4865-a2d2-38b0069b2665/bank-details' returned 503. Response body: '{\"reason\" : \"Dependent systems are currently not responding\"}'"
+          ]
+        },
+        "userEnteredDetails": {
+          "repaymentMethod": "bank",
+          "chosenBank": "Barclays Personal",
+          "p800Reference": 12345678,
+          "nino": "LM001014C",
+          "dob": {
+            "dayOfMonth": "1",
+            "month": "1",
+            "year": "2000"
+          }
+        },
+        "repaymentAmount": 1234,
+        "repaymentInformation": {
+          "reconciliationIdentifier": 123,
+          "paymentNumber": 12345678,
+          "payeNumber": "PayeNumber-123",
+          "taxDistrictNumber": 717,
+          "associatedPayableNumber": 1234,
+          "customerAccountNumber": "customerAccountNumber-1234",
+          "currentOptimisticLock": 15
+        },
+        "name": {
+          "title": "Sir",
+          "firstForename": "Greg",
+          "secondForename": "Greggory",
+          "surname": "Greggson"
+        },
+        "address": {
+          "addressLine1": "Flat 1 Rose House",
+          "addressLine2": "Worthing",
+          "addressPostcode": "BN12 4XL"
+        }
+      }
+      """).as[JsObject]
+    )
   }
 
   "Show technical difficulties page when 'Notify case management' call fails" in {

@@ -68,8 +68,8 @@ class AuditService @Inject() (
     audit(toChequeClaimAttemptMade(journey, isSuccessful))
   }
 
-  def auditBankClaimAttempt(journey: Journey, actionsOutcome: ActionsOutcome)(implicit requestHeader: RequestHeader, hc: HeaderCarrier): Unit =
-    audit(toBankClaimAttempt(journey, actionsOutcome))
+  def auditBankClaimAttempt(journey: Journey, actionsOutcome: BankActionsOutcome, failureReasons: Option[Seq[String]] = None)(implicit requestHeader: RequestHeader, hc: HeaderCarrier): Unit =
+    audit(toBankClaimAttempt(journey, actionsOutcome, failureReasons))
 
   private def toValidateUserDetails(journey: Journey, attemptInfo: Option[AttemptInfo], isSuccessful: IsSuccessful)(implicit requestHeader: RequestHeader): ValidateUserDetails =
     ValidateUserDetails(
@@ -132,9 +132,9 @@ class AuditService @Inject() (
       currentOptimisticLock    = p800ReferenceChecked.currentOptimisticLock
     )
 
-  private def toBankClaimAttempt(journey: Journey, actionsOutcome: ActionsOutcome)(implicit requestHeader: RequestHeader): BankClaimAttempt =
+  private def toBankClaimAttempt(journey: Journey, actionsOutcome: BankActionsOutcome, failureReasons: Option[Seq[String]])(implicit requestHeader: RequestHeader): BankClaimAttempt =
     BankClaimAttempt(
-      outcome              = toBankClaimOutcome(actionsOutcome),
+      outcome              = toBankClaimOutcome(actionsOutcome, failureReasons),
       userEnteredDetails   = toBankClaimUserEnteredDetails(journey),
       repaymentAmount      = journey.referenceCheckResult.fold[Option[AmountInPence]](None) {
         case p800ReferenceChecked: ValidateReferenceResult.P800ReferenceChecked => Some(AmountInPence(p800ReferenceChecked.paymentAmount))
@@ -148,11 +148,11 @@ class AuditService @Inject() (
       address              = toAddress(journey.traceIndividualResponse)
     )
 
-  private def toBankClaimOutcome(actionsOutcome: ActionsOutcome): BankClaimOutcome =
+  private def toBankClaimOutcome(actionsOutcome: BankActionsOutcome, failureReasons: Option[Seq[String]]): BankClaimOutcome =
     BankClaimOutcome(
       isSuccessful   = actionsOutcome.overallResult,
       actionsOutcome = actionsOutcome,
-      failureReasons = None
+      failureReasons = failureReasons
     )
 
   private def toBankClaimUserEnteredDetails(journey: Journey)(implicit requestHeader: RequestHeader): BankClaimUserEnteredDetails =
