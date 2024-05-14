@@ -27,6 +27,10 @@ import scala.util.Try
 @Singleton
 class AppConfig @Inject() (servicesConfig: ServicesConfig, configuration: Configuration) {
 
+  object Timeout {
+    val timeoutUrl: String = readConfigAsValidUrlString("timeoutUrl")
+  }
+
   object JourneyRepo {
     val journeyRepoTtl: FiniteDuration = readFiniteDuration("mongodb.journey-repo.journey-repo-ttl")
   }

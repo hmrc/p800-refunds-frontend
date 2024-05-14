@@ -27,6 +27,48 @@ import java.util.Locale
 
 object Messages {
 
+  object TimeoutMessages {
+    val `Timeout out page - Title`: Message = Message(
+      english = "Time out page - This page is going to time out",
+      welsh   = "Time out page - This page is going to time out" //TODO add missing welsh
+    )
+
+    val `For your Security`: Message = Message(
+      english = "For your security",
+      welsh   = "Rydych ar fin cael eich allgofnodi"
+    )
+
+    val `We will delete your answers`: Message = Message(
+      english = "We will delete your answers in",
+      welsh   = "Er eich diogelwch, byddwn yn eich allgofnodi cyn pen"
+    )
+
+    val `Continue with getting income tax refund`: Message = Message(
+      english = "Continue with getting your Income Tax refund",
+      welsh   = "Mynd yn eich blaen â chael eich ad-daliad treth incwm"
+    )
+
+    val `Delete your answers`: Message = Message(
+      english = "Delete your answers",
+      welsh   = "Dileu’ch atebion"
+    )
+
+    val `You deleted your answers`: Message = Message(
+      english = "You deleted your answers",
+      welsh   = "Rydych wedi dileu’ch atebion"
+    )
+
+    val `For your security, we deleted your answers`: Message = Message(
+      english = "For your security, we deleted your answers",
+      welsh   = "Er eich diogelwch, gwnaethom ddileu’ch atebion"
+    )
+
+    val `Start again`: Message = Message(
+      english = "Start again",
+      welsh   = "Dechrau eto"
+    )
+  }
+
   object CommonMessages {
     val back: Message = Message(
       english = "Back",

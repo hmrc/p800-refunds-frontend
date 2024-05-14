@@ -76,6 +76,8 @@ class Pages(baseUrl: String)(implicit webDriver: WebDriver) {
 
   val thereIsAProblemPage = new ThereIsAProblemPage(baseUrl = baseUrl)
 
+  def timeoutPage(didUserDelete: Boolean) = new TimeoutPage(baseUrl = baseUrl, didUserDelete)
+
   val isYourAddressUpToDate = new IsYourAddressUpToDatePage(baseUrl = baseUrl)
   val updateYourAddressPage = new UpdateYourAddressPage(baseUrl = baseUrl)
 
