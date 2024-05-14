@@ -37,6 +37,7 @@
     hmrcScripts: HmrcScripts,
     hmrcLanguageSelectHelper: HmrcLanguageSelectHelper,
     hmrcReportTechnicalIssueHelper: HmrcReportTechnicalIssueHelper,
+    hmrcTimeoutDialogHelper: HmrcTimeoutDialogHelper,
     viewsHelpers: views.ViewsHelpers,
     appConfig: AppConfig
 )
@@ -58,6 +59,16 @@
 
 @head = {
     @headBlock.getOrElse(Html(""))
+
+    @hmrcTimeoutDialogHelper(
+    signOutUrl = controllers.routes.TimeoutController.get(didUserDelete = true).url,
+    title = Some(Messages.TimeoutMessages.`For your Security`.show),
+    message = Some(Messages.TimeoutMessages.`We will delete your answers`.show),
+    keepAliveButtonText = Some(Messages.TimeoutMessages.`Continue with getting income tax refund`.show),
+    signOutButtonText = Some(Messages.TimeoutMessages.`Delete your answers`.show),
+    timeoutUrl = Some(controllers.routes.TimeoutController.get(didUserDelete = false).url)
+    )
+
     @Html(s"""<link rel="stylesheet" media="screen" href="${controllers.routes.Assets.versioned("stylesheets/application.css").toString}" ${CSPNonce.attr.toString}>""")
 }
 
