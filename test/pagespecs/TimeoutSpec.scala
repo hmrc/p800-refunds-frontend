@@ -31,13 +31,11 @@ class TimeoutSpec extends ItSpec {
       val timeoutPage = pages.timeoutPage(true)
       timeoutPage.open()
       timeoutPage.assertPageIsDisplayed()
-      getOptionalJourneyFromDatabase(tdAll.journeyId) shouldBe None
     }
     "the page naturally times out" in {
       val timeoutPage = pages.timeoutPage(false)
       timeoutPage.open()
       timeoutPage.assertPageIsDisplayed()
-      getOptionalJourneyFromDatabase(tdAll.journeyId) shouldBe None
     }
   }
 }

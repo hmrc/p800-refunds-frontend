@@ -66,12 +66,6 @@ abstract class Repo[ID, A: ClassTag](
     )
     .headOption()
 
-  def removeById(i: ID): Future[Option[A]] = {
-    collection.findOneAndDelete(
-      filter = Filters.eq("_id", id.value(i))
-    )
-      .headOption()
-  }
 }
 
 object Repo {

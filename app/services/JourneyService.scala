@@ -56,8 +56,4 @@ class JourneyService @Inject() (
     journeyRepo
       .findById(journeyId)
       .map(_.map(journeyCrypto.decryptJourney))
-
-  def remove(journeyId: JourneyId): Future[Option[Journey]] =
-    journeyRepo
-      .removeById(journeyId)
 }

@@ -18,27 +18,22 @@ package controllers
 
 import action.{Actions, JourneyRequest}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import services.JourneyService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import util.JourneyLogger
 import views.html.TimeoutPage
 
 import javax.inject.{Inject, Singleton}
-import scala.concurrent.ExecutionContext
 
 @Singleton
 class TimeoutController @Inject() (
-    mcc:            MessagesControllerComponents,
-    timeOutPage:    TimeoutPage,
-    actions:        Actions,
-    journeyService: JourneyService
-)(implicit ec: ExecutionContext) extends FrontendController(mcc) {
+    mcc:         MessagesControllerComponents,
+    timeOutPage: TimeoutPage,
+    actions:     Actions
+) extends FrontendController(mcc) {
 
-  def get(didUserDelete: Boolean): Action[AnyContent] = actions.journeyTimedOut.async { implicit request: JourneyRequest[_] =>
-    journeyService.remove(request.journeyId).map{ _ =>
-      JourneyLogger.info(s"Removing journey for [journeyId:${request.journeyId.value}]")
-      Ok(timeOutPage(didUserDelete))
-    }
+  def get(didUserDelete: Boolean): Action[AnyContent] = actions.journeyTimedOut { implicit request: JourneyRequest[_] =>
+    JourneyLogger.info("User timed out")
+    Ok(timeOutPage(didUserDelete)).withNewSession
   }
 
 }

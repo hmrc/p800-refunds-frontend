@@ -129,12 +129,6 @@ trait ItSpec extends AnyFreeSpecLike
     app.injector.instanceOf[JourneyCrypto].decryptJourney(journey)
   }
 
-  def getOptionalJourneyFromDatabase(journeyId: JourneyId): Option[Journey] = {
-    val journeyRepo: JourneyRepo = app.injector.instanceOf[JourneyRepo]
-    val journey = journeyRepo.findById(journeyId).futureValue
-    journey.map(j => app.injector.instanceOf[JourneyCrypto].decryptJourney(j))
-  }
-
   def upsertFailedAttemptToDatabase(attemptInfo: AttemptInfo): Unit = {
     val attemptRepo: FailedVerificationAttemptRepo = app.injector.instanceOf[FailedVerificationAttemptRepo]
     attemptRepo.upsert(attemptInfo).futureValue
