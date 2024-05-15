@@ -34,7 +34,6 @@ import uk.gov.hmrc.play.audit.model.ExtendedDataEvent
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.ExecutionContext
-import models.journeymodels.JourneyType
 
 @Singleton
 class AuditService @Inject() (
@@ -61,19 +60,19 @@ class AuditService @Inject() (
       ipAddressLockedout = ipAddressLockedout
     ))
 
-  def auditValidateUserDetails(journey: Journey, attemptInfo: Option[AttemptInfo], isSuccessful: Boolean)(implicit requestHeader: RequestHeader, hc: HeaderCarrier): Unit =
-    audit(toValidateUserDetails(journey, attemptInfo, IsSuccessful(isSuccessful)))
+  def auditValidateUserDetails(journey: Journey, attemptInfo: Option[AttemptInfo], isSuccessful: Boolean, apiResponsibleForFailure: Option[ApiResponsibleForFailure] = None, failureReasons: Option[Seq[String]] = None)(implicit requestHeader: RequestHeader, hc: HeaderCarrier): Unit =
+    audit(toValidateUserDetails(journey, attemptInfo, IsSuccessful(isSuccessful), apiResponsibleForFailure, failureReasons))
 
   def auditChequeClaimAttemptMade(journey: Journey, isSuccessful: IsSuccessful)(implicit requestHeader: RequestHeader, hc: HeaderCarrier): Unit = {
     audit(toChequeClaimAttemptMade(journey, isSuccessful))
   }
 
-  def auditBankClaimAttempt(journey: Journey, actionsOutcome: ActionsOutcome)(implicit requestHeader: RequestHeader, hc: HeaderCarrier): Unit =
-    audit(toBankClaimAttempt(journey, actionsOutcome))
+  def auditBankClaimAttempt(journey: Journey, actionsOutcome: BankActionsOutcome, failureReasons: Option[Seq[String]] = None)(implicit requestHeader: RequestHeader, hc: HeaderCarrier): Unit =
+    audit(toBankClaimAttempt(journey, actionsOutcome, failureReasons))
 
-  private def toValidateUserDetails(journey: Journey, attemptInfo: Option[AttemptInfo], isSuccessful: IsSuccessful)(implicit requestHeader: RequestHeader): ValidateUserDetails =
+  private def toValidateUserDetails(journey: Journey, attemptInfo: Option[AttemptInfo], isSuccessful: IsSuccessful, apiResponsibleForFailure: Option[ApiResponsibleForFailure], failureReasons: Option[Seq[String]])(implicit requestHeader: RequestHeader): ValidateUserDetails =
     ValidateUserDetails(
-      outcome              = toOutcome(journey, attemptInfo, isSuccessful),
+      outcome              = toOutcome(attemptInfo, isSuccessful, apiResponsibleForFailure, failureReasons.getOrElse(Seq.empty)),
       userEnteredDetails   = toUserEnteredDetails(journey),
       repaymentAmount      = journey.referenceCheckResult.fold[Option[AmountInPence]](None) {
         case p800ReferenceChecked: ValidateReferenceResult.P800ReferenceChecked => Some(AmountInPence(p800ReferenceChecked.paymentAmount))
@@ -87,29 +86,15 @@ class AuditService @Inject() (
       address              = toAddress(journey.traceIndividualResponse)
     )
 
-  private def toOutcome(journey: Journey, maybeAttemptInfo: Option[AttemptInfo], isSuccessful: IsSuccessful)(implicit requestHeader: RequestHeader): Outcome = {
-    val p800ReferenceCheck: String = "p800 reference check"
-    val traceIndividual: String = "trace indvidual"
+  private def toOutcome(maybeAttemptInfo: Option[AttemptInfo], isSuccessful: IsSuccessful, apiResponsibleForFailure: Option[ApiResponsibleForFailure], reasons: Seq[String]): Outcome = {
     val lockedOut = LockedOut(maybeAttemptInfo.fold(false)(AttemptInfo.shouldBeLockedOut(_, appConfig.FailedAttemptRepo.failedAttemptRepoMaxAttempts)))
 
     Outcome(
       isSuccessful             = isSuccessful,
       attemptsOnRecord         = maybeAttemptInfo.fold[Option[NumberOfAttempts]](None) { attemptInfo => Some(attemptInfo.numberOfFailedAttempts) },
       lockout                  = lockedOut,
-      apiResponsibleForFailure =
-        if (isSuccessful.value) {
-          None
-        } else {
-          journey.getJourneyType match {
-            case JourneyType.Cheque => Some(p800ReferenceCheck)
-            case JourneyType.BankTransfer =>
-              Some(journey.referenceCheckResult.fold[String](p800ReferenceCheck) {
-                case _: ValidateReferenceResult.P800ReferenceChecked => traceIndividual
-                case _ => p800ReferenceCheck
-              })
-          }
-        },
-      reasons                  = Seq()
+      apiResponsibleForFailure = apiResponsibleForFailure,
+      reasons                  = reasons
     )
   }
 
@@ -132,9 +117,9 @@ class AuditService @Inject() (
       currentOptimisticLock    = p800ReferenceChecked.currentOptimisticLock
     )
 
-  private def toBankClaimAttempt(journey: Journey, actionsOutcome: ActionsOutcome)(implicit requestHeader: RequestHeader): BankClaimAttempt =
+  private def toBankClaimAttempt(journey: Journey, actionsOutcome: BankActionsOutcome, failureReasons: Option[Seq[String]])(implicit requestHeader: RequestHeader): BankClaimAttempt =
     BankClaimAttempt(
-      outcome              = toBankClaimOutcome(actionsOutcome),
+      outcome              = toBankClaimOutcome(actionsOutcome, failureReasons),
       userEnteredDetails   = toBankClaimUserEnteredDetails(journey),
       repaymentAmount      = journey.referenceCheckResult.fold[Option[AmountInPence]](None) {
         case p800ReferenceChecked: ValidateReferenceResult.P800ReferenceChecked => Some(AmountInPence(p800ReferenceChecked.paymentAmount))
@@ -148,11 +133,11 @@ class AuditService @Inject() (
       address              = toAddress(journey.traceIndividualResponse)
     )
 
-  private def toBankClaimOutcome(actionsOutcome: ActionsOutcome): BankClaimOutcome =
+  private def toBankClaimOutcome(actionsOutcome: BankActionsOutcome, failureReasons: Option[Seq[String]]): BankClaimOutcome =
     BankClaimOutcome(
       isSuccessful   = actionsOutcome.overallResult,
       actionsOutcome = actionsOutcome,
-      failureReasons = None
+      failureReasons = failureReasons
     )
 
   private def toBankClaimUserEnteredDetails(journey: Journey)(implicit requestHeader: RequestHeader): BankClaimUserEnteredDetails =

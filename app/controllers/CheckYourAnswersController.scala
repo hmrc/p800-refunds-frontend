@@ -37,6 +37,7 @@ import views.Views
 import java.time.format.DateTimeFormatter
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
+import models.audit.ApiResponsibleForFailure
 
 @Singleton
 class CheckYourAnswersController @Inject() (
@@ -114,7 +115,11 @@ class CheckYourAnswersController @Inject() (
         attemptInfo <- failedVerificationAttemptService.find()
         journey <- journeyService.upsert(journey.update(maybeTraceIndividualResponse = maybeTraceIndividualResponse))
       } yield {
-        auditService.auditValidateUserDetails(journey      = journey, attemptInfo = attemptInfo, isSuccessful = true)(request, hc)
+        auditService.auditValidateUserDetails(
+          journey      = journey,
+          attemptInfo  = attemptInfo,
+          isSuccessful = true
+        )(request, hc)
         Redirect(controllers.YourIdentityIsConfirmedController.redirectLocation(journey))
       }
 
@@ -146,8 +151,14 @@ class CheckYourAnswersController @Inject() (
           journeyService
             .upsert(r.journey.update(HasFinished.YesRefundAlreadyTaken))
             .map { j =>
-              JourneyLogger.info("NPS indicate that refund has already been claimed")
-              auditService.auditValidateUserDetails(journey      = j, attemptInfo = None, isSuccessful = false)(request, hc)
+              JourneyLogger.info("NPS indicated that refund has already been claimed")
+              auditService.auditValidateUserDetails(
+                journey                  = j,
+                attemptInfo              = None,
+                isSuccessful             = false,
+                apiResponsibleForFailure = Some(ApiResponsibleForFailure.P800ReferenceCheck),
+                failureReasons           = Some(Seq("NPS indicated that refund has already been claimed"))
+              )(request, hc)
               Some(Redirect(routes.ThereIsAProblemController.get))
             }
         case ValidateReferenceResult.ReferenceDidntMatchNino =>
@@ -157,13 +168,25 @@ class CheckYourAnswersController @Inject() (
               journeyService
                 .upsert(r.journey.copy(hasFinished = HasFinished.YesLockedOut))
                 .map { j =>
-                  auditService.auditValidateUserDetails(journey      = j, attemptInfo = Some(attemptInfo), isSuccessful = false)(request, hc)
+                  auditService.auditValidateUserDetails(
+                    journey                  = j,
+                    attemptInfo              = Some(attemptInfo),
+                    isSuccessful             = false,
+                    apiResponsibleForFailure = Some(ApiResponsibleForFailure.P800ReferenceCheck),
+                    failureReasons           = Some(Seq("Max attempts reached. User is locked out.", "NPS indicated that the reference did not match the NINO"))
+                  )(request, hc)
                   Some(Redirect(controllers.NoMoreAttemptsLeftToConfirmYourIdentityController.redirectLocation(j)))
                 }
             } else journeyService
               .upsert(r.journey)
               .map { j =>
-                auditService.auditValidateUserDetails(journey      = j, attemptInfo = Some(attemptInfo), isSuccessful = false)(request, hc)
+                auditService.auditValidateUserDetails(
+                  journey                  = j,
+                  attemptInfo              = Some(attemptInfo),
+                  isSuccessful             = false,
+                  apiResponsibleForFailure = Some(ApiResponsibleForFailure.P800ReferenceCheck),
+                  failureReasons           = Some(Seq("NPS indicated that the reference did not match the NINO"))
+                )(request, hc)
                 Some(Redirect(controllers.CannotConfirmYourIdentityTryAgainController.redirectLocation(j)))
               }
           } yield result
