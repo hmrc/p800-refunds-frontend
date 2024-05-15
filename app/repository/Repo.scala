@@ -65,6 +65,7 @@ abstract class Repo[ID, A: ClassTag](
       filter = Filters.eq("_id", id.value(i))
     )
     .headOption()
+
 }
 
 object Repo {

@@ -20,6 +20,12 @@ import testsupport.ItSpec
 
 class TimeoutSpec extends ItSpec {
 
+  override def beforeEach(): Unit = {
+    super.beforeEach()
+    addJourneyIdToSession(tdAll.journeyId)
+    upsertJourneyToDatabase(tdAll.BankTransfer.journeyBankAccountConsentSuccessfulNameMatch)
+  }
+
   "navigating to /timeout should render the Timeout page when" - {
     "the user chooses to delete their data" in {
       val timeoutPage = pages.timeoutPage(true)

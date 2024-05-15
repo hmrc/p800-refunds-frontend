@@ -28,9 +28,14 @@ import java.util.Locale
 object Messages {
 
   object TimeoutMessages {
-    val `Timeout out page - Title`: Message = Message(
-      english = "Time out page - This page is going to time out",
-      welsh   = "Time out page - This page is going to time out" //TODO add missing welsh
+    val `Timeout out page title - You deleted your answers`: Message = Message(
+      english = "You deleted your answers - Get an Income Tax refund - GOV.UK",
+      welsh   = "Rydych wedi dileu’ch atebion - Cael ad-daliad Treth Incwm - GOVUK"
+    )
+
+    val `Timeout out page title - For your security, we deleted your answers`: Message = Message(
+      english = "For your security, we deleted your answers - Get an Income Tax refund - GOV.UK",
+      welsh   = "Er eich diogelwch, gwnaethom ddileu’ch atebion - Cael ad-daliad Treth Incwm - GOVUK"
     )
 
     val `For your Security`: Message = Message(

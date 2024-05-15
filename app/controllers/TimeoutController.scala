@@ -16,9 +16,10 @@
 
 package controllers
 
-import action.Actions
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Request}
+import action.{Actions, JourneyRequest}
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
+import util.JourneyLogger
 import views.html.TimeoutPage
 
 import javax.inject.{Inject, Singleton}
@@ -30,8 +31,9 @@ class TimeoutController @Inject() (
     actions:     Actions
 ) extends FrontendController(mcc) {
 
-  def get(didUserDelete: Boolean): Action[AnyContent] = actions.default { implicit request: Request[_] =>
-    Ok(timeOutPage(didUserDelete))
+  def get(didUserDelete: Boolean): Action[AnyContent] = actions.journeyTimedOut { implicit request: JourneyRequest[_] =>
+    JourneyLogger.info("User timed out")
+    Ok(timeOutPage(didUserDelete)).withNewSession
   }
 
 }
