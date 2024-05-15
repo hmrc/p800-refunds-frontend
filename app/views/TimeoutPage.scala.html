@@ -37,8 +37,16 @@
  }
 }
 
+ @title = @{
+  if (didUserDelete) {
+   Messages.TimeoutMessages.`Timeout out page title - You deleted your answers`.show
+  } else {
+   Messages.TimeoutMessages.`Timeout out page title - For your security, we deleted your answers`.show
+  }
+ }
+
 @layout(
- pageTitle = Some(Messages.TimeoutMessages.`Timeout out page - Title`.show),
+ pageTitle = Some(title),
  showBackLink = false
 ) {
  <h1 class="govuk-heading-xl">@heading</h1>

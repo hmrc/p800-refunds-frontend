@@ -25,9 +25,9 @@ class TimeoutPage(baseUrl: String, didUserDelete: Boolean)(implicit webDriver: W
   path = s"/get-an-income-tax-refund/timeout/${didUserDelete.toString}"
 ) {
 
-  val expectedTitle = "Time out page - This page is going to time out"
   override def expectedH1: String = if (didUserDelete) "You deleted your answers" else "For your security, we deleted your answers"
   override def expectedWelshH1: String = if (didUserDelete) "Rydych wedi dileu’ch atebion" else "Er eich diogelwch, gwnaethom ddileu’ch atebion"
+  def expectedTitle = s"$expectedH1 - Get an Income Tax refund - GOV.UK"
 
   override def assertPageIsDisplayed(extraExpectations: ContentExpectation*): Unit = withPageClue {
 

@@ -57,6 +57,9 @@ class Actions @Inject() (
         )
       )
 
+  @SuppressWarnings(Array("org.wartremover.warts.Any"))
+  def journeyTimedOut: ActionBuilder[JourneyRequest, AnyContent] = default.andThen(getJourneyActionRefiner)
+
   private def redirectWhenJourneyIsFinished(journey: Journey): Call = journey.hasFinished match {
     case HasFinished.YesSucceeded =>
       journey.journeyType match {
