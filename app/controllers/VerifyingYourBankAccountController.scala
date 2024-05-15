@@ -29,7 +29,7 @@ import models.p800externalapi.EventValue
 import nps.models.ValidateReferenceResult.P800ReferenceChecked
 import nps.models._
 import play.api.mvc._
-import services.{AuditService, EcospendService, JourneyService, NameMatchingService}
+import services.{AuditService, EcospendService, JourneyService, NameMatchingService, GetBankDetailsRiskResultService}
 import uk.gov.hmrc.http.{HttpException, UpstreamErrorResponse}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import util.SafeEquals.EqualsOps
@@ -48,8 +48,8 @@ class VerifyingYourBankAccountController @Inject() (
     mcc:                             MessagesControllerComponents,
     p800RefundsBackendConnector:     P800RefundsBackendConnector,
     p800RefundsExternalApiConnector: P800RefundsExternalApiConnector,
-    views:                           Views,
-    claimIdGenerator:                ClaimIdGenerator
+    getBankDetailsRiskResultService: GetBankDetailsRiskResultService,
+    views:                           Views
 )(implicit ec: ExecutionContext) extends FrontendController(mcc) {
 
   def get(status: Option[ConsentStatus], consent_id: Option[ConsentId], bank_reference_id: Option[BankReferenceId]): Action[AnyContent] = actions.journeyInProgress.async { implicit request: JourneyRequest[_] =>
@@ -62,23 +62,7 @@ class VerifyingYourBankAccountController @Inject() (
     for {
       isValidEventValue: EventValue <- obtainIsValid(journey)
       bankAccountSummary: BankAccountSummary <- obtainBankAccountSummary(journey)
-      bankDetailsRiskResultResponse: GetBankDetailsRiskResultResponse <- obtainGetBankDetailsRiskResultResponse(journey, bankAccountSummary)
-        .recover {
-          case err @ (_: UpstreamErrorResponse | _: HttpException) =>
-            auditService.auditBankClaimAttempt(
-              journey        = journey,
-              actionsOutcome = BankActionsOutcome(
-                ecospendFraudCheckIsSuccessful = isValidEventValue match {
-                  case EventValue.Valid       => Some(IsSuccessful.yes)
-                  case EventValue.NotValid    => Some(IsSuccessful.no)
-                  case EventValue.NotReceived => None
-                },
-                hmrcFraudCheckIsSuccessful     = Some(IsSuccessful.no)
-              ),
-              failureReasons = Some(Seq(err.getMessage))
-            )
-            throw err
-        }
+      bankDetailsRiskResultResponse: GetBankDetailsRiskResultResponse <- getBankDetailsRiskResultService.getBankDetailsRiskResult(journey, bankAccountSummary, isValidEventValue)
       didAnyNameMatch = doAnyNamesFromPartiesListMatch(journey.getTraceIndividualResponse, bankAccountSummary)
       newJourney = journey.update(isValidEventValue, bankAccountSummary, bankDetailsRiskResultResponse)
       (result, newJourney) <- next(newJourney, isValidEventValue, bankDetailsRiskResultResponse, bankAccountSummary, consentStatus, didAnyNameMatch)
@@ -261,59 +245,6 @@ class VerifyingYourBankAccountController @Inject() (
       .bankAccountSummary
       .map(Future.successful)
       .getOrElse(ecospendService.getAccountSummary(journey))
-  }
-
-  //See https://confluence.tools.tax.service.gov.uk/pages/viewpage.action?pageId=770835142 for data mapping
-  private def obtainGetBankDetailsRiskResultResponse(journey: Journey, bankAccountSummary: BankAccountSummary)(implicit request: Request[_]): Future[GetBankDetailsRiskResultResponse] = {
-
-    lazy val claimId: ClaimId = claimIdGenerator.nextClaimId()
-    lazy val bankDetailsRiskResultRequest: GetBankDetailsRiskResultRequest = {
-
-      val r = GetBankDetailsRiskResultRequest(
-        header       = Header(
-          transactionID = claimId.asTransactionId,
-          requesterID   = RequesterID("Repayment Service"),
-          serviceID     = ServiceID("P800")
-        ),
-        paymentData  = Some(PaymentData(
-          paymentAmount = Some(journey.getAmount.inPounds), //TODO: according to analysis this comes form repayment status API, but we don't call it.
-          paymentNumber = Some(journey.getP800Reference.sanitiseReference.value) //TODO: according to analysis this comes form repayment status API, but we don't call it.
-        )),
-        employerData = None, //TODO: according to the analysis: confirm this is not needed
-
-        riskData                     = List(RiskDataObject(
-          personType  = PersonType.Customer,
-          person      = Some(Person(
-            //TODO: according to the analysis all those fields come from the CitisenDetails API, which we don't call
-            surname                 = Surname(journey.getTraceIndividualResponse.surname),
-            firstForenameOrInitial  = journey.getTraceIndividualResponse.firstForename.map(FirstForenameOrInitial.apply),
-            secondForenameOrInitial = journey.getTraceIndividualResponse.secondForename.map(SecondForenameOrInitial.apply),
-            nino                    = journey.getNino,
-            dateOfBirth             = DateOfBirth(journey.getDateOfBirth.`formatYYYY-MM-DD`),
-            title                   = journey.getTraceIndividualResponse.title.map(Title.apply),
-            address                 = None
-          )),
-          bankDetails = Some(BankDetails(
-            bankAccountNumber     = Some(bankAccountSummary.accountIdentification.asBankAccountNumber),
-            bankSortCode          = Some(bankAccountSummary.accountIdentification.asBankSortCode),
-            bankAccountName       = Some(BankAccountName(bankAccountSummary.displayName.value)),
-            buildingSocietyRef    = None, //TODO: this has not been analysed
-            designatedAccountFlag = None, //TODO: according to the analysis: confirm this is not needed, Collected from user Journey, Is the same value as personType
-            currency              = None //TODO: according to the analysis: confirm this is not needed, Always "GBP"
-          ))
-        )),
-        bankValidationResults        = None, //as agreed we don't call BARS to obtain those data and won't pass anything here
-        transactionMonitoringResults = None //TODO: this has not been analysed so don't know what needs to passed here
-      )
-      r.validate.fold(())(validationProblem =>
-        JourneyLogger.warn(s"Internal validation of GetBankDetailsRiskResultRequest failed: [$validationProblem]"))
-      r
-    }
-
-    journey
-      .bankDetailsRiskResultResponse
-      .map(Future.successful)
-      .getOrElse(p800RefundsBackendConnector.getBankDetailsRiskResult(claimId, bankDetailsRiskResultRequest, journey.correlationId))
   }
 
   private def notifyCaseManagement(journey: Journey)(implicit requestHeader: RequestHeader): Future[Unit] = {
