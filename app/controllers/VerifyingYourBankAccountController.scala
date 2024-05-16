@@ -60,8 +60,8 @@ class VerifyingYourBankAccountController @Inject() (
       status.getOrElse(Errors.throwServerErrorException("This endpoint requires a status parameter."))
 
     for {
-      isValidEventValue: EventValue <- obtainIsValid(journey)
       bankAccountSummary: BankAccountSummary <- obtainBankAccountSummary(journey)
+      isValidEventValue: EventValue <- obtainIsValid(journey, bankAccountSummary)
       bankDetailsRiskResultResponse: GetBankDetailsRiskResultResponse <- getBankDetailsRiskResultService.getBankDetailsRiskResult(journey, bankAccountSummary, isValidEventValue)
       didAnyNameMatch = doAnyNamesFromPartiesListMatch(journey.getTraceIndividualResponse, bankAccountSummary)
       newJourney = journey.update(isValidEventValue, bankAccountSummary, bankDetailsRiskResultResponse)
@@ -224,11 +224,11 @@ class VerifyingYourBankAccountController @Inject() (
     }
   }
 
-  private def obtainIsValid(journey: Journey)(implicit request: Request[_]): Future[EventValue] = {
+  private def obtainIsValid(journey: Journey, bankAccountSummary: BankAccountSummary)(implicit request: Request[_]): Future[EventValue] = {
     JourneyLogger.debug("Obtaining EventValue ...")
     journey.isValidEventValue match {
       case None | Some(EventValue.NotReceived) =>
-        p800RefundsExternalApiConnector.isValid(journey.getBankConsent.id).map { ev =>
+        p800RefundsExternalApiConnector.isValid(bankAccountSummary.id).map { ev =>
           JourneyLogger.info(s"Received EventValue from backend: [${ev.toString}]")
           ev
         }
