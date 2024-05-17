@@ -62,7 +62,7 @@
 
     @hmrcTimeoutDialogHelper(
     signOutUrl = controllers.routes.TimeoutController.get(didUserDelete = true).url,
-    title = pageTitle,
+    title = Some(Messages.TimeoutMessages.`For your Security`.show),
     message = Some(Messages.TimeoutMessages.`We will delete your answers`.show),
     keepAliveButtonText = Some(Messages.TimeoutMessages.`Continue with getting income tax refund`.show),
     signOutButtonText = Some(Messages.TimeoutMessages.`Delete your answers`.show),
