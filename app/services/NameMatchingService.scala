@@ -30,10 +30,11 @@ object NameMatchingService {
   def fuzzyNameMatching(
       npsOptFirstName:  Option[String],
       npsOptSecondName: Option[String],
-      npsSurname:       String,
+      npsOptSurname:    Option[String],
       ecospendName:     String
   )(implicit request: RequestHeader): (NameMatchingResponse, NameMatchingAudit) = {
 
+    val npsSurname = npsOptSurname.getOrElse("")
     val sanitisedNpsName = sanitiseFullName(s"${npsOptFirstName.getOrElse("")} ${npsOptSecondName.getOrElse("")} $npsSurname")
     val sanitisedEcospendName = sanitiseFullName(ecospendName)
 
@@ -52,7 +53,7 @@ object NameMatchingService {
         BasicSuccessfulNameMatch,
         NameMatchingAudit(
           NameMatchOutcome(isSuccessful = true, BasicSuccessfulNameMatch.auditString),
-          RawNpsName(npsOptFirstName, npsOptSecondName, npsSurname),
+          RawNpsName(npsOptFirstName, npsOptSecondName, npsOptSurname),
           Some(ecospendName),
           Some(sanitisedNpsName),
           Some(fullEcospendName)
@@ -64,7 +65,7 @@ object NameMatchingService {
           FailedSurnameMatch,
           NameMatchingAudit(
             NameMatchOutcome(isSuccessful = false, FailedSurnameMatch.auditString),
-            RawNpsName(npsOptFirstName, npsOptSecondName, npsSurname),
+            RawNpsName(npsOptFirstName, npsOptSecondName, npsOptSurname),
             Some(ecospendName),
             Some(sanitisedNpsName),
             Some(fullEcospendName)
@@ -78,7 +79,7 @@ object NameMatchingService {
             FirstAndMiddleNameSuccessfulNameMatch,
             NameMatchingAudit(
               NameMatchOutcome(isSuccessful = true, FirstAndMiddleNameSuccessfulNameMatch.auditString),
-              RawNpsName(npsOptFirstName, npsOptSecondName, npsSurname),
+              RawNpsName(npsOptFirstName, npsOptSecondName, npsOptSurname),
               Some(ecospendName),
               Some(s"${comparisonResult.npsNameWithInitials} ${npsSurnameFromSeq.mkString}"),
               Some(s"${comparisonResult.ecospendNameWithInitials} $ecoSurname")
@@ -90,7 +91,7 @@ object NameMatchingService {
             matchingResponse,
             NameMatchingAudit(
               NameMatchOutcome(isSuccessful = isSuccessful, matchingResponse.auditString),
-              RawNpsName(npsOptFirstName, npsOptSecondName, npsSurname),
+              RawNpsName(npsOptFirstName, npsOptSecondName, npsOptSurname),
               Some(ecospendName),
               Some(s"${comparisonResult.npsNameWithInitials} ${npsSurnameFromSeq.mkString}"),
               Some(s"${comparisonResult.ecospendNameWithInitials} $ecoSurname"),
@@ -103,7 +104,7 @@ object NameMatchingService {
             FailedFirstAndMiddleNameMatch,
             NameMatchingAudit(
               NameMatchOutcome(isSuccessful = false, FailedFirstAndMiddleNameMatch.auditString),
-              RawNpsName(npsOptFirstName, npsOptSecondName, npsSurname),
+              RawNpsName(npsOptFirstName, npsOptSecondName, npsOptSurname),
               Some(ecospendName),
               Some(s"${comparisonResult.npsNameWithInitials} ${npsSurnameFromSeq.mkString}"),
               Some(s"${comparisonResult.ecospendNameWithInitials} $ecoSurname")

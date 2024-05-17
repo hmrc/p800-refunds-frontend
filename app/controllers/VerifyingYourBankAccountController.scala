@@ -294,13 +294,13 @@ class VerifyingYourBankAccountController @Inject() (
           CaseManagementContact(
             `type`    = PersonType.Customer,
             firstName = journey.getTraceIndividualResponse.firstForename.getOrElse(""),
-            surname   = journey.getTraceIndividualResponse.surname,
+            surname   = journey.getTraceIndividualResponse.surname.getOrElse(""),
             address   = List(
               CaseManagementAddress(
                 `type`       = NPSAddress,
-                addressLine1 = Some(journey.getTraceIndividualResponse.addressLine1),
-                addressLine2 = Some(journey.getTraceIndividualResponse.addressLine2),
-                postcode     = Some(journey.getTraceIndividualResponse.addressPostcode)
+                addressLine1 = journey.getTraceIndividualResponse.addressLine1,
+                addressLine2 = journey.getTraceIndividualResponse.addressLine2,
+                postcode     = journey.getTraceIndividualResponse.addressPostcode
               )
             )
           )

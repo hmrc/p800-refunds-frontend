@@ -93,20 +93,20 @@ trait TdBase {
     title           = Some(title),
     firstForename   = Some(firstForename),
     secondForename  = None,
-    surname         = surname,
-    addressLine1    = "Flat 1 Rose House",
-    addressLine2    = "Worthing",
-    addressPostcode = Postcode("BN12 4XL")
+    surname         = Some(surname),
+    addressLine1    = Some("Flat 1 Rose House"),
+    addressLine2    = Some("Worthing"),
+    addressPostcode = Some(Postcode("BN12 4XL"))
   )
 
   lazy val traceIndividualResponseSuccessFulNameMatch: TracedIndividual = TracedIndividual(
     title           = Some(title),
     firstForename   = Some("Greg"),
     secondForename  = Some("Greggory"),
-    surname         = "Greggson",
-    addressLine1    = "Flat 1 Rose House",
-    addressLine2    = "Worthing",
-    addressPostcode = Postcode("BN12 4XL")
+    surname         = Some("Greggson"),
+    addressLine1    = Some("Flat 1 Rose House"),
+    addressLine2    = Some("Worthing"),
+    addressPostcode = Some(Postcode("BN12 4XL"))
   )
 
   lazy val bankId: BankId = BankId("obie-barclays-personal")

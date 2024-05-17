@@ -121,7 +121,7 @@ object EmployerData {
 }
 
 final case class Person(
-    surname:                 Surname,
+    surname:                 Option[Surname],
     firstForenameOrInitial:  Option[FirstForenameOrInitial],
     secondForenameOrInitial: Option[SecondForenameOrInitial],
     nino:                    Nino,
@@ -130,7 +130,7 @@ final case class Person(
     address:                 Option[List[Address]]
 ) {
   def validate: Option[String] =
-    surname.validate
+    surname.flatMap(_.validate)
       .orElse(firstForenameOrInitial.flatMap(_.validate))
       .orElse(secondForenameOrInitial.flatMap(_.validate))
       //      .orElse(nino.validate) we don't validate nino as it should be validated by the form

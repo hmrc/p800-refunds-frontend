@@ -94,7 +94,7 @@ final case class Name(
     title:          Option[String],
     firstForename:  Option[String],
     secondForename: Option[String],
-    surname:        String
+    surname:        Option[String]
 )
 
 object Name {
@@ -103,9 +103,9 @@ object Name {
 }
 
 final case class Address(
-    addressLine1:    String,
-    addressLine2:    String,
-    addressPostcode: Postcode
+    addressLine1:    Option[String],
+    addressLine2:    Option[String],
+    addressPostcode: Option[Postcode]
 )
 
 object Address {
