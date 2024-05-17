@@ -150,7 +150,15 @@ class VerifyingYourBankAccountController @Inject() (
     }
     case (_, _, false) => Future.successful {
       JourneyLogger.info(s"Ecospend names failed matching against NPS name")
-      auditService.auditBankClaimAttempt(journey, toBankActionsOutcome(journey, isValidEventValue, didAnyNameMatch))
+      auditService.auditBankClaimAttempt(
+        journey        = journey,
+        actionsOutcome = BankActionsOutcome(
+          ecospendFraudCheckIsSuccessful = isEcospendFraudCheckIsSuccessful(isValidEventValue),
+          hmrcFraudCheckIsSuccessful     = isHmrcFraudCheckSuccessful(journey.bankDetailsRiskResultResponse),
+          fuzzyNameMatchingIsSuccessful  = Some(IsSuccessful.no)
+        ),
+        failureReasons = Some(Seq("Ecospend names failed matching against NPS name"))
+      )
 
       (
         Redirect(routes.RefundRequestNotSubmittedController.get),
@@ -165,7 +173,15 @@ class VerifyingYourBankAccountController @Inject() (
     )
     case (EventValue.NotValid, ConsentStatus.Authorised, _) => Future.successful {
       JourneyLogger.info(s"Account assessment failed.")
-      auditService.auditBankClaimAttempt(journey, toBankActionsOutcome(journey, isValidEventValue, didAnyNameMatch))
+      auditService.auditBankClaimAttempt(
+        journey = journey,
+        BankActionsOutcome(
+          ecospendFraudCheckIsSuccessful = Some(IsSuccessful.no),
+          hmrcFraudCheckIsSuccessful     = isHmrcFraudCheckSuccessful(journey.bankDetailsRiskResultResponse),
+          fuzzyNameMatchingIsSuccessful  = Some(IsSuccessful(didAnyNameMatch))
+        ),
+        failureReasons = Some(Seq("Account assessment failed."))
+      )
 
       (
         Redirect(routes.RefundRequestNotSubmittedController.get),
@@ -199,7 +215,15 @@ class VerifyingYourBankAccountController @Inject() (
       _ <- notifyCaseManagement(journey)
       _ <- p800RefundsBackendConnector.suspendOverpayment(journey.getNino, suspendOverpaymentRequest, journey.correlationId)
     } yield {
-      auditService.auditBankClaimAttempt(journey, toBankActionsOutcome(journey, EventValue.Valid, true))
+      auditService.auditBankClaimAttempt(
+        journey        = journey,
+        actionsOutcome = BankActionsOutcome(
+          ecospendFraudCheckIsSuccessful = Some(IsSuccessful.yes),
+          fuzzyNameMatchingIsSuccessful  = Some(IsSuccessful.yes),
+          hmrcFraudCheckIsSuccessful     = Some(IsSuccessful.no)
+        ),
+        failureReasons = Some(Seq("EDH indicated DoNotPay"))
+      )
 
       (
         Redirect(routes.RequestReceivedController.getBankTransfer),
@@ -346,20 +370,22 @@ class VerifyingYourBankAccountController @Inject() (
       .map(_ => ())
   }
 
-  private def toBankActionsOutcome(journey: Journey, eventValue: EventValue, didAnyNameMatch: Boolean): BankActionsOutcome =
-    BankActionsOutcome(
-      ecospendFraudCheckIsSuccessful = eventValue match {
-        case EventValue.Valid       => Some(IsSuccessful.yes)
-        case EventValue.NotValid    => Some(IsSuccessful.no)
-        case EventValue.NotReceived => None
-      },
-      fuzzyNameMatchingIsSuccessful  = Some(IsSuccessful(didAnyNameMatch)),
-      hmrcFraudCheckIsSuccessful     = journey.bankDetailsRiskResultResponse match {
-        case Some(_) => Some(IsSuccessful.yes)
-        case _       => None
-      },
-      claimOverpaymentIsSuccessful   = None
-    )
+  private def isEcospendFraudCheckIsSuccessful(eventValue: EventValue): Option[IsSuccessful] = eventValue match {
+    case EventValue.Valid       => Some(IsSuccessful.yes)
+    case EventValue.NotValid    => Some(IsSuccessful.no)
+    case EventValue.NotReceived => None
+  }
+
+  private def isHmrcFraudCheckSuccessful(bankDetailsRiskResultResponse: Option[GetBankDetailsRiskResultResponse]): Option[IsSuccessful] =
+    bankDetailsRiskResultResponse match {
+      case Some(bankDetailsRiskResultResponse) => {
+        bankDetailsRiskResultResponse.overallRiskResult.nextAction match {
+          case NextAction.DoNotPay => Some(IsSuccessful.no)
+          case NextAction.Pay      => Some(IsSuccessful.yes)
+        }
+      }
+      case _ => None
+    }
 
   @inline private def sanityChecks(consent_id: Option[ConsentId], bank_reference_id: Option[BankReferenceId], journey: Journey)(implicit request: RequestHeader): Unit = {
     Errors.require(

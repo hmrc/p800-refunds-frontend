@@ -51,6 +51,7 @@ class VerifyingYourBankAccountPageSpec extends ItSpec {
     EdhStub.verifyGetBankDetailsRiskResult(tdAll.claimId, tdAll.correlationId)
     P800RefundsExternalApiStub.verifyIsValid(tdAll.consentId)
     MakeBacsRepaymentStub.verifyNone(tdAll.nino)
+    AuditConnectorStub.verifyNoAuditEvent("BankClaimAttemptMade")
   }
 
   "/verify-bank-account renders the 'Refund Request not Submitted' page when the Consent Status is Canceled" in {
@@ -69,6 +70,7 @@ class VerifyingYourBankAccountPageSpec extends ItSpec {
     EdhStub.verifyGetBankDetailsRiskResult(tdAll.claimId, tdAll.correlationId)
     P800RefundsExternalApiStub.verifyIsValid(tdAll.consentId)
     MakeBacsRepaymentStub.verifyNone(tdAll.nino)
+    AuditConnectorStub.verifyNoAuditEvent("BankClaimAttemptMade")
   }
 
   "/verify-bank-account renders the 'Refund Request not Submitted' page when the Name Matching Fails" in {
@@ -95,8 +97,12 @@ class VerifyingYourBankAccountPageSpec extends ItSpec {
           "outcome": {
             "isSuccessful": false,
             "actionsOutcome": {
-              "fuzzyNameMatchingIsSuccessful": false
-            }
+              "fuzzyNameMatchingIsSuccessful": false,
+              "hmrcFraudCheckIsSuccessful": true
+            },
+            "failureReasons": [
+              "Ecospend names failed matching against NPS name"
+            ]
           },
           "userEnteredDetails": {
             "chosenBank": "Barclays Personal",
@@ -168,6 +174,56 @@ class VerifyingYourBankAccountPageSpec extends ItSpec {
     EdhStub.verifyGetBankDetailsRiskResult(tdAll.claimId, tdAll.correlationId)
     P800RefundsExternalApiStub.verifyIsValid(tdAll.consentId)
     MakeBacsRepaymentStub.verifyNone(tdAll.nino)
+    AuditConnectorStub.verifyEventAudited(
+      "BankClaimAttemptMade",
+      Json.parse(
+        """
+        {
+          "outcome": {
+            "isSuccessful": false,
+            "actionsOutcome": {
+              "fuzzyNameMatchingIsSuccessful": false,
+              "hmrcFraudCheckIsSuccessful": true
+            },
+            "failureReasons": [
+              "Ecospend names failed matching against NPS name"
+            ]
+          },
+          "userEnteredDetails": {
+            "chosenBank": "Barclays Personal",
+            "p800Reference": 12345678,
+            "nino": "LM001014C",
+            "dob": {
+              "dayOfMonth": "1",
+              "month": "1",
+              "year": "2000"
+            }
+          },
+          "repaymentAmount": 1234,
+          "repaymentInformation": {
+            "reconciliationIdentifier": 123,
+            "paymentNumber": 12345678,
+            "payeNumber": "PayeNumber-123",
+            "taxDistrictNumber": 717,
+            "associatedPayableNumber": 1234,
+            "customerAccountNumber": "customerAccountNumber-1234",
+            "currentOptimisticLock": 15
+          },
+          "name": {
+            "title": "Sir",
+            "firstForename": "Greg",
+            "secondForename": "Greggory",
+            "surname": "Greggson"
+          },
+          "address": {
+            "addressLine1": "Flat 1 Rose House",
+            "addressLine2": "Worthing",
+            "addressPostcode": "BN12 4XL"
+          }
+        }
+        """.stripMargin
+      ).as[JsObject]
+    )
   }
 
   "/verify-bank-account renders the 'Refund Request not Submitted' page when the parties list & account name is empty" in {
@@ -202,6 +258,56 @@ class VerifyingYourBankAccountPageSpec extends ItSpec {
     EdhStub.verifyGetBankDetailsRiskResult(tdAll.claimId, tdAll.correlationId)
     P800RefundsExternalApiStub.verifyIsValid(tdAll.consentId)
     MakeBacsRepaymentStub.verifyNone(tdAll.nino)
+    AuditConnectorStub.verifyEventAudited(
+      "BankClaimAttemptMade",
+      Json.parse(
+        """
+        {
+          "outcome": {
+            "isSuccessful": false,
+            "actionsOutcome": {
+              "fuzzyNameMatchingIsSuccessful": false,
+              "hmrcFraudCheckIsSuccessful": true
+            },
+            "failureReasons": [
+              "Ecospend names failed matching against NPS name"
+            ]
+          },
+          "userEnteredDetails": {
+            "chosenBank": "Barclays Personal",
+            "p800Reference": 12345678,
+            "nino": "LM001014C",
+            "dob": {
+              "dayOfMonth": "1",
+              "month": "1",
+              "year": "2000"
+            }
+          },
+          "repaymentAmount": 1234,
+          "repaymentInformation": {
+            "reconciliationIdentifier": 123,
+            "paymentNumber": 12345678,
+            "payeNumber": "PayeNumber-123",
+            "taxDistrictNumber": 717,
+            "associatedPayableNumber": 1234,
+            "customerAccountNumber": "customerAccountNumber-1234",
+            "currentOptimisticLock": 15
+          },
+          "name": {
+            "title": "Sir",
+            "firstForename": "Greg",
+            "secondForename": "Greggory",
+            "surname": "Greggson"
+          },
+          "address": {
+            "addressLine1": "Flat 1 Rose House",
+            "addressLine2": "Worthing",
+            "addressPostcode": "BN12 4XL"
+          }
+        }
+        """.stripMargin
+      ).as[JsObject]
+    )
   }
 
   "/verify-bank-account renders the 'We are verifying your bank account' page" in {
@@ -219,6 +325,7 @@ class VerifyingYourBankAccountPageSpec extends ItSpec {
     EdhStub.verifyGetBankDetailsRiskResult(tdAll.claimId, tdAll.correlationId)
     P800RefundsExternalApiStub.verifyIsValid(tdAll.consentId)
     MakeBacsRepaymentStub.verifyNone(tdAll.nino)
+    AuditConnectorStub.verifyNoAuditEvent("BankClaimAttemptMade")
   }
 
   "/verify-bank-account renders the 'We are verifying your bank account' page when using the fallback joint account name" in {
@@ -255,6 +362,7 @@ class VerifyingYourBankAccountPageSpec extends ItSpec {
     EdhStub.verifyGetBankDetailsRiskResult(tdAll.claimId, tdAll.correlationId)
     P800RefundsExternalApiStub.verifyIsValid(tdAll.consentId)
     MakeBacsRepaymentStub.verifyNone(tdAll.nino)
+    AuditConnectorStub.verifyNoAuditEvent("BankClaimAttemptMade")
   }
 
   "clicking 'refresh this page' refreshes the page - showing the same page if bank is not verified yet" in {
@@ -391,8 +499,13 @@ class VerifyingYourBankAccountPageSpec extends ItSpec {
           "outcome": {
             "isSuccessful": false,
             "actionsOutcome": {
-              "ecospendFraudCheckIsSuccessful": false
-            }
+              "ecospendFraudCheckIsSuccessful": false,
+              "fuzzyNameMatchingIsSuccessful": true,
+              "hmrcFraudCheckIsSuccessful": true
+            },
+            "failureReasons": [
+              "Account assessment failed."
+            ]
           },
           "userEnteredDetails": {
             "chosenBank": "Barclays Personal",
@@ -482,8 +595,11 @@ class VerifyingYourBankAccountPageSpec extends ItSpec {
             "actionsOutcome": {
               "ecospendFraudCheckIsSuccessful": true,
               "fuzzyNameMatchingIsSuccessful": true,
-              "hmrcFraudCheckIsSuccessful": true
-            }
+              "hmrcFraudCheckIsSuccessful": false
+            },
+            "failureReasons": [
+              "EDH indicated DoNotPay"
+            ]
           },
           "userEnteredDetails": {
             "chosenBank": "Barclays Personal",
