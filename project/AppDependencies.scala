@@ -35,7 +35,7 @@ object AppDependencies {
     // format: OFF
     "uk.gov.hmrc"             %% "bootstrap-test-play-30"     % bootstrapVersion,
     "uk.gov.hmrc.mongo"       %% "hmrc-mongo-test-play-30"    % hmrcMongoVersion,
-    "org.seleniumhq.selenium" %  "selenium-java"              % "4.20.0",
+    "org.seleniumhq.selenium" %  "selenium-java"              % "4.21.0",
     "org.seleniumhq.selenium" %  "htmlunit-driver"            % "4.13.0"
   // format: ON
   ).map(_ % Test)

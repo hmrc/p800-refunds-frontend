@@ -26,10 +26,10 @@ final case class TracedIndividual(
     title:           Option[String],
     firstForename:   Option[String],
     secondForename:  Option[String],
-    surname:         String,
-    addressLine1:    String,
-    addressLine2:    String,
-    addressPostcode: Postcode
+    surname:         Option[String],
+    addressLine1:    Option[String],
+    addressLine2:    Option[String],
+    addressPostcode: Option[Postcode]
 )
 
 object TracedIndividual {

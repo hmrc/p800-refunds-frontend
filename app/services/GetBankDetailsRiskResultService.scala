@@ -80,7 +80,7 @@ class GetBankDetailsRiskResultService @Inject() (
           personType  = PersonType.Customer,
           person      = Some(Person(
             //TODO: according to the analysis all those fields come from the CitisenDetails API, which we don't call
-            surname                 = Surname(journey.getTraceIndividualResponse.surname),
+            surname                 = journey.getTraceIndividualResponse.surname.map(Surname.apply),
             firstForenameOrInitial  = journey.getTraceIndividualResponse.firstForename.map(FirstForenameOrInitial.apply),
             secondForenameOrInitial = journey.getTraceIndividualResponse.secondForename.map(SecondForenameOrInitial.apply),
             nino                    = journey.getNino,

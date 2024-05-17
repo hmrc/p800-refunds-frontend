@@ -33,7 +33,7 @@ object NameMatchOutcome {
 final case class RawNpsName(
     firstForename:  Option[String],
     secondForename: Option[String],
-    surname:        String
+    surname:        Option[String]
 )
 
 final case class NameMatchOutcome(isSuccessful: Boolean, category: String)
