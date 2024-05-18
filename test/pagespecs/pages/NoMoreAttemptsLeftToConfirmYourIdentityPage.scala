@@ -37,7 +37,7 @@ class NoMoreAttemptsLeftToConfirmYourIdentityPage(baseUrl: String, pathForJourne
           |We cannot confirm your identity
           |You have entered information that does not match our records too many times.
           |For security reasons, you must wait 24 hours and then try again.
-          |Alternatively you can sign in to you HMRC online account to request your refund.
+          |Alternatively you can sign in to your HMRC online account to request your refund.
           |If you continue having problems with confirming your identity, you need to contact us.
           |""".stripMargin
     )) ++ extraExpectations
@@ -55,7 +55,7 @@ class NoMoreAttemptsLeftToConfirmYourIdentityPage(baseUrl: String, pathForJourne
     ()
   }
 
-  def clickSignInToYourHmrcAccount(): Unit = PageUtil.clickByIdOrName("sign-in-to-you-hmrc-online-account")
+  def clickSignInToYourHmrcAccount(): Unit = PageUtil.clickByIdOrName("sign-in-to-your-hmrc-online-account")
   def contactUsHref(): String = PageUtil.getHrefById("contact-hmrc")
 
 }
