@@ -463,14 +463,14 @@ object Messages {
       welsh   = "Rydych wedi nodi gwybodaeth sydd ddim yn cyd-fynd â’n cofnodion gormod o weithiau. Am resymau diogelwch, mae’n rhaid i chi aros <strong>24 awr</strong> ac yna rhoi cynnig arall arni."
     )
 
-    def `Alternatively you can sign in to you HMRC online account`(signInLink: String, contactUsLink: String): Message = Message(
+    def `Alternatively you can sign in to your HMRC online account`(signInLink: String, contactUsLink: String): Message = Message(
       english =
-        s"""Alternatively you can <a id="sign-in-to-you-hmrc-online-account" href="$signInLink" class="govuk-link">sign in
-           |to you HMRC online account</a> to request your refund. If you continue having problems with confirming your identity,
+        s"""Alternatively you can <a id="sign-in-to-your-hmrc-online-account" href="$signInLink" class="govuk-link">sign in
+           |to your HMRC online account</a> to request your refund. If you continue having problems with confirming your identity,
            |you need to <a id="contact-hmrc" href="$contactUsLink" class="govuk-link">contact us</a>.
            |""".stripMargin,
       welsh   =
-        s"""Fel arall, gallwch <a id="sign-in-to-you-hmrc-online-account" href="$signInLink" class="govuk-link">fewngofnodi i’ch cyfrif ar-lein CThEF</a> i
+        s"""Fel arall, gallwch <a id="sign-in-to-your-hmrc-online-account" href="$signInLink" class="govuk-link">fewngofnodi i’ch cyfrif ar-lein CThEF</a> i
            |ofyn am eich ad-daliad. Os ydych chi’n dal i gael trafferth cadarnhau pwy ydych, mae angen i chi <a id="contact-hmrc" href="$contactUsLink" class="govuk-link">gysylltu â ni</a>.""".stripMargin
     )
   }
