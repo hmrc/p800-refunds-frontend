@@ -24,6 +24,8 @@ class JourneyCryptoSpec extends ItSpec {
     val journeyCrypto = app.injector.instanceOf[JourneyCrypto]
     val journey = tdAll.BankTransfer.journeyClaimedOverpayment
     val encrypted = journeyCrypto.encryptJourney(journey)
-    journeyCrypto.decryptJourney(encrypted) shouldBe journey
+    val decrypted = journeyCrypto.decryptJourney(encrypted)
+    decrypted shouldBe journey
+    encrypted should not be journey
   }
 }
