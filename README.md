@@ -1,14 +1,174 @@
+# P800 Refunds Frontend
+
+## Overview
+This service facilitates refund requests for taxpayers who have overpaid their taxes, 
+enabling them to claim refunds without logging in. 
+For a logged-in experience to claim refunds, please visit the [Repayments Frontend project](https://github.com/hmrc/repayments-frontend).
+
+Users have the option to receive their refunds either through a bank transfer or by cheque. 
+The system supports two distinct processes based on the chosen method:
+
+- **Cheque Journey:** Users can opt to receive their refund via a traditional cheque.
+- **Bank Transfer Journey:** Users can choose to have their refund deposited directly into their bank account.
+
+To ensure security, users are required to verify their identity by providing specific details. 
+The required information varies slightly depending on whether the cheque or bank transfer journey is selected.
+
+## Cheque Journey
+The cheque journey is a simplified process requiring the provision of a National Insurance Number (NINO) 
+and a P800 Reference Number, as detailed in the correspondence from HMRC. 
+If the data matches the records, confirmation will be obtained that the cheque will be mailed to the recorded address.
 
 
-# :construction: p800-refunds-frontend
+## Bank Transfer Journey
+The bank transfer journey is a more sophisticated process. The user provides their NINO, P800 Reference number, 
+and date of birth. After successful validation, the user can select a bank from the list of available 
+banks and authenticate their bank account.
 
-This service allows taxpayers to request refunds for overpaid tax.
+The integration with the Banks API is facilitated through Ecospend's AIS (Account Information Services) APIs. 
+Once the application receives the necessary information about the user's bank accounts, 
+it will use this data to verify the bank account and transfer the funds accordingly.
 
-The application is currently being developed.
+## IP Address Lockouts
+
+In accordance with security requirements, this application tracks and blocks IP addresses. 
+
+These are monitored to count the number of attempts made during each journey, 
+especially when incorrect data (e.g., NINO, P800 Reference Number) is entered. 
+Only a limited number of attempts are allowed per IP address. 
+After reaching the maximum number of allowed attempts, the IP address will be locked out for 24 hours. 
+This lockout will trigger a specific notification page and restrict access to the service.
 
 
-# Project setup in intellij
+## Account Assessment by Ecospend
+In line with security requirements, this application must verify the bank accounts used for withdrawing funds. 
 
+The Ecospend Gateway can assess an account using tenant-specific custom algorithms to deliver a clear FAIL/PASS outcome.
+These assessments are computed asynchronously and the results are received as notifications. 
+Specifically, Ecospend calls an external API and sends a notification to the p800-refunds-external-api microservice, 
+detailing the outcome of the bank account verification. 
+This microservice actively polls p800-refunds-external-api until it receives this notification. 
+For more information, visit [p800-refunds-external-api](https://github.com/hmrc/p800-refunds-external-api/).
+
+
+## Name Matching
+In accordance with security requirements, the taxpayer's name received from the 
+NPS system must match one of the names on the bank account. 
+
+This requirement is challenging due to the differences in how data are stored across these systems. 
+To address this, a fuzzy name matching heuristic is implemented, which accommodates mismatches. 
+This algorithm involves various string transformations and comparisons, 
+including the calculation of Levenshtein distance. For more details, see `NameMatchingService` and 
+the corresponding specification.
+
+## Risk Assessment
+In accordance with security requirements, additional checks are performed using the EDH risk check API. 
+
+This process determines one of two outcomes: "Pay" or "DoNotPay," which then directs subsequent actions.
+
+- **Pay Outcome**: If the risk assessment is successful, the BACS Repayment API is activated to transfer the refund funds to the selected bank account.
+- **DoNotPay Outcome**: If the risk assessment fails, the refund is suspended at originated system (NPS), and the case is escalated to the Case Management System. This prompts an HMRC representative to contact the individual regarding the refund.
+
+# Architecture
+This service is part of the P800-refunds microservice suite, which includes:
+
+- [P800-refunds-backend](https://github.com/hmrc/p800-refunds-backend)
+- [P800-refunds-external-api](https://github.com/hmrc/p800-refunds-external-api)
+- [P800-refunds-stubs](https://github.com/hmrc/p800-refunds-stubs)
+
+```mermaid
+flowchart TD
+    FE[p800-refunds-frontend] -->|call APIs| BE(p800-refunds-backend)
+    FE -->|persist journey and attempts| DB(mongo)
+    FE -->|Call AIS| Ecospend
+    Ecospend -->|Account Assessment Notification| EA(p800-refunds-external-api)
+    FE -->|Get Account Assessment| EA
+    BE --> NPS
+    BE --> EDH
+    BE --> CaseManagement
+
+```
+
+# Running the Service
+
+To start the service, use the following commands:
+- `sbt run` to launch the service normally.
+- `sbt runTestOnly` for testing modes.
+
+After starting the service, access the helper page at:
+[`http://localhost:10150/get-an-income-tax-refund/test-only`](http://localhost:10150/get-an-income-tax-refund/test-only)
+
+This helper page enables you to initiate a journey, inspect associated journey data, and simulate receiving notifications from Ecospend.
+
+Ensure that all dependent applications, including MongoDB and other microservices managed by `P800_REFUNDS_ALL`, are also running. 
+To start these dependent services, use the Service Manager command:
+
+```bash
+sm --start P800_REFUNDS_ALL
+```
+
+## Test Data
+
+For testing purposes, refer to the [p800-refunds-stubs](https://github.com/hmrc/p800-refunds-stubs) repository. 
+This contains detailed documentation and a list of scenarios you can use. 
+Make sure to use the appropriate National Insurance Number (NINO) corresponding to the scenario you choose.
+
+
+## NPS Integration
+This service interfaces with the NPS through a data exchange layer (HIP and/or IF). As the master data system for refunds, 
+NPS provides essential APIs that support various functionalities of this project:
+- **Verification of P800 Reference Numbers**
+- **Retrieval of User Data** through TraceIndividualAPI
+- **Processing Payments** by issuing Bacs Repayments for bank transfers and Payable Orders for cheques
+- **Suspension of Refunds** as needed
+
+## EDH Integration
+This system integrates with the Enterprise Data Hub (EDH) through the p800-refunds-backend microservice. 
+EDH offers an API specifically for performing risk assessments, which are critical in determining the outcome of refund processes.
+
+## Case Management Integration
+Integration with the Case Management system is also managed through the p800-refunds-backend microservice. 
+This system provides an API used to open cases when a risk assessment fails, facilitating necessary follow-ups and resolution actions.
+
+## Ecospend Integration
+This service integrates with Ecospend, a third-party system that implements Open Banking APIs. 
+
+These APIs enable the system to:
+- List available banks
+- Obtain user consent for data sharing
+- Validate bank account details
+- Retrieve account information, such as sort code, account number, and owner's legal names, crucial for name matching
+
+For more detailed guidance on using these APIs, refer to the [Ecospend documentation](https://docs.ecospend.com/new/guides.html#aisIntro).
+
+The API is accessed via squid proxy.
+
+## Data Storage
+
+This system utilizes MongoDB to store data specific to each user journey. 
+The retention period for journey-related data is set at 30 minutes, reflecting the brief duration required for processing.
+
+Additionally, the system records IP addresses and the number of failed attempts associated with these addresses, 
+retaining this information for 24 hours to enhance security measures.
+
+In accordance with security requirements, all personally identifiable information (PII), such as addresses, names, 
+identifiers, and IP addresses, is encrypted before being stored in MongoDB. 
+
+# Java version
+This project builds on JDK v11. 
+In particular, this version of java is used when building this service: `OPENJDK_VERSION_11_0_23_0_9`
+
+# Project Setup in IntelliJ
+
+When importing a project into IntelliJ IDEA, it is recommended to configure your setup as follows to optimize the development process:
+
+1. **SBT Shell Integration**: Utilize the sbt shell for project reloads and builds. This integration automates project discovery and reduces issues when running individual tests from the IDE.
+
+2. **Enable Debugging**: Ensure that the "Enable debugging" option is selected. This allows you to set breakpoints and use the debugger to troubleshoot and fine-tune your code.
+
+3. **Library and SBT Sources**: For those working on SBT project definitions, make sure to include "library sources" and "sbt sources." These settings enhance code navigation and comprehension by providing access to the underlying SBT and library code.
+
+Here is a visual guide to assist you in setting up:
 ![img.png](readme/intellij-sbt-setup.png)
 
 ## Project specific sbt commands
@@ -28,77 +188,35 @@ When you restart it or you build on jenkins, this will be turned on.
 sbt> runTestOnly
 ```
 
+## Application Architecture
 
-## Application architecture
+The architecture of this application revolves around the `Journey` case class, 
+which serves as the main model class. Understanding this class is crucial as it encapsulates the core functionality 
+and data flow within the application.
 
-### Journey States
-Journey states correspond to the result of the submission on pages (or endpoints).
+### Architecture Pattern
+The application adheres to the standard Model-View-Controller (MVC) pattern, structured as follows:
+- **Controllers and Actions**, which call 
+- **Services**, which call
+    - **Connectors**: Facilitate communication with external systems or services.
+    - **Database**: Interactions with the database to retrieve or update data.
 
-[If mermaid dosen't render click here](https://mermaid.live/edit#pako:eNqtVU1z2jAQ_Ss7OoOLceIAh84k5JIeMpmEhknrzqDaC6i2JSrLIQnDf-_KNjblK-lMzcWs3nv7tNqVVyxUEbIBmyZqGc65NjC6DmQggZ6Zes7jBZ_h9yAYJlykwCUIGaoUwfAX0DjNZQTcAp08BgsNgh9Qsttt-JqhhjARYYwRTD5lhvQnkAgZg5LbLKekXILEJfxSuZb4CiKDUCM3xOWUJrdiFJP8WcyKqFFg5ghfSvy1elL5mEszUg9iJm9k6afy8nkDe7AmiAyw2ebOQu3-UmZL1Nb5rZpUYbJ9OA_sJdrD3aqdjAcQTXaUpkieYSqeeSIiW26KyBAbL-M5NzcZqei7XqdzXwMOOzqC3nF1FFUZyzDB0BZq8oTZVl2GcwxjS_vbRuPi0e6CDq5ev1yIIU-SVQkpGuDuBmwImlAhC_fE2N77emP6mGhTyKJ4e7XYd_tY4k7L1qpSmVK5VYaK7ty0ZmZbc4xDLgk2VHIqdLpfmYo51SqF5ZwWQBgaiop94mQr4mZOaKwMFoZogOUMo48fPBRjsHX4R8vyzuHXrVxx6V54FPyKy3ikucxI6_A0vs-jPDsN-nGPh-f2v1s8PtgnKZXd-n6kRjFC5jipLVs67fZ3jmORJFd4pzLa18iqH_Z6gvDPFqnwzRCZnyE4jtMkHF0N6T9rsRR1ykVEn5BijgNGV3KKARvQa8R1HLBArgnHc6MeXmXIBkbn2GL5ws7XteAzzdNNcMElG6zYCxu4Zz3Hu_Au3PNu33X7fu-8xV7ZoO12O47nd3q-73UvPK_bO1u32JtSJOE6Hc_td_we_Xy_TwqF4Ldi0eqv_wAOZFOL)
 
-```mermaid
-flowchart TD;
+### Journey Flow
+- The process begins at the `/start` endpoint, which initializes a new journey instance.
+- Subsequent pages retrieve the current state of the journey from the database as needed during request processing.
+- If modifications are required, the journey data is updated in the database to ensure the state of the application is accurately maintained.
 
-    govukpage[\Get an Income Tax refund a gov.uk page\]
-    -- User clicked `/start` link on gov.uk page.
-    A new journey is created and user is navigated to the JourneyDoYouWantToSignIn page
-    --> JourneyStarted
-
-    JourneyStarted
-    -- Answered `Yes`
-    on DoYouWantToSignIn page
-    --> JourneyDoYouWantToSignInYes
-
-    JourneyStarted
-    -- Answered `No`
-    on DoYouWantToSignIn page
-    --> JourneyDoYouWantToSignInNo
-
-    JourneyDoYouWantToSignInNo
-    -- entered semivalid reference
-    on WhatIsYourP800Reference page
-    --> JourneyWhatIsYourP800Reference
-
-    JourneyWhatIsYourP800Reference
-    -- selected `Yes`
-    on CheckYourReference page
-    --> ValidateReferenceApiCall{
-        API Call
-        Check Rererence
-    }
-
-    ValidateReferenceApiCall
-    -- valid
-    --> JourneyCheckYourReferenceValid
-
-    JourneyCheckYourReferenceValid
-    -- selected `Yes`
-    on DoYouWantYourRefundViaBankTransfer page
-    --> JourneyDoYouWantYourRefundViaBankTransferYes
-
-    JourneyCheckYourReferenceValid
-    -- selected `No`
-    on DoYouWantYourRefundViaBankTransfer page
-    --> JourneyDoYouWantYourRefundViaBankTransferNo
-
-    JourneyDoYouWantYourRefundViaBankTransferNo
-    -- clicked `Continue`
-    on YourChequeWillBePostedToYou page
-    --> JourneyYourChequeWillBePostedToYou
-
-    JourneyDoYouWantYourRefundViaBankTransferYes
-    -- clicked `Continue`
-    on WeNeedYouToConfirmYourIdentity page
-    --> JourneyWhatIsYourFullName
-
-    JourneyWhatIsYourFullName
-    -- tbc ...
-    --> TBC...
+### Endpoint for Monitoring Journey Data
+To view the current data of a specific journey during runtime, utilize the following endpoint:
+```
+GET /get-an-income-tax-refund/test-only/show-journey/:journeyId
 ```
 
----
+This endpoint provides a live snapshot of the journey's data, aiding in debugging and development processes.
 
-### Navigating through quickly with Tampermonkey
+
+## Navigating through quickly with Tampermonkey
 A script has been created to be used with [Tampermonkey](https://www.tampermonkey.net/) to enable fast navigation through
 the service to make testing easier. To make use of it, install the Tampermonkey browser extension on your browser and
 then install [this script](https://raw.githubusercontent.com/hmrc/p800-refunds-frontend/main/tampermonkey/quickJourney.js). After
@@ -106,9 +224,7 @@ installation, a green "Quick submit" button will be visible near the top-left of
 button will autocomplete the inputs on the page (including the test-only start page) and automatically click the continue
 button on that page.
 
----
-
-### Testing features requiring `True-Client-IP` header
+## Testing features requiring `True-Client-IP` header
 
 Optionally, you can setup an Nginx server as a reverse proxy to test and debug with custom values for
 `True-Client-IP`.
@@ -144,6 +260,7 @@ After making any changes make sure to run `brew services restart nginx`.
 Now using the application normally via the new port, `localhost:8008` in this example, each request will send an
 additional `True-Client-IP` header.
 
-### License
+
+## License
 
 This code is open source software licensed under the [Apache 2.0 License]("http://www.apache.org/licenses/LICENSE-2.0.html").
