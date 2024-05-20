@@ -18,6 +18,7 @@ package services
 
 import com.google.inject.{Inject, Singleton}
 import config.AppConfig
+import crypto.AttemptInfoCrypto
 import models.attemptmodels.{AttemptInfo, IpAddress}
 import play.api.mvc.RequestHeader
 import repository.FailedVerificationAttemptRepo
@@ -28,10 +29,10 @@ import scala.concurrent.{ExecutionContext, Future}
 @Singleton
 class FailedVerificationAttemptService @Inject() (
     failedVerificationAttemptRepo: FailedVerificationAttemptRepo,
-    appConfig:                     AppConfig
+    appConfig:                     AppConfig,
+    attemptInfoCrypto:             AttemptInfoCrypto
 )(implicit ec: ExecutionContext) {
 
-  //TODO: encrypt/decrypt the ip address in service layer - OPS-11735
   //TODO: find in action when landing, so we can lock users out straight away - OPS-11736
 
   def trueClientIpAddress(implicit requestHeader: RequestHeader): IpAddress =
@@ -39,11 +40,12 @@ class FailedVerificationAttemptService @Inject() (
       .getOrElse(requestHeader.remoteAddress))
 
   def find()(implicit requestHeader: RequestHeader): Future[Option[AttemptInfo]] =
-    failedVerificationAttemptRepo.findByIpAddress(trueClientIpAddress)
+    failedVerificationAttemptRepo
+      .findByIpAddress(attemptInfoCrypto.encrypt(trueClientIpAddress))
+      .map(_.map(attemptInfoCrypto.decrypt))
 
   def shouldBeLockedOut()(implicit requestHeader: RequestHeader): Future[Boolean] = {
-    failedVerificationAttemptRepo
-      .findByIpAddress(trueClientIpAddress)
+    find()
       .map{ _.map(AttemptInfo.shouldBeLockedOut(_, appConfig.FailedAttemptRepo.failedAttemptRepoMaxAttempts)) }
       .map(_.getOrElse(false))
   }
@@ -53,10 +55,10 @@ class FailedVerificationAttemptService @Inject() (
    */
   def updateNumberOfFailedAttempts()(implicit requestHeader: RequestHeader): Future[(Boolean, AttemptInfo)] = {
     for {
-      maybeAttemptInfo <- failedVerificationAttemptRepo.findByIpAddress(trueClientIpAddress)
-      newAttemptInfo: AttemptInfo = maybeAttemptInfo.fold(AttemptInfo.newAttemptInfo(trueClientIpAddress))(a => a.incrementAttemptNumberByOne)
-      attemptInfoAfterUpsert: AttemptInfo <- failedVerificationAttemptRepo.upsert(newAttemptInfo).map(_ => newAttemptInfo)
-    } yield (AttemptInfo.shouldBeLockedOut(attemptInfoAfterUpsert, appConfig.FailedAttemptRepo.failedAttemptRepoMaxAttempts), attemptInfoAfterUpsert)
+      maybeAttemptInfo <- find()
+      attemptInfo: AttemptInfo = maybeAttemptInfo.fold(AttemptInfo.newAttemptInfo(trueClientIpAddress))(a => a.incrementAttemptNumberByOne)
+      _ <- failedVerificationAttemptRepo.upsert(attemptInfoCrypto.encrypt(attemptInfo))
+    } yield (AttemptInfo.shouldBeLockedOut(attemptInfo, appConfig.FailedAttemptRepo.failedAttemptRepoMaxAttempts), attemptInfo)
   }
 
   def drop(): Future[Unit] = failedVerificationAttemptRepo.drop()

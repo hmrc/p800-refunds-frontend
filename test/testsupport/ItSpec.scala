@@ -17,7 +17,7 @@
 package testsupport
 
 import com.google.inject.AbstractModule
-import crypto.JourneyCrypto
+import crypto.{AttemptInfoCrypto, JourneyCrypto}
 import edh.{ClaimId, ClaimIdGenerator}
 import models.attemptmodels.{AttemptInfo, IpAddress}
 import models.journeymodels.{Journey, JourneyId}
@@ -131,12 +131,20 @@ trait ItSpec extends AnyFreeSpecLike
 
   def upsertFailedAttemptToDatabase(attemptInfo: AttemptInfo): Unit = {
     val attemptRepo: FailedVerificationAttemptRepo = app.injector.instanceOf[FailedVerificationAttemptRepo]
-    attemptRepo.upsert(attemptInfo).futureValue
+    val attemptRepoCrypto = app.injector.instanceOf[AttemptInfoCrypto]
+    val encrypted: AttemptInfo = attemptRepoCrypto.encrypt(attemptInfo)
+    attemptRepo.upsert(encrypted).futureValue
   }
 
   def getFailedAttemptCount(ipAddress: IpAddress = IpAddress("127.0.0.1")): Option[Int] = {
     val attemptRepo: FailedVerificationAttemptRepo = app.injector.instanceOf[FailedVerificationAttemptRepo]
-    attemptRepo.findByIpAddress(ipAddress).futureValue.map(_.numberOfFailedAttempts.value)
+    val attemptRepoCrypto = app.injector.instanceOf[AttemptInfoCrypto]
+
+    attemptRepo
+      .findByIpAddress(attemptRepoCrypto.encrypt(ipAddress))
+      .futureValue
+      .map(attemptRepoCrypto.decrypt)
+      .map(_.numberOfFailedAttempts.value)
   }
 
   def clearDownFailedAttemptDatabase(): Unit = {
