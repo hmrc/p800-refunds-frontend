@@ -21,7 +21,7 @@ import testsupport.ItSpec
 
 class AttemptInfoCryptoSpec extends ItSpec {
 
-  "AttemptInfo symmetrically encrypt attempInfo" in {
+  "AttemptInfoCrypto symmetrically encrypt attemptInfo" in {
     val attemptInfoCrypto = app.injector.instanceOf[AttemptInfoCrypto]
     val attemptInfo = tdAll.attemptInfo(3)
     val encrypted: AttemptInfo = attemptInfoCrypto.encrypt(attemptInfo)
@@ -30,7 +30,7 @@ class AttemptInfoCryptoSpec extends ItSpec {
     encrypted should not be decrypted
   }
 
-  "AttemptInfo symmetrically encrypt IpAddress" in {
+  "AttemptInfoCrypto symmetrically encrypt IpAddress" in {
     val attemptInfoCrypto = app.injector.instanceOf[AttemptInfoCrypto]
     val attemptInfo = IpAddress("1.2.3.4")
     val encrypted: IpAddress = attemptInfoCrypto.encrypt(attemptInfo)
@@ -39,7 +39,7 @@ class AttemptInfoCryptoSpec extends ItSpec {
     encrypted should not be decrypted
   }
 
-  "AttemptInfo deterministically encrypt ip address" in {
+  "AttemptInfoCrypto deterministically encrypt ip address" in {
     val attemptInfoCrypto = app.injector.instanceOf[AttemptInfoCrypto]
     val attemptInfo = IpAddress("1.2.3.4")
     val encrypted: IpAddress = attemptInfoCrypto.encrypt(attemptInfo)
