@@ -74,8 +74,8 @@ class AuditService @Inject() (
     ValidateUserDetails(
       outcome              = toOutcome(attemptInfo, isSuccessful, apiResponsibleForFailure, failureReasons.getOrElse(Seq.empty)),
       userEnteredDetails   = toUserEnteredDetails(journey),
-      repaymentAmount      = journey.referenceCheckResult.fold[Option[AmountInPence]](None) {
-        case p800ReferenceChecked: ValidateReferenceResult.P800ReferenceChecked => Some(AmountInPence(p800ReferenceChecked.paymentAmount))
+      repaymentAmount      = journey.referenceCheckResult.fold[Option[BigDecimal]](None) {
+        case p800ReferenceChecked: ValidateReferenceResult.P800ReferenceChecked => Some(AmountInPence(p800ReferenceChecked.paymentAmount).inPounds)
         case _ => None
       },
       repaymentInformation = journey.referenceCheckResult.fold[Option[RepaymentInformation]](None) {
@@ -121,8 +121,8 @@ class AuditService @Inject() (
     BankClaimAttempt(
       outcome              = toBankClaimOutcome(actionsOutcome, failureReasons),
       userEnteredDetails   = toBankClaimUserEnteredDetails(journey),
-      repaymentAmount      = journey.referenceCheckResult.fold[Option[AmountInPence]](None) {
-        case p800ReferenceChecked: ValidateReferenceResult.P800ReferenceChecked => Some(AmountInPence(p800ReferenceChecked.paymentAmount))
+      repaymentAmount      = journey.referenceCheckResult.fold[Option[BigDecimal]](None) {
+        case p800ReferenceChecked: ValidateReferenceResult.P800ReferenceChecked => Some(AmountInPence(p800ReferenceChecked.paymentAmount).inPounds)
         case _ => None
       },
       repaymentInformation = journey.referenceCheckResult.fold[Option[RepaymentInformation]](None) {

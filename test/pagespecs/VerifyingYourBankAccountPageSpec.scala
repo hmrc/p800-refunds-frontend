@@ -51,7 +51,7 @@ class VerifyingYourBankAccountPageSpec extends ItSpec {
     EdhStub.verifyGetBankDetailsRiskResult(tdAll.claimId, tdAll.correlationId)
     P800RefundsExternalApiStub.verifyIsValid(tdAll.consentId)
     MakeBacsRepaymentStub.verifyNone(tdAll.nino)
-    AuditConnectorStub.verifyNoAuditEvent("BankClaimAttemptMade")
+    AuditConnectorStub.verifyNoAuditEvent(AuditConnectorStub.bankClaimAttemptMadeAuditType)
   }
 
   "/verify-bank-account renders the 'Refund Request not Submitted' page when the Consent Status is Canceled" in {
@@ -70,7 +70,7 @@ class VerifyingYourBankAccountPageSpec extends ItSpec {
     EdhStub.verifyGetBankDetailsRiskResult(tdAll.claimId, tdAll.correlationId)
     P800RefundsExternalApiStub.verifyIsValid(tdAll.consentId)
     MakeBacsRepaymentStub.verifyNone(tdAll.nino)
-    AuditConnectorStub.verifyNoAuditEvent("BankClaimAttemptMade")
+    AuditConnectorStub.verifyNoAuditEvent(AuditConnectorStub.bankClaimAttemptMadeAuditType)
   }
 
   "/verify-bank-account renders the 'Refund Request not Submitted' page when the Name Matching Fails" in {
@@ -89,7 +89,7 @@ class VerifyingYourBankAccountPageSpec extends ItSpec {
     P800RefundsExternalApiStub.verifyIsValid(tdAll.consentId)
     MakeBacsRepaymentStub.verifyNone(tdAll.nino)
     AuditConnectorStub.verifyEventAudited(
-      "BankClaimAttemptMade",
+      AuditConnectorStub.bankClaimAttemptMadeAuditType,
       Json.parse(
         //format=JSON
         """
@@ -108,13 +108,9 @@ class VerifyingYourBankAccountPageSpec extends ItSpec {
             "chosenBank": "Barclays Personal",
             "p800Reference": 12345678,
             "nino": "LM001014C",
-            "dob": {
-              "dayOfMonth": "1",
-              "month": "1",
-              "year": "2000"
-            }
+            "dob": "2000-01-01"
           },
-          "repaymentAmount": 1234,
+          "repaymentAmount": 12.34,
           "repaymentInformation": {
             "reconciliationIdentifier": 123,
             "paymentNumber": 12345678,
@@ -175,7 +171,7 @@ class VerifyingYourBankAccountPageSpec extends ItSpec {
     P800RefundsExternalApiStub.verifyIsValid(tdAll.consentId)
     MakeBacsRepaymentStub.verifyNone(tdAll.nino)
     AuditConnectorStub.verifyEventAudited(
-      "BankClaimAttemptMade",
+      AuditConnectorStub.bankClaimAttemptMadeAuditType,
       Json.parse(
         """
         {
@@ -193,13 +189,9 @@ class VerifyingYourBankAccountPageSpec extends ItSpec {
             "chosenBank": "Barclays Personal",
             "p800Reference": 12345678,
             "nino": "LM001014C",
-            "dob": {
-              "dayOfMonth": "1",
-              "month": "1",
-              "year": "2000"
-            }
+            "dob": "2000-01-01"
           },
-          "repaymentAmount": 1234,
+          "repaymentAmount": 12.34,
           "repaymentInformation": {
             "reconciliationIdentifier": 123,
             "paymentNumber": 12345678,
@@ -259,7 +251,7 @@ class VerifyingYourBankAccountPageSpec extends ItSpec {
     P800RefundsExternalApiStub.verifyIsValid(tdAll.consentId)
     MakeBacsRepaymentStub.verifyNone(tdAll.nino)
     AuditConnectorStub.verifyEventAudited(
-      "BankClaimAttemptMade",
+      AuditConnectorStub.bankClaimAttemptMadeAuditType,
       Json.parse(
         """
         {
@@ -277,13 +269,9 @@ class VerifyingYourBankAccountPageSpec extends ItSpec {
             "chosenBank": "Barclays Personal",
             "p800Reference": 12345678,
             "nino": "LM001014C",
-            "dob": {
-              "dayOfMonth": "1",
-              "month": "1",
-              "year": "2000"
-            }
+            "dob": "2000-01-01"
           },
-          "repaymentAmount": 1234,
+          "repaymentAmount": 12.34,
           "repaymentInformation": {
             "reconciliationIdentifier": 123,
             "paymentNumber": 12345678,
@@ -325,7 +313,7 @@ class VerifyingYourBankAccountPageSpec extends ItSpec {
     EdhStub.verifyGetBankDetailsRiskResult(tdAll.claimId, tdAll.correlationId)
     P800RefundsExternalApiStub.verifyIsValid(tdAll.consentId)
     MakeBacsRepaymentStub.verifyNone(tdAll.nino)
-    AuditConnectorStub.verifyNoAuditEvent("BankClaimAttemptMade")
+    AuditConnectorStub.verifyNoAuditEvent(AuditConnectorStub.bankClaimAttemptMadeAuditType)
   }
 
   "/verify-bank-account renders the 'We are verifying your bank account' page when using the fallback joint account name" in {
@@ -362,7 +350,7 @@ class VerifyingYourBankAccountPageSpec extends ItSpec {
     EdhStub.verifyGetBankDetailsRiskResult(tdAll.claimId, tdAll.correlationId)
     P800RefundsExternalApiStub.verifyIsValid(tdAll.consentId)
     MakeBacsRepaymentStub.verifyNone(tdAll.nino)
-    AuditConnectorStub.verifyNoAuditEvent("BankClaimAttemptMade")
+    AuditConnectorStub.verifyNoAuditEvent(AuditConnectorStub.bankClaimAttemptMadeAuditType)
   }
 
   "clicking 'refresh this page' refreshes the page - showing the same page if bank is not verified yet" in {
@@ -383,7 +371,7 @@ class VerifyingYourBankAccountPageSpec extends ItSpec {
     EdhStub.verifyGetBankDetailsRiskResult(tdAll.claimId, tdAll.correlationId)
     P800RefundsExternalApiStub.verifyIsValid(tdAll.consentId, 2)
     MakeBacsRepaymentStub.verifyNone(tdAll.nino)
-    AuditConnectorStub.verifyNoAuditEvent("BankClaimAttemptMade")
+    AuditConnectorStub.verifyNoAuditEvent(AuditConnectorStub.bankClaimAttemptMadeAuditType)
   }
 
   "redirect to bank transfer 'Request received' page when verification call returns Successful" in {
@@ -414,7 +402,7 @@ class VerifyingYourBankAccountPageSpec extends ItSpec {
     MakeBacsRepaymentStub.verify(tdAll.nino, tdAll.correlationId)
 
     AuditConnectorStub.verifyEventAudited(
-      "BankClaimAttemptMade",
+      AuditConnectorStub.bankClaimAttemptMadeAuditType,
       Json.parse(
         //format=JSON
         """
@@ -432,13 +420,9 @@ class VerifyingYourBankAccountPageSpec extends ItSpec {
             "chosenBank": "Barclays Personal",
             "p800Reference": 12345678,
             "nino": "LM001014C",
-            "dob": {
-              "dayOfMonth": "1",
-              "month": "1",
-              "year": "2000"
-            }
+            "dob": "2000-01-01"
           },
-          "repaymentAmount": 1234,
+          "repaymentAmount": 12.34,
           "repaymentInformation": {
             "reconciliationIdentifier": 123,
             "paymentNumber": 12345678,
@@ -491,7 +475,7 @@ class VerifyingYourBankAccountPageSpec extends ItSpec {
     pages.refundRequestNotSubmittedPage.assertPageIsDisplayed()
     P800RefundsExternalApiStub.verifyIsValid(tdAll.consentId, 2)
     AuditConnectorStub.verifyEventAudited(
-      "BankClaimAttemptMade",
+      AuditConnectorStub.bankClaimAttemptMadeAuditType,
       Json.parse(
         //format=JSON
         """
@@ -511,13 +495,9 @@ class VerifyingYourBankAccountPageSpec extends ItSpec {
             "chosenBank": "Barclays Personal",
             "p800Reference": 12345678,
             "nino": "LM001014C",
-            "dob": {
-              "dayOfMonth": "1",
-              "month": "1",
-              "year": "2000"
-            }
+            "dob": "2000-01-01"
           },
-          "repaymentAmount": 1234,
+          "repaymentAmount": 12.34,
           "repaymentInformation": {
             "reconciliationIdentifier": 123,
             "paymentNumber": 12345678,
@@ -559,7 +539,7 @@ class VerifyingYourBankAccountPageSpec extends ItSpec {
     pages.verifyingBankAccountPage.assertPageIsDisplayed()
     EcospendStub.AccountStub.accountSummaryValidate(numberOfRequests = 1, tdAll.consentId)
     EdhStub.verifyGetBankDetailsRiskResult(tdAll.claimId, tdAll.correlationId, numberOfRequests = 1)
-    AuditConnectorStub.verifyNoAuditEvent("BankClaimAttemptMade")
+    AuditConnectorStub.verifyNoAuditEvent(AuditConnectorStub.bankClaimAttemptMadeAuditType)
   }
 
   "redirect to 'Request received' page when EDH call results in nextAction=DoNotPay" in {
@@ -585,7 +565,7 @@ class VerifyingYourBankAccountPageSpec extends ItSpec {
     P800RefundsExternalApiStub.verifyIsValid(tdAll.consentId)
     MakeBacsRepaymentStub.verifyNone(tdAll.nino)
     AuditConnectorStub.verifyEventAudited(
-      "BankClaimAttemptMade",
+      AuditConnectorStub.bankClaimAttemptMadeAuditType,
       Json.parse(
         //format=JSON
         """
@@ -605,13 +585,9 @@ class VerifyingYourBankAccountPageSpec extends ItSpec {
             "chosenBank": "Barclays Personal",
             "p800Reference": 12345678,
             "nino": "LM001014C",
-            "dob": {
-              "dayOfMonth": "1",
-              "month": "1",
-              "year": "2000"
-            }
+            "dob": "2000-01-01"
           },
-          "repaymentAmount": 1234,
+          "repaymentAmount": 12.34,
           "repaymentInformation": {
             "reconciliationIdentifier": 123,
             "paymentNumber": 12345678,
@@ -653,7 +629,7 @@ class VerifyingYourBankAccountPageSpec extends ItSpec {
     MakeBacsRepaymentStub.verify(tdAll.nino, tdAll.correlationId)
 
     AuditConnectorStub.verifyEventAudited(
-      "BankClaimAttemptMade",
+      AuditConnectorStub.bankClaimAttemptMadeAuditType,
       Json.parse(
         //format=JSON
         """
@@ -675,13 +651,9 @@ class VerifyingYourBankAccountPageSpec extends ItSpec {
             "chosenBank": "Barclays Personal",
             "p800Reference": 12345678,
             "nino": "LM001014C",
-            "dob": {
-              "dayOfMonth": "1",
-              "month": "1",
-              "year": "2000"
-            }
+            "dob": "2000-01-01"
           },
-          "repaymentAmount": 1234,
+          "repaymentAmount": 12.34,
           "repaymentInformation": {
             "reconciliationIdentifier": 123,
             "paymentNumber": 12345678,
@@ -721,7 +693,7 @@ class VerifyingYourBankAccountPageSpec extends ItSpec {
     EdhStub.verifyGetBankDetailsRiskResult(tdAll.claimId, tdAll.correlationId)
     MakeBacsRepaymentStub.verify(tdAll.nino, tdAll.correlationId)
     AuditConnectorStub.verifyEventAudited(
-      "BankClaimAttemptMade",
+      AuditConnectorStub.bankClaimAttemptMadeAuditType,
       Json.parse(
         //format=JSON
         """
@@ -743,13 +715,9 @@ class VerifyingYourBankAccountPageSpec extends ItSpec {
             "chosenBank": "Barclays Personal",
             "p800Reference": 12345678,
             "nino": "LM001014C",
-            "dob": {
-              "dayOfMonth": "1",
-              "month": "1",
-              "year": "2000"
-            }
+            "dob": "2000-01-01"
           },
-          "repaymentAmount": 1234,
+          "repaymentAmount": 12.34,
           "repaymentInformation": {
             "reconciliationIdentifier": 123,
             "paymentNumber": 12345678,
@@ -790,7 +758,7 @@ class VerifyingYourBankAccountPageSpec extends ItSpec {
     EdhStub.verifyGetBankDetailsRiskResult(tdAll.claimId, tdAll.correlationId)
     MakeBacsRepaymentStub.verify(tdAll.nino, tdAll.correlationId)
     AuditConnectorStub.verifyEventAudited(
-      "BankClaimAttemptMade",
+      AuditConnectorStub.bankClaimAttemptMadeAuditType,
       Json.parse(
         //format=JSON
         """
@@ -812,13 +780,9 @@ class VerifyingYourBankAccountPageSpec extends ItSpec {
             "chosenBank": "Barclays Personal",
             "p800Reference": 12345678,
             "nino": "LM001014C",
-            "dob": {
-              "dayOfMonth": "1",
-              "month": "1",
-              "year": "2000"
-            }
+            "dob": "2000-01-01"
           },
-          "repaymentAmount": 1234,
+          "repaymentAmount": 12.34,
           "repaymentInformation": {
             "reconciliationIdentifier": 123,
             "paymentNumber": 12345678,
@@ -856,7 +820,7 @@ class VerifyingYourBankAccountPageSpec extends ItSpec {
     EdhStub.verifyGetBankDetailsRiskResult(tdAll.claimId, tdAll.correlationId)
     MakeBacsRepaymentStub.verifyNone(tdAll.nino)
     AuditConnectorStub.verifyEventAudited(
-      "BankClaimAttemptMade",
+      AuditConnectorStub.bankClaimAttemptMadeAuditType,
       Json.parse(
         //format=JSON
         """
@@ -876,13 +840,9 @@ class VerifyingYourBankAccountPageSpec extends ItSpec {
             "chosenBank": "Barclays Personal",
             "p800Reference": 12345678,
             "nino": "LM001014C",
-            "dob": {
-              "dayOfMonth": "1",
-              "month": "1",
-              "year": "2000"
-            }
+            "dob": "2000-01-01"
           },
-          "repaymentAmount": 1234,
+          "repaymentAmount": 12.34,
           "repaymentInformation": {
             "reconciliationIdentifier": 123,
             "paymentNumber": 12345678,
@@ -925,7 +885,7 @@ class VerifyingYourBankAccountPageSpec extends ItSpec {
     CaseManagementStub.verifyNotifyCaseManagement(tdAll.clientUId, tdAll.correlationId)
     P800RefundsExternalApiStub.verifyIsValid(tdAll.consentId)
     MakeBacsRepaymentStub.verifyNone(tdAll.nino)
-    AuditConnectorStub.verifyNoAuditEvent("BankClaimAttemptMade")
+    AuditConnectorStub.verifyNoAuditEvent(AuditConnectorStub.bankClaimAttemptMadeAuditType)
   }
 
 }

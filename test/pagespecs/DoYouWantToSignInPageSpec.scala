@@ -37,7 +37,7 @@ class DoYouWantToSignInPageSpec extends ItSpec {
     getJourneyFromDatabase(tdAll.journeyId) shouldBeLike tdAll.journeyStarted
 
     AuditConnectorStub.verifyEventAudited(
-      "userLoginSelection",
+      AuditConnectorStub.userLoginSelectionAuditType,
       Json.parse(
         //format=JSON
         """
@@ -59,7 +59,7 @@ class DoYouWantToSignInPageSpec extends ItSpec {
     getJourneyFromDatabase(tdAll.journeyId) shouldBeLike tdAll.journeyStarted
 
     AuditConnectorStub.verifyEventAudited(
-      "userLoginSelection",
+      AuditConnectorStub.userLoginSelectionAuditType,
       Json.parse(
         //format=JSON
         """
@@ -81,7 +81,7 @@ class DoYouWantToSignInPageSpec extends ItSpec {
     pages.youCannotConfirmYourIdentityYetSpec.assertPageIsDisplayed()
 
     AuditConnectorStub.verifyEventAudited(
-      "userLoginSelection",
+      AuditConnectorStub.userLoginSelectionAuditType,
       Json.parse(
         //format=JSON
         """
@@ -101,7 +101,7 @@ class DoYouWantToSignInPageSpec extends ItSpec {
     pages.doYouWantToSignInPage.assertPageShowsWithErrors()
     getJourneyFromDatabase(tdAll.journeyId) shouldBeLike tdAll.journeyStarted
 
-    AuditConnectorStub.verifyNoAuditEvent("userLoginSelection")
+    AuditConnectorStub.verifyNoAuditEvent(AuditConnectorStub.userLoginSelectionAuditType)
   }
 
   "Render page in Welsh" in {
@@ -119,7 +119,7 @@ class DoYouWantToSignInPageSpec extends ItSpec {
     pages.doYouWantToSignInPage.assertPageShowsWithErrorsInWelsh()
     getJourneyFromDatabase(tdAll.journeyId) shouldBeLike tdAll.journeyStarted
 
-    AuditConnectorStub.verifyNoAuditEvent("userLoginSelection")
+    AuditConnectorStub.verifyNoAuditEvent(AuditConnectorStub.userLoginSelectionAuditType)
   }
 
 }

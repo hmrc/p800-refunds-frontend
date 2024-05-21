@@ -22,7 +22,7 @@ final case class UserLoginSelection(
     login:              Login,
     ipAddressLockedout: IpAddressLockedout
 ) extends AuditDetail {
-  val auditType: String = "userLoginSelection"
+  val auditType: String = "UserLoginSelection"
 }
 
 object UserLoginSelection {

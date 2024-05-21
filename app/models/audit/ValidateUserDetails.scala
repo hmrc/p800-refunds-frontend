@@ -20,13 +20,13 @@ import edh.Postcode
 import models.attemptmodels.NumberOfAttempts
 import models.dateofbirth.DateOfBirth
 import models.journeymodels.JourneyType
-import models.{AmountInPence, P800Reference, Nino}
+import models.{P800Reference, Nino}
 import play.api.libs.json.{Json, OWrites, Writes, JsString}
 
 final case class ValidateUserDetails(
     outcome:              Outcome,
     userEnteredDetails:   UserEnteredDetails,
-    repaymentAmount:      Option[AmountInPence],
+    repaymentAmount:      Option[BigDecimal],
     repaymentInformation: Option[RepaymentInformation],
     name:                 Option[Name],
     address:              Option[Address]
@@ -79,10 +79,10 @@ final case class UserEnteredDetails(
 )
 
 object UserEnteredDetails {
-  implicit val journeyTypeWrites: Writes[JourneyType] = Writes(journeyType => journeyType match {
+  implicit val journeyTypeWrites: Writes[JourneyType] = Writes {
     case JourneyType.BankTransfer => JsString("bank")
     case JourneyType.Cheque       => JsString("cheque")
-  })
+  }
 
   implicit val dateOfBirthWrites: Writes[DateOfBirth] = Writes(dateOfBirth => JsString(dateOfBirth.`formatYYYY-MM-DD`))
 

@@ -171,7 +171,7 @@ class CheckYourAnswersPageSpec extends ItSpec {
       getJourneyFromDatabase(tdAll.journeyId) shouldBeLike j
 
       AuditConnectorStub.verifyEventAudited(
-        "ValidateUserDetails",
+        AuditConnectorStub.validateUserDetailsAuditType,
         Json.parse(
           //format=JSON
           """
@@ -187,7 +187,7 @@ class CheckYourAnswersPageSpec extends ItSpec {
               "nino": "LM001014C",
               "dob": "2000-01-01"
             },
-            "repaymentAmount": 1234,
+            "repaymentAmount": 12.34,
             "repaymentInformation": {
               "reconciliationIdentifier": 123,
               "paymentNumber": 12345678,
@@ -213,7 +213,7 @@ class CheckYourAnswersPageSpec extends ItSpec {
       getJourneyFromDatabase(tdAll.journeyId) shouldBeLike j
 
       AuditConnectorStub.verifyEventAudited(
-        "ValidateUserDetails",
+        AuditConnectorStub.validateUserDetailsAuditType,
         Json.parse(
           //format=JSON
           """
@@ -228,7 +228,7 @@ class CheckYourAnswersPageSpec extends ItSpec {
               "p800Reference": 12345678,
               "nino": "LM001014C"
             },
-            "repaymentAmount": 1234,
+            "repaymentAmount": 12.34,
             "repaymentInformation": {
               "reconciliationIdentifier": 123,
               "paymentNumber": 12345678,
@@ -290,7 +290,7 @@ class CheckYourAnswersPageSpec extends ItSpec {
       getFailedAttemptCount() shouldBe Some(1)
 
       AuditConnectorStub.verifyEventAudited(
-        "ValidateUserDetails",
+        AuditConnectorStub.validateUserDetailsAuditType,
         Json.parse(
           //format=JSON
           """
@@ -331,7 +331,7 @@ class CheckYourAnswersPageSpec extends ItSpec {
       getFailedAttemptCount() shouldBe Some(1)
 
       AuditConnectorStub.verifyEventAudited(
-        "ValidateUserDetails",
+        AuditConnectorStub.validateUserDetailsAuditType,
         Json.parse(
           //format=JSON
           """
@@ -404,7 +404,7 @@ class CheckYourAnswersPageSpec extends ItSpec {
       getFailedAttemptCount() shouldBe Some(3)
 
       AuditConnectorStub.verifyEventAudited(
-        "ValidateUserDetails",
+        AuditConnectorStub.validateUserDetailsAuditType,
         Json.parse(
           //format=JSON
           """
@@ -445,7 +445,7 @@ class CheckYourAnswersPageSpec extends ItSpec {
       getFailedAttemptCount() shouldBe Some(3)
 
       AuditConnectorStub.verifyEventAudited(
-        "ValidateUserDetails",
+        AuditConnectorStub.validateUserDetailsAuditType,
         Json.parse(
           //format=JSON
           """
@@ -494,7 +494,7 @@ class CheckYourAnswersPageSpec extends ItSpec {
       TraceIndividualStub.verifyNoneTraceIndividual()
 
       AuditConnectorStub.verifyEventAudited(
-        "ValidateUserDetails",
+        AuditConnectorStub.validateUserDetailsAuditType,
         Json.parse(
           //format=JSON
           """
@@ -530,7 +530,7 @@ class CheckYourAnswersPageSpec extends ItSpec {
       TraceIndividualStub.verifyNoneTraceIndividual()
 
       AuditConnectorStub.verifyEventAudited(
-        "ValidateUserDetails",
+        AuditConnectorStub.validateUserDetailsAuditType,
         Json.parse(
           //format=JSON
           """
