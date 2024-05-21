@@ -19,13 +19,13 @@ package models.audit
 import models.dateofbirth.DateOfBirth
 import models.ecospend.BankFriendlyName
 import models.journeymodels.JourneyType
-import models.{AmountInPence, P800Reference, Nino}
-import play.api.libs.json.{Json, OWrites, Writes, JsString}
+import models.{Nino, P800Reference}
+import play.api.libs.json.{JsString, Json, OWrites, Writes}
 
 final case class BankClaimAttempt(
     outcome:              BankClaimOutcome,
     userEnteredDetails:   BankClaimUserEnteredDetails,
-    repaymentAmount:      Option[AmountInPence],
+    repaymentAmount:      Option[BigDecimal],
     repaymentInformation: Option[RepaymentInformation],
     name:                 Option[Name],
     address:              Option[Address]
@@ -77,10 +77,12 @@ final case class BankClaimUserEnteredDetails(
 )
 
 object BankClaimUserEnteredDetails {
-  implicit val journeyTypeWrites: Writes[JourneyType] = Writes(journeyType => journeyType match {
+  implicit val journeyTypeWrites: Writes[JourneyType] = Writes {
     case JourneyType.BankTransfer => JsString("bank")
     case JourneyType.Cheque       => JsString("cheque")
-  })
+  }
+
+  implicit val dateOfBirthWrites: Writes[DateOfBirth] = Writes(dateOfBirth => JsString(dateOfBirth.`formatYYYY-MM-DD`))
 
   @SuppressWarnings(Array("org.wartremover.warts.Any"))
   implicit val writes: OWrites[BankClaimUserEnteredDetails] = Json.writes[BankClaimUserEnteredDetails]

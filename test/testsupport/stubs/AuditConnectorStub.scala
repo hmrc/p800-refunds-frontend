@@ -47,6 +47,9 @@ object AuditConnectorStub {
         )
     )
 
+  val userLoginSelectionAuditType: String = "UserLoginSelection"
+  val bankClaimAttemptMadeAuditType: String = "BankClaimAttemptMade"
+  val validateUserDetailsAuditType: String = "ValidateUserDetails"
   val chequeClaimAttemptMadeAuditType: String = "ChequeClaimAttemptMade"
 
   /*
