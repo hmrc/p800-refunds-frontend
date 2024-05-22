@@ -261,6 +261,56 @@ Now using the application normally via the new port, `localhost:8008` in this ex
 additional `True-Client-IP` header.
 
 
+## Testing Approach for p800-refunds-frontend
+
+Our approach to testing the microservice incorporates both unit tests, where we test individual components in isolation, and integration tests, which incorporate Selenium to test the behavior of the entire application. We find this method very effective and aligned with our needs.
+
+We've achieved excellent test coverage metrics—86.15% for statements and 62.73% for branches. Additionally, our Business-Driven Development (BDD) approach ensures thorough coverage of business functionality and acceptance criteria.
+
+### Our Behavioural Tests Structure
+
+- When a user is on page P1
+- And performs action A (such as clicking a button),
+- And the APIs return responses R,
+- Then the new page P2 is rendered,
+- Which displays specific content C.
+
+This setup allows us to simulate real user interactions across the service, ensuring that the service behaves according to requirements. The implementation details are irrelevant as long as the outcomes align with business requirements.
+
+We use Selenium for these tests because it can verify that actions like clicking a link, entering text, changing a radio button, selecting from a dropdown, or confirming that JavaScript refreshes a page can be executed. Unit tests cannot check if a browser can render and interact with components effectively; Selenium can.
+
+This approach has enabled us to effectively catch bugs and define the intended behavior of the service, which is the main goal of testing.
+
+### Living Documentation
+
+As mentioned, our black-box testing also serves as living documentation. It clearly shows how the app behaves based on user actions and outcomes.
+
+### Using Unit Tests
+
+It's important to note that we also rely heavily on unit tests to examine many components individually, especially when testing numerous edge cases is too costly with a full application setup.
+
+There are plenty of unit tests. However, there are more pages than components that require unit tests, therefore, the number of integration tests using Selenium is higher.
+
+### Build Times - A Reason to Use Selenium Sparingly
+
+It takes about 6 minutes on slow Jenkins agents to build the application and less than 2 minutes on an old laptop. These times are perfectly acceptable and comparable to the build times of other services, keeping our development cycle smooth and agile.
+
+If build times start to get a lot longer, we should think about breaking this microservice into smaller pieces instead of cutting back on our integration tests.
+
+### Coding Speed
+
+We've found it much cheaper and quicker to write a single behavioral test that mimics a user interacting with our application than to test all components in isolation and mock up the behavior of dependent objects. This test covers multiple aspects of the application at once, reducing the redundancy and effort involved in setting up numerous isolated tests.
+
+This approach also allows us to reduce maintenance headaches and easily adapt code to frequently changing business requirements.
+
+### Code Maintenance and Cleanup
+
+Maintaining a codebase where components are tested in isolation with mocked dependencies is tricky and time-consuming. When dependent objects change behavior, updating the corresponding mocks becomes error-prone and hinders refactoring. This contributes to lower coding speed and increases the complexity of maintaining code cleanliness.
+
+### Comparison to UI Tests
+
+Our BDD does not overlap with what and how UI tests (p800-refunds-ui-tests) are conducted. We test individual actions on pages and their outcomes before PR merges or during build time. UI tests examine entire user journeys after the microservice is built (and deployed?) and integrated with other applications.
+
 ## License
 
 This code is open source software licensed under the [Apache 2.0 License]("http://www.apache.org/licenses/LICENSE-2.0.html").
