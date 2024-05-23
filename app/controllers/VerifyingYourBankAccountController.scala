@@ -18,9 +18,10 @@ package controllers
 
 import action.{Actions, JourneyRequest}
 import casemanagement._
+import config.AppConfig
 import connectors.{P800RefundsBackendConnector, P800RefundsExternalApiConnector}
 import edh._
-import models.audit.{NameMatchOutcome, NameMatchingAudit, RawNpsName, BankActionsOutcome, IsSuccessful}
+import models.audit.{BankActionsOutcome, IsSuccessful, NameMatchOutcome, NameMatchingAudit, RawNpsName}
 import models.ecospend.account.{BankAccountOwnerName, BankAccountSummary}
 import models.ecospend.consent.{BankReferenceId, ConsentId, ConsentStatus}
 import models.journeymodels._
@@ -29,7 +30,7 @@ import models.p800externalapi.EventValue
 import nps.models.ValidateReferenceResult.P800ReferenceChecked
 import nps.models._
 import play.api.mvc._
-import services.{AuditService, EcospendService, JourneyService, NameMatchingService, GetBankDetailsRiskResultService}
+import services.{AuditService, EcospendService, GetBankDetailsRiskResultService, JourneyService, NameMatchingService}
 import uk.gov.hmrc.http.{HttpException, UpstreamErrorResponse}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import util.SafeEquals.EqualsOps
@@ -41,6 +42,7 @@ import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class VerifyingYourBankAccountController @Inject() (
+    appConfig:                       AppConfig,
     actions:                         Actions,
     auditService:                    AuditService,
     ecospendService:                 EcospendService,
@@ -212,7 +214,7 @@ class VerifyingYourBankAccountController @Inject() (
     )
 
     for {
-      _ <- notifyCaseManagement(journey)
+      _ <- if (appConfig.FeatureFlags.isCaseManagementEnabled) notifyCaseManagement(journey) else Future.successful(())
       _ <- p800RefundsBackendConnector.suspendOverpayment(journey.getNino, suspendOverpaymentRequest, journey.correlationId)
     } yield {
       auditService.auditBankClaimAttempt(
