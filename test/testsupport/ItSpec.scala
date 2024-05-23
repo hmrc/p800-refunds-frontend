@@ -59,7 +59,7 @@ trait ItSpec extends AnyFreeSpecLike
 
   protected implicit val webDriver: WebDriver = new HtmlUnitDriver()
 
-  protected lazy val configMap: Map[String, Any] = Map[String, Any](
+  protected def configMap: Map[String, Any] = Map[String, Any](
     "mongodb.uri" -> s"mongodb://localhost:27017/$databaseName",
     "play.http.router" -> "testOnlyDoNotUseInAppConf.Routes",
     "auditing.consumer.baseUri.port" -> WireMockSupport.port,

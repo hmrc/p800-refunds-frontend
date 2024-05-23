@@ -19,12 +19,9 @@ package pagespecs
 import edh.GetBankDetailsRiskResultResponse
 import models.ecospend.consent.ConsentStatus
 import models.p800externalapi.EventValue
-import play.api.Application
-import play.api.inject.guice.{GuiceApplicationBuilder, GuiceableModule}
 import play.api.libs.json.{JsObject, Json}
 import testsupport.ItSpec
-import testsupport.stubs.AuditConnectorStub
-import testsupport.stubs.{CaseManagementStub, DateCalculatorStub, EcospendStub, EdhStub, MakeBacsRepaymentStub, NpsSuspendOverpaymentStub, P800RefundsExternalApiStub}
+import testsupport.stubs._
 
 class VerifyingYourBankAccountPageSpec extends ItSpec {
 
@@ -893,18 +890,13 @@ class VerifyingYourBankAccountPageSpec extends ItSpec {
 
 class VerifyingYourBankAccountFeatureFlagOffPageSpec extends ItSpec {
 
+  override lazy val configMap: Map[String, Any] = super.configMap ++ Map("feature-flags.isCaseManagementApiEnabled" -> false)
+
   override def beforeEach(): Unit = {
     super.beforeEach()
     addJourneyIdToSession(tdAll.journeyId)
     upsertJourneyToDatabase(tdAll.BankTransfer.journeyBankAccountConsentSuccessfulNameMatch)
   }
-
-  override def fakeApplication(): Application = {
-    new GuiceApplicationBuilder()
-      .overrides(GuiceableModule.fromGuiceModules(Seq(overridingsModule)))
-      .configure(configMap ++ Map("feature-flags.isCaseManagementApiEnabled" -> false)).build()
-  }
-
 
   "Should not make the 'Notify case management' call when the feature flag is off" in {
     EcospendStub.AuthStubs.stubEcospendAuth2xxSucceeded
