@@ -19,8 +19,8 @@ package models.ecospend.account
 import play.api.libs.json.{Json, Format, OFormat, JsonConfiguration, JsonNaming}
 
 final case class BankAccountParty(
-    name:          BankPartyName,
-    fullLegalName: BankPartyFullLegalName
+    name:          Option[BankPartyName],
+    fullLegalName: Option[BankPartyFullLegalName]
 )
 
 @SuppressWarnings(Array("org.wartremover.warts.Any"))

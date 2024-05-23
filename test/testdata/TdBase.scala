@@ -159,29 +159,29 @@ trait TdBase {
 
   lazy val bankAccountSummary: BankAccountSummary = BankAccountSummary(
     id                    = accountId,
-    bankId                = bankId,
+    bankId                = Some(bankId),
     merchantId            = None,
     merchantUserId        = None,
-    ttype                 = BankAccountType.Personal,
+    `type`                = BankAccountType.Personal,
     subType               = BankAccountSubType.CurrentAccount,
     currency              = Currency.getInstance("GBP"),
     accountFormat         = BankAccountFormat.SortCode,
-    accountIdentification = BankAccountIdentification(sortCode + bankAccountNumber),
-    calculatedOwnerName   = CalculatedOwnerName("Mr Greg Greggson"),
+    accountIdentification = Some(BankAccountIdentification(sortCode + bankAccountNumber)),
+    calculatedOwnerName   = Some(CalculatedOwnerName("Mr Greg Greggson")),
     accountOwnerName      = Some(BankAccountOwnerName("Greggson Gregory ")),
-    displayName           = BankAccountDisplayName("bank account display name"),
+    displayName           = Some(BankAccountDisplayName("bank account display name")),
     balance               = 123.7,
     lastUpdateTime        = localDateTime,
-    parties               = List(
+    parties               = Some(List(
       BankAccountParty(
-        name          = BankPartyName("Greg Greggson"),
-        fullLegalName = BankPartyFullLegalName("Greg Greggory Greggson")
+        name          = Some(BankPartyName("Greg Greggson")),
+        fullLegalName = Some(BankPartyFullLegalName("Greg Greggory Greggson"))
       ),
       BankAccountParty(
-        name          = BankPartyName("Margaret Greggson"),
-        fullLegalName = BankPartyFullLegalName("Margaretta Greggson")
+        name          = Some(BankPartyName("Margaret Greggson")),
+        fullLegalName = Some(BankPartyFullLegalName("Margaretta Greggson"))
       )
-    )
+    ))
   )
 
   lazy val isValidEventValueValid: EventValue = EventValue.Valid
@@ -222,7 +222,7 @@ trait TdBase {
     nino                  = nino,
     bankSortCode          = BankSortCode(sortCode),
     bankAccountNumber     = BankAccountNumber(bankAccountNumber),
-    bankAccountName       = BankAccountName(bankAccountSummary.displayName.value),
+    bankAccountName       = BankAccountName(bankAccountSummary.displayName.map(_.value).getOrElse("")),
     designatedAccountFlag = 1,
     contact               = List(
       CaseManagementContact(

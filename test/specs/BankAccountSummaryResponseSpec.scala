@@ -33,23 +33,23 @@ class BankAccountSummaryResponseSpec extends UnitSpec {
   "Survive round-trip JSON serialisation" in {
     val testBankAccountSummaryResponse = BankAccountSummaryResponse(List(BankAccountSummary(
       id                    = UUID.fromString("cddd0273-b709-4ee7-b73d-7113dd7a7d66"),
-      bankId                = BankId("obie-barclays-personal"),
+      bankId                = Some(BankId("obie-barclays-personal")),
       merchantId            = None,
       merchantUserId        = None,
-      ttype                 = BankAccountType.Personal,
+      `type`                = BankAccountType.Personal,
       subType               = BankAccountSubType.CurrentAccount,
       currency              = Currency.getInstance("GBP"),
       accountFormat         = BankAccountFormat.SortCode,
-      accountIdentification = BankAccountIdentification("44556610002333"),
-      calculatedOwnerName   = CalculatedOwnerName("Greg Greggson"),
+      accountIdentification = Some(BankAccountIdentification("44556610002333")),
+      calculatedOwnerName   = Some(CalculatedOwnerName("Greg Greggson")),
       accountOwnerName      = Some(BankAccountOwnerName("Greg Greggson")),
-      displayName           = BankAccountDisplayName("bank account display name"),
+      displayName           = Some(BankAccountDisplayName("bank account display name")),
       balance               = 123.7,
       lastUpdateTime        = localDateTime,
-      parties               = List(BankAccountParty(
-        name          = BankPartyName("Greg Greggson"),
-        fullLegalName = BankPartyFullLegalName("Greg Greggory Greggson")
-      ))
+      parties               = Some(List(BankAccountParty(
+        name          = Some(BankPartyName("Greg Greggson")),
+        fullLegalName = Some(BankPartyFullLegalName("Greg Greggory Greggson"))
+      )))
     )))
 
     val json = Json.toJson(testBankAccountSummaryResponse)
@@ -87,23 +87,23 @@ class BankAccountSummaryResponseSpec extends UnitSpec {
 
     val expectedCaseClass: BankAccountSummaryResponse = BankAccountSummaryResponse(List(BankAccountSummary(
       id                    = UUID.fromString("cddd0273-b709-4ee7-b73d-7113dd7a7d66"),
-      bankId                = BankId("obie-barclays-personal"),
+      bankId                = Some(BankId("obie-barclays-personal")),
       merchantId            = None,
       merchantUserId        = None,
-      ttype                 = BankAccountType.Personal,
+      `type`                = BankAccountType.Personal,
       subType               = BankAccountSubType.CurrentAccount,
       currency              = Currency.getInstance("GBP"),
       accountFormat         = BankAccountFormat.SortCode,
-      accountIdentification = BankAccountIdentification("44556610002333"),
-      calculatedOwnerName   = CalculatedOwnerName("Greg Greggson"),
+      accountIdentification = Some(BankAccountIdentification("44556610002333")),
+      calculatedOwnerName   = Some(CalculatedOwnerName("Greg Greggson")),
       accountOwnerName      = Some(BankAccountOwnerName("Greg Greggson")),
-      displayName           = BankAccountDisplayName("bank account display name"),
+      displayName           = Some(BankAccountDisplayName("bank account display name")),
       balance               = 123.7,
       lastUpdateTime        = localDateTime,
-      parties               = List(BankAccountParty(
-        name          = BankPartyName("Greg Greggson"),
-        fullLegalName = BankPartyFullLegalName("Greg Greggory Greggson")
-      ))
+      parties               = Some(List(BankAccountParty(
+        name          = Some(BankPartyName("Greg Greggson")),
+        fullLegalName = Some(BankPartyFullLegalName("Greg Greggory Greggson"))
+      )))
     )))
 
     implicitly[Reads[BankAccountSummaryResponse]].reads(testJson) shouldBe JsSuccess(expectedCaseClass)
@@ -133,20 +133,20 @@ class BankAccountSummaryResponseSpec extends UnitSpec {
 
     val expectedCaseClass: BankAccountSummaryResponse = BankAccountSummaryResponse(List(BankAccountSummary(
       id                    = UUID.fromString("cddd0273-b709-4ee7-b73d-7113dd7a7d66"),
-      bankId                = BankId("obie-barclays-personal"),
+      bankId                = Some(BankId("obie-barclays-personal")),
       merchantId            = None,
       merchantUserId        = None,
-      ttype                 = BankAccountType.Personal,
+      `type`                = BankAccountType.Personal,
       subType               = BankAccountSubType.CurrentAccount,
       currency              = Currency.getInstance("GBP"),
       accountFormat         = BankAccountFormat.SortCode,
-      accountIdentification = BankAccountIdentification("44556610002333"),
-      calculatedOwnerName   = CalculatedOwnerName("Greg Greggson"),
+      accountIdentification = Some(BankAccountIdentification("44556610002333")),
+      calculatedOwnerName   = Some(CalculatedOwnerName("Greg Greggson")),
       accountOwnerName      = None,
-      displayName           = BankAccountDisplayName("bank account display name"),
+      displayName           = Some(BankAccountDisplayName("bank account display name")),
       balance               = 123.7,
       lastUpdateTime        = localDateTime,
-      parties               = List()
+      parties               = Some(List())
     )))
 
     implicitly[Reads[BankAccountSummaryResponse]].reads(testJson) shouldBe JsSuccess(expectedCaseClass)

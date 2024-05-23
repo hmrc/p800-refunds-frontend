@@ -967,5 +967,258 @@ class VerifyingYourBankAccountFeatureFlagOffPageSpec extends ItSpec {
     )
   }
 
+  "Show technical difficulties when BankAccountSummaryResponse 'account_identification' is None" in {
+    val responseBody =
+      //language=JSON
+      s"""[{
+          "id" : "${tdAll.consentId.value}",
+          "type" : "Personal",
+          "sub_type" : "CurrentAccount",
+          "currency" : "GBP",
+          "account_format" : "SortCode",
+          "balance" : 123.7,
+          "last_update_time" : "2059-11-25T16:33:51.88"
+        }]""".stripMargin
+
+    EcospendStub.AuthStubs.stubEcospendAuth2xxSucceeded
+    EcospendStub.AccountStub.stubAccountSummaryWithJson2xxSucceeded(tdAll.consentId, responseBody)
+    P800RefundsExternalApiStub.isValid(tdAll.consentId, EventValue.Valid)
+
+    pages.verifyingBankAccountPage.open()
+    pages.verifyingBankAccountPage.assertPageIsDisplayedWithTechnicalDifficultiesError()
+
+    P800RefundsExternalApiStub.verifyIsValid(tdAll.consentId)
+    MakeBacsRepaymentStub.verifyNone(tdAll.nino)
+    AuditConnectorStub.verifyNoAuditEvent(AuditConnectorStub.bankClaimAttemptMadeAuditType)
+  }
+
+  "Show technical difficulties when BankAccountSummaryResponse 'display_name' is None" in {
+    val responseBody =
+      //language=JSON
+      s"""[{
+          "id" : "${tdAll.consentId.value}",
+          "type" : "Personal",
+          "sub_type" : "CurrentAccount",
+          "currency" : "GBP",
+          "account_format" : "SortCode",
+          "account_identification" : "44556610002333",
+          "balance" : 123.7,
+          "last_update_time" : "2059-11-25T16:33:51.88"
+        }]""".stripMargin
+
+    EcospendStub.AuthStubs.stubEcospendAuth2xxSucceeded
+    EcospendStub.AccountStub.stubAccountSummaryWithJson2xxSucceeded(tdAll.consentId, responseBody)
+    P800RefundsExternalApiStub.isValid(tdAll.consentId, EventValue.Valid)
+
+    pages.verifyingBankAccountPage.open()
+    pages.verifyingBankAccountPage.assertPageIsDisplayedWithTechnicalDifficultiesError()
+
+    P800RefundsExternalApiStub.verifyIsValid(tdAll.consentId)
+    MakeBacsRepaymentStub.verifyNone(tdAll.nino)
+    AuditConnectorStub.verifyNoAuditEvent(AuditConnectorStub.bankClaimAttemptMadeAuditType)
+  }
+
+  "Fail fuzzy name matching when BankAccountSummaryResponse 'parties' is None" in {
+    val responseBody =
+      //language=JSON
+      s"""[{
+          "id" : "${tdAll.consentId.value}",
+          "type" : "Personal",
+          "sub_type" : "CurrentAccount",
+          "currency" : "GBP",
+          "account_format" : "SortCode",
+          "account_identification" : "44556610002333",
+          "display_name" : "bank account display name",
+          "balance" : 123.7,
+          "last_update_time" : "2059-11-25T16:33:51.88"
+        }]""".stripMargin
+
+    EcospendStub.AuthStubs.stubEcospendAuth2xxSucceeded
+    EcospendStub.AccountStub.stubAccountSummaryWithJson2xxSucceeded(tdAll.consentId, responseBody)
+    P800RefundsExternalApiStub.isValid(tdAll.consentId, EventValue.Valid)
+
+    val pay: GetBankDetailsRiskResultResponse = tdAll.getBankDetailsRiskResultResponse
+    EdhStub.getBankDetailsRiskResult(tdAll.getBankDetailsRiskResultRequest, pay)
+
+    pages.verifyingBankAccountPage.open()
+    pages.refundRequestNotSubmittedPage.assertPageIsDisplayed()
+
+    EdhStub.verifyGetBankDetailsRiskResult(tdAll.claimId, tdAll.correlationId)
+    P800RefundsExternalApiStub.verifyIsValid(tdAll.consentId)
+    MakeBacsRepaymentStub.verifyNone(tdAll.nino)
+    AuditConnectorStub.verifyEventAudited(
+      AuditConnectorStub.bankClaimAttemptMadeAuditType,
+      Json.parse(
+        //format=JSON
+        """
+        {
+          "outcome": {
+            "isSuccessful": false,
+            "actionsOutcome": {
+              "ecospendFraudCheckIsSuccessful": true,
+              "hmrcFraudCheckIsSuccessful": true,
+              "fuzzyNameMatchingIsSuccessful": false
+            },
+            "failureReasons": [
+              "Ecospend names failed matching against NPS name"
+            ]
+          },
+          "userEnteredDetails": {
+            "chosenBank": "Barclays Personal",
+            "p800Reference": 12345678,
+            "nino": "LM001014C",
+            "dob": "2000-01-01"
+          },
+          "repaymentAmount": 12.34,
+          "repaymentInformation": {
+            "reconciliationIdentifier": 123,
+            "paymentNumber": 12345678,
+            "payeNumber": "PayeNumber-123",
+            "taxDistrictNumber": 717,
+            "associatedPayableNumber": 1234,
+            "customerAccountNumber": "customerAccountNumber-1234",
+            "currentOptimisticLock": 15
+          },
+          "name": {
+            "title": "Sir",
+            "firstForename": "Greg",
+            "secondForename": "Greggory",
+            "surname": "Greggson"
+          },
+          "address": {
+            "addressLine1": "Flat 1 Rose House",
+            "addressLine2": "Worthing",
+            "addressPostcode": "BN12 4XL"
+          }
+        }
+        """.stripMargin
+      ).as[JsObject]
+    )
+  }
+
+  "Show technical difficulties when BankAccountSummaryResponse 'parties.full_legal_name' is None" in {
+    val responseBody =
+      //language=JSON
+      s"""[{
+          "id" : "${tdAll.consentId.value}",
+          "type" : "Personal",
+          "sub_type" : "CurrentAccount",
+          "currency" : "GBP",
+          "account_format" : "SortCode",
+          "account_identification" : "44556610002333",
+          "display_name" : "bank account display name",
+          "balance" : 123.7,
+          "last_update_time" : "2059-11-25T16:33:51.88",
+          "parties" : [{
+            "name" : "Greg Greggson"
+          }]
+        }]""".stripMargin
+
+    EcospendStub.AuthStubs.stubEcospendAuth2xxSucceeded
+    EcospendStub.AccountStub.stubAccountSummaryWithJson2xxSucceeded(tdAll.consentId, responseBody)
+    P800RefundsExternalApiStub.isValid(tdAll.consentId, EventValue.Valid)
+
+    val pay: GetBankDetailsRiskResultResponse = tdAll.getBankDetailsRiskResultResponse
+    EdhStub.getBankDetailsRiskResult(tdAll.getBankDetailsRiskResultRequest, pay)
+
+    pages.verifyingBankAccountPage.open()
+    pages.verifyingBankAccountPage.assertPageIsDisplayedWithTechnicalDifficultiesError()
+
+    EdhStub.verifyGetBankDetailsRiskResult(tdAll.claimId, tdAll.correlationId)
+    P800RefundsExternalApiStub.verifyIsValid(tdAll.consentId)
+    MakeBacsRepaymentStub.verifyNone(tdAll.nino)
+    AuditConnectorStub.verifyNoAuditEvent(AuditConnectorStub.bankClaimAttemptMadeAuditType)
+  }
+
+  "Redirect to bank transfer 'Request received' page when unused optional BankAccountSummaryResponse field are None" in {
+
+    // Response body is missing "bank_id", "calculated_owner_name", "account_owner_name"
+    val responseBody =
+      //language=JSON
+      s"""[{
+          "id" : "${tdAll.consentId.value}",
+          "type" : "Personal",
+          "sub_type" : "CurrentAccount",
+          "currency" : "GBP",
+          "account_format" : "SortCode",
+          "account_identification" : "44556610002333",
+          "display_name" : "bank account display name",
+          "balance" : 123.7,
+          "last_update_time" : "2059-11-25T16:33:51.88",
+          "parties" : [ {
+            "name" : "Greg Greggson",
+            "full_legal_name" : "Greg Greggory Greggson"
+          }, {
+            "name" : "Margaret Greggson",
+            "full_legal_name" : "Margaretta Greggson"
+          } ]
+        }]""".stripMargin
+
+    EcospendStub.AuthStubs.stubEcospendAuth2xxSucceeded
+    EcospendStub.AccountStub.stubAccountSummaryWithJson2xxSucceeded(tdAll.consentId, responseBody)
+    P800RefundsExternalApiStub.isValid(tdAll.consentId, EventValue.Valid)
+    EdhStub.getBankDetailsRiskResult(tdAll.getBankDetailsRiskResultRequest, tdAll.getBankDetailsRiskResultResponse)
+    DateCalculatorStub.addWorkingDays()
+    MakeBacsRepaymentStub.`makeBacsRepayment 200 OK`(
+      nino     = tdAll.nino,
+      request  = tdAll.claimOverpaymentRequest,
+      response = tdAll.claimOverpaymentResponse
+    )
+
+    pages.verifyingBankAccountPage.open()
+    pages.requestReceivedBankTransferPage.assertPageIsDisplayedForBankTransfer()
+
+    EdhStub.verifyGetBankDetailsRiskResult(tdAll.claimId, tdAll.correlationId)
+    P800RefundsExternalApiStub.verifyIsValid(tdAll.consentId)
+    MakeBacsRepaymentStub.verify(tdAll.nino, tdAll.correlationId)
+    DateCalculatorStub.verifyAddWorkingDays()
+    AuditConnectorStub.verifyEventAudited(
+      AuditConnectorStub.bankClaimAttemptMadeAuditType,
+      Json.parse(
+        //format=JSON
+        """
+        {
+          "outcome": {
+            "isSuccessful": true,
+            "actionsOutcome": {
+              "ecospendFraudCheckIsSuccessful": true,
+              "fuzzyNameMatchingIsSuccessful": true,
+              "hmrcFraudCheckIsSuccessful": true,
+              "claimOverpaymentIsSuccessful": true
+            }
+          },
+          "userEnteredDetails": {
+            "chosenBank": "Barclays Personal",
+            "p800Reference": 12345678,
+            "nino": "LM001014C",
+            "dob": "2000-01-01"
+          },
+          "repaymentAmount": 12.34,
+          "repaymentInformation": {
+            "reconciliationIdentifier": 123,
+            "paymentNumber": 12345678,
+            "payeNumber": "PayeNumber-123",
+            "taxDistrictNumber": 717,
+            "associatedPayableNumber": 1234,
+            "customerAccountNumber": "customerAccountNumber-1234",
+            "currentOptimisticLock": 15
+          },
+          "name": {
+            "title": "Sir",
+            "firstForename": "Greg",
+            "secondForename": "Greggory",
+            "surname": "Greggson"
+          },
+          "address": {
+            "addressLine1": "Flat 1 Rose House",
+            "addressLine2": "Worthing",
+            "addressPostcode": "BN12 4XL"
+          }
+        }
+        """.stripMargin
+      ).as[JsObject]
+    )
+  }
+
 }
 
