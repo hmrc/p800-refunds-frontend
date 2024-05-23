@@ -19,7 +19,9 @@ package pagespecs
 import edh.GetBankDetailsRiskResultResponse
 import models.ecospend.consent.ConsentStatus
 import models.p800externalapi.EventValue
-import play.api.libs.json.{Json, JsObject}
+import play.api.Application
+import play.api.inject.guice.{GuiceApplicationBuilder, GuiceableModule}
+import play.api.libs.json.{JsObject, Json}
 import testsupport.ItSpec
 import testsupport.stubs.AuditConnectorStub
 import testsupport.stubs.{CaseManagementStub, DateCalculatorStub, EcospendStub, EdhStub, MakeBacsRepaymentStub, NpsSuspendOverpaymentStub, P800RefundsExternalApiStub}
@@ -887,5 +889,91 @@ class VerifyingYourBankAccountPageSpec extends ItSpec {
     MakeBacsRepaymentStub.verifyNone(tdAll.nino)
     AuditConnectorStub.verifyNoAuditEvent(AuditConnectorStub.bankClaimAttemptMadeAuditType)
   }
+}
+
+class VerifyingYourBankAccountFeatureFlagOffPageSpec extends ItSpec {
+
+  override def beforeEach(): Unit = {
+    super.beforeEach()
+    addJourneyIdToSession(tdAll.journeyId)
+    upsertJourneyToDatabase(tdAll.BankTransfer.journeyBankAccountConsentSuccessfulNameMatch)
+  }
+
+  override def fakeApplication(): Application = {
+    new GuiceApplicationBuilder()
+      .overrides(GuiceableModule.fromGuiceModules(Seq(overridingsModule)))
+      .configure(configMap ++ Map("feature-flags.isCaseManagementApiEnabled" -> false)).build()
+  }
+
+
+  "Should not make the 'Notify case management' call when the feature flag is off" in {
+    EcospendStub.AuthStubs.stubEcospendAuth2xxSucceeded
+    EcospendStub.AccountStub.stubAccountSummary2xxSucceeded(tdAll.consentId)
+    P800RefundsExternalApiStub.isValid(tdAll.consentId, EventValue.Valid)
+    DateCalculatorStub.addWorkingDays()
+
+    val doNotPay: GetBankDetailsRiskResultResponse = tdAll.getBankDetailsRiskResultResponseDoNotPay
+    EdhStub.getBankDetailsRiskResult(tdAll.getBankDetailsRiskResultRequest, doNotPay)
+    CaseManagementStub.notifyCaseManagement2xx(tdAll.clientUId, tdAll.caseManagementRequest)
+    NpsSuspendOverpaymentStub.suspendOverpayment(tdAll.nino, tdAll.suspendOverpaymentRequest)
+
+    pages.verifyingBankAccountPage.open()
+    pages.requestReceivedBankTransferPage.assertPageIsDisplayedForBankTransfer()
+
+    EdhStub.verifyGetBankDetailsRiskResult(tdAll.claimId, tdAll.correlationId)
+    CaseManagementStub.verifyNotifyCaseManagement(tdAll.clientUId, tdAll.correlationId, 0) //Checking case management isn't called
+    NpsSuspendOverpaymentStub.verify(tdAll.nino, tdAll.correlationId)
+    P800RefundsExternalApiStub.verifyIsValid(tdAll.consentId)
+    MakeBacsRepaymentStub.verifyNone(tdAll.nino)
+    AuditConnectorStub.verifyEventAudited(
+      AuditConnectorStub.bankClaimAttemptMadeAuditType,
+      Json.parse(
+        //format=JSON
+        """
+        {
+          "outcome": {
+            "isSuccessful": false,
+            "actionsOutcome": {
+              "ecospendFraudCheckIsSuccessful": true,
+              "fuzzyNameMatchingIsSuccessful": true,
+              "hmrcFraudCheckIsSuccessful": false
+            },
+            "failureReasons": [
+              "EDH indicated DoNotPay"
+            ]
+          },
+          "userEnteredDetails": {
+            "chosenBank": "Barclays Personal",
+            "p800Reference": 12345678,
+            "nino": "LM001014C",
+            "dob": "2000-01-01"
+          },
+          "repaymentAmount": 12.34,
+          "repaymentInformation": {
+            "reconciliationIdentifier": 123,
+            "paymentNumber": 12345678,
+            "payeNumber": "PayeNumber-123",
+            "taxDistrictNumber": 717,
+            "associatedPayableNumber": 1234,
+            "customerAccountNumber": "customerAccountNumber-1234",
+            "currentOptimisticLock": 15
+          },
+          "name": {
+            "title": "Sir",
+            "firstForename": "Greg",
+            "secondForename": "Greggory",
+            "surname": "Greggson"
+          },
+          "address": {
+            "addressLine1": "Flat 1 Rose House",
+            "addressLine2": "Worthing",
+            "addressPostcode": "BN12 4XL"
+          }
+        }
+        """.stripMargin
+      ).as[JsObject]
+    )
+  }
 
 }
+

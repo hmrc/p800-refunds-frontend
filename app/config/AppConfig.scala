@@ -27,6 +27,10 @@ import scala.util.Try
 @Singleton
 class AppConfig @Inject() (servicesConfig: ServicesConfig, configuration: Configuration) {
 
+  object FeatureFlags {
+    val isCaseManagementEnabled: Boolean = servicesConfig.getBoolean("feature-flags.isCaseManagementApiEnabled")
+  }
+
   object Timeout {
     val timeoutUrl: String = readConfigAsValidUrlString("timeoutUrl")
   }
