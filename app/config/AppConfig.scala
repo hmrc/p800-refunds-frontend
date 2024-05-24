@@ -17,8 +17,10 @@
 package config
 
 import play.api.Configuration
+import play.api.mvc.RequestHeader
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 
+import java.net.URLEncoder
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.duration.Duration.Infinite
 import scala.concurrent.duration.FiniteDuration
@@ -45,7 +47,20 @@ class AppConfig @Inject() (servicesConfig: ServicesConfig, configuration: Config
   }
 
   val platformFrontendHost: String = readConfigAsValidUrlString("urls.localhost")
-  val feedbackFrontendUrl: String = readConfigAsValidUrlString("urls.feedback-frontend")
+
+  object Feedback {
+    val feedbackFrontendUrl: String = readConfigAsValidUrlString("urls.feedback-frontend")
+
+    def betaFeedbackUrl()(implicit requestHeader: RequestHeader): String = {
+      val currentUrl: String = URLEncoder.encode(platformFrontendHost + requestHeader.uri, "utf-8")
+
+      s"""$feedbackFrontendUrl/contact/beta-feedback?""" +
+        s"""&service=p800-refunds-frontend""" +
+        s"""&canOmitComments=true""" +
+        s"""&backUrl=$currentUrl""" +
+        s"""&referrerUrl=$currentUrl"""
+    }
+  }
 
   val govUkRouteIn: String = readConfigAsValidUrlString("urls.gov-uk.govuk-route-in")
 
