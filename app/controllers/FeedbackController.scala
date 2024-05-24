@@ -33,7 +33,7 @@ class FeedbackController @Inject() (
     appConfig:      AppConfig,
     auditConnector: AuditConnector
 )(implicit ex: ExecutionContext) extends FrontendController(mcc) {
-  private val feedbackFrontendUrl: String = appConfig.feedbackFrontendUrl
+  private val feedbackFrontendUrl: String = appConfig.Feedback.feedbackFrontendUrl
 
   def get: Action[AnyContent] = actions.journeyFinished { implicit request =>
     val journey: Journey = request.journey

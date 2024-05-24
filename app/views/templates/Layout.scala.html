@@ -84,7 +84,7 @@
       @govukPhaseBanner(
         PhaseBanner(
           tag = Some(Tag(content = Text(Messages.ServicePhase.beta.show))),
-          content = HtmlContent(Messages.ServicePhase.bannerText("").show)
+          content = HtmlContent(Messages.ServicePhase.bannerText(link = appConfig.Feedback.betaFeedbackUrl()).show)
         )
       )
         @hmrcLanguageSelectHelper()
