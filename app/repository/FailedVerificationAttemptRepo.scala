@@ -66,10 +66,13 @@ object FailedVerificationAttemptRepo {
   }
 
   def indexes(cacheTtl: FiniteDuration): Seq[IndexModel] = Seq(
-    //TODO: I think we should add an index on the IpAddress as well
     IndexModel(
       keys         = Indexes.ascending("lastUpdated"),
       indexOptions = IndexOptions().expireAfter(cacheTtl.toSeconds, TimeUnit.SECONDS).name("lastUpdatedIdx")
+    ),
+    IndexModel(
+      keys         = Indexes.ascending("ipAddress"),
+      indexOptions = IndexOptions().name("ipAddressIdx")
     )
   )
 

@@ -16,31 +16,39 @@
 
 package specs
 
-import models.journeymodels.Journey
+import models.attemptmodels.AttemptInfo
 import org.scalatest.concurrent.ScalaFutures
 import org.scalatest.freespec.AnyFreeSpecLike
 import org.scalatest.matchers.should.Matchers
-import repository.JourneyRepo
+import repository.FailedVerificationAttemptRepo
 import testsupport.ItSpec
 import uk.gov.hmrc.mongo.play.json.PlayMongoRepository
 import uk.gov.hmrc.mongo.test.DefaultPlayMongoRepositorySupport
 
 import java.util.concurrent.TimeUnit
 
-class JourneyRepoSpec extends AnyFreeSpecLike
-  with DefaultPlayMongoRepositorySupport[Journey]
+class FailedVerificationAttemptRepoSpec extends AnyFreeSpecLike
+  with DefaultPlayMongoRepositorySupport[AttemptInfo]
   with ItSpec
   with Matchers
   with ScalaFutures {
 
+  override def beforeEach(): Unit = {
+    upsertFailedAttemptToDatabase(tdAll.attemptInfo(1))
+  }
+
   override def configMap: Map[String, Any] = Map("mongodb.uri" -> mongoUri)
 
-  override protected val repository: PlayMongoRepository[Journey] = app.injector.instanceOf[JourneyRepo]
+  override protected val repository: PlayMongoRepository[AttemptInfo] = app.injector.instanceOf[FailedVerificationAttemptRepo]
 
-  "JourneyRepo should have a index for lastUpdated with ttl of 30 minutes" in {
-    repository.indexes.size shouldBe 1
-    val indexOptions = repository.indexes.map(_.getOptions)
-    indexOptions.find(_.getName === "lastUpdatedIdx").map(_.getExpireAfter(TimeUnit.MINUTES)) shouldBe Some(30)
+  "FailedVerificationAttemptRepo" - {
+    "should have a indexes for lastUpdated with ttl of 24 hours and also an index for ipAddress" in {
+      repository.indexes.size shouldBe 2
+      val indexOptions = repository.indexes.map(_.getOptions)
+      println(indexOptions)
+      indexOptions.find(_.getName === "lastUpdatedIdx").map(_.getExpireAfter(TimeUnit.HOURS)) shouldBe Some(24)
+      indexOptions.exists(_.getName === "ipAddressIdx") shouldBe true
+    }
   }
 
 }
