@@ -11,7 +11,7 @@ object AppDependencies {
     "uk.gov.hmrc.mongo" %% "hmrc-mongo-play-30"         % hmrcMongoVersion,
     "uk.gov.hmrc"       %% "play-frontend-hmrc-play-30" % "8.5.0",
     "com.beachape"      %% "enumeratum-play"            % "1.8.0", //later version results in JsBoolean error for case classes when being used with BsonDocs
-    "org.typelevel"     %% "cats-core"                  % "2.10.0",
+    "org.typelevel"     %% "cats-core"                  % "2.12.0",
     /*
      * WARN! Choose this version carefully.
      * play-json-derived-codecs-10.1.0 was compiled for play 2.9,

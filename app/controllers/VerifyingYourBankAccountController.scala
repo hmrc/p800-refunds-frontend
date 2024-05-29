@@ -39,6 +39,7 @@ import views.Views
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
+import scala.math.BigDecimal.RoundingMode
 
 @Singleton
 class VerifyingYourBankAccountController @Inject() (
@@ -308,7 +309,7 @@ class VerifyingYourBankAccountController @Inject() (
           )
         ),
         currency              = bankAccountSummary.currency,
-        paymentAmount         = journey.getAmount.inPounds,
+        paymentAmount         = journey.getAmount.inPounds.setScale(2, RoundingMode.DOWN),
         overallRiskResult     = bankDetailsRiskResult.overallRiskResult.ruleScore,
         ruleResults           = Some(
           bankDetailsRiskResult.riskResults.getOrElse(List.empty).map(risk =>
