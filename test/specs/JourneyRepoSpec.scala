@@ -16,19 +16,31 @@
 
 package specs
 
-import models.journeymodels.{Journey, JourneyId}
+import models.journeymodels.Journey
+import org.scalatest.concurrent.ScalaFutures
+import org.scalatest.freespec.AnyFreeSpecLike
+import org.scalatest.matchers.should.Matchers
 import repository.JourneyRepo
 import testsupport.ItSpec
+import uk.gov.hmrc.mongo.play.json.PlayMongoRepository
 import uk.gov.hmrc.mongo.test.DefaultPlayMongoRepositorySupport
 
-class JourneyRepoSpec extends ItSpec with DefaultPlayMongoRepositorySupport[Journey] {
+import java.util.concurrent.TimeUnit
 
-  override def beforeEach(): Unit = { () }
+class JourneyRepoSpec extends AnyFreeSpecLike
+  with DefaultPlayMongoRepositorySupport[Journey]
+  with ItSpec
+  with Matchers
+  with ScalaFutures {
 
-  override lazy val repository: JourneyRepo = app.injector.instanceOf[JourneyRepo]
+  override def configMap: Map[String, Any] = Map("mongodb.uri" -> mongoUri)
 
-  //throws a No ttl indexes were found for collection journey atm, try and fix this as it might be a nice test to check indexes
-  "JourneyRepo should have correct indexes" ignore {
-    repository.findById(JourneyId("12345678")).futureValue shouldBe None
+  override protected val repository: PlayMongoRepository[Journey] = app.injector.instanceOf[JourneyRepo]
+
+  "JourneyRepo should have a index for lastUpdated with ttl of 30 minutes" in {
+    repository.indexes.size shouldBe 1
+    val indexOptions = repository.indexes.map(_.getOptions)
+    indexOptions.find(_.getName === "lastUpdatedIdx").map(_.getExpireAfter(TimeUnit.MINUTES)) shouldBe Some(30)
   }
+
 }
