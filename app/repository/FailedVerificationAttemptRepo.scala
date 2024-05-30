@@ -72,7 +72,7 @@ object FailedVerificationAttemptRepo {
     ),
     IndexModel(
       keys         = Indexes.ascending("ipAddress"),
-      indexOptions = IndexOptions().name("ipAddressIdx")
+      indexOptions = IndexOptions().name("ipAddressIdx").unique(true)
     )
   )
 
