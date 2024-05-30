@@ -45,9 +45,12 @@ class FailedVerificationAttemptRepoSpec extends AnyFreeSpecLike
     "should have a indexes for lastUpdated with ttl of 24 hours and also an index for ipAddress" in {
       repository.indexes.size shouldBe 2
       val indexOptions = repository.indexes.map(_.getOptions)
-      indexOptions.find(_.getName === "lastUpdatedIdx").map(_.getExpireAfter(TimeUnit.HOURS)) shouldBe Some(24)
+      indexOptions.find(_.getName === "lastUpdatedIdx").map(_.getExpireAfter(TimeUnit.HOURS)) shouldBe Some(24) withClue "TTL should be 24 hours"
       indexOptions.exists(_.getName === "ipAddressIdx") shouldBe true
-      indexOptions.find(_.getName === "ipAddressIdx").map(_.isUnique) shouldBe Some(true)
+      indexOptions.find(_.getName === "ipAddressIdx").map(_.isUnique) shouldBe Some(true) withClue "ipAddressIdx should be unique"
+
+      val fieldNames = tdAll.attemptInfo(1).productElementNames.toList
+      fieldNames.exists(_ === "ipAddress") shouldBe true withClue "ipAddress fieldName must exist in AttemptInfo, be careful if you're refactoring it..."
     }
   }
 
