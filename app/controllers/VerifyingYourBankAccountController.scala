@@ -78,7 +78,7 @@ class VerifyingYourBankAccountController @Inject() (
       bankAccountSummary: BankAccountSummary
   )(implicit request: JourneyRequest[_]): Boolean = {
 
-    (bankAccountSummary.parties.isEmpty, bankAccountSummary.accountOwnerName.isEmpty) match {
+    (bankAccountSummary.parties.exists(_.isEmpty), bankAccountSummary.accountOwnerName.isEmpty) match {
       case (true, true) =>
         JourneyLogger.warn("No parties list or account owner name present")
         val emptyListAudit = NameMatchingAudit(
@@ -115,14 +115,18 @@ class VerifyingYourBankAccountController @Inject() (
 
       case (false, _) =>
         //There is a parties list to iterate through
-        val matchingResponseList: Seq[(NameMatchingResponse, NameMatchingAudit)] = bankAccountSummary.parties.map { party =>
-          NameMatchingService.fuzzyNameMatching(
-            individualResponse.firstForename,
-            individualResponse.secondForename,
-            individualResponse.surname,
-            party.fullLegalName.value
-          )
-        }
+        val matchingResponseList: Seq[(NameMatchingResponse, NameMatchingAudit)] =
+          bankAccountSummary
+            .parties
+            .getOrElse(List.empty)
+            .map { party =>
+              NameMatchingService.fuzzyNameMatching(
+                individualResponse.firstForename,
+                individualResponse.secondForename,
+                individualResponse.surname,
+                party.fullLegalName.map(_.value).getOrElse(Errors.throwServerErrorException("Expected party.fullLegalName, but was None"))
+              )
+            }
 
         matchingResponseList.foreach(nameAudit => auditService.auditNameMatching(nameAudit._2))
         matchingResponseList.exists(_._1.isSuccess)
@@ -208,9 +212,9 @@ class VerifyingYourBankAccountController @Inject() (
       currentOptimisticLock    = journey.getP800ReferenceChecked.currentOptimisticLock,
       reconciliationIdentifier = journey.getP800ReferenceChecked.reconciliationIdentifier,
       associatedPayableNumber  = journey.getP800ReferenceChecked.associatedPayableNumber,
-      payeeBankAccountNumber   = journey.getBankAccountSummary.accountIdentification.asPayeeBankAccountNumber,
-      payeeBankSortCode        = journey.getBankAccountSummary.accountIdentification.asPayeeBankSortCode,
-      payeeBankAccountName     = PayeeBankAccountName(journey.getBankAccountSummary.displayName.value),
+      payeeBankAccountNumber   = journey.getBankAccountSummary.getAccountIdentification.asPayeeBankAccountNumber,
+      payeeBankSortCode        = journey.getBankAccountSummary.getAccountIdentification.asPayeeBankSortCode,
+      payeeBankAccountName     = PayeeBankAccountName(journey.getBankAccountSummary.getDisplayName.value),
       designatedPayeeAccount   = DesignatedPayeeAccount(false)
     )
 
@@ -277,9 +281,9 @@ class VerifyingYourBankAccountController @Inject() (
   private def notifyCaseManagement(journey: Journey)(implicit requestHeader: RequestHeader): Future[Unit] = {
 
     val bankAccountSummary: BankAccountSummary = journey.getBankAccountSummary
-    val accountNumber: BankAccountNumber = bankAccountSummary.accountIdentification.asBankAccountNumber
-    val sortCode: BankSortCode = bankAccountSummary.accountIdentification.asBankSortCode
-    val bankAccountName: BankAccountName = BankAccountName(bankAccountSummary.displayName.value)
+    val accountNumber: BankAccountNumber = bankAccountSummary.getAccountIdentification.asBankAccountNumber
+    val sortCode: BankSortCode = bankAccountSummary.getAccountIdentification.asBankSortCode
+    val bankAccountName: BankAccountName = BankAccountName(bankAccountSummary.getDisplayName.value)
 
     val bankDetailsRiskResult: GetBankDetailsRiskResultResponse = journey.getBankDetailsRiskResultResponse
     val clientUId: ClientUId = ClientUId(bankDetailsRiskResult.header.transactionID.value)
@@ -347,9 +351,9 @@ class VerifyingYourBankAccountController @Inject() (
       currentOptimisticLock    = p800ReferenceCheckResult.currentOptimisticLock,
       reconciliationIdentifier = p800ReferenceCheckResult.reconciliationIdentifier,
       associatedPayableNumber  = p800ReferenceCheckResult.associatedPayableNumber,
-      payeeBankAccountNumber   = bankAccountSummary.accountIdentification.asPayeeBankAccountNumber,
-      payeeBankSortCode        = bankAccountSummary.accountIdentification.asPayeeBankSortCode,
-      payeeBankAccountName     = PayeeBankAccountName(bankAccountSummary.displayName.value),
+      payeeBankAccountNumber   = bankAccountSummary.getAccountIdentification.asPayeeBankAccountNumber,
+      payeeBankSortCode        = bankAccountSummary.getAccountIdentification.asPayeeBankSortCode,
+      payeeBankAccountName     = PayeeBankAccountName(bankAccountSummary.getDisplayName.value),
       designatedPayeeAccount   = DesignatedPayeeAccount(true)
     )
 

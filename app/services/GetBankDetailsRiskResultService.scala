@@ -89,9 +89,9 @@ class GetBankDetailsRiskResultService @Inject() (
             address                 = None
           )),
           bankDetails = Some(BankDetails(
-            bankAccountNumber     = Some(bankAccountSummary.accountIdentification.asBankAccountNumber),
-            bankSortCode          = Some(bankAccountSummary.accountIdentification.asBankSortCode),
-            bankAccountName       = Some(BankAccountName(bankAccountSummary.displayName.value)),
+            bankAccountNumber     = Some(bankAccountSummary.getAccountIdentification.asBankAccountNumber),
+            bankSortCode          = Some(bankAccountSummary.getAccountIdentification.asBankSortCode),
+            bankAccountName       = Some(BankAccountName(bankAccountSummary.getDisplayName.value)),
             buildingSocietyRef    = None, //TODO: this has not been analysed
             designatedAccountFlag = None, //TODO: according to the analysis: confirm this is not needed, Collected from user Journey, Is the same value as personType
             currency              = None //TODO: according to the analysis: confirm this is not needed, Always "GBP"

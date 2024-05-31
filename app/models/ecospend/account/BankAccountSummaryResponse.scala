@@ -16,10 +16,10 @@
 
 package models.ecospend.account
 
-import _root_.util.SafeEquals.EqualsOps
 import models.ecospend.BankId
 import play.api.libs.json.{Json, Format, OFormat, JsonConfiguration, JsonNaming}
-import util.CurrencyFormat
+import util.{CurrencyFormat, Errors}
+import play.api.mvc.RequestHeader
 
 import java.util.{UUID, Currency}
 import java.time.LocalDateTime
@@ -32,41 +32,34 @@ object BankAccountSummaryResponse {
 
 final case class BankAccountSummary(
     id:                    UUID,
-    bankId:                BankId,
+    bankId:                Option[BankId],
     merchantId:            Option[String],
     merchantUserId:        Option[String],
-    ttype:                 BankAccountType,
+    `type`:                BankAccountType,
     subType:               BankAccountSubType,
     currency:              Currency,
     accountFormat:         BankAccountFormat,
-    accountIdentification: BankAccountIdentification,
-    calculatedOwnerName:   CalculatedOwnerName,
+    accountIdentification: Option[BankAccountIdentification],
+    calculatedOwnerName:   Option[CalculatedOwnerName],
     accountOwnerName:      Option[BankAccountOwnerName],
-    displayName:           BankAccountDisplayName,
+    displayName:           Option[BankAccountDisplayName],
     balance:               Double,
     lastUpdateTime:        LocalDateTime,
-    parties:               List[BankAccountParty]
-)
+    parties:               Option[List[BankAccountParty]]
+) {
+  def getAccountIdentification(implicit requestHeader: RequestHeader): BankAccountIdentification =
+    accountIdentification.getOrElse(Errors.throwServerErrorException(s"Expected 'accountIdentification' to be defined but it was None [bankId: ${id.toString}]"))
+
+  def getDisplayName(implicit requestHeader: RequestHeader): BankAccountDisplayName =
+    displayName.getOrElse(Errors.throwServerErrorException(s"Expected 'displayName' to be defined but it was None [bankId: ${id.toString}]"))
+}
 
 @SuppressWarnings(Array("org.wartremover.warts.Any"))
 object BankAccountSummary {
   implicit val currencyFormat: Format[Currency] = CurrencyFormat.format
 
-  // Converts the name "ttype" to the string "type" for JSON without needing to do custom Reads, Writes & Format
-  // As "type" is a keyword we are unable to use it in the case class directly.
-  object SnakeCaseCustom extends JsonNaming {
-    override def apply(property: String): String = {
-      if (property === "ttype")
-        "type"
-      else
-        JsonNaming.SnakeCase.apply(property)
-    }
-
-    override val toString = "SnakeCaseCustom"
-  }
-
   implicit val format: OFormat[BankAccountSummary] = {
-    implicit val config: JsonConfiguration = JsonConfiguration(BankAccountSummary.SnakeCaseCustom)
+    implicit val config: JsonConfiguration = JsonConfiguration(JsonNaming.SnakeCase)
 
     Json.format[BankAccountSummary]
   }
