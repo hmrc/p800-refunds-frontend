@@ -44,12 +44,12 @@ class GetJourneyActionRefiner @Inject() (
           maybeJourney match {
             case Some(journey) => Right(new JourneyRequest(journey, request))
             case None =>
-              JourneyLogger.error(s"Journey not found based on the journeyId from session, redirecting to the gov.uk route in page [journeyIdFromSession:${journeyId.value}]")
+              JourneyLogger.warn(s"Journey not found based on the journeyId from session, redirecting to the gov.uk route in page [journeyIdFromSession:${journeyId.value}]")
               redirectToGovUkRouteIn
           }
         }
       case None =>
-        JourneyLogger.error(s"There was missing journeyId in the play session. Redirecting to the the gov.uk route in page")
+        JourneyLogger.warn(s"There was missing journeyId in the play session. Redirecting to the the gov.uk route in page")
         Future.successful(redirectToGovUkRouteIn)
     }
   }
