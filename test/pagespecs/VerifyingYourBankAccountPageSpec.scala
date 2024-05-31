@@ -1004,7 +1004,7 @@ class VerifyingYourBankAccountFeatureFlagOffPageSpec extends ItSpec {
     )
   }
 
-  "Show technical difficulties when BankAccountSummaryResponse 'account_identification' is None" in {
+  "Show Refund Request not Submitted when BankAccountSummaryResponse 'account_identification' is None" in {
     val responseBody =
       //language=JSON
       s"""[{
@@ -1019,12 +1019,11 @@ class VerifyingYourBankAccountFeatureFlagOffPageSpec extends ItSpec {
 
     EcospendStub.AuthStubs.stubEcospendAuth2xxSucceeded
     EcospendStub.AccountStub.stubAccountSummaryWithJson2xxSucceeded(tdAll.consentId, responseBody)
-    P800RefundsExternalApiStub.isValid(tdAll.consentId, EventValue.Valid)
 
     pages.verifyingBankAccountPage.open()
-    pages.verifyingBankAccountPage.assertPageIsDisplayedWithTechnicalDifficultiesError()
+    pages.refundRequestNotSubmittedPage.assertPageIsDisplayed()
 
-    P800RefundsExternalApiStub.verifyIsValid(tdAll.consentId)
+    P800RefundsExternalApiStub.verifyNoneIsValid(tdAll.consentId)
     MakeBacsRepaymentStub.verifyNone(tdAll.nino)
     AuditConnectorStub.verifyNoAuditEvent(AuditConnectorStub.bankClaimAttemptMadeAuditType)
   }
