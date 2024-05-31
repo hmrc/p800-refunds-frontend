@@ -1,4 +1,4 @@
-//refresh the page every 1 seconds (1000ms)
+//refresh the page every n seconds (n * 1000ms)
 setTimeout(function(){
     window.location.reload();
-}, 1000);
+}, 5000);
