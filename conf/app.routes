@@ -82,6 +82,3 @@ GET         /refund-cancelled                                              contr
 GET         /timeout/:didUserDelete                                        controllers.TimeoutController.get(didUserDelete: Boolean)
 
 GET         /feedback                                                      controllers.FeedbackController.get
-
-#todo remove me when we remove the super secret connectivity test endpoint
-GET         /super-secret-endpoint-dont-use-me-871234-blah-hi-darren-prod-test       controllers.EcospendConnectivityTestController.setupJourneyForEcospendConnectivityTest
