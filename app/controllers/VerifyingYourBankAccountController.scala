@@ -22,6 +22,7 @@ import config.AppConfig
 import connectors.{P800RefundsBackendConnector, P800RefundsExternalApiConnector}
 import edh._
 import models.audit.{BankActionsOutcome, IsSuccessful, NameMatchOutcome, NameMatchingAudit, RawNpsName}
+import models.ecospend.BankId
 import models.ecospend.account.{BankAccountOwnerName, BankAccountSummary}
 import models.ecospend.consent.{BankReferenceId, ConsentId, ConsentStatus}
 import models.journeymodels._
@@ -34,7 +35,7 @@ import services.{AuditService, EcospendService, GetBankDetailsRiskResultService,
 import uk.gov.hmrc.http.{HttpException, UpstreamErrorResponse}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import util.SafeEquals.EqualsOps
-import util.{Errors, JourneyLogger}
+import util.{Errors, JourneyLogger, NameParsingUtil}
 import views.Views
 
 import javax.inject.{Inject, Singleton}
@@ -77,9 +78,10 @@ class VerifyingYourBankAccountController @Inject() (
       individualResponse: TracedIndividual,
       bankAccountSummary: BankAccountSummary
   )(implicit request: JourneyRequest[_]): Boolean = {
+    val isAVariationsBank: Boolean = NameParsingUtil.bankIdMatchingVariationList.contains(bankAccountSummary.bankId.getOrElse(BankId("NoBankId")).value)
 
-    (bankAccountSummary.parties.exists(_.isEmpty), bankAccountSummary.accountOwnerName.isEmpty) match {
-      case (true, true) =>
+    (bankAccountSummary.parties.exists(_.isEmpty), bankAccountSummary.accountOwnerName.isEmpty, isAVariationsBank) match {
+      case (true, true, _) =>
         JourneyLogger.warn("No parties list or account owner name present")
         val emptyListAudit = NameMatchingAudit(
           NameMatchOutcome(isSuccessful = false, "no names returned from bank"),
@@ -96,7 +98,24 @@ class VerifyingYourBankAccountController @Inject() (
         auditService.auditNameMatching(emptyListAudit)
         false
 
-      case (true, false) =>
+      case (true, false, true) =>
+        JourneyLogger.info("No parties list, falling back to account owner name - bankId Variation route")
+        val accountName = bankAccountSummary.accountOwnerName.getOrElse(BankAccountOwnerName("fallback name error")).value
+        val nameMatchingList = NameParsingUtil.bankIdBasedAccountNameParsing(accountName)
+
+        val matchingResponseList: Seq[(NameMatchingResponse, NameMatchingAudit)] = nameMatchingList.map { accountName =>
+          NameMatchingService.fuzzyNameMatching(
+            individualResponse.firstForename,
+            individualResponse.secondForename,
+            individualResponse.surname,
+            accountName
+          )
+        }
+
+        matchingResponseList.foreach(nameAudit => auditService.auditNameMatching(nameAudit._2.copy(partiesArrayUsed = false)))
+        matchingResponseList.exists(_._1.isSuccess)
+
+      case (true, false, false) =>
         JourneyLogger.info("No parties list, falling back to account owner name")
         val accountName = bankAccountSummary.accountOwnerName.getOrElse(BankAccountOwnerName("fallback name error")).value
         val jointAccountNamesSplit = accountName.split(",").toSeq //For joint accounts, account owner names can be comma-delimited strings
@@ -113,7 +132,7 @@ class VerifyingYourBankAccountController @Inject() (
         matchingResponseList.foreach(nameAudit => auditService.auditNameMatching(nameAudit._2.copy(partiesArrayUsed = false)))
         matchingResponseList.exists(_._1.isSuccess)
 
-      case (false, _) =>
+      case (false, _, _) =>
         //There is a parties list to iterate through
         val matchingResponseList: Seq[(NameMatchingResponse, NameMatchingAudit)] =
           bankAccountSummary
