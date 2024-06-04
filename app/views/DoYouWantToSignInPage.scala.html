@@ -67,7 +67,10 @@
                 RadioItem(
                     content = Text(Messages.DoYouWantToSignInMessages.`Yes, sign in`.show),
                     value = Some("Yes"),
-                    checked = form.data.values.toList.contains("Yes")
+                    checked = form.data.values.toList.contains("Yes"),
+                    hint = Some(Hint(
+                        content = Text(Messages.DoYouWantToSignInMessages.`If your tax calculation letter...`.show)
+                    ))
                 ),
                 RadioItem(
                     content = Text(Messages.DoYouWantToSignInMessages.`No, continue without signing in`.show),

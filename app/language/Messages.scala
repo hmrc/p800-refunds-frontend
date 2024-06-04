@@ -117,6 +117,11 @@ object Messages {
       welsh   = "Iawn, mewngofnodi"
     )
 
+    val `If your tax calculation letter...`: Message = Message(
+      english = "If your tax calculation letter (P800) is dated before 3 June 2024, you must sign in to get your refund.",
+      welsh   = "Os yw’ch llythyr cyfrifiad treth (P800) wedi’i ddyddio cyn 3 Mehefin 2024, mae’n rhaid i chi fewngofnodi i gael eich ad-daliad."
+    )
+
     val `No, continue without signing in`: Message = Message(
       english = "No, continue without signing in",
       welsh   = "Na, ewch yn eich blaen heb fewngofnodi"
