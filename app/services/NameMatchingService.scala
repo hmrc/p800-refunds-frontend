@@ -36,17 +36,18 @@ object NameMatchingService {
 
     val npsSurname = npsOptSurname.getOrElse("")
     val sanitisedNpsName = sanitiseFullName(s"${npsOptFirstName.getOrElse("")} ${npsOptSecondName.getOrElse("")} $npsSurname")
+    val sanitisedNpsSurname = sanitiseFullName(npsSurname)
     val sanitisedEcospendName = sanitiseFullName(ecospendName)
 
     val npsNamesList = sanitisedNpsName.split(' ').toSeq
     val ecoNamesList = sanitisedEcospendName.split(' ').toSeq
-    val (npsListWithoutSurname, npsSurnameFromSeq) = npsNamesList.splitAt(npsNamesList.length - 1)
+    val (npsListWithoutSurname, _) = npsNamesList.splitAt(npsNamesList.length - 1)
     val (ecoListWithoutSurname, ecoSurname) = splitEcospendSurname(npsSurname, ecoNamesList)
 
     val fullEcospendName = s"${ecoListWithoutSurname.mkString(" ")} $ecoSurname"
 
     val doSanitisedNamesMatch = sanitisedNpsName === fullEcospendName
-    val doSurnamesMatch = npsSurnameFromSeq.mkString === ecoSurname
+    val doSurnamesMatch = sanitisedNpsSurname === ecoSurname && sanitisedNpsSurname.nonEmpty && ecoSurname.nonEmpty
 
     (doSanitisedNamesMatch, doSurnamesMatch) match {
       case (true, _) => (
@@ -81,7 +82,7 @@ object NameMatchingService {
               NameMatchOutcome(isSuccessful = true, FirstAndMiddleNameSuccessfulNameMatch.auditString),
               RawNpsName(npsOptFirstName, npsOptSecondName, npsOptSurname),
               Some(ecospendName),
-              Some(s"${comparisonResult.npsNameWithInitials} ${npsSurnameFromSeq.mkString}"),
+              Some(s"${comparisonResult.npsNameWithInitials} $sanitisedNpsSurname"),
               Some(s"${comparisonResult.ecospendNameWithInitials} $ecoSurname")
             )
           )
@@ -93,7 +94,7 @@ object NameMatchingService {
               NameMatchOutcome(isSuccessful = isSuccessful, matchingResponse.auditString),
               RawNpsName(npsOptFirstName, npsOptSecondName, npsOptSurname),
               Some(ecospendName),
-              Some(s"${comparisonResult.npsNameWithInitials} ${npsSurnameFromSeq.mkString}"),
+              Some(s"${comparisonResult.npsNameWithInitials} $sanitisedNpsSurname"),
               Some(s"${comparisonResult.ecospendNameWithInitials} $ecoSurname"),
               Some(levenshteinDistance)
             )
@@ -106,7 +107,7 @@ object NameMatchingService {
               NameMatchOutcome(isSuccessful = false, FailedFirstAndMiddleNameMatch.auditString),
               RawNpsName(npsOptFirstName, npsOptSecondName, npsOptSurname),
               Some(ecospendName),
-              Some(s"${comparisonResult.npsNameWithInitials} ${npsSurnameFromSeq.mkString}"),
+              Some(s"${comparisonResult.npsNameWithInitials} $sanitisedNpsSurname"),
               Some(s"${comparisonResult.ecospendNameWithInitials} $ecoSurname")
             )
           )

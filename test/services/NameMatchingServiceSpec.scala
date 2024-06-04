@@ -53,6 +53,8 @@ class NameMatchingServiceSpec extends UnitSpec with TdRequest {
     ("Paul"         , "James"       , "Rubens Smith"  , "Paul James Rubens-Smith"   , BasicSuccessfulNameMatch), //Spaces vs Hyphens in the surname (swapped for ecospend)
     ("Paul"         , "James"       , "Odd-Hyphen"    , "Paul James Odd‒‑—–-Hyphen" , BasicSuccessfulNameMatch), //Using different hyphen types
     ("Paul Janes"   , ""            , "Rubens Smith"  , "Paul-Janes Rubens-Smith"   , BasicSuccessfulNameMatch), //Hyphens in first names and last names
+    ("Paul"         , "J"           , "Rubens-Smith"  , "P J Rubens Smith"          , FirstAndMiddleNameSuccessfulNameMatch), //Spaces vs Hyphens in the surname - not a full name match
+    ("P"            , "J"           , "Rubens Smith"  , "Paul J Rubens-Smith"       , FirstAndMiddleNameSuccessfulNameMatch), //Spaces vs Hyphens in the surname (swapped for ecospend) - not a full name match
     ("P"            , ""            , "Rubens"        , "Paul James Rubens"         , FirstAndMiddleNameSuccessfulNameMatch), //Initials check for the first name and no middle name
     ("P"            , "J"           , "Rubens"        , "Paul James Rubens"         , FirstAndMiddleNameSuccessfulNameMatch), //Initials check for the first and middle name
     ("P"            , "J."          , "Rubens"        , "Paul James Rubens"         , FirstAndMiddleNameSuccessfulNameMatch), //Initials with a fullstop
