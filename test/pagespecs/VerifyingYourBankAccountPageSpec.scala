@@ -16,7 +16,7 @@
 
 package pagespecs
 
-import edh.GetBankDetailsRiskResultResponse
+import edh._
 import models.ecospend.consent.ConsentStatus
 import models.p800externalapi.EventValue
 import play.api.libs.json.{JsObject, Json}
@@ -923,55 +923,105 @@ class VerifyingYourBankAccountPageSpec extends ItSpec {
     MakeBacsRepaymentStub.verifyNone(tdAll.nino)
     AuditConnectorStub.verifyNoAuditEvent(AuditConnectorStub.bankClaimAttemptMadeAuditType)
   }
-}
 
-class VerifyingYourBankAccountFeatureFlagOffPageSpec extends ItSpec {
+  "Show Refund Request not Submitted when BankAccountSummaryResponse 'account_identification' is None" in {
+    val responseBody =
+      //language=JSON
+      s"""[{
+          "id" : "${tdAll.consentId.value}",
+          "type" : "Personal",
+          "sub_type" : "CurrentAccount",
+          "currency" : "GBP",
+          "account_format" : "SortCode",
+          "balance" : 123.7,
+          "last_update_time" : "2059-11-25T16:33:51.88"
+        }]""".stripMargin
 
-  override lazy val configMap: Map[String, Any] = super.configMap ++ Map("feature-flags.isCaseManagementApiEnabled" -> false)
-
-  override def beforeEach(): Unit = {
-    super.beforeEach()
-    addJourneyIdToSession(tdAll.journeyId)
-    upsertJourneyToDatabase(tdAll.BankTransfer.journeyBankAccountConsentSuccessfulNameMatch)
-  }
-
-  "Should not make the 'Notify case management' call when the feature flag is off" in {
     EcospendStub.AuthStubs.stubEcospendAuth2xxSucceeded
-    EcospendStub.AccountStub.stubAccountSummary2xxSucceeded(tdAll.consentId)
-    P800RefundsExternalApiStub.isValid(tdAll.consentId, EventValue.Valid)
-    DateCalculatorStub.addWorkingDays()
-
-    val doNotPay: GetBankDetailsRiskResultResponse = tdAll.getBankDetailsRiskResultResponseDoNotPay
-    EdhStub.getBankDetailsRiskResult(tdAll.getBankDetailsRiskResultRequest, doNotPay)
-    CaseManagementStub.notifyCaseManagement2xx(tdAll.clientUId, tdAll.caseManagementRequest)
-    NpsSuspendOverpaymentStub.suspendOverpayment(tdAll.nino, tdAll.suspendOverpaymentRequest)
+    EcospendStub.AccountStub.stubAccountSummaryWithJson2xxSucceeded(tdAll.consentId, responseBody)
 
     pages.verifyingBankAccountPage.open()
-    pages.requestReceivedBankTransferPage.assertPageIsDisplayedForBankTransfer()
+    pages.refundRequestNotSubmittedPage.assertPageIsDisplayed()
 
-    EdhStub.verifyGetBankDetailsRiskResult(tdAll.claimId, tdAll.correlationId)
-    CaseManagementStub.verifyNotifyCaseManagement(tdAll.clientUId, tdAll.correlationId, 0) //Checking case management isn't called
-    NpsSuspendOverpaymentStub.verify(tdAll.nino, tdAll.correlationId)
+    P800RefundsExternalApiStub.verifyNoneIsValid(tdAll.consentId)
+    MakeBacsRepaymentStub.verifyNone(tdAll.nino)
+    AuditConnectorStub.verifyNoAuditEvent(AuditConnectorStub.bankClaimAttemptMadeAuditType)
+  }
+
+  "Show Refund Request Not Submitted Page when BankAccountSummaryResponse 'display_name' is None" in {
+    val responseBody =
+      //language=JSON
+      s"""[{
+          "id" : "${tdAll.consentId.value}",
+          "bank_id" : "obie-barclays-personal",
+          "type" : "Personal",
+          "sub_type" : "CurrentAccount",
+          "currency" : "GBP",
+          "account_format" : "SortCode",
+          "account_identification" : "44556610002333",
+          "calculated_owner_name" : "Mr Greg Greggson",
+          "account_owner_name" : "Greggson Gregory ",
+          "balance" : 123.7,
+          "last_update_time" : "2059-11-25T16:33:51.88",
+          "parties" : []
+        }]""".stripMargin
+
+    EcospendStub.AuthStubs.stubEcospendAuth2xxSucceeded
+    EcospendStub.AccountStub.stubAccountSummaryWithJson2xxSucceeded(tdAll.consentId, responseBody)
+    P800RefundsExternalApiStub.isValid(tdAll.consentId, EventValue.Valid)
+    MakeBacsRepaymentStub.`makeBacsRepayment 200 OK`(
+      nino     = tdAll.nino,
+      request  = tdAll.claimOverpaymentRequest,
+      response = tdAll.claimOverpaymentResponse
+    )
+    val edhRiskRequest: GetBankDetailsRiskResultRequest = tdAll.getBankDetailsRiskResultRequest.copy(
+      riskData = List(RiskDataObject(
+        personType  = PersonType.Customer,
+        person      = Some(Person(
+          //TODO: according to the analysis all those fields come from the CitisenDetails API, which we don't call
+          surname                 = Some(Surname(tdAll.surnameGreg)),
+          firstForenameOrInitial  = Some(FirstForenameOrInitial(tdAll.firstNameGreg)),
+          secondForenameOrInitial = Some(SecondForenameOrInitial(tdAll.secondForenameGreggson)),
+          nino                    = tdAll.nino,
+          dateOfBirth             = DateOfBirth(tdAll.`dateOfBirthFormatted YYYY-MM-DD`),
+          title                   = Some(Title(tdAll.title)),
+          address                 = None
+        )),
+        bankDetails = Some(BankDetails(
+          bankAccountNumber     = Some(BankAccountNumber(tdAll.bankAccountNumber)),
+          bankSortCode          = Some(BankSortCode(tdAll.sortCode)),
+          bankAccountName       = None,
+          buildingSocietyRef    = None,
+          designatedAccountFlag = None,
+          currency              = None
+        ))
+      ))
+    )
+    EdhStub.getBankDetailsRiskResult(edhRiskRequest, tdAll.getBankDetailsRiskResultResponse)
+
+    pages.verifyingBankAccountPage.open()
+    pages.refundRequestNotSubmittedPage.assertPageIsDisplayed()
+
     P800RefundsExternalApiStub.verifyIsValid(tdAll.consentId)
     MakeBacsRepaymentStub.verifyNone(tdAll.nino)
     AuditConnectorStub.verifyEventAudited(
       AuditConnectorStub.bankClaimAttemptMadeAuditType,
       Json.parse(
-        //format=JSON
         """
         {
           "outcome": {
             "isSuccessful": false,
             "actionsOutcome": {
               "ecospendFraudCheckIsSuccessful": true,
-              "fuzzyNameMatchingIsSuccessful": true,
-              "hmrcFraudCheckIsSuccessful": false
+              "fuzzyNameMatchingIsSuccessful": false,
+              "hmrcFraudCheckIsSuccessful": true
             },
             "failureReasons": [
-              "EDH indicated DoNotPay"
+              "Ecospend names failed matching against NPS name"
             ]
           },
           "userEnteredDetails": {
+            "repaymentMethod": "bank",
             "chosenBank": "Barclays Personal",
             "p800Reference": 12345678,
             "nino": "LM001014C",
@@ -1004,57 +1054,7 @@ class VerifyingYourBankAccountFeatureFlagOffPageSpec extends ItSpec {
     )
   }
 
-  "Show Refund Request not Submitted when BankAccountSummaryResponse 'account_identification' is None" in {
-    val responseBody =
-      //language=JSON
-      s"""[{
-          "id" : "${tdAll.consentId.value}",
-          "type" : "Personal",
-          "sub_type" : "CurrentAccount",
-          "currency" : "GBP",
-          "account_format" : "SortCode",
-          "balance" : 123.7,
-          "last_update_time" : "2059-11-25T16:33:51.88"
-        }]""".stripMargin
-
-    EcospendStub.AuthStubs.stubEcospendAuth2xxSucceeded
-    EcospendStub.AccountStub.stubAccountSummaryWithJson2xxSucceeded(tdAll.consentId, responseBody)
-
-    pages.verifyingBankAccountPage.open()
-    pages.refundRequestNotSubmittedPage.assertPageIsDisplayed()
-
-    P800RefundsExternalApiStub.verifyNoneIsValid(tdAll.consentId)
-    MakeBacsRepaymentStub.verifyNone(tdAll.nino)
-    AuditConnectorStub.verifyNoAuditEvent(AuditConnectorStub.bankClaimAttemptMadeAuditType)
-  }
-
-  "Show technical difficulties when BankAccountSummaryResponse 'display_name' is None" in {
-    val responseBody =
-      //language=JSON
-      s"""[{
-          "id" : "${tdAll.consentId.value}",
-          "type" : "Personal",
-          "sub_type" : "CurrentAccount",
-          "currency" : "GBP",
-          "account_format" : "SortCode",
-          "account_identification" : "44556610002333",
-          "balance" : 123.7,
-          "last_update_time" : "2059-11-25T16:33:51.88"
-        }]""".stripMargin
-
-    EcospendStub.AuthStubs.stubEcospendAuth2xxSucceeded
-    EcospendStub.AccountStub.stubAccountSummaryWithJson2xxSucceeded(tdAll.consentId, responseBody)
-    P800RefundsExternalApiStub.isValid(tdAll.consentId, EventValue.Valid)
-
-    pages.verifyingBankAccountPage.open()
-    pages.verifyingBankAccountPage.assertPageIsDisplayedWithTechnicalDifficultiesError()
-
-    P800RefundsExternalApiStub.verifyIsValid(tdAll.consentId)
-    MakeBacsRepaymentStub.verifyNone(tdAll.nino)
-    AuditConnectorStub.verifyNoAuditEvent(AuditConnectorStub.bankClaimAttemptMadeAuditType)
-  }
-
-  "Fail fuzzy name matching when BankAccountSummaryResponse 'parties' is None" in {
+  "Fail fuzzy name matching when BankAccountSummaryResponse 'parties' AND 'account_owner_name' is None" in {
     val responseBody =
       //language=JSON
       s"""[{
@@ -1072,9 +1072,7 @@ class VerifyingYourBankAccountFeatureFlagOffPageSpec extends ItSpec {
     EcospendStub.AuthStubs.stubEcospendAuth2xxSucceeded
     EcospendStub.AccountStub.stubAccountSummaryWithJson2xxSucceeded(tdAll.consentId, responseBody)
     P800RefundsExternalApiStub.isValid(tdAll.consentId, EventValue.Valid)
-
-    val pay: GetBankDetailsRiskResultResponse = tdAll.getBankDetailsRiskResultResponse
-    EdhStub.getBankDetailsRiskResult(tdAll.getBankDetailsRiskResultRequest, pay)
+    EdhStub.getBankDetailsRiskResult(tdAll.getBankDetailsRiskResultRequest, tdAll.getBankDetailsRiskResultResponse)
 
     pages.verifyingBankAccountPage.open()
     pages.refundRequestNotSubmittedPage.assertPageIsDisplayed()
@@ -1132,7 +1130,42 @@ class VerifyingYourBankAccountFeatureFlagOffPageSpec extends ItSpec {
     )
   }
 
-  "Show technical difficulties when BankAccountSummaryResponse 'parties.full_legal_name' is None" in {
+  "Fall back to account_owner_name when BankAccountSummaryResponse 'parties' is None" in {
+    val responseBody =
+      //language=JSON
+      s"""[{
+          "id" : "${tdAll.consentId.value}",
+          "bank_id" : "obie-barclays-personal",
+          "type" : "Personal",
+          "sub_type" : "CurrentAccount",
+          "currency" : "GBP",
+          "account_format" : "SortCode",
+          "account_identification" : "44556610002333",
+          "calculated_owner_name" : "Mr Greg Greggson",
+          "account_owner_name" : "Margaretta Greggson,Greg Greggory Greggson",
+          "display_name" : "bank account display name",
+          "balance" : 123.7,
+          "last_update_time" : "2059-11-25T16:33:51.88"
+        }]""".stripMargin
+
+    EcospendStub.AuthStubs.stubEcospendAuth2xxSucceeded
+    EcospendStub.AccountStub.stubAccountSummaryWithJson2xxSucceeded(tdAll.consentId, responseBody)
+    P800RefundsExternalApiStub.isValid(tdAll.consentId, EventValue.NotReceived)
+    MakeBacsRepaymentStub.`makeBacsRepayment 200 OK`(
+      nino     = tdAll.nino,
+      request  = tdAll.claimOverpaymentRequest,
+      response = tdAll.claimOverpaymentResponse
+    )
+    EdhStub.getBankDetailsRiskResult(tdAll.getBankDetailsRiskResultRequest, tdAll.getBankDetailsRiskResultResponse)
+    pages.verifyingBankAccountPage.open()
+    pages.verifyingBankAccountPage.assertPageIsDisplayed()
+    EdhStub.verifyGetBankDetailsRiskResult(tdAll.claimId, tdAll.correlationId)
+    P800RefundsExternalApiStub.verifyIsValid(tdAll.consentId)
+    MakeBacsRepaymentStub.verifyNone(tdAll.nino)
+    AuditConnectorStub.verifyNoAuditEvent(AuditConnectorStub.bankClaimAttemptMadeAuditType)
+  }
+
+  "Fall back to 'account_owner_name' when BankAccountSummaryResponse 'parties.full_legal_name' is None" in {
     val responseBody =
       //language=JSON
       s"""[{
@@ -1143,6 +1176,7 @@ class VerifyingYourBankAccountFeatureFlagOffPageSpec extends ItSpec {
           "account_format" : "SortCode",
           "account_identification" : "44556610002333",
           "display_name" : "bank account display name",
+          "account_owner_name" : "Margaretta Greggson,Greg Greggory Greggson",
           "balance" : 123.7,
           "last_update_time" : "2059-11-25T16:33:51.88",
           "parties" : [{
@@ -1153,17 +1187,156 @@ class VerifyingYourBankAccountFeatureFlagOffPageSpec extends ItSpec {
     EcospendStub.AuthStubs.stubEcospendAuth2xxSucceeded
     EcospendStub.AccountStub.stubAccountSummaryWithJson2xxSucceeded(tdAll.consentId, responseBody)
     P800RefundsExternalApiStub.isValid(tdAll.consentId, EventValue.Valid)
-
-    val pay: GetBankDetailsRiskResultResponse = tdAll.getBankDetailsRiskResultResponse
-    EdhStub.getBankDetailsRiskResult(tdAll.getBankDetailsRiskResultRequest, pay)
+    DateCalculatorStub.addWorkingDays()
+    MakeBacsRepaymentStub.`makeBacsRepayment 200 OK`(
+      nino     = tdAll.nino,
+      request  = tdAll.claimOverpaymentRequest,
+      response = tdAll.claimOverpaymentResponse
+    )
+    EdhStub.getBankDetailsRiskResult(tdAll.getBankDetailsRiskResultRequest, tdAll.getBankDetailsRiskResultResponse)
 
     pages.verifyingBankAccountPage.open()
-    pages.verifyingBankAccountPage.assertPageIsDisplayedWithTechnicalDifficultiesError()
+    pages.requestReceivedBankTransferPage.assertPageIsDisplayedForBankTransfer()
 
     EdhStub.verifyGetBankDetailsRiskResult(tdAll.claimId, tdAll.correlationId)
     P800RefundsExternalApiStub.verifyIsValid(tdAll.consentId)
-    MakeBacsRepaymentStub.verifyNone(tdAll.nino)
-    AuditConnectorStub.verifyNoAuditEvent(AuditConnectorStub.bankClaimAttemptMadeAuditType)
+    MakeBacsRepaymentStub.verify(tdAll.nino, tdAll.correlationId)
+    AuditConnectorStub.verifyEventAudited(
+      AuditConnectorStub.bankClaimAttemptMadeAuditType,
+      Json.parse(
+        //format=JSON
+        """
+        {
+          "outcome": {
+            "isSuccessful": true,
+            "actionsOutcome": {
+              "ecospendFraudCheckIsSuccessful": true,
+              "fuzzyNameMatchingIsSuccessful": true,
+              "hmrcFraudCheckIsSuccessful": true,
+              "claimOverpaymentIsSuccessful": true
+            }
+          },
+          "userEnteredDetails": {
+            "chosenBank": "Barclays Personal",
+            "p800Reference": 12345678,
+            "nino": "LM001014C",
+            "dob": "2000-01-01"
+          },
+          "repaymentAmount": 12.34,
+          "repaymentInformation": {
+            "reconciliationIdentifier": 123,
+            "paymentNumber": 12345678,
+            "payeNumber": "PayeNumber-123",
+            "taxDistrictNumber": 717,
+            "associatedPayableNumber": 1234,
+            "customerAccountNumber": "customerAccountNumber-1234",
+            "currentOptimisticLock": 15
+          },
+          "name": {
+            "title": "Sir",
+            "firstForename": "Greg",
+            "secondForename": "Greggory",
+            "surname": "Greggson"
+          },
+          "address": {
+            "addressLine1": "Flat 1 Rose House",
+            "addressLine2": "Worthing",
+            "addressPostcode": "BN12 4XL"
+          }
+        }
+        """.stripMargin
+      ).as[JsObject]
+    )
+  }
+
+  "Fall back to 'account_owner_name' when BankAccountSummaryResponse one 'parties.full_legal_name' is None" in {
+    val responseBody =
+      //language=JSON
+      s"""[{
+          "id" : "${tdAll.consentId.value}",
+          "type" : "Personal",
+          "sub_type" : "CurrentAccount",
+          "currency" : "GBP",
+          "account_format" : "SortCode",
+          "account_identification" : "44556610002333",
+          "display_name" : "bank account display name",
+          "account_owner_name" : "Margaretta Greggson,Greg Greggory Greggson",
+          "balance" : 123.7,
+          "last_update_time" : "2059-11-25T16:33:51.88",
+          "parties" : [
+            {
+              "name" : "Greg Greggson"
+            },
+            {
+              "name" : "Margaret Greggson",
+              "full_legal_name" : "Margaretta Greggson"
+            }
+          ]
+        }]""".stripMargin
+
+    EcospendStub.AuthStubs.stubEcospendAuth2xxSucceeded
+    EcospendStub.AccountStub.stubAccountSummaryWithJson2xxSucceeded(tdAll.consentId, responseBody)
+    P800RefundsExternalApiStub.isValid(tdAll.consentId, EventValue.Valid)
+    DateCalculatorStub.addWorkingDays()
+    MakeBacsRepaymentStub.`makeBacsRepayment 200 OK`(
+      nino     = tdAll.nino,
+      request  = tdAll.claimOverpaymentRequest,
+      response = tdAll.claimOverpaymentResponse
+    )
+    EdhStub.getBankDetailsRiskResult(tdAll.getBankDetailsRiskResultRequest, tdAll.getBankDetailsRiskResultResponse)
+
+    pages.verifyingBankAccountPage.open()
+    pages.requestReceivedBankTransferPage.assertPageIsDisplayedForBankTransfer()
+
+    EdhStub.verifyGetBankDetailsRiskResult(tdAll.claimId, tdAll.correlationId)
+    P800RefundsExternalApiStub.verifyIsValid(tdAll.consentId)
+    MakeBacsRepaymentStub.verify(tdAll.nino, tdAll.correlationId)
+    AuditConnectorStub.verifyEventAudited(
+      AuditConnectorStub.bankClaimAttemptMadeAuditType,
+      Json.parse(
+        //format=JSON
+        """
+        {
+          "outcome": {
+            "isSuccessful": true,
+            "actionsOutcome": {
+              "ecospendFraudCheckIsSuccessful": true,
+              "fuzzyNameMatchingIsSuccessful": true,
+              "hmrcFraudCheckIsSuccessful": true,
+              "claimOverpaymentIsSuccessful": true
+            }
+          },
+          "userEnteredDetails": {
+            "chosenBank": "Barclays Personal",
+            "p800Reference": 12345678,
+            "nino": "LM001014C",
+            "dob": "2000-01-01"
+          },
+          "repaymentAmount": 12.34,
+          "repaymentInformation": {
+            "reconciliationIdentifier": 123,
+            "paymentNumber": 12345678,
+            "payeNumber": "PayeNumber-123",
+            "taxDistrictNumber": 717,
+            "associatedPayableNumber": 1234,
+            "customerAccountNumber": "customerAccountNumber-1234",
+            "currentOptimisticLock": 15
+          },
+          "name": {
+            "title": "Sir",
+            "firstForename": "Greg",
+            "secondForename": "Greggory",
+            "surname": "Greggson"
+          },
+          "address": {
+            "addressLine1": "Flat 1 Rose House",
+            "addressLine2": "Worthing",
+            "addressPostcode": "BN12 4XL"
+          }
+        }
+        """.stripMargin
+      ).as[JsObject]
+    )
   }
 
   "Redirect to bank transfer 'Request received' page when unused optional BankAccountSummaryResponse field are None" in {
@@ -1255,6 +1428,85 @@ class VerifyingYourBankAccountFeatureFlagOffPageSpec extends ItSpec {
       ).as[JsObject]
     )
   }
+}
 
+class VerifyingYourBankAccountFeatureFlagOffPageSpec extends ItSpec {
+
+  override lazy val configMap: Map[String, Any] = super.configMap ++ Map("feature-flags.isCaseManagementApiEnabled" -> false)
+
+  override def beforeEach(): Unit = {
+    super.beforeEach()
+    addJourneyIdToSession(tdAll.journeyId)
+    upsertJourneyToDatabase(tdAll.BankTransfer.journeyBankAccountConsentSuccessfulNameMatch)
+  }
+
+  "Should not make the 'Notify case management' call when the feature flag is off" in {
+    EcospendStub.AuthStubs.stubEcospendAuth2xxSucceeded
+    EcospendStub.AccountStub.stubAccountSummary2xxSucceeded(tdAll.consentId)
+    P800RefundsExternalApiStub.isValid(tdAll.consentId, EventValue.Valid)
+    DateCalculatorStub.addWorkingDays()
+
+    val doNotPay: GetBankDetailsRiskResultResponse = tdAll.getBankDetailsRiskResultResponseDoNotPay
+    EdhStub.getBankDetailsRiskResult(tdAll.getBankDetailsRiskResultRequest, doNotPay)
+    CaseManagementStub.notifyCaseManagement2xx(tdAll.clientUId, tdAll.caseManagementRequest)
+    NpsSuspendOverpaymentStub.suspendOverpayment(tdAll.nino, tdAll.suspendOverpaymentRequest)
+
+    pages.verifyingBankAccountPage.open()
+    pages.requestReceivedBankTransferPage.assertPageIsDisplayedForBankTransfer()
+
+    EdhStub.verifyGetBankDetailsRiskResult(tdAll.claimId, tdAll.correlationId)
+    CaseManagementStub.verifyNotifyCaseManagement(tdAll.clientUId, tdAll.correlationId, 0) //Checking case management isn't called
+    NpsSuspendOverpaymentStub.verify(tdAll.nino, tdAll.correlationId)
+    P800RefundsExternalApiStub.verifyIsValid(tdAll.consentId)
+    MakeBacsRepaymentStub.verifyNone(tdAll.nino)
+    AuditConnectorStub.verifyEventAudited(
+      AuditConnectorStub.bankClaimAttemptMadeAuditType,
+      Json.parse(
+        //format=JSON
+        """
+        {
+          "outcome": {
+            "isSuccessful": false,
+            "actionsOutcome": {
+              "ecospendFraudCheckIsSuccessful": true,
+              "fuzzyNameMatchingIsSuccessful": true,
+              "hmrcFraudCheckIsSuccessful": false
+            },
+            "failureReasons": [
+              "EDH indicated DoNotPay"
+            ]
+          },
+          "userEnteredDetails": {
+            "chosenBank": "Barclays Personal",
+            "p800Reference": 12345678,
+            "nino": "LM001014C",
+            "dob": "2000-01-01"
+          },
+          "repaymentAmount": 12.34,
+          "repaymentInformation": {
+            "reconciliationIdentifier": 123,
+            "paymentNumber": 12345678,
+            "payeNumber": "PayeNumber-123",
+            "taxDistrictNumber": 717,
+            "associatedPayableNumber": 1234,
+            "customerAccountNumber": "customerAccountNumber-1234",
+            "currentOptimisticLock": 15
+          },
+          "name": {
+            "title": "Sir",
+            "firstForename": "Greg",
+            "secondForename": "Greggory",
+            "surname": "Greggson"
+          },
+          "address": {
+            "addressLine1": "Flat 1 Rose House",
+            "addressLine2": "Worthing",
+            "addressPostcode": "BN12 4XL"
+          }
+        }
+        """.stripMargin
+      ).as[JsObject]
+    )
+  }
 }
 
