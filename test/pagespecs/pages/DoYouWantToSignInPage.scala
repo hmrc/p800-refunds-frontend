@@ -35,6 +35,7 @@ class DoYouWantToSignInPage(baseUrl: String)(implicit webDriver: WebDriver) exte
           |Do you want to sign in?
           |You’ll have fewer details to enter if you sign in using your Government Gateway user ID.
           |Yes, sign in
+          |If your tax calculation letter (P800) is dated before 3 June 2024, you must sign in to get your refund.
           |No, continue without signing in
           |Continue
           |""".stripMargin
@@ -60,6 +61,7 @@ class DoYouWantToSignInPage(baseUrl: String)(implicit webDriver: WebDriver) exte
           |Do you want to sign in?
           |You’ll have fewer details to enter if you sign in using your Government Gateway user ID.
           |Yes, sign in
+          |If your tax calculation letter (P800) is dated before 3 June 2024, you must sign in to get your refund.
           |No, continue without signing in
           |Continue
           |""".stripMargin
@@ -82,6 +84,7 @@ class DoYouWantToSignInPage(baseUrl: String)(implicit webDriver: WebDriver) exte
           |A ydych am fewngofnodi?
           |Bydd gennych lai o fanylion i’w nodi os byddwch yn mewngofnodi gan ddefnyddio eich Dynodydd Defnyddiwr (ID) ar gyfer Porth y Llywodraeth.
           |Iawn, mewngofnodi
+          |Os yw’ch llythyr cyfrifiad treth (P800) wedi’i ddyddio cyn 3 Mehefin 2024, mae’n rhaid i chi fewngofnodi i gael eich ad-daliad.
           |Na, ewch yn eich blaen heb fewngofnodi
           |Yn eich blaen
           |""".stripMargin
@@ -107,6 +110,7 @@ class DoYouWantToSignInPage(baseUrl: String)(implicit webDriver: WebDriver) exte
           |Dewiswch ‘Iawn’ os hoffech fewngofnodi i’ch cyfrif treth
           |Bydd gennych lai o fanylion i’w nodi os byddwch yn mewngofnodi gan ddefnyddio eich Dynodydd Defnyddiwr (ID) ar gyfer Porth y Llywodraeth.
           |Iawn, mewngofnodi
+          |Os yw’ch llythyr cyfrifiad treth (P800) wedi’i ddyddio cyn 3 Mehefin 2024, mae’n rhaid i chi fewngofnodi i gael eich ad-daliad.
           |Na, ewch yn eich blaen heb fewngofnodi
           |Yn eich blaen
           |""".stripMargin
