@@ -352,6 +352,43 @@ class VerifyingYourBankAccountPageSpec extends ItSpec {
     AuditConnectorStub.verifyNoAuditEvent(AuditConnectorStub.bankClaimAttemptMadeAuditType)
   }
 
+  "/verify-bank-account renders the 'We are verifying your bank account' page when going through the bankIdBasedAccountNameParsing fallback joint account name" in {
+
+    val responseBody =
+      //language=JSON
+      s"""[{
+          "id" : "${tdAll.consentId.value}",
+          "bank_id" : "obie-natwest-production",
+          "type" : "Personal",
+          "sub_type" : "CurrentAccount",
+          "currency" : "GBP",
+          "account_format" : "SortCode",
+          "account_identification" : "44556610002333",
+          "calculated_owner_name" : "Mr Greg Greggson",
+          "account_owner_name" : "Greggson M & G",
+          "display_name" : "bank account display name",
+          "balance" : 123.7,
+          "last_update_time" : "2059-11-25T16:33:51.88",
+          "parties" : []
+        }]""".stripMargin
+
+    EcospendStub.AuthStubs.stubEcospendAuth2xxSucceeded
+    EcospendStub.AccountStub.stubAccountSummaryWithJson2xxSucceeded(tdAll.consentId, responseBody)
+    P800RefundsExternalApiStub.isValid(tdAll.consentId, EventValue.NotReceived)
+    MakeBacsRepaymentStub.`makeBacsRepayment 200 OK`(
+      nino     = tdAll.nino,
+      request  = tdAll.claimOverpaymentRequest,
+      response = tdAll.claimOverpaymentResponse
+    )
+    EdhStub.getBankDetailsRiskResult(tdAll.getBankDetailsRiskResultRequest, tdAll.getBankDetailsRiskResultResponse)
+    pages.verifyingBankAccountPage.open()
+    pages.verifyingBankAccountPage.assertPageIsDisplayed()
+    EdhStub.verifyGetBankDetailsRiskResult(tdAll.claimId, tdAll.correlationId)
+    P800RefundsExternalApiStub.verifyIsValid(tdAll.consentId)
+    MakeBacsRepaymentStub.verifyNone(tdAll.nino)
+    AuditConnectorStub.verifyNoAuditEvent(AuditConnectorStub.bankClaimAttemptMadeAuditType)
+  }
+
   "clicking 'refresh this page' refreshes the page - showing the same page if bank is not verified yet" in {
     EcospendStub.AuthStubs.stubEcospendAuth2xxSucceeded
     EcospendStub.AccountStub.stubAccountSummary2xxSucceeded(tdAll.consentId)
