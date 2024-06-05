@@ -132,7 +132,7 @@ class CheckYourAnswersController @Inject() (
       val sanitiseRef: P800Reference = r.journey.getP800Reference.sanitiseReference
 
       if (!sanitiseRef.withinNpsBounds) {
-        JourneyLogger.info("P800 reference entered that's out of bounds for NPS and would therefore always fail, failing fast instead.")
+        JourneyLogger.info(s"P800 reference entered that's out of bounds for NPS and would therefore always fail, failing fast instead. P800 Reference attempted: [ ${r.journey.getP800Reference.value} ]")
         Future.successful(Right(new JourneyRequest[A](
           journey = r.journey.update(referenceCheckResult = ValidateReferenceResult.ReferenceDidntMatchNino),
           request = r.request
