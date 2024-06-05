@@ -21,7 +21,7 @@ import connectors.P800RefundsBackendConnector
 import language.Messages
 import models.dateofbirth.DateOfBirth
 import models.journeymodels._
-import models.{Nino, UserEnteredP800Reference}
+import models.{Nino, P800Reference, UserEnteredP800Reference}
 import nps.models.{TraceIndividualRequest, TracedIndividual, ValidateReferenceResult}
 import play.api.mvc._
 import requests.RequestSupport
@@ -129,11 +129,21 @@ class CheckYourAnswersController @Inject() (
   private val validateP800Reference: ActionRefiner[JourneyRequest, JourneyRequest] = new ActionRefiner[JourneyRequest, JourneyRequest] {
     override protected def refine[A](request: JourneyRequest[A]): Future[Either[Result, JourneyRequest[A]]] = {
       implicit val r: JourneyRequest[A] = request
-      p800RefundsBackendConnector
-        .validateP800Reference(r.journey.getNino, r.journey.getP800Reference.sanitiseReference, r.journey.correlationId)
-        .map { referenceCheckResult: ValidateReferenceResult =>
-          Right(new JourneyRequest[A](journey = r.journey.update(referenceCheckResult), request = r.request))
-        }
+      val sanitiseRef: P800Reference = r.journey.getP800Reference.sanitiseReference
+
+      if (!sanitiseRef.withinNpsBounds) {
+        JourneyLogger.info(s"P800 reference entered that's out of bounds for NPS and would therefore always fail, failing fast instead. P800 Reference attempted: [ ${r.journey.getP800Reference.value} ]")
+        Future.successful(Right(new JourneyRequest[A](
+          journey = r.journey.update(referenceCheckResult = ValidateReferenceResult.ReferenceDidntMatchNino),
+          request = r.request
+        )))
+      } else {
+        p800RefundsBackendConnector
+          .validateP800Reference(r.journey.getNino, r.journey.getP800Reference.sanitiseReference, r.journey.correlationId)
+          .map { referenceCheckResult: ValidateReferenceResult =>
+            Right(new JourneyRequest[A](journey = r.journey.update(referenceCheckResult), request = r.request))
+          }
+      }
     }
 
     override protected def executionContext: ExecutionContext = ec
