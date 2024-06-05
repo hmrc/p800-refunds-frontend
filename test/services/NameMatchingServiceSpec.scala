@@ -65,6 +65,8 @@ class NameMatchingServiceSpec extends UnitSpec with TdRequest {
     ("Paul"         , "James"       , "Rubens"        , "Paul James John Rubens"    , FirstAndMiddleNameSuccessfulNameMatch), //Multiple middle names in Ecospendd but not NPS
     ("Paula"        , "James"       , "Rubens"        , "Paul James Rubens"         , LevenshteinSuccessfulNameMatch), //Levenshtein distance of one
     ("P"            , "J"           , "Turner"        , "Pauline Kate Turner"       , LevenshteinSuccessfulNameMatch), //Multiple initials, valid for Levenshtein
+    ("P"            , "A"           , "Rubens Smith"  , "Paul J Sammy Rubens-Smith" , LevenshteinSuccessfulNameMatch), //Extra middle name
+
   )
 
   val auditTestScenarios = Seq(

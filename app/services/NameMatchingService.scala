@@ -35,13 +35,13 @@ object NameMatchingService {
   )(implicit request: RequestHeader): (NameMatchingResponse, NameMatchingAudit) = {
 
     val npsSurname = npsOptSurname.getOrElse("")
-    val sanitisedNpsName = sanitiseFullName(s"${npsOptFirstName.getOrElse("")} ${npsOptSecondName.getOrElse("")} $npsSurname")
     val sanitisedNpsSurname = sanitiseFullName(npsSurname)
+    val sanitisedNpsName = sanitiseFullName(s"${npsOptFirstName.getOrElse("")} ${npsOptSecondName.getOrElse("")} $npsSurname")
     val sanitisedEcospendName = sanitiseFullName(ecospendName)
 
     val npsNamesList = sanitisedNpsName.split(' ').toSeq
     val ecoNamesList = sanitisedEcospendName.split(' ').toSeq
-    val (npsListWithoutSurname, _) = npsNamesList.splitAt(npsNamesList.length - 1)
+    val (npsListWithoutSurname, _) = npsNamesList.splitAt(npsNamesList.length - getSurnameLength(npsSurname))
     val (ecoListWithoutSurname, ecoSurname) = splitEcospendSurname(npsSurname, ecoNamesList)
 
     val fullEcospendName = s"${ecoListWithoutSurname.mkString(" ")} $ecoSurname"
@@ -146,13 +146,17 @@ object NameMatchingService {
     }
   }
 
-  def splitEcospendSurname(npsSurname: String, ecospendNamesList: Seq[String]): (Seq[String], String) = {
-    //By looking at the structure of the NPS surname, we can identify the structure of the Ecospend name to learn where the first/middle name ends and the surname begins.
-    //This is necessary for surnames split by spaces not hyphens.
-    val npsSurnameLength = processSpacesApostrophesAndHyphens(npsSurname)
+  private def getSurnameLength(surname: String) = {
+    processSpacesApostrophesAndHyphens(surname)
       .split(" ")
       .toSeq
       .length
+  }
+
+  def splitEcospendSurname(npsSurname: String, ecospendNamesList: Seq[String]): (Seq[String], String) = {
+    //By looking at the structure of the NPS surname, we can identify the structure of the Ecospend name to learn where the first/middle name ends and the surname begins.
+    //This is necessary for surnames split by spaces not hyphens.
+    val npsSurnameLength = getSurnameLength(npsSurname)
 
     val (firstMiddleList, surnameList) = ecospendNamesList.splitAt(ecospendNamesList.length - npsSurnameLength)
     val sanitisedSurname = processSpacesApostrophesAndHyphens(surnameList.mkString(" "))
