@@ -53,6 +53,8 @@ class NameMatchingServiceSpec extends UnitSpec with TdRequest {
     ("Paul"         , "James"       , "Rubens Smith"  , "Paul James Rubens-Smith"   , BasicSuccessfulNameMatch), //Spaces vs Hyphens in the surname (swapped for ecospend)
     ("Paul"         , "James"       , "Odd-Hyphen"    , "Paul James Odd‒‑—–-Hyphen" , BasicSuccessfulNameMatch), //Using different hyphen types
     ("Paul Janes"   , ""            , "Rubens Smith"  , "Paul-Janes Rubens-Smith"   , BasicSuccessfulNameMatch), //Hyphens in first names and last names
+    ("Paul"         , "J"           , "Rubens-Smith"  , "P J Rubens Smith"          , FirstAndMiddleNameSuccessfulNameMatch), //Spaces vs Hyphens in the surname - not a full name match
+    ("P"            , "J"           , "Rubens Smith"  , "Paul J Rubens-Smith"       , FirstAndMiddleNameSuccessfulNameMatch), //Spaces vs Hyphens in the surname (swapped for ecospend) - not a full name match
     ("P"            , ""            , "Rubens"        , "Paul James Rubens"         , FirstAndMiddleNameSuccessfulNameMatch), //Initials check for the first name and no middle name
     ("P"            , "J"           , "Rubens"        , "Paul James Rubens"         , FirstAndMiddleNameSuccessfulNameMatch), //Initials check for the first and middle name
     ("P"            , "J."          , "Rubens"        , "Paul James Rubens"         , FirstAndMiddleNameSuccessfulNameMatch), //Initials with a fullstop
@@ -63,6 +65,8 @@ class NameMatchingServiceSpec extends UnitSpec with TdRequest {
     ("Paul"         , "James"       , "Rubens"        , "Paul James John Rubens"    , FirstAndMiddleNameSuccessfulNameMatch), //Multiple middle names in Ecospendd but not NPS
     ("Paula"        , "James"       , "Rubens"        , "Paul James Rubens"         , LevenshteinSuccessfulNameMatch), //Levenshtein distance of one
     ("P"            , "J"           , "Turner"        , "Pauline Kate Turner"       , LevenshteinSuccessfulNameMatch), //Multiple initials, valid for Levenshtein
+    ("P"            , "A"           , "Rubens Smith"  , "Paul J Sammy Rubens-Smith" , LevenshteinSuccessfulNameMatch), //Extra middle name
+
   )
 
   val auditTestScenarios = Seq(
