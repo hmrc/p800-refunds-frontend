@@ -71,6 +71,8 @@ object VerifyP800ReferenceStub {
         .withHeader("correlationid", matching(correlationId.value.toString))
     )
 
+  def verifyNone(): Unit = WireMockHelpers.Post.verifyNone(url)
+
   private val url = "/p800-refunds-backend/nps/validate-p800-reference"
 
 }

@@ -565,6 +565,53 @@ class CheckYourAnswersPageSpec extends ItSpec {
       }
   }
 
+  "clicking submit redirects to 'We cannot confirm your identity' if P800 ref is outside of NPS spec number bounds (greater than 2147483646), but doesn't actually call NPS" in {
+    val p800RefOutOfBounds = UserEnteredP800Reference("2147483647")
+    val j = tdAll.BankTransfer.journeyEnteredDateOfBirth.copy(p800Reference = Some(p800RefOutOfBounds))
+    upsertJourneyToDatabase(j)
+    getFailedAttemptCount() shouldBe None
+    //No need for TraceIndividual stub as it won't be called
+
+    pages.checkYourAnswersBankTransferPage.open()
+    pages.checkYourAnswersBankTransferPage.assertPageIsDisplayedForBankTransfer(
+      p800RefOutOfBounds,
+      tdAll.dateOfBirthFormatted,
+      tdAll.nino
+    )
+    pages.checkYourAnswersBankTransferPage.clickSubmit()
+    pages.cannotConfirmYourIdentityTryAgainBankTransferPage.assertPageIsDisplayed(JourneyType.BankTransfer)
+
+    VerifyP800ReferenceStub.verifyNone()
+    getJourneyFromDatabase(tdAll.journeyId) shouldBeLike tdAll.BankTransfer.AfterReferenceCheck.journeyReferenceDidntMatchNino.copy(p800Reference = Some(p800RefOutOfBounds))
+    getFailedAttemptCount() shouldBe Some(1)
+
+    AuditConnectorStub.verifyEventAudited(
+      AuditConnectorStub.validateUserDetailsAuditType,
+      Json.parse(
+        //format=JSON
+        s"""
+          {
+            "outcome": {
+              "isSuccessful": false,
+              "attemptsOnRecord": 1,
+              "lockout": false,
+              "apiResponsibleForFailure": "p800 reference check",
+              "reasons": [
+                "NPS indicated that the reference did not match the NINO"
+              ]
+            },
+            "userEnteredDetails": {
+              "repaymentMethod": "bank",
+              "p800Reference": ${p800RefOutOfBounds.value},
+              "nino": "LM001014C",
+              "dob": "2000-01-01"
+            }
+          }
+          """.stripMargin
+      ).as[JsObject]
+    )
+  }
+
   override def beforeEach(): Unit = {
     super.beforeEach()
     addJourneyIdToSession(tdAll.journeyId)
