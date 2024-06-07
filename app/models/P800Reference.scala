@@ -18,7 +18,7 @@ package models
 
 import play.api.libs.json.{Format, Json}
 
-final case class P800Reference(value: Int) extends AnyVal {
+final case class P800Reference(value: Long) extends AnyVal {
   // NPS accepts p800 refs between 1 and 2147483646, we let a user enter a higher number, but it would always fail the NPS call
   def withinNpsBounds: Boolean = value > 0 && value <= 2147483646
 }
