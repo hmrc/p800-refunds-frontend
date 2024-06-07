@@ -21,9 +21,10 @@ import config.AppConfig
 import models.p800externalapi.EventValue
 import play.api.mvc.RequestHeader
 import requests.RequestSupport
-import uk.gov.hmrc.http.HttpClient
 import uk.gov.hmrc.http.HttpReads.Implicits._
 import util.JourneyLogger
+import uk.gov.hmrc.http.StringContextOps
+import uk.gov.hmrc.http.client.HttpClientV2
 
 import java.util.UUID
 import scala.concurrent.{ExecutionContext, Future}
@@ -31,7 +32,7 @@ import scala.concurrent.{ExecutionContext, Future}
 @Singleton
 class P800RefundsExternalApiConnector @Inject() (
     appConfig:  AppConfig,
-    httpClient: HttpClient
+    httpClient: HttpClientV2
 )(implicit executionContext: ExecutionContext) {
 
   import RequestSupport.hc
@@ -42,7 +43,8 @@ class P800RefundsExternalApiConnector @Inject() (
   def isValid(recordId: UUID)(implicit request: RequestHeader): Future[EventValue] = {
     val url = isValidUrl(recordId)
     JourneyLogger.debug(s"checking if isValid ... [url:${url}]")
-    httpClient.GET[EventValue](url)
+
+    httpClient.get(url"$url").execute[EventValue]
   }
 
 }

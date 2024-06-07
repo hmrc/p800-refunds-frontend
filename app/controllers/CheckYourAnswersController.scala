@@ -17,15 +17,15 @@
 package controllers
 
 import action.{Actions, JourneyRequest}
-import connectors.P800RefundsBackendConnector
 import language.Messages
+import models.audit.ApiResponsibleForFailure
 import models.dateofbirth.DateOfBirth
 import models.journeymodels._
 import models.{Nino, P800Reference, UserEnteredP800Reference}
-import nps.models.{TraceIndividualRequest, TracedIndividual, ValidateReferenceResult}
+import nps.models.{TracedIndividual, ValidateReferenceResult}
 import play.api.mvc._
 import requests.RequestSupport
-import services.{AuditService, FailedVerificationAttemptService, JourneyService}
+import services.{AuditService, FailedVerificationAttemptService, ValidateP800ReferenceService, TraceIndividualService, JourneyService}
 import uk.gov.hmrc.govukfrontend.views.Aliases.{HtmlContent, Key, SummaryListRow, Value}
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryList
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
@@ -37,7 +37,6 @@ import views.Views
 import java.time.format.DateTimeFormatter
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
-import models.audit.ApiResponsibleForFailure
 
 @Singleton
 class CheckYourAnswersController @Inject() (
@@ -48,7 +47,8 @@ class CheckYourAnswersController @Inject() (
     views:                            Views,
     actions:                          Actions,
     failedVerificationAttemptService: FailedVerificationAttemptService,
-    p800RefundsBackendConnector:      P800RefundsBackendConnector
+    validateP800ReferenceService:     ValidateP800ReferenceService,
+    traceIndividualService:           TraceIndividualService
 )(implicit ec: ExecutionContext) extends FrontendController(mcc) {
 
   import requestSupport._
@@ -60,18 +60,25 @@ class CheckYourAnswersController @Inject() (
   private def getResult(implicit request: JourneyRequest[_]) = {
     val journey: Journey = request.journey
 
-    val summaryList = journey.getJourneyType match {
-      case JourneyType.BankTransfer => buildSummaryList(
-        p800Reference           = journey.getP800Reference,
-        nationalInsuranceNumber = journey.getNino,
-        dateOfBirth             = journey.getDateOfBirth
-      )
-      case JourneyType.Cheque => buildSummaryList(
-        p800Reference = journey.getP800Reference,
-        nino          = journey.getNino
-      )
+    journey.getJourneyType match {
+      case JourneyType.BankTransfer =>
+        Ok(views.checkYourAnswersPage(
+          summaryList = buildSummaryList(
+            p800Reference           = journey.getP800Reference,
+            nationalInsuranceNumber = journey.getNino,
+            dateOfBirth             = journey.getDateOfBirth
+          ),
+          formAction  = controllers.routes.CheckYourAnswersController.postBankTransfer
+        ))
+      case JourneyType.Cheque =>
+        Ok(views.checkYourAnswersPage(
+          summaryList = buildSummaryList(
+            p800Reference = journey.getP800Reference,
+            nino          = journey.getNino
+          ),
+          formAction  = controllers.routes.CheckYourAnswersController.postCheque
+        ))
     }
-    Ok(views.checkYourAnswersPage(summaryList = summaryList))
   }
 
   def changeNationalInsuranceNumber: Action[AnyContent] = actions.journeyInProgress.async { implicit request =>
@@ -93,8 +100,11 @@ class CheckYourAnswersController @Inject() (
       .map(_ => Redirect(EnterYourP800ReferenceController.redirectLocation(journey)))
   }
 
+  def postBankTransfer: Action[AnyContent] = post
+  def postCheque: Action[AnyContent] = post
+
   @SuppressWarnings(Array("org.wartremover.warts.Any"))
-  def post: Action[AnyContent] = actions
+  private def post: Action[AnyContent] = actions
     .journeyInProgress
     .andThen(validateP800Reference)
     .andThen(processFailedReferenceCheck)
@@ -103,13 +113,8 @@ class CheckYourAnswersController @Inject() (
       for {
         maybeTraceIndividualResponse: Option[TracedIndividual] <- journey.getJourneyType match {
           case JourneyType.BankTransfer =>
-            p800RefundsBackendConnector.traceIndividual(
-              traceIndividualRequest = TraceIndividualRequest(
-                identifier  = journey.getNino,
-                dateOfBirth = journey.getDateOfBirth.`formatYYYY-MM-DD`
-              ),
-              correlationId          = journey.correlationId
-            ).map(Some(_))
+            traceIndividualService.traceIndividual(journey)
+              .map(Some(_))
           case JourneyType.Cheque => Future.successful(None)
         }
         attemptInfo <- failedVerificationAttemptService.find()
@@ -138,8 +143,8 @@ class CheckYourAnswersController @Inject() (
           request = r.request
         )))
       } else {
-        p800RefundsBackendConnector
-          .validateP800Reference(r.journey.getNino, r.journey.getP800Reference.sanitiseReference, r.journey.correlationId)
+        validateP800ReferenceService
+          .validateP800Reference(r.journey)
           .map { referenceCheckResult: ValidateReferenceResult =>
             Right(new JourneyRequest[A](journey = r.journey.update(referenceCheckResult), request = r.request))
           }

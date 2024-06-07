@@ -35,7 +35,8 @@ POST        /bank-transfer/enter-your-date-of-birth                        contr
 
 GET         /bank-transfer/check-your-answers                              controllers.CheckYourAnswersController.getBankTransfer
 GET         /cheque/check-your-answers                                     controllers.CheckYourAnswersController.getCheque
-POST        /check-your-answers                                            controllers.CheckYourAnswersController.post
+POST        /bank-transfer/check-your-answers                              controllers.CheckYourAnswersController.postBankTransfer
+POST        /cheque/check-your-answers                                     controllers.CheckYourAnswersController.postCheque
 GET         /check-your-answers/change-p800-reference                      controllers.CheckYourAnswersController.changeP800Reference
 GET         /check-your-answers/change-national-insurance-number           controllers.CheckYourAnswersController.changeNationalInsuranceNumber
 GET         /check-your-answers/change-date-of-birth                       controllers.CheckYourAnswersController.changeDateOfBirth

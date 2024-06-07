@@ -64,6 +64,15 @@ object VerifyP800ReferenceStub {
       requiredHeaders = npsHeaders
     )
 
+  def badRequestError(nino: Nino, p800Reference: P800Reference): StubMapping =
+    WireMockHelpers.Post.stubForPost(
+      url             = url,
+      responseBody    = "simulated bad request error",
+      responseStatus  = Status.BAD_REQUEST,
+      requestBodyJson = Some(requestBody(nino, p800Reference)),
+      requiredHeaders = npsHeaders
+    )
+
   def verify(correlationId: CorrelationId): Unit =
     WireMock.verify(
       exactly(1),

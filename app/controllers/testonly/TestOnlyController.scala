@@ -24,7 +24,9 @@ import models.journeymodels.{HasFinished, Journey, JourneyId, JourneyType}
 import play.api.libs.json.{JsValue, Json}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import services.{FailedVerificationAttemptService, JourneyService}
-import uk.gov.hmrc.http.{HttpClient, HttpReads}
+import uk.gov.hmrc.http.HttpReads
+import uk.gov.hmrc.http.StringContextOps
+import uk.gov.hmrc.http.client.HttpClientV2
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import views.ViewsTestOnly
 
@@ -38,7 +40,7 @@ class TestOnlyController @Inject() (
     journeyService:                   JourneyService,
     failedVerificationAttemptService: FailedVerificationAttemptService,
     as:                               Actions,
-    httpClient:                       HttpClient,
+    httpClient:                       HttpClientV2,
     appConfig:                        AppConfig
 )(implicit ec: ExecutionContext) extends FrontendController(mcc) {
 
@@ -170,7 +172,9 @@ class TestOnlyController @Inject() (
         // also, this value will also likely change
         val webhookUrl = appConfig.P800RefundsExternalApi.p800RefundsExternalApiBaseUrl + "/status"
         httpClient
-          .POST[JsValue, Unit](webhookUrl, webhookJson) //todo headers?
+          .post(url"$webhookUrl")
+          .withBody(Json.toJson(webhookJson))
+          .execute[Unit]
           .map(_ => Ok(s"Sending notification to: $webhookUrl \nNotification sent: \n${Json.toJson(webhookJson).toString()}"))
       }
 

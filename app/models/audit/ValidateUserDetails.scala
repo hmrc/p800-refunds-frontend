@@ -67,7 +67,7 @@ object ApiResponsibleForFailure {
 
   implicit val writes: Writes[ApiResponsibleForFailure] = Writes(_ match {
     case P800ReferenceCheck => JsString("p800 reference check")
-    case TraceIndividual    => JsString("p800 reference check")
+    case TraceIndividual    => JsString("trace individual")
   })
 }
 

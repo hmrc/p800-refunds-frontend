@@ -28,8 +28,11 @@ import play.api.mvc.RequestHeader
 import requests.RequestSupport.hc
 import services.AuditService
 import uk.gov.hmrc.http.HttpReads.Implicits._
-import uk.gov.hmrc.http.{HttpClient, HttpReads, HttpResponse, UpstreamErrorResponse}
+import uk.gov.hmrc.http.{HttpReads, HttpResponse, UpstreamErrorResponse}
 import util.{HttpResponseUtils, JourneyLogger}
+import uk.gov.hmrc.http.StringContextOps
+import uk.gov.hmrc.http.client.HttpClientV2
+import play.api.libs.json.Json
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -37,7 +40,7 @@ import scala.concurrent.{ExecutionContext, Future}
 class P800RefundsBackendConnector @Inject() (
     appConfig:    AppConfig,
     auditService: AuditService,
-    httpClient:   HttpClient
+    httpClient:   HttpClientV2
 )(implicit executionContext: ExecutionContext) {
 
   private val baseUrl: String = appConfig.P800RefundsBackend.p800RefundsBackendBaseUrl + "/p800-refunds-backend"
@@ -48,20 +51,18 @@ class P800RefundsBackendConnector @Inject() (
 
   def validateP800Reference(nino: Nino, p800Reference: P800Reference, correlationId: CorrelationId)(implicit requestHeader: RequestHeader): Future[ValidateReferenceResult] = {
     httpClient
-      .POST[ValidateP800ReferenceRequest, ValidateReferenceResult](
-        url     = s"$baseUrl/nps/validate-p800-reference",
-        body    = ValidateP800ReferenceRequest(nino, p800Reference),
-        headers = makeHeaders(correlationId)
-      )
+      .post(url"$baseUrl/nps/validate-p800-reference")
+      .setHeader(makeHeaders(correlationId): _*)
+      .withBody(Json.toJson(ValidateP800ReferenceRequest(nino, p800Reference)))
+      .execute[ValidateReferenceResult]
   }
 
   def traceIndividual(traceIndividualRequest: TraceIndividualRequest, correlationId: CorrelationId)(implicit requestHeader: RequestHeader): Future[TracedIndividual] = {
     httpClient
-      .POST[TraceIndividualRequest, TracedIndividual](
-        url     = s"$baseUrl/nps/trace-individual",
-        body    = traceIndividualRequest,
-        headers = makeHeaders(correlationId)
-      )
+      .post(url"$baseUrl/nps/trace-individual")
+      .setHeader(makeHeaders(correlationId): _*)
+      .withBody(Json.toJson(traceIndividualRequest))
+      .execute[TracedIndividual]
   }
 
   def makeBacsRepayment(
@@ -70,11 +71,12 @@ class P800RefundsBackendConnector @Inject() (
       correlationId:            CorrelationId
   )(implicit requestHeader: RequestHeader): Future[MakeBacsRepaymentResponse] = {
     JourneyLogger.info("Making Bacs repayment (Claiming overpayment)")
-    httpClient.POST[MakeBacsRepaymentRequest, MakeBacsRepaymentResponse](
-      url     = s"$baseUrl/nps/make-bacs-repayment/${nino.value}",
-      body    = makeBacsRepaymentRequest,
-      headers = makeHeaders(correlationId)
-    )
+
+    httpClient
+      .post(url"$baseUrl/nps/make-bacs-repayment/${nino.value}")
+      .setHeader(makeHeaders(correlationId): _*)
+      .withBody(Json.toJson(makeBacsRepaymentRequest))
+      .execute[MakeBacsRepaymentResponse]
   }
 
   def suspendOverpayment(
@@ -86,11 +88,11 @@ class P800RefundsBackendConnector @Inject() (
 
     implicit val readUnit: HttpReads[Unit] = HttpResponseUtils.httpReadsUnit
 
-    httpClient.POST[SuspendOverpaymentRequest, Unit](
-      url     = s"$baseUrl/nps/suspend-overpayment/${nino.value}",
-      body    = suspendOverpaymentRequest,
-      headers = makeHeaders(correlationId)
-    )
+    httpClient
+      .post(url"$baseUrl/nps/suspend-overpayment/${nino.value}")
+      .setHeader(makeHeaders(correlationId): _*)
+      .withBody(Json.toJson(suspendOverpaymentRequest))
+      .execute[Unit]
   }
 
   def issuePayableOrder(
@@ -103,11 +105,12 @@ class P800RefundsBackendConnector @Inject() (
 
     implicit val readUnit: HttpReads[Unit] = HttpResponseUtils.httpReadsUnit
 
-    httpClient.POST[IssuePayableOrderRequest, Unit](
-      url     = s"$baseUrl/nps/issue-payable-order/${nino.value}/${p800Reference.value.toString}",
-      body    = issuePayableOrderRequest,
-      headers = makeHeaders(correlationId)
-    ).recoverWith { _ =>
+    httpClient
+      .post(url"$baseUrl/nps/issue-payable-order/${nino.value}/${p800Reference.value.toString}")
+      .setHeader(makeHeaders(correlationId): _*)
+      .withBody(Json.toJson(issuePayableOrderRequest))
+      .execute[Unit]
+      .recoverWith { _ =>
         auditService.auditChequeClaimAttemptMade(journey, isSuccessful = IsSuccessful(false))(requestHeader, hc)
         throw new RuntimeException("Error when submitting Cheque issue payable order")
       }
@@ -118,11 +121,12 @@ class P800RefundsBackendConnector @Inject() (
 
   def getBankDetailsRiskResult(claimId: ClaimId, request: GetBankDetailsRiskResultRequest, correlationId: CorrelationId)(implicit requestHeader: RequestHeader): Future[GetBankDetailsRiskResultResponse] = {
     JourneyLogger.info(s"calling EDH ${claimId.toString}...")
-    httpClient.POST[GetBankDetailsRiskResultRequest, GetBankDetailsRiskResultResponse](
-      url     = getBankDetailsRiskResultUrl(claimId),
-      body    = request,
-      headers = makeHeaders(correlationId)
-    ).map { response: GetBankDetailsRiskResultResponse =>
+    httpClient
+      .post(url"${getBankDetailsRiskResultUrl(claimId)}")
+      .setHeader(makeHeaders(correlationId): _*)
+      .withBody(Json.toJson(request))
+      .execute[GetBankDetailsRiskResultResponse]
+      .map { response: GetBankDetailsRiskResultResponse =>
         JourneyLogger.info(s"got BankDetailsRiskResult from EDH ${claimId.toString} succeeded: [NextAction=${response.overallRiskResult.nextAction.toString}]")
         response
       }
@@ -139,14 +143,14 @@ class P800RefundsBackendConnector @Inject() (
     JourneyLogger.info(s"Notifying case management: ${clientUId.value}")
 
     httpClient
-      .POST[CaseManagementRequest, Either[UpstreamErrorResponse, HttpResponse]](
-        url     = notifyCaseManagementUrl(clientUId),
-        body    = request,
-        headers = makeHeaders(correlationId)
-      ).map {
-          case Right(_)    => ()
-          case Left(error) => throw error
-        }
+      .post(url"${notifyCaseManagementUrl(clientUId)}")
+      .setHeader(makeHeaders(correlationId): _*)
+      .withBody(Json.toJson(request))
+      .execute[Either[UpstreamErrorResponse, HttpResponse]]
+      .map {
+        case Right(_)    => ()
+        case Left(error) => throw error
+      }
   }
 }
 

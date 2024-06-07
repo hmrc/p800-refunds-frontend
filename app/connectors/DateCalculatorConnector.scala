@@ -21,15 +21,18 @@ import config.AppConfig
 import models.datecalculator.DateCalculatorRequest
 import play.api.mvc.Request
 import requests.RequestSupport
-import uk.gov.hmrc.http.{HttpClient, HttpResponse}
 import uk.gov.hmrc.http.HttpReads.Implicits._
+import uk.gov.hmrc.http.HttpResponse
+import uk.gov.hmrc.http.StringContextOps
+import uk.gov.hmrc.http.client.HttpClientV2
+import play.api.libs.json.Json
 
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class DateCalculatorConnector @Inject() (
     appConfig:      AppConfig,
-    httpClient:     HttpClient,
+    httpClient:     HttpClientV2,
     requestSupport: RequestSupport
 )(implicit executionContext: ExecutionContext) {
 
@@ -38,6 +41,9 @@ class DateCalculatorConnector @Inject() (
   private val workingDaysUrl = s"${appConfig.DateCalculator.dateCalculatorBaseUrl}/date-calculator/add-working-days"
 
   def addWorkingDays(dateCalculatorRequest: DateCalculatorRequest)(implicit request: Request[_]): Future[HttpResponse] =
-    httpClient.POST[DateCalculatorRequest, HttpResponse](workingDaysUrl, dateCalculatorRequest)
+    httpClient
+      .post(url"$workingDaysUrl")
+      .withBody(Json.toJson(dateCalculatorRequest))
+      .execute[HttpResponse]
 
 }
