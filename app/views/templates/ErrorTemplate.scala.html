@@ -23,7 +23,7 @@
     pageTitle: String,
     heading: String,
     message: String
-)(implicit request: Request[_])
+)(implicit request: RequestHeader)
 
 @layout(pageTitle = Some(pageTitle)) {
     <h1 class="govuk-heading-xl">@{Text(heading).asHtml}</h1>

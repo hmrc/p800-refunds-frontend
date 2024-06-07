@@ -22,6 +22,8 @@ import play.api.mvc.RequestHeader
 import requests.RequestSupport
 import uk.gov.hmrc.http.HttpReads.Implicits._
 import util.JourneyLogger
+import uk.gov.hmrc.http.StringContextOps
+import uk.gov.hmrc.http.client.HttpClientV2
 
 import java.time.Clock
 import javax.inject.{Inject, Singleton}
@@ -30,7 +32,7 @@ import scala.concurrent.{ExecutionContext, Future}
 @Singleton
 class EcospendAuthServerConnector @Inject() (
     appConfig:      AppConfig,
-    httpClient:     ProxyClient,
+    httpClient:     HttpClientV2,
     requestSupport: RequestSupport
 )(implicit ec: ExecutionContext, clock: Clock) {
 
@@ -45,7 +47,11 @@ class EcospendAuthServerConnector @Inject() (
       "client_secret" -> appConfig.ExternalApiCalls.ecospendAuthClientSecret
     ).view.mapValues(Seq.apply(_)).toMap
 
-    httpClient.POSTForm[EcospendAccessToken](accessTokenUrl, body)
+    httpClient
+      .post(url"$accessTokenUrl")
+      .withProxy
+      .withBody(body)
+      .execute[EcospendAccessToken]
   }
 
   private def captureException[A](future: => Future[A])(implicit request: RequestHeader): Future[A] =

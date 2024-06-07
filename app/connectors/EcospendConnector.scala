@@ -27,6 +27,9 @@ import requests.RequestSupport
 import uk.gov.hmrc.http.HeaderNames
 import uk.gov.hmrc.http.HttpReads.Implicits._
 import util.JourneyLogger
+import uk.gov.hmrc.http.StringContextOps
+import uk.gov.hmrc.http.client.HttpClientV2
+import play.api.libs.json.Json
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
@@ -34,7 +37,7 @@ import scala.concurrent.{ExecutionContext, Future}
 @Singleton
 class EcospendConnector @Inject() (
     appConfig:      AppConfig,
-    httpClient:     ProxyClient,
+    httpClient:     HttpClientV2,
     requestSupport: RequestSupport
 )(implicit ec: ExecutionContext) {
 
@@ -43,12 +46,11 @@ class EcospendConnector @Inject() (
   private val banksUrl: String = appConfig.ExternalApiCalls.ecospendUrl + "/banks"
 
   def getListOfAvailableBanks(accessToken: EcospendAccessToken)(implicit request: JourneyRequest[_]): Future[EcospendGetBanksResponse] = captureException {
-    httpClient.GET[EcospendGetBanksResponse](
-      url     = banksUrl,
-      headers = Seq(
-        authorizationHeader(accessToken)
-      )
-    )
+    httpClient
+      .get(url"$banksUrl")
+      .withProxy
+      .setHeader(authorizationHeader(accessToken))
+      .execute[EcospendGetBanksResponse]
   }
 
   private val validateUrl: String = appConfig.ExternalApiCalls.ecospendUrl + "/validate"
@@ -57,13 +59,12 @@ class EcospendConnector @Inject() (
       accessToken:             EcospendAccessToken,
       bankVerificationRequest: BankVerificationRequest
   )(implicit journeyRequest: JourneyRequest[_]): Future[BankVerification] = captureException {
-    httpClient.POST[BankVerificationRequest, BankVerification](
-      url     = validateUrl,
-      body    = bankVerificationRequest,
-      headers = Seq(
-        authorizationHeader(accessToken)
-      )
-    )
+    httpClient
+      .post(url"$validateUrl")
+      .withProxy
+      .setHeader(authorizationHeader(accessToken))
+      .withBody(Json.toJson(bankVerificationRequest))
+      .execute[BankVerification]
   }
 
   private val createConsentUrl: String = appConfig.ExternalApiCalls.ecospendUrl + "/consents"
@@ -72,13 +73,12 @@ class EcospendConnector @Inject() (
       accessToken:        EcospendAccessToken,
       bankConsentRequest: BankConsentRequest
   )(implicit request: JourneyRequest[_]): Future[BankConsentResponse] = captureException {
-    httpClient.POST[BankConsentRequest, BankConsentResponse](
-      url     = createConsentUrl,
-      body    = bankConsentRequest,
-      headers = Seq(
-        authorizationHeader(accessToken)
-      )
-    )
+    httpClient
+      .post(url"$createConsentUrl")
+      .withProxy
+      .setHeader(authorizationHeader(accessToken))
+      .withBody(Json.toJson(bankConsentRequest))
+      .execute[BankConsentResponse]
   }
 
   private val accountSummaryUrl: String = appConfig.ExternalApiCalls.ecospendUrl + "/accounts/summary"
@@ -87,12 +87,12 @@ class EcospendConnector @Inject() (
       accessToken: EcospendAccessToken,
       consentId:   ConsentId
   )(implicit request: RequestHeader): Future[BankAccountSummaryResponse] = captureException {
-    httpClient.GET[BankAccountSummaryResponse](
-      url     = accountSummaryUrl,
-      headers = Seq(
-        authorizationHeader(accessToken),
-      ) ++ consentIdHeader(consentId)
-    )
+    httpClient
+      .get(url"$accountSummaryUrl")
+      .withProxy
+      .setHeader(authorizationHeader(accessToken))
+      .setHeader(consentIdHeader(consentId): _*)
+      .execute[BankAccountSummaryResponse]
   }
 
   private def authorizationHeader(accessToken: EcospendAccessToken): (String, String) =
