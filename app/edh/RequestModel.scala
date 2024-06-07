@@ -78,7 +78,7 @@ object ServiceID {
 
 final case class PaymentData(
     paymentAmount: Option[BigDecimal],
-    paymentNumber: Option[Int]
+    paymentNumber: Option[Long]
 )
 
 object PaymentData {

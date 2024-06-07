@@ -565,8 +565,8 @@ class CheckYourAnswersPageSpec extends ItSpec {
       }
   }
 
-  "clicking submit redirects to 'We cannot confirm your identity' if P800 ref is outside of NPS spec number bounds (greater than 2147483646), but doesn't actually call NPS" in {
-    val p800RefOutOfBounds = UserEnteredP800Reference("2147483647")
+  "clicking submit redirects to 'We cannot confirm your identity' if P800 ref is outside of NPS spec number bounds (greater than 2147483646 - Int.MAX), but doesn't actually call NPS" in {
+    val p800RefOutOfBounds = UserEnteredP800Reference("2147483648")
     val j = tdAll.BankTransfer.journeyEnteredDateOfBirth.copy(p800Reference = Some(p800RefOutOfBounds))
     upsertJourneyToDatabase(j)
     getFailedAttemptCount() shouldBe None

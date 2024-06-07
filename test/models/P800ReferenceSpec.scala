@@ -33,10 +33,10 @@ class P800ReferenceSpec extends UnitSpec {
     }
     "return false when number is outside range of 1-2147483646 (both inclusive)" in {
       Seq(
-        (0, "zero"),
-        (-1, "negative"),
-        (2147483647, "larger than 2147483646"),
-        (-2147483646, "negative 2147483646"),
+        (0L, "zero"),
+        (-1L, "negative"),
+        (2147483648L, "larger than 2147483646"),
+        (-2147483648L, "negative 2147483646"),
       ).foreach {
           case (input, clue) =>
             P800Reference(input).withinNpsBounds shouldBe false withClue clue

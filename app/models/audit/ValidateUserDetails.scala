@@ -65,10 +65,10 @@ object ApiResponsibleForFailure {
   case object P800ReferenceCheck extends ApiResponsibleForFailure
   case object TraceIndividual extends ApiResponsibleForFailure
 
-  implicit val writes: Writes[ApiResponsibleForFailure] = Writes(_ match {
+  implicit val writes: Writes[ApiResponsibleForFailure] = Writes {
     case P800ReferenceCheck => JsString("p800 reference check")
     case TraceIndividual    => JsString("trace individual")
-  })
+  }
 }
 
 final case class UserEnteredDetails(

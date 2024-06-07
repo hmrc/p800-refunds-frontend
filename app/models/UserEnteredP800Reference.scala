@@ -20,6 +20,8 @@ import models.forms.EnterP800ReferenceForm
 import util.SafeEquals.EqualsOps
 import play.api.libs.json.{Format, Json}
 
+import scala.util.Try
+
 final case class UserEnteredP800Reference(value: String) {
 
   def sanitiseReference: P800Reference = {
@@ -31,9 +33,11 @@ final case class UserEnteredP800Reference(value: String) {
         .filter(!charactersThatAreAllowedFromForm.contains(_))
         .filter(_.isDigit)
         .dropWhile(_ === '0')
-        .toInt
+        .toLong
     )
   }
+
+  def maybeValidReference: Option[P800Reference] = Try(sanitiseReference).toOption
 }
 
 object UserEnteredP800Reference {
