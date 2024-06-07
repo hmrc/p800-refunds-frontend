@@ -612,6 +612,156 @@ class CheckYourAnswersPageSpec extends ItSpec {
     )
   }
 
+  "clicking submit redirects to 'Technical Difficulties' when validate p800 reference check throws exception" - {
+    "bank transfer" in {
+      upsertJourneyToDatabase(tdAll.BankTransfer.journeyEnteredDateOfBirth)
+      pages.checkYourAnswersBankTransferPage.open()
+      val j = tdAll.BankTransfer.journeyEnteredDateOfBirth
+      VerifyP800ReferenceStub.badRequestError(j.nino.value, tdAll.p800Reference)
+
+      pages.checkYourAnswersBankTransferPage.clickSubmit()
+      pages.checkYourAnswersBankTransferPage.assertPageIsDisplayedWithTechnicalDifficultiesError()
+      VerifyP800ReferenceStub.verify(tdAll.correlationId)
+      TraceIndividualStub.verifyNoneTraceIndividual()
+      getJourneyFromDatabase(tdAll.journeyId) shouldBeLike j
+
+      AuditConnectorStub.verifyEventAudited(
+        AuditConnectorStub.validateUserDetailsAuditType,
+        Json.parse(
+          //format=JSON
+          """
+          {
+            "outcome": {
+              "isSuccessful": false,
+              "lockout": false,
+              "apiResponsibleForFailure": "p800 reference check",
+              "reasons": [
+                "POST of 'http://localhost:11112/p800-refunds-backend/nps/validate-p800-reference' returned 400. Response body: 'simulated bad request error'"
+              ]
+            },
+            "userEnteredDetails": {
+              "repaymentMethod": "bank",
+              "p800Reference": 12345678,
+              "nino": "LM001014C",
+              "dob": "2000-01-01"
+            }
+          }
+          """.stripMargin
+        ).as[JsObject]
+      )
+    }
+    "cheque" in {
+      upsertJourneyToDatabase(tdAll.Cheque.journeyEnteredNino)
+      pages.checkYourAnswersChequePage.open()
+      val j = tdAll.Cheque.journeyEnteredNino
+      VerifyP800ReferenceStub.badRequestError(j.nino.value, tdAll.p800Reference)
+
+      pages.checkYourAnswersChequePage.clickSubmit()
+      pages.checkYourAnswersChequePage.assertPageIsDisplayedWithTechnicalDifficultiesError()
+
+      VerifyP800ReferenceStub.verify(tdAll.correlationId)
+      getJourneyFromDatabase(tdAll.journeyId) shouldBeLike j
+
+      AuditConnectorStub.verifyEventAudited(
+        AuditConnectorStub.validateUserDetailsAuditType,
+        Json.parse(
+          //format=JSON
+          """
+          {
+            "outcome": {
+              "isSuccessful": false,
+              "lockout": false,
+              "apiResponsibleForFailure": "p800 reference check",
+              "reasons": [
+                "POST of 'http://localhost:11112/p800-refunds-backend/nps/validate-p800-reference' returned 400. Response body: 'simulated bad request error'"
+              ]
+            },
+            "userEnteredDetails": {
+              "repaymentMethod": "cheque",
+              "p800Reference": 12345678,
+              "nino": "LM001014C"
+            }
+          }
+          """.stripMargin
+        ).as[JsObject]
+      )
+    }
+  }
+
+  "clicking submit redirects to 'Technical Difficulties' when trace individual throws exception" in {
+    upsertJourneyToDatabase(tdAll.BankTransfer.journeyEnteredDateOfBirth)
+    pages.checkYourAnswersBankTransferPage.open()
+    val j = tdAll.BankTransfer.AfterReferenceCheck.journeyReferenceChecked
+    VerifyP800ReferenceStub.p800ReferenceChecked(j.nino.value, tdAll.p800Reference, j.getP800ReferenceChecked(request = tdAll.fakeRequest))
+    TraceIndividualStub.traceIndividualBadRequest(
+      request = TraceIndividualRequest(j.nino.value, tdAll.`dateOfBirthFormatted YYYY-MM-DD`)
+    )
+
+    pages.checkYourAnswersBankTransferPage.clickSubmit()
+    pages.checkYourAnswersBankTransferPage.assertPageIsDisplayedWithTechnicalDifficultiesError()
+    VerifyP800ReferenceStub.verify(tdAll.correlationId)
+    TraceIndividualStub.verifyTraceIndividual(tdAll.correlationId)
+    getJourneyFromDatabase(tdAll.journeyId) shouldBeLike tdAll.BankTransfer.journeyEnteredDateOfBirth
+
+    AuditConnectorStub.verifyEventAudited(
+      AuditConnectorStub.validateUserDetailsAuditType,
+      Json.parse(
+        //format=JSON
+        """
+        {
+          "outcome": {
+            "isSuccessful": false,
+            "lockout": false,
+            "apiResponsibleForFailure": "trace individual",
+            "reasons": [
+              "POST of 'http://localhost:11112/p800-refunds-backend/nps/trace-individual' returned 400. Response body: 'simulated bad request error'"
+            ]
+          },
+          "userEnteredDetails": {
+            "repaymentMethod": "bank",
+            "p800Reference": 12345678,
+            "nino": "LM001014C",
+            "dob": "2000-01-01"
+          },
+          "repaymentAmount": 12.34,
+          "repaymentInformation": {
+            "reconciliationIdentifier": 123,
+            "paymentNumber": 12345678,
+            "payeNumber": "PayeNumber-123",
+            "taxDistrictNumber": 717,
+            "associatedPayableNumber": 1234,
+            "customerAccountNumber": "customerAccountNumber-1234",
+            "currentOptimisticLock": 15
+          }
+        }
+        """.stripMargin
+      ).as[JsObject]
+    )
+  }
+
+  "with p800 reference getting sanitised before being sent, if user decides to put leading 0's, or any of the other bizarre 'allowed' characters" in {
+    val p800ReferenceThatShouldBeSent = P800Reference(1234560)
+    val expectedCheckResult = Some(tdAll.p800ReferenceChecked.copy(paymentNumber = p800ReferenceThatShouldBeSent))
+    val journey = tdAll.BankTransfer.journeyEnteredDateOfBirth.copy(p800Reference = Some(UserEnteredP800Reference("00123,- 4560")))
+    upsertJourneyToDatabase(journey)
+    pages.checkYourAnswersBankTransferPage.open()
+    val j = tdAll.BankTransfer.journeyAfterTracedIndividual.copy(
+      p800Reference        = Some(UserEnteredP800Reference("00123,- 4560")),
+      referenceCheckResult = expectedCheckResult
+    )
+    VerifyP800ReferenceStub.p800ReferenceChecked(j.nino.value, p800ReferenceThatShouldBeSent, j.getP800ReferenceChecked(request = tdAll.fakeRequest).copy(paymentNumber = p800ReferenceThatShouldBeSent))
+    TraceIndividualStub.traceIndividual(
+      request  = TraceIndividualRequest(j.nino.value, tdAll.`dateOfBirthFormatted YYYY-MM-DD`),
+      response = j.traceIndividualResponse.value
+    )
+
+    pages.checkYourAnswersBankTransferPage.clickSubmit()
+    pages.yourIdentityIsConfirmedBankTransferPage.assertPageIsDisplayed()
+    VerifyP800ReferenceStub.verify(tdAll.correlationId)
+    TraceIndividualStub.verifyTraceIndividual(tdAll.correlationId)
+    getJourneyFromDatabase(tdAll.journeyId) shouldBeLike j
+  }
+
   override def beforeEach(): Unit = {
     super.beforeEach()
     addJourneyIdToSession(tdAll.journeyId)

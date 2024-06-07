@@ -36,6 +36,15 @@ object TraceIndividualStub {
     )
   }
 
+  def traceIndividualBadRequest(request: TraceIndividualRequest): StubMapping =
+    WireMockHelpers.Post.stubForPost(
+      url             = url,
+      responseBody    = "simulated bad request error",
+      responseStatus  = Status.BAD_REQUEST,
+      requestBodyJson = Some(Json.prettyPrint(Json.toJson(request))),
+      requiredHeaders = npsHeaders
+    )
+
   def verifyTraceIndividual(correlationId: CorrelationId): Unit =
     verify(
       exactly(1),

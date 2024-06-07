@@ -26,7 +26,7 @@
     viewsHelpers: ViewsHelpers
 )
 
-@(summaryList: SummaryList)(implicit request: JourneyRequest[_])
+@(summaryList: SummaryList, formAction: Call)(implicit request: JourneyRequest[_])
 
 @import viewsHelpers.requestSupport._
 
@@ -38,7 +38,7 @@
 
     @viewsHelpers.govukSummaryList(summaryList)
 
-    @viewsHelpers.formWithCsrf(action = controllers.routes.CheckYourAnswersController.post) {
+    @viewsHelpers.formWithCsrf(action = formAction) {
         @viewsHelpers.govukButton(Button(
             content = Text(Messages.CommonMessages.continue.show),
             id = Some("submit")
