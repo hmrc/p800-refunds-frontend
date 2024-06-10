@@ -17,10 +17,7 @@ object SbtUpdatesSettings {
     dependencyUpdatesFilter -= moduleFilter("org.julienrf", "play-json-derived-codecs"),
     dependencyUpdatesFilter -= moduleFilter("com.vladsch.flexmark", "flexmark-all"),
     dependencyUpdatesFilter -= moduleFilter("org.scalatestplus.play", "scalatestplus-play"),
-    dependencyUpdatesFilter -= moduleFilter("com.beachape", "enumeratum-play"),
-    //upgrading to version 9.0.0 breaks the javascript on the select your bank page - OPS-11918 to fix this
-    dependencyUpdatesFilter -= moduleFilter("uk.gov.hmrc", "play-frontend-hmrc-play-30")
-
+    dependencyUpdatesFilter -= moduleFilter("com.beachape", "enumeratum-play")
   )
 
 }

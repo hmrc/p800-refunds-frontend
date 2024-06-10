@@ -39,9 +39,15 @@
     "selectedBankId"
 }
 
+@additionalScript = {
+    <script type="module" src="@controllers.routes.Assets.versioned("lib/accessible-autocomplete/dist/accessible-autocomplete.min.js")" @{CSPNonce.attr}></script>
+    <script type="module" src="@controllers.routes.Assets.versioned("javascripts/WhatIsTheNameOfYourBankAccountPageJavaScript.js")" @{CSPNonce.attr}></script>
+}
+
 @layout(
     pageTitle = Some(Messages.WhatIsTheNameOfYourBankAccount.`What is the name of your bank?`.show),
-    hasErrors = form.errors.nonEmpty
+    hasErrors = form.errors.nonEmpty,
+    additionalScripts = Some(additionalScript)
 ) {
 
     @if(form.errors.nonEmpty) {
@@ -86,9 +92,5 @@
     }
 
     <link @{CSPNonce.attr} rel="stylesheet" media="screen" href='@routes.Assets.versioned("lib/accessible-autocomplete/dist/accessible-autocomplete.min.css")' type="text/css" />
-    <script @{CSPNonce.attr} type="text/javascript" src='@routes.Assets.versioned("lib/accessible-autocomplete/dist/accessible-autocomplete.min.js")'></script>
-
-    <!-- Hint: Make sure the inputId in the javascript matches the value of 'key' set in this file. -->
-    <script @{CSPNonce.attr} type="text/javascript" src='@routes.Assets.versioned("javascripts/WhatIsTheNameOfYourBankAccountPageJavaScript.js")'></script>
 
 }

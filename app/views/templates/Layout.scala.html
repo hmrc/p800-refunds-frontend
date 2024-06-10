@@ -73,8 +73,8 @@
 }
 
 @scripts = {
-    <script src="@{controllers.routes.Assets.versioned("javascripts/application.js")}" @{CSPNonce.attr}></script>
-    <script src="@{controllers.routes.Assets.versioned("lib/jquery/jquery.min.js")}" @{CSPNonce.attr}></script>
+    <script type="module" src="@{controllers.routes.Assets.versioned("javascripts/application.js")}" @{CSPNonce.attr}></script>
+    <script type="module" src="@{controllers.routes.Assets.versioned("lib/jquery/jquery.min.js")}" @{CSPNonce.attr}></script>
     @additionalScripts.getOrElse(Html(""))
 }
 
@@ -83,7 +83,7 @@
     <div class="govuk-!-display-none-print">
       @govukPhaseBanner(
         PhaseBanner(
-          tag = Some(Tag(content = Text(Messages.ServicePhase.beta.show))),
+          tag = Some(Tag(content = Text(Messages.ServicePhase.Beta.show))),
           content = HtmlContent(Messages.ServicePhase.bannerText(link = appConfig.Feedback.betaFeedbackUrl()).show)
         )
       )

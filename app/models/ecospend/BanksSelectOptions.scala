@@ -20,7 +20,7 @@ final case class BanksSelectOptions(bankId: Option[BankId], bankName: Option[Ban
 
 object BanksSelectOptions {
   def noBankOption: BanksSelectOptions =
-    BanksSelectOptions(None, Some(BankName("Choose your bank")))
+    BanksSelectOptions(Some(BankId("")), Some(BankName("Choose your bank")))
 
   def apply(bankId: BankId, bankName: BankName): BanksSelectOptions =
     BanksSelectOptions(Some(bankId), Some(bankName))
