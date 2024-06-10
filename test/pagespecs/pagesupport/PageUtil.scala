@@ -31,7 +31,7 @@ object PageUtil {
     val errorMessage: String = """//*[@class="govuk-error-message"]"""
     val header: String = """/html/body/div/header"""
     val h1: String = """//*[@id="main-content"]//h1"""
-    val serviceName: String = """/html/body/header//a[contains(@class, "hmrc-header__service-name")]"""
+    val serviceName: String = """/html/body/header//a[contains(@class, "govuk-header__service-name")]"""
   }
 
   def clickByIdOrName(id: String)(implicit webDriver: WebDriver): Unit = findElement(id).underlying.click()

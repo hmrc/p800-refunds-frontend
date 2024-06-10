@@ -718,9 +718,9 @@ object Messages {
       english = "Test Only - Get an Income Tax refund"
     )
 
-    val beta: Message = Message(
-      english = "beta",
-      welsh   = "beta"
+    val Beta: Message = Message(
+      english = "Beta",
+      welsh   = "Beta"
     )
 
     def bannerText(link: String): Message = Message(
