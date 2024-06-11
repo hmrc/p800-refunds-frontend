@@ -29,6 +29,11 @@ import scala.util.Try
 @Singleton
 class AppConfig @Inject() (servicesConfig: ServicesConfig, configuration: Configuration) {
 
+  object NameParsing {
+    val titles: Seq[String] = configuration.get[Seq[String]]("name-parsing.titles")
+    val bankIdMatchingVariationsList: Seq[String] = configuration.get[Seq[String]]("name-parsing.bank-id-matching-variations")
+  }
+
   object FeatureFlags {
     val isCaseManagementEnabled: Boolean = servicesConfig.getBoolean("feature-flags.isCaseManagementApiEnabled")
   }

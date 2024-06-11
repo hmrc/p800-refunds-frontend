@@ -56,7 +56,7 @@
                     classes = "govuk-fieldset__legend--xl",
                     isPageHeading = true)))
             )
-        ).withFormField(form("date")))
+        ).withDayMonthYearFormField(form("date")))
 
         @viewsHelpers.govukButton(Button(
             content = Text(Messages.CommonMessages.`continue`.show),

@@ -18,22 +18,14 @@ package util
 
 object NameParsingUtil {
 
-  val bankIdMatchingVariationList: Seq[String] = Seq(
-    "obie-natwest-production",
-    "obie-rbs-personal-production",
-    "obie-natwest-bankline-production",
-    "obie-natwest-international-production",
-    "obie-natwest-international-eq-production",
-    "obie-natwest-clearspend-production",
-    "obie-rbs-natwest-one-production",
-    "obie-rbs-one-production",
-    "obie-rbs-virgin-production",
-    "obie-rbs-bankline-production",
-    "obie-rbs-international-production",
-    "obie-rbs-international-eq-production",
-    "obie-ulster-ni-production",
-    "obie-ulster-ni-bankline-production"
-  )
+  def removeTitleFromName(titles: Seq[String], name: String): String = {
+    val titlesWithFullstops = titles.map(_ + ".")
+    val nameAsList = name.split(' ').toSeq
+    val nameWithoutTitle = nameAsList.filterNot { name =>
+      titles.contains(name) || titlesWithFullstops.contains(name)
+    }
+    nameWithoutTitle.mkString(" ")
+  }
 
   @SuppressWarnings(Array("org.wartremover.warts.IterableOps"))
   def bankIdBasedAccountNameParsing(accountName: String): Seq[String] = {
