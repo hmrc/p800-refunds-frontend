@@ -18,13 +18,23 @@ package util
 
 object NameParsingUtil {
 
-  def removeTitleFromName(titles: Seq[String], name: String): String = {
+  @SuppressWarnings(Array("org.wartremover.warts.IterableOps"))
+  def removeTitleFromName(titles: Seq[String], ecospendName: String): String = {
     val titlesWithFullstops = titles.map(_ + ".")
-    val nameAsList = name.split(' ').toSeq
-    val nameWithoutTitle = nameAsList.filterNot { name =>
-      titles.contains(name) || titlesWithFullstops.contains(name)
+    val fullNameList = ecospendName.split(',').toSeq //split by comma first, to handle joint accounts
+
+    val titlesList: Seq[String] = fullNameList.map { fullName =>
+      val singleAccountNameList = fullName.split(' ')
+      val singleAccountNameTitle = if (singleAccountNameList.head.isEmpty) singleAccountNameList(1) else singleAccountNameList.head //skipping empty space after comma
+
+      if (titles.contains(singleAccountNameTitle) || titlesWithFullstops.contains(singleAccountNameTitle)) {
+        fullName.replace(singleAccountNameTitle, "").trim
+      } else {
+        fullName
+      }
     }
-    nameWithoutTitle.mkString(" ")
+
+    titlesList.mkString(", ")
   }
 
   @SuppressWarnings(Array("org.wartremover.warts.IterableOps"))
