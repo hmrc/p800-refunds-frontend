@@ -63,7 +63,7 @@ class EcospendService @Inject() (
       redirectUrl      = redirectUrl,
       merchantId       = None,
       merchantUserId   = None,
-      consentEndDate   = LocalDateTime.now().plusSeconds(30.minutes.toSeconds),
+      consentEndDate   = LocalDateTime.now().plusSeconds(48.hours.toSeconds),
       permissions      = List(
         ConsentPermission.Account,
         ConsentPermission.Balance,
