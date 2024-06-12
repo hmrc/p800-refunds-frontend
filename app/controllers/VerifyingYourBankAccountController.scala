@@ -118,7 +118,7 @@ class VerifyingYourBankAccountController @Inject() (
 
       case (false, _, _) =>
         //There is a parties list to iterate through
-        val matchingResponseList: Seq[(NameMatchingResponse, NameMatchingAudit)] =
+        val matchingResponseAndEcospendNameList: Seq[((NameMatchingResponse, NameMatchingAudit), String)] =
           bankAccountSummary
             .parties
             .getOrElse(List.empty)
@@ -126,16 +126,20 @@ class VerifyingYourBankAccountController @Inject() (
               val ecospendFullName = party.fullLegalName.map(_.value).getOrElse(Errors.throwServerErrorException("Expected party.fullLegalName, but was None"))
               val ecospendNameWithoutTitle = NameParsingUtil.removeTitleFromName(appConfig.NameParsing.titles, ecospendFullName)
 
-              NameMatchingService.fuzzyNameMatching(
+              (NameMatchingService.fuzzyNameMatching(
                 individualResponse.firstForename,
                 individualResponse.secondForename,
                 individualResponse.surname,
                 ecospendNameWithoutTitle
-              )
+              ), ecospendFullName)
             }
 
-        matchingResponseList.foreach(nameAudit => auditService.auditNameMatching(nameAudit._2))
-        matchingResponseList.exists(_._1.isSuccess)
+        matchingResponseAndEcospendNameList.foreach{ response =>
+          val (matchingResponse, ecoName) = response
+          auditService.auditNameMatching(matchingResponse._2.copy(rawBankName = Some(ecoName), partiesArrayUsed = false))
+        }
+
+        matchingResponseAndEcospendNameList.exists(matchingResponse => matchingResponse._1._1.isSuccess)
     }
   }
 
@@ -157,7 +161,7 @@ class VerifyingYourBankAccountController @Inject() (
       )
     }
 
-    matchingResponseList.foreach(nameAudit => auditService.auditNameMatching(nameAudit._2.copy(partiesArrayUsed = false)))
+    matchingResponseList.foreach(nameAudit => auditService.auditNameMatching(nameAudit._2.copy(rawBankName      = Some(accountName), partiesArrayUsed = false)))
     matchingResponseList.exists(_._1.isSuccess)
   }
 
