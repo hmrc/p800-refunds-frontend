@@ -175,7 +175,7 @@ trait TdBase {
     parties               = Some(List(
       BankAccountParty(
         name          = Some(BankPartyName("Greg Greggson")),
-        fullLegalName = Some(BankPartyFullLegalName("Greg Greggory Greggson"))
+        fullLegalName = Some(BankPartyFullLegalName("Sir. Greg Greggory Greggson"))
       ),
       BankAccountParty(
         name          = Some(BankPartyName("Margaret Greggson")),

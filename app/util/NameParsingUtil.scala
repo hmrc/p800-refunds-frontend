@@ -18,22 +18,24 @@ package util
 
 object NameParsingUtil {
 
-  val bankIdMatchingVariationList: Seq[String] = Seq(
-    "obie-natwest-production",
-    "obie-rbs-personal-production",
-    "obie-natwest-bankline-production",
-    "obie-natwest-international-production",
-    "obie-natwest-international-eq-production",
-    "obie-natwest-clearspend-production",
-    "obie-rbs-natwest-one-production",
-    "obie-rbs-one-production",
-    "obie-rbs-virgin-production",
-    "obie-rbs-bankline-production",
-    "obie-rbs-international-production",
-    "obie-rbs-international-eq-production",
-    "obie-ulster-ni-production",
-    "obie-ulster-ni-bankline-production"
-  )
+  @SuppressWarnings(Array("org.wartremover.warts.IterableOps"))
+  def removeTitleFromName(titles: Seq[String], ecospendName: String): String = {
+    val titlesWithFullstops = titles.map(_ + ".")
+    val fullNameList = ecospendName.split(',').toSeq //split by comma first, to handle joint accounts
+
+    val titlesList: Seq[String] = fullNameList.map { fullName =>
+      val singleAccountNameList = fullName.split(' ')
+      val singleAccountNameTitle = if (singleAccountNameList.head.isEmpty) singleAccountNameList(1) else singleAccountNameList.head //skipping empty space after comma
+
+      if (titles.contains(singleAccountNameTitle) || titlesWithFullstops.contains(singleAccountNameTitle)) {
+        fullName.replace(singleAccountNameTitle, "").trim
+      } else {
+        fullName
+      }
+    }
+
+    titlesList.mkString(", ")
+  }
 
   @SuppressWarnings(Array("org.wartremover.warts.IterableOps"))
   def bankIdBasedAccountNameParsing(accountName: String): Seq[String] = {

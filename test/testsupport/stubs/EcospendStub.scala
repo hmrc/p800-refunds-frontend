@@ -216,7 +216,7 @@ object EcospendStub {
     private val consentIdHeaderKey: String = "consent_id"
     private val developmentConsentIdHeaderKey: String = "consent-id"
 
-    def stubAccountSummary2xxSucceeded(consentId: ConsentId, fullName: String = "Greg Greggory Greggson"): StubMapping =
+    def stubAccountSummary2xxSucceeded(consentId: ConsentId, fullName: String = "Sir. Greg Greggory Greggson"): StubMapping =
       WireMockHelpers.Get.stubForGetWithResponseBody(
         url             = accountSummaryUrl,
         responseBody    = validateBankAccountSummaryResponseJson(consentId, fullName),
