@@ -19,9 +19,9 @@ package pagespecs.pages
 import org.openqa.selenium.WebDriver
 import pagespecs.pagesupport.{ContentExpectation, Page, PageUtil}
 
-class GiveYourPermissionPage(baseUrl: String)(implicit webDriver: WebDriver) extends Page(
+class GiveYourConsentPage(baseUrl: String)(implicit webDriver: WebDriver) extends Page(
   baseUrl,
-  path = "/get-an-income-tax-refund/bank-transfer/give-your-permission"
+  path = "/get-an-income-tax-refund/bank-transfer/give-your-consent"
 ) {
 
   override def expectedH1: String = "Give your consent"

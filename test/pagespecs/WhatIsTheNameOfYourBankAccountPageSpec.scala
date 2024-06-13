@@ -46,7 +46,7 @@ class WhatIsTheNameOfYourBankAccountPageSpec extends ItSpec {
     pages.enterNameOfYourBankAccountPage.assertPageIsDisplayed()
     pages.enterNameOfYourBankAccountPage.selectBankAccount(tdAll.bankId)
     pages.enterNameOfYourBankAccountPage.clickSubmit()
-    pages.giveYourPermissionPage.assertPageIsDisplayed()
+    pages.giveYourConsentPage.assertPageIsDisplayed()
 
     EcospendStub.AuthStubs.verifyEcospendAccessToken(numberOfRequests = 2)
     EcospendStub.BanksStubs.verifyEcospendGetBanks(numberOfRequests = 2)
