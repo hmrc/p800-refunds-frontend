@@ -30,13 +30,13 @@
 @import viewsHelpers.requestSupport._
 
 @layout(
-    pageTitle = Some(Messages.GiveYourPermission.`Give your consent`.show)
+    pageTitle = Some(Messages.GiveYourConsent.`Give your consent`.show)
 ) {
 
-    <h1 class="govuk-heading-xl">@{Messages.GiveYourPermission.`Give your consent`.show}</h1>
+    <h1 class="govuk-heading-xl">@{Messages.GiveYourConsent.`Give your consent`.show}</h1>
 
     <p class="govuk-body">
-        @{Html(Messages.GiveYourPermission.`By choosing approve`(
+        @{Html(Messages.GiveYourConsent.`By choosing approve`(
             bankName = bankName,
             amount = amountInPence,
             changeBankLink = controllers.routes.EnterNameOfYourBankController.get.url
@@ -44,34 +44,34 @@
     </p>
 
     <p class="govuk-body">
-        @{Messages.GiveYourPermission.`This is a service provided by Ecospend`.show}
+        @{Messages.GiveYourConsent.`This is a service provided by Ecospend`.show}
     </p>
 
     <p class="govuk-body">
-        @{Messages.GiveYourPermission.`Ecospend will have one-off access to`.show}
+        @{Messages.GiveYourConsent.`Ecospend will have one-off access to`.show}
     </p>
 
     <ul class="govuk-list govuk-list--bullet">
-        <li>@{Messages.GiveYourPermission.`the name on your account`.show}</li>
-        <li>@{Messages.GiveYourPermission.`your account number and sort code`.show}</li>
-        <li>@{Messages.GiveYourPermission.`your transactions`.show}</li>
+        <li>@{Messages.GiveYourConsent.`the name on your account`.show}</li>
+        <li>@{Messages.GiveYourConsent.`your account number and sort code`.show}</li>
+        <li>@{Messages.GiveYourConsent.`your transactions`.show}</li>
     </ul>
 
     <p class="govuk-body">
-         <strong>@{Messages.GiveYourPermission.`Ecospend will not store`.show}</strong>
+         <strong>@{Messages.GiveYourConsent.`Ecospend will not store`.show}</strong>
     </p>
 
     <p class="govuk-body">
-        <strong>@{Messages.GiveYourPermission.`HMRC cannot see your transactions`.show}</strong>
+        <strong>@{Messages.GiveYourConsent.`HMRC cannot see your transactions`.show}</strong>
     </p>
-    @viewsHelpers.formWithCsrf(action = controllers.routes.GiveYourPermissionController.post) {
+    @viewsHelpers.formWithCsrf(action = controllers.routes.GiveYourConsentController.post) {
         <div class="govuk-button-group">
                 @viewsHelpers.govukButton(Button(
-                    content = Text(Messages.GiveYourPermission.`Approve this refund`.show),
+                    content = Text(Messages.GiveYourConsent.`Approve this refund`.show),
                     id      = Some("approve-this-refund")
                 ))
             <a id="choose-another-way" class="govuk-link" href="@routes.ChooseAnotherWayToReceiveYourRefundController.getBankTransfer.url">
-                @{Messages.GiveYourPermission.`Choose another way to get my money`.show}
+                @{Messages.GiveYourConsent.`Choose another way to get my money`.show}
             </a>
         </div>
     }

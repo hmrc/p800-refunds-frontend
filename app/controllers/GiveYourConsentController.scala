@@ -31,7 +31,7 @@ import javax.inject.{Inject, Singleton}
 import scala.concurrent.ExecutionContext
 
 @Singleton
-class GiveYourPermissionController @Inject() (
+class GiveYourConsentController @Inject() (
     mcc:             MessagesControllerComponents,
     views:           Views,
     actions:         Actions,

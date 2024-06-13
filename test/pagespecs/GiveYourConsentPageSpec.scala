@@ -20,7 +20,7 @@ import models.p800externalapi.EventValue
 import testsupport.ItSpec
 import testsupport.stubs.{EcospendStub, EdhStub, P800RefundsExternalApiStub}
 
-class GiveYourPermissionPageSpec extends ItSpec {
+class GiveYourConsentPageSpec extends ItSpec {
 
   override def beforeEach(): Unit = {
     super.beforeEach()
@@ -28,9 +28,9 @@ class GiveYourPermissionPageSpec extends ItSpec {
     upsertJourneyToDatabase(tdAll.BankTransfer.journeySelectedBank)
   }
 
-  "/give-your-permission renders the give your permission page" in {
-    pages.giveYourPermissionPage.open()
-    pages.giveYourPermissionPage.assertPageIsDisplayed()
+  "/give-your-consent renders the give your consent page" in {
+    pages.giveYourConsentPage.open()
+    pages.giveYourConsentPage.assertPageIsDisplayed()
     getJourneyFromDatabase(tdAll.journeyId) shouldBeLike tdAll.BankTransfer.journeySelectedBank
   }
 
@@ -38,9 +38,9 @@ class GiveYourPermissionPageSpec extends ItSpec {
   "clicking 'Change my bank' redirects to 'What is the name of your bank' page" in {
     EcospendStub.AuthStubs.stubEcospendAuth2xxSucceeded
     EcospendStub.BanksStubs.stubEcospendGetBanks2xx
-    pages.giveYourPermissionPage.open()
-    pages.giveYourPermissionPage.assertPageIsDisplayed()
-    pages.giveYourPermissionPage.clickChangeBank()
+    pages.giveYourConsentPage.open()
+    pages.giveYourConsentPage.assertPageIsDisplayed()
+    pages.giveYourConsentPage.clickChangeBank()
     pages.enterNameOfYourBankAccountPage.assertPageIsDisplayed()
     getJourneyFromDatabase(tdAll.journeyId) shouldBeLike tdAll.BankTransfer.journeySelectedBank
   }
@@ -53,9 +53,9 @@ class GiveYourPermissionPageSpec extends ItSpec {
     P800RefundsExternalApiStub.isValid(tdAll.consentId, EventValue.NotReceived)
     EdhStub.getBankDetailsRiskResult(tdAll.getBankDetailsRiskResultRequest, tdAll.getBankDetailsRiskResultResponse)
 
-    pages.giveYourPermissionPage.open()
-    pages.giveYourPermissionPage.assertPageIsDisplayed()
-    pages.giveYourPermissionPage.clickApproveThisRefund()
+    pages.giveYourConsentPage.open()
+    pages.giveYourConsentPage.assertPageIsDisplayed()
+    pages.giveYourConsentPage.clickApproveThisRefund()
     pages.bankStubPage.assertPageIsDisplayed()
     pages.bankStubPage.selectAuthorised()
     pages.bankStubPage.clickSubmit()
@@ -66,9 +66,9 @@ class GiveYourPermissionPageSpec extends ItSpec {
   }
 
   "clicking 'Choose another way to get my money' redirects to 'Choose another way to get my refund' page" in {
-    pages.giveYourPermissionPage.open()
-    pages.giveYourPermissionPage.assertPageIsDisplayed()
-    pages.giveYourPermissionPage.clickChooseAnotherWayToGetMyMoney()
+    pages.giveYourConsentPage.open()
+    pages.giveYourConsentPage.assertPageIsDisplayed()
+    pages.giveYourConsentPage.clickChooseAnotherWayToGetMyMoney()
     pages.chooseAnotherWayToReceiveYourRefundPage.assertPageIsDisplayed()
     getJourneyFromDatabase(tdAll.journeyId) shouldBeLike tdAll.BankTransfer.journeySelectedBank
   }

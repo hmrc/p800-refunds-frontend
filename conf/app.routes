@@ -61,8 +61,8 @@ POST        /cheque/claim-your-refund-by-bank-transfer                     contr
 GET         /bank-transfer/enter-name-of-your-bank                         controllers.EnterNameOfYourBankController.get
 POST        /bank-transfer/enter-name-of-your-bank                         controllers.EnterNameOfYourBankController.post
 
-GET         /bank-transfer/give-your-permission                            controllers.GiveYourPermissionController.get
-POST        /bank-transfer/give-your-permission                            controllers.GiveYourPermissionController.post
+GET         /bank-transfer/give-your-consent                               controllers.GiveYourConsentController.get
+POST        /bank-transfer/give-your-consent                               controllers.GiveYourConsentController.post
 
 GET         /bank-transfer/verifying-your-bank-account                     controllers.VerifyingYourBankAccountController.get(status: Option[models.ecospend.consent.ConsentStatus], consent_id: Option[ConsentId], bank_reference_id: Option[models.ecospend.consent.BankReferenceId])
 

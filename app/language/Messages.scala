@@ -172,7 +172,7 @@ object Messages {
     )
   }
 
-  object GiveYourPermission {
+  object GiveYourConsent {
     val `Give your consent`: Message = Message(
       english = "Give your consent",
       welsh   = "Rhowch eich caniatâd"

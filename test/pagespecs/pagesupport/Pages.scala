@@ -65,7 +65,7 @@ class Pages(baseUrl: String)(implicit webDriver: WebDriver) {
   //cheque specific page
   val claimYourRefundByBankTransferPage = new ClaimYourRefundByBankTransferPage(baseUrl = baseUrl)
 
-  val giveYourPermissionPage = new GiveYourPermissionPage(baseUrl = baseUrl)
+  val giveYourConsentPage = new GiveYourConsentPage(baseUrl = baseUrl)
 
   val youCannotConfirmYourIdentityYetSpec = new YouCannotConfirmYourIdentityYetPage(baseUrl = baseUrl)
 
