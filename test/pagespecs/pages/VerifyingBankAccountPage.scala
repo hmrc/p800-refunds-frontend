@@ -35,7 +35,7 @@ class VerifyingBankAccountPage(baseUrl: String, consentStatus: ConsentStatus, co
       expectedLines =
         """
           |We are verifying your bank account
-          |This usually takes a few seconds. You can refresh this page if it does not update automatically.
+          |This can take up to a minute. You can refresh this page if it does not update automatically.
           |""".stripMargin
     )) ++ extraExpectations
 

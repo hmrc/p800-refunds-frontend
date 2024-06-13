@@ -46,7 +46,7 @@
     <h1 class="govuk-heading-xl">@{Messages.VerifyBankAccount.`We are verifying your bank account`.show}</h1>
 
     <p class="govuk-body">
-        @{Html(Messages.VerifyBankAccount.`This usually takes a few seconds`(routes.VerifyingYourBankAccountController.get(status, consentId, bankReferenceId).url).show)}
+        @{Html(Messages.VerifyBankAccount.`This can take up to a minute`(routes.VerifyingYourBankAccountController.get(status, consentId, bankReferenceId).url).show)}
     </p>
 
 }

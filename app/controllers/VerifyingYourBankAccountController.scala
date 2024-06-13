@@ -136,7 +136,7 @@ class VerifyingYourBankAccountController @Inject() (
 
         matchingResponseAndEcospendNameList.foreach{ response =>
           val (matchingResponse, ecoName) = response
-          auditService.auditNameMatching(matchingResponse._2.copy(rawBankName = Some(ecoName), partiesArrayUsed = false))
+          auditService.auditNameMatching(matchingResponse._2.copy(rawBankName      = Some(ecoName), partiesArrayUsed = false))
         }
 
         matchingResponseAndEcospendNameList.exists(matchingResponse => matchingResponse._1._1.isSuccess)
