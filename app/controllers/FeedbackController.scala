@@ -20,19 +20,16 @@ import action.Actions
 import config.AppConfig
 import models.journeymodels.{Journey, JourneyType}
 import play.api.mvc._
-import uk.gov.hmrc.play.audit.http.connector.AuditConnector
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
 import javax.inject.{Inject, Singleton}
-import scala.concurrent.ExecutionContext
 
 @Singleton
 class FeedbackController @Inject() (
-    actions:        Actions,
-    mcc:            MessagesControllerComponents,
-    appConfig:      AppConfig,
-    auditConnector: AuditConnector
-)(implicit ex: ExecutionContext) extends FrontendController(mcc) {
+    actions:   Actions,
+    mcc:       MessagesControllerComponents,
+    appConfig: AppConfig
+) extends FrontendController(mcc) {
   private val feedbackFrontendUrl: String = appConfig.Feedback.feedbackFrontendUrl
 
   def get: Action[AnyContent] = actions.journeyFinished { implicit request =>
@@ -44,10 +41,7 @@ class FeedbackController @Inject() (
       case JourneyType.BankTransfer => "p800-refunds-bank-transfer"
     }
 
-    val auditData = Map("feedbackId" -> feedbackId)
-    auditConnector.sendExplicitAudit(serviceName, auditData)
-
-    Redirect(s"${feedbackFrontendUrl}/feedback/${serviceName}")
+    Redirect(s"${feedbackFrontendUrl}/feedback/$serviceName")
       .withSession(("feedbackId", feedbackId))
   }
 }
