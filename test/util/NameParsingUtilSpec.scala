@@ -76,12 +76,22 @@ class NameParsingUtilSpec extends UnitSpec {
     ("Smith-Rubens P & J", Seq("P Smith-Rubens", "J Smith-Rubens")),
 
     // Joint account - Double Initial
-    ("Rubens JI & ER", Seq("JI Rubens", "ER Rubens")),
-    ("Rubens JI & Smith ER", Seq("JI Rubens", "ER Smith")),
-    ("Smith-Rubens JI & ER", Seq("JI Smith-Rubens", "ER Smith-Rubens")),
+    ("Rubens JI & ER", Seq("J I Rubens", "E R Rubens")),
+    ("Rubens JI & Smith ER", Seq("J I Rubens", "E R Smith")),
+    ("Smith-Rubens JI & ER", Seq("J I Smith-Rubens", "E R Smith-Rubens")),
+
+    // Joint account - Spaced out double initials
+    ("Rubens J I & E R", Seq("J I Rubens", "E R Rubens")),
+    ("Rubens J I & Smith E R", Seq("J I Rubens", "E R Smith")),
+    ("Smith-Rubens J I & E R", Seq("J I Smith-Rubens", "E R Smith-Rubens")),
 
     // Joint account - Extra spaces
-    ("   Rubens   P   &    J  ", Seq("P Rubens", "J Rubens"))
+    ("  Rubens   P   &    J  ", Seq("P Rubens", "J Rubens")),
+    ("  Rubens    P & Smith J  ", Seq("P Rubens", "J Smith")),
+    ("  Smith-Rubens    P   &   J  ", Seq("P Smith-Rubens", "J Smith-Rubens")),
+    ("  Rubens J     I  &    E    R  ", Seq("J I Rubens", "E R Rubens")),
+    ("  Rubens    J  I  &  Smith    E     R  ", Seq("J I Rubens", "E R Smith")),
+    ("  Smith-Rubens    J    I   &   E    R  ", Seq("J I Smith-Rubens", "E R Smith-Rubens"))
   ).foreach {
       case (input, expected) =>
         val printableExpected = expected.map(x => s"'${x}'").mkString(" & ")

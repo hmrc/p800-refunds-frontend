@@ -42,18 +42,37 @@ object NameParsingUtil {
     if (accountName.contains('&')) {
       val jointAccountNamesList = accountName.split('&').map(_.trim)
 
-      jointAccountNamesList.last.length match {
-        case x if x <= 2 =>
-          //Joint account same surname e.g. 'Rubens J & E' OR 'Rubens JI & ER'
-          val accountNameSeq = jointAccountNamesList.head.split(' ').toSeq
-          val surname = accountNameSeq.head
+      val d = jointAccountNamesList
+        .last
+        .splitAt(jointAccountNamesList.head.indexOf(' '))
+        ._1
+        .trim
+        .replaceAll("\\s+", "")
 
-          Seq(s"${accountNameSeq.last} $surname", s"${jointAccountNamesList.last.trim} $surname")
+        def sanitizeInitial(initials: String): String =
+          initials
+            .trim
+            .replaceAll("\\s+", "")
+            .toCharArray
+            .mkString(" ")
+
+      d.length match {
+        case x if x <= 2 =>
+          //Joint account same surname e.g. 'Rubens J & E' OR 'Rubens JI & ER' OR 'Rubens J I & E R'
+          val (surname, party1InitialsUnsanitized) = // ('Rubens', 'J') or ('Rubens', 'JI') or ('Rubens', 'J I')
+            jointAccountNamesList
+              .head
+              .splitAt(jointAccountNamesList.head.indexOf(' '))
+
+          val party1Initials = sanitizeInitial(party1InitialsUnsanitized)
+          val party2Initials = sanitizeInitial(jointAccountNamesList.last)
+
+          Seq(s"$party1Initials $surname", s"$party2Initials $surname")
         case _ =>
           //Joint account different surnames e.g. 'Rubens J & Smith E' OR 'Rubens JI & Smith ER'
           jointAccountNamesList.map { fullName =>
             val fullNameAsList = fullName.split(' ').map(_.trim)
-            val firstName = fullNameAsList.last
+            val firstName = sanitizeInitial(fullNameAsList.tail.mkString)
             val surname = fullNameAsList.head
             s"$firstName $surname"
           }.toSeq
