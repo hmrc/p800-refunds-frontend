@@ -45,6 +45,7 @@ class EnterNameOfYourBankAccountPage(baseUrl: String)(implicit webDriver: WebDri
         """
           |What is the name of your bank?
           |Start typing the name of a UK bank that you want your refund to be sent to.
+          |The name on your bank account must match the name on your P800 letter.
           |Continue
           |My bank is not listed
           |""".stripMargin
@@ -69,6 +70,7 @@ class EnterNameOfYourBankAccountPage(baseUrl: String)(implicit webDriver: WebDri
           """
             |What is the name of your bank?
             |Start typing the name of a UK bank that you want your refund to be sent to.
+            |The name on your bank account must match the name on your P800 letter.
             |Continue
             |My bank is not listed
             |""".stripMargin
