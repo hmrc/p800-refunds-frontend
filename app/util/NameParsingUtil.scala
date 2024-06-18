@@ -40,20 +40,21 @@ object NameParsingUtil {
   @SuppressWarnings(Array("org.wartremover.warts.IterableOps"))
   def bankIdBasedAccountNameParsing(accountName: String): Seq[String] = {
     if (accountName.contains('&')) {
-      val jointAccountNamesList = accountName.split('&')
-      jointAccountNamesList.last.trim.length match {
-        case 1 =>
-          //Joint account same surname e.g. Rubens J & E
+      val jointAccountNamesList = accountName.split('&').map(_.trim)
+
+      jointAccountNamesList.last.length match {
+        case x if x <= 2 =>
+          //Joint account same surname e.g. 'Rubens J & E' OR 'Rubens JI & ER'
           val accountNameSeq = jointAccountNamesList.head.split(' ').toSeq
           val surname = accountNameSeq.head
 
           Seq(s"${accountNameSeq.last} $surname", s"${jointAccountNamesList.last.trim} $surname")
         case _ =>
-          //Joint account different surnames e.g. Rubens J & Smith E
+          //Joint account different surnames e.g. 'Rubens J & Smith E' OR 'Rubens JI & Smith ER'
           jointAccountNamesList.map { fullName =>
-            val fullNameAsList = fullName.split(' ')
+            val fullNameAsList = fullName.split(' ').map(_.trim)
             val firstName = fullNameAsList.last
-            val surname = if (fullNameAsList.head.isEmpty) fullNameAsList(1) else fullNameAsList.head // the space after the & causes issues with split
+            val surname = fullNameAsList.head
             s"$firstName $surname"
           }.toSeq
       }

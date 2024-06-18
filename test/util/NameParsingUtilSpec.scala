@@ -69,17 +69,27 @@ class NameParsingUtilSpec extends UnitSpec {
     NameParsingUtil.bankIdBasedAccountNameParsing("Smith-Rubens PJ") shouldBe Seq("P J Smith-Rubens")
   }
 
-  "Joint Account, same surname for: 'Rubens P & J' should become 'P Rubens' & 'J Rubens'" in {
-    NameParsingUtil.bankIdBasedAccountNameParsing("Rubens P & J") shouldBe Seq("P Rubens", "J Rubens")
-  }
+  Seq(
+    // Joint account - Single initial
+    ("Rubens P & J", Seq("P Rubens", "J Rubens")),
+    ("Rubens P & Smith J", Seq("P Rubens", "J Smith")),
+    ("Smith-Rubens P & J", Seq("P Smith-Rubens", "J Smith-Rubens")),
 
-  "Joint Account, different surname for: 'Rubens P & Smith J' should become 'P Rubens' & 'J Smith'" in {
-    NameParsingUtil.bankIdBasedAccountNameParsing("Rubens P & Smith J") shouldBe Seq("P Rubens", "J Smith")
-  }
+    // Joint account - Double Initial
+    ("Rubens JI & ER", Seq("JI Rubens", "ER Rubens")),
+    ("Rubens JI & Smith ER", Seq("JI Rubens", "ER Smith")),
+    ("Smith-Rubens JI & ER", Seq("JI Smith-Rubens", "ER Smith-Rubens")),
 
-  "Joint Account, double barrelled surname: 'Smith-Rubens P & J' should become 'P Smith-Rubens' & 'J Smith-Rubens'" in {
-    NameParsingUtil.bankIdBasedAccountNameParsing("Smith-Rubens P & J") shouldBe Seq("P Smith-Rubens", "J Smith-Rubens")
-  }
+    // Joint account - Extra spaces
+    ("   Rubens   P   &    J  ", Seq("P Rubens", "J Rubens"))
+  ).foreach {
+      case (input, expected) =>
+        val printableExpected = expected.map(x => s"'${x}'").mkString(" & ")
+
+        s"Joint Account, same surname for: '${input}' should become ${printableExpected}" in {
+          NameParsingUtil.bankIdBasedAccountNameParsing(input) shouldBe expected
+        }
+    }
 
   "bankIdBasedAccountNameParsing should return empty sequence for empty account name" in {
     val result = NameParsingUtil.bankIdBasedAccountNameParsing("")
