@@ -693,7 +693,7 @@ class CheckYourAnswersPageSpec extends ItSpec {
     pages.checkYourAnswersBankTransferPage.open()
     val j = tdAll.BankTransfer.AfterReferenceCheck.journeyReferenceChecked
     VerifyP800ReferenceStub.p800ReferenceChecked(j.nino.value, tdAll.p800Reference, j.getP800ReferenceChecked(request = tdAll.fakeRequest))
-    TraceIndividualStub.traceIndividualBadRequest(
+    TraceIndividualStub.traceIndividualVariedResponseStub(
       request = TraceIndividualRequest(j.nino.value, tdAll.`dateOfBirthFormatted YYYY-MM-DD`)
     )
 
@@ -735,6 +735,58 @@ class CheckYourAnswersPageSpec extends ItSpec {
           }
         }
         """.stripMargin
+      ).as[JsObject]
+    )
+  }
+
+  "clicking submit redirects to 'We cannot confirm your identity' when trace individual returns a 404" in {
+    upsertJourneyToDatabase(tdAll.BankTransfer.journeyEnteredDateOfBirth)
+    pages.checkYourAnswersBankTransferPage.open()
+    val j = tdAll.BankTransfer.AfterReferenceCheck.journeyReferenceChecked
+    VerifyP800ReferenceStub.p800ReferenceChecked(j.nino.value, tdAll.p800Reference, j.getP800ReferenceChecked(request = tdAll.fakeRequest))
+    TraceIndividualStub.traceIndividualVariedResponseStub(
+      request = TraceIndividualRequest(j.nino.value, tdAll.`dateOfBirthFormatted YYYY-MM-DD`),
+      body    = "",
+      status  = 404
+    )
+
+    pages.checkYourAnswersBankTransferPage.clickSubmit()
+    pages.cannotConfirmYourIdentityTryAgainBankTransferPage.assertPageIsDisplayed(JourneyType.BankTransfer)
+
+    VerifyP800ReferenceStub.verify(tdAll.correlationId)
+    TraceIndividualStub.verifyTraceIndividual(tdAll.correlationId)
+    getJourneyFromDatabase(tdAll.journeyId) shouldBeLike tdAll.BankTransfer.AfterReferenceCheck.journeyReferenceChecked
+
+    AuditConnectorStub.verifyEventAudited(
+      AuditConnectorStub.validateUserDetailsAuditType,
+      Json.parse(
+        //format=JSON
+        """
+          {
+            "outcome": {
+              "isSuccessful": false,
+              "attemptsOnRecord": 1,
+              "lockout": false,
+              "reasons": ["Trace Individual response was 404 NotFound."]
+            },
+            "userEnteredDetails": {
+              "repaymentMethod": "bank",
+              "p800Reference": 12345678,
+              "nino": "LM001014C",
+              "dob": "2000-01-01"
+            },
+            "repaymentAmount": 12.34,
+            "repaymentInformation": {
+              "reconciliationIdentifier": 123,
+              "paymentNumber": 12345678,
+              "payeNumber": "PayeNumber-123",
+              "taxDistrictNumber": 717,
+              "associatedPayableNumber": 1234,
+              "customerAccountNumber": "customerAccountNumber-1234",
+              "currentOptimisticLock": 15
+            }
+          }
+          """.stripMargin
       ).as[JsObject]
     )
   }

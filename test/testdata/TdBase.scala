@@ -18,7 +18,7 @@ package testdata
 
 import _root_.nps.models._
 import casemanagement._
-import edh.{BankSortCode, BankAccountNumber, BankAccountName, PersonType, Postcode}
+import edh.{BankAccountName, BankAccountNumber, BankSortCode, PersonType, Postcode}
 import models._
 import models.attemptmodels.{AttemptId, AttemptInfo, IpAddress, NumberOfAttempts}
 import models.dateofbirth.{DateOfBirth, DayOfMonth, Month, Year}
@@ -26,6 +26,7 @@ import models.ecospend._
 import models.ecospend.account._
 import models.ecospend.consent._
 import models.p800externalapi.EventValue
+import nps.models.TraceIndividualResponse.TracedIndividual
 import nps.models.ValidateReferenceResult.P800ReferenceChecked
 import org.apache.pekko.http.scaladsl.model.Uri
 import testsupport.ItSpec

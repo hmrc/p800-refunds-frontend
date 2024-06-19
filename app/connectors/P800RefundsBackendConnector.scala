@@ -23,6 +23,7 @@ import edh.{ClaimId, GetBankDetailsRiskResultRequest, GetBankDetailsRiskResultRe
 import models.audit.IsSuccessful
 import models.journeymodels.Journey
 import models.{CorrelationId, Nino, P800Reference}
+import nps.models.TraceIndividualResponse.customTraceIndividualReads
 import nps.models._
 import play.api.mvc.RequestHeader
 import requests.RequestSupport.hc
@@ -57,12 +58,13 @@ class P800RefundsBackendConnector @Inject() (
       .execute[ValidateReferenceResult]
   }
 
-  def traceIndividual(traceIndividualRequest: TraceIndividualRequest, correlationId: CorrelationId)(implicit requestHeader: RequestHeader): Future[TracedIndividual] = {
+  def traceIndividual(traceIndividualRequest: TraceIndividualRequest, correlationId: CorrelationId)(implicit requestHeader: RequestHeader): Future[TraceIndividualResponse] = {
+    implicit val traceIndividualResponseReads: HttpReads[TraceIndividualResponse] = customTraceIndividualReads
     httpClient
       .post(url"$baseUrl/nps/trace-individual")
       .setHeader(makeHeaders(correlationId): _*)
       .withBody(Json.toJson(traceIndividualRequest))
-      .execute[TracedIndividual]
+      .execute[TraceIndividualResponse]
   }
 
   def makeBacsRepayment(

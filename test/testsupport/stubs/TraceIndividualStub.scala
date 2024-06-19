@@ -19,7 +19,8 @@ package testsupport.stubs
 import com.github.tomakehurst.wiremock.client.WireMock._
 import com.github.tomakehurst.wiremock.stubbing.StubMapping
 import models.CorrelationId
-import nps.models.{TraceIndividualRequest, TracedIndividual}
+import nps.models.TraceIndividualRequest
+import nps.models.TraceIndividualResponse.TracedIndividual
 import play.api.http.Status
 import play.api.libs.json.Json
 import testsupport.stubs.NpsHeaders.npsHeaders
@@ -36,11 +37,15 @@ object TraceIndividualStub {
     )
   }
 
-  def traceIndividualBadRequest(request: TraceIndividualRequest): StubMapping =
+  def traceIndividualVariedResponseStub(
+      request: TraceIndividualRequest,
+      body:    String                 = "simulated bad request error",
+      status:  Int                    = Status.BAD_REQUEST
+  ): StubMapping =
     WireMockHelpers.Post.stubForPost(
       url             = url,
-      responseBody    = "simulated bad request error",
-      responseStatus  = Status.BAD_REQUEST,
+      responseBody    = body,
+      responseStatus  = status,
       requestBodyJson = Some(Json.prettyPrint(Json.toJson(request))),
       requiredHeaders = npsHeaders
     )

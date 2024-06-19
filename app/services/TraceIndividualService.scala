@@ -18,13 +18,13 @@ package services
 
 import connectors.P800RefundsBackendConnector
 import models.audit.ApiResponsibleForFailure
-import nps.models.{TraceIndividualRequest, TracedIndividual}
-import play.api.mvc.Request
 import models.journeymodels.Journey
-import util.JourneyLogger
+import nps.models.{TraceIndividualRequest, TraceIndividualResponse}
+import play.api.mvc.Request
 import requests.RequestSupport
+import util.JourneyLogger
 
-import javax.inject.{Singleton, Inject}
+import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
@@ -34,7 +34,7 @@ class TraceIndividualService @Inject() (
 )(implicit ec: ExecutionContext) {
   import RequestSupport._
 
-  def traceIndividual(journey: Journey)(implicit request: Request[_]): Future[TracedIndividual] =
+  def traceIndividual(journey: Journey)(implicit request: Request[_]): Future[TraceIndividualResponse] =
     p800RefundsBackendConnector
       .traceIndividual(
         traceIndividualRequest = TraceIndividualRequest(
@@ -45,15 +45,13 @@ class TraceIndividualService @Inject() (
       )
       .recover {
         case ex =>
-          JourneyLogger.warn(s"Trace trace individual call failed with exception: ${ex.getMessage()}")
+          JourneyLogger.warn(s"Trace trace individual call failed with exception: ${ex.getMessage}")
           auditService.auditValidateUserDetails(
             journey                  = journey,
             attemptInfo              = None,
             isSuccessful             = false,
             apiResponsibleForFailure = Some(ApiResponsibleForFailure.TraceIndividual),
-            failureReasons           = Some(Seq(
-              ex.getMessage()
-            ))
+            failureReasons           = Some(Seq(ex.getMessage))
           )
           throw ex
       }

@@ -23,7 +23,8 @@ import models.ecospend.account.BankAccountSummary
 import models.ecospend.consent.BankConsentResponse
 import models.p800externalapi.EventValue
 import models.{AmountInPence, CorrelationId, Nino, UserEnteredP800Reference}
-import nps.models.{ValidateReferenceResult, TracedIndividual}
+import nps.models.TraceIndividualResponse.TracedIndividual
+import nps.models.ValidateReferenceResult
 import play.api.libs.json.OFormat
 import play.api.mvc.RequestHeader
 import util.Errors

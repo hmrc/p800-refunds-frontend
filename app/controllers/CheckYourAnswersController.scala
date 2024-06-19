@@ -22,10 +22,11 @@ import models.audit.ApiResponsibleForFailure
 import models.dateofbirth.DateOfBirth
 import models.journeymodels._
 import models.{Nino, P800Reference, UserEnteredP800Reference}
-import nps.models.{TracedIndividual, ValidateReferenceResult}
+import nps.models.TraceIndividualResponse.TracedIndividual
+import nps.models.{TraceIndividualResponse, ValidateReferenceResult}
 import play.api.mvc._
 import requests.RequestSupport
-import services.{AuditService, FailedVerificationAttemptService, ValidateP800ReferenceService, TraceIndividualService, JourneyService}
+import services._
 import uk.gov.hmrc.govukfrontend.views.Aliases.{HtmlContent, Key, SummaryListRow, Value}
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryList
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
@@ -111,24 +112,70 @@ class CheckYourAnswersController @Inject() (
     .async { implicit request =>
       val journey: Journey = request.journey
       for {
-        maybeTraceIndividualResponse: Option[TracedIndividual] <- journey.getJourneyType match {
+        maybeTraceIndividualResponse: Option[TraceIndividualResponse] <- journey.getJourneyType match {
           case JourneyType.BankTransfer =>
             traceIndividualService.traceIndividual(journey)
               .map(Some(_))
           case JourneyType.Cheque => Future.successful(None)
         }
         attemptInfo <- failedVerificationAttemptService.find()
-        journey <- journeyService.upsert(journey.update(maybeTraceIndividualResponse = maybeTraceIndividualResponse))
-      } yield {
-        auditService.auditValidateUserDetails(
-          journey      = journey,
-          attemptInfo  = attemptInfo,
-          isSuccessful = true
-        )(request, hc)
-        Redirect(controllers.YourIdentityIsConfirmedController.redirectLocation(journey))
-      }
+        redirectLocation <- maybeTraceIndividualResponse match {
+          case None => //covers cheque journey
+            auditService.auditValidateUserDetails(
+              journey      = journey,
+              attemptInfo  = attemptInfo,
+              isSuccessful = true
+            )(request, hc)
 
+            journeyService.upsert(journey.update(maybeTraceIndividualResponse = None))
+              .map(j => Redirect(controllers.YourIdentityIsConfirmedController.redirectLocation(j)))
+          case Some(tracedIndividual: TracedIndividual) =>
+            auditService.auditValidateUserDetails(
+              journey      = journey,
+              attemptInfo  = attemptInfo,
+              isSuccessful = true
+            )(request, hc)
+
+            journeyService
+              .upsert(journey.update(maybeTraceIndividualResponse = Some(tracedIndividual)))
+              .map(j => Redirect(controllers.YourIdentityIsConfirmedController.redirectLocation(j)))
+          case _ => processIndividualTraceNotFound()
+        }
+      } yield {
+        redirectLocation
+      }
     }
+
+  private def processIndividualTraceNotFound()(implicit req: JourneyRequest[_]): Future[Result] = {
+    for {
+      (shouldBeLockedOut, attemptInfo) <- failedVerificationAttemptService.updateNumberOfFailedAttempts()
+      result <- if (shouldBeLockedOut) {
+        journeyService
+          .upsert(req.journey.update(maybeTraceIndividualResponse = None).copy(hasFinished = HasFinished.YesLockedOut))
+          .map { j =>
+            auditService.auditValidateUserDetails(
+              journey                  = j,
+              attemptInfo              = Some(attemptInfo),
+              isSuccessful             = false,
+              apiResponsibleForFailure = Some(ApiResponsibleForFailure.TraceIndividual),
+              failureReasons           = Some(Seq("Max attempts reached. User is locked out."))
+            )(req, hc)
+            Redirect(controllers.NoMoreAttemptsLeftToConfirmYourIdentityController.redirectLocation(j))
+          }
+      } else journeyService
+        .upsert(req.journey.update(maybeTraceIndividualResponse = None))
+        .map { j =>
+          auditService.auditValidateUserDetails(
+            journey                  = j,
+            attemptInfo              = Some(attemptInfo),
+            isSuccessful             = false,
+            apiResponsibleForFailure = Some(ApiResponsibleForFailure.TraceIndividual),
+            failureReasons           = Some(Seq("Trace Individual response was 404 NotFound."))
+          )(req, hc)
+          Redirect(controllers.CannotConfirmYourIdentityTryAgainController.redirectLocation(j))
+        }
+    } yield result
+  }
 
   @SuppressWarnings(Array("org.wartremover.warts.Any"))
   private val validateP800Reference: ActionRefiner[JourneyRequest, JourneyRequest] = new ActionRefiner[JourneyRequest, JourneyRequest] {
