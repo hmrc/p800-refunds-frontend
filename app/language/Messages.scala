@@ -598,7 +598,7 @@ object Messages {
     )
 
     val `Bank transfers are faster and safer. ...`: Message = Message(
-      english = "Bank transfers are faster and safer. You’ll need to have your online or mobile banking details ready.",
+      english = "Bank transfers are faster and safer. You’ll be transferred to your bank to sign in and select the account you want the refund to be sent to.",
       welsh   = "Mae trosglwyddiadau banc yn gyflymach ac yn fwy diogel. Bydd angen i chi gael eich manylion bancio ar-lein neu symudol yn barod."
     )
 
