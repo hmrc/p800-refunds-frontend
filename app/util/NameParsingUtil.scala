@@ -40,20 +40,40 @@ object NameParsingUtil {
   @SuppressWarnings(Array("org.wartremover.warts.IterableOps"))
   def bankIdBasedAccountNameParsing(accountName: String): Seq[String] = {
     if (accountName.contains('&')) {
-      val jointAccountNamesList = accountName.split('&')
-      jointAccountNamesList.last.trim.length match {
-        case 1 =>
-          //Joint account same surname e.g. Rubens J & E
-          val accountNameSeq = jointAccountNamesList.head.split(' ').toSeq
-          val surname = accountNameSeq.head
+      val jointAccountNamesList = accountName.split('&').map(_.trim)
 
-          Seq(s"${accountNameSeq.last} $surname", s"${jointAccountNamesList.last.trim} $surname")
+      val secondSurname = jointAccountNamesList
+        .last
+        .splitAt(jointAccountNamesList.head.indexOf(' '))
+        ._1
+        .trim
+        .replaceAll("\\s+", "")
+
+        def sanitizeInitial(initials: String): String =
+          initials
+            .trim
+            .replaceAll("\\s+", "")
+            .toCharArray
+            .mkString(" ")
+
+      secondSurname.length match {
+        case secondSurnameLength if secondSurnameLength <= 2 =>
+          //Joint account same surname e.g. 'Rubens J & E' OR 'Rubens JI & ER' OR 'Rubens J I & E R'
+          val (surname, party1InitialsUnsanitized) = // ('Rubens', 'J') or ('Rubens', 'JI') or ('Rubens', 'J I')
+            jointAccountNamesList
+              .head
+              .splitAt(jointAccountNamesList.head.indexOf(' '))
+
+          val party1Initials = sanitizeInitial(party1InitialsUnsanitized)
+          val party2Initials = sanitizeInitial(jointAccountNamesList.last)
+
+          Seq(s"$party1Initials $surname", s"$party2Initials $surname")
         case _ =>
-          //Joint account different surnames e.g. Rubens J & Smith E
+          //Joint account different surnames e.g. 'Rubens J & Smith E' OR 'Rubens JI & Smith ER'
           jointAccountNamesList.map { fullName =>
-            val fullNameAsList = fullName.split(' ')
-            val firstName = fullNameAsList.last
-            val surname = if (fullNameAsList.head.isEmpty) fullNameAsList(1) else fullNameAsList.head // the space after the & causes issues with split
+            val fullNameAsList = fullName.split(' ').map(_.trim)
+            val firstName = sanitizeInitial(fullNameAsList.tail.mkString)
+            val surname = fullNameAsList.head
             s"$firstName $surname"
           }.toSeq
       }
