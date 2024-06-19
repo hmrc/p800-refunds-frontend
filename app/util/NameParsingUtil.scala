@@ -42,7 +42,7 @@ object NameParsingUtil {
     if (accountName.contains('&')) {
       val jointAccountNamesList = accountName.split('&').map(_.trim)
 
-      val d = jointAccountNamesList
+      val secondSurname = jointAccountNamesList
         .last
         .splitAt(jointAccountNamesList.head.indexOf(' '))
         ._1
@@ -56,8 +56,8 @@ object NameParsingUtil {
             .toCharArray
             .mkString(" ")
 
-      d.length match {
-        case x if x <= 2 =>
+      secondSurname.length match {
+        case secondSurnameLength if secondSurnameLength <= 2 =>
           //Joint account same surname e.g. 'Rubens J & E' OR 'Rubens JI & ER' OR 'Rubens J I & E R'
           val (surname, party1InitialsUnsanitized) = // ('Rubens', 'J') or ('Rubens', 'JI') or ('Rubens', 'J I')
             jointAccountNamesList
