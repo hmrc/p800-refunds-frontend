@@ -28,6 +28,7 @@ import models.ecospend.consent.{BankReferenceId, ConsentId, ConsentStatus}
 import models.journeymodels._
 import models.namematching.NameMatchingResponse
 import models.p800externalapi.EventValue
+import nps.models.TraceIndividualResponse.TracedIndividual
 import nps.models.ValidateReferenceResult.P800ReferenceChecked
 import nps.models._
 import play.api.mvc._

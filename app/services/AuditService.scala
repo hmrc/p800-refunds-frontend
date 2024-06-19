@@ -19,12 +19,12 @@ package services
 import config.AppConfig
 import models.AmountInPence
 import models.attemptmodels.{AttemptInfo, NumberOfAttempts}
-import models.audit._
 import models.audit.cheque.ChequeClaimAttemptMade
-import models.audit.{AuditDetail, IpAddressLockedout, Login, NameMatchingAudit, UserLoginSelection}
+import models.audit._
 import models.ecospend.BankFriendlyName
 import models.journeymodels.Journey
-import nps.models.{TracedIndividual, ValidateReferenceResult}
+import nps.models.TraceIndividualResponse.TracedIndividual
+import nps.models.ValidateReferenceResult
 import play.api.libs.json.{Json, Writes}
 import play.api.mvc.RequestHeader
 import uk.gov.hmrc.http.HeaderCarrier
