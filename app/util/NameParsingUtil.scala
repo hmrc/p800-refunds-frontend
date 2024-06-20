@@ -20,21 +20,20 @@ object NameParsingUtil {
 
   @SuppressWarnings(Array("org.wartremover.warts.IterableOps"))
   def removeTitleFromName(titles: Seq[String], ecospendName: String): String = {
-    val titlesWithFullstops = titles.map(_ + ".")
-    val fullNameList = ecospendName.split(',').toSeq //split by comma first, to handle joint accounts
+    val titlesSet = (titles ++ titles.map(_ + ".")).map(_.toLowerCase).toSet
+    val fullNameList = ecospendName.split(',').map(_.toLowerCase).toSeq //split by comma first, to handle joint accounts
 
-    val titlesList: Seq[String] = fullNameList.map { fullName =>
+    val namesList: Seq[String] = fullNameList.map { fullName =>
       val singleAccountNameList = fullName.split(' ')
       val singleAccountNameTitle = if (singleAccountNameList.head.isEmpty) singleAccountNameList(1) else singleAccountNameList.head //skipping empty space after comma
 
-      if (titles.contains(singleAccountNameTitle) || titlesWithFullstops.contains(singleAccountNameTitle)) {
+      if (titlesSet.contains(singleAccountNameTitle)) {
         fullName.replace(singleAccountNameTitle, "").trim
       } else {
         fullName
       }
     }
-
-    titlesList.mkString(", ")
+    namesList.mkString(", ")
   }
 
   @SuppressWarnings(Array("org.wartremover.warts.IterableOps"))

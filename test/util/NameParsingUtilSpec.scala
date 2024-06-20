@@ -20,41 +20,51 @@ import testsupport.UnitSpec
 
 class NameParsingUtilSpec extends UnitSpec {
 
-  val titlesList: Seq[String] = Seq("Mr", "Mrs", "Miss", "Ms", "Master", "Madame", "Dr", "Sir")
+  val titlesList: Seq[String] = Seq("mr", "mrs", "miss", "ms", "master", "madame", "dr", "sir")
 
   "removeTitleFromName should return the same name when no titles are provided" in {
     val result = NameParsingUtil.removeTitleFromName(Seq.empty, "Mr John Doe")
-    result should be ("Mr John Doe")
+    result should be ("mr john doe")
   }
 
   "removeTitleFromName should return the same name even if the name includes a title's letters" in {
     val result = NameParsingUtil.removeTitleFromName(titlesList, "Mrian Revanish")
-    result should be ("Mrian Revanish")
+    result should be ("mrian revanish")
   }
 
   "removeTitleFromName should remove the title from the name when a title is provided" in {
     val result = NameParsingUtil.removeTitleFromName(titlesList, "Mr John Andrew Doe")
-    result should be ("John Andrew Doe")
+    result should be ("john andrew doe")
+  }
+
+  "removeTitleFromName should remove the title from the name when uppercase title is provided" in {
+    val result = NameParsingUtil.removeTitleFromName(titlesList, "MR John Andrew Doe")
+    result should be ("john andrew doe")
+  }
+
+  "removeTitleFromName should remove the title from the name when lowercase title is provided" in {
+    val result = NameParsingUtil.removeTitleFromName(titlesList, "mr John Andrew Doe")
+    result should be ("john andrew doe")
   }
 
   "removeTitleFromName should remove the title even if it includes a fullstop" in {
     val result = NameParsingUtil.removeTitleFromName(titlesList, "Mr. John Andrew Doe")
-    result should be ("John Andrew Doe")
+    result should be ("john andrew doe")
   }
 
   "removeTitleFromName should NOT remove the title from the name when the title is not at the start" in {
     val result = NameParsingUtil.removeTitleFromName(titlesList, "John Andrew Doe Mr")
-    result should be ("John Andrew Doe Mr")
+    result should be ("john andrew doe mr")
   }
 
   "removeTitleFromName should remove only the first title from the name when multiple titles are provided" in {
     val result = NameParsingUtil.removeTitleFromName(titlesList, "Dr Master John Doe")
-    result should be ("Master John Doe")
+    result should be ("master john doe")
   }
 
   "removeTitleFromName should remove all titles from the name when multiple names are provided" in {
     val result = NameParsingUtil.removeTitleFromName(titlesList, "Mr John Doe, Mrs. Jane Doe")
-    result should be ("John Doe, Jane Doe")
+    result should be ("john doe, jane doe")
   }
 
   "Single Account, one forename initial: 'Rubens P' should become 'P Rubens" in {
