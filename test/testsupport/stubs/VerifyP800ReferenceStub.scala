@@ -55,6 +55,15 @@ object VerifyP800ReferenceStub {
       requiredHeaders = npsHeaders
     )
 
+  def refundNoLongerAvailable(nino: Nino, p800Reference: P800Reference): StubMapping =
+    WireMockHelpers.Post.stubForPost(
+      url             = url,
+      responseBody    = Json.toJson(ValidateReferenceResult.RefundNoLongerAvailable)(ValidateReferenceResult.format.writes(_)).toString(),
+      responseStatus  = Status.OK,
+      requestBodyJson = Some(requestBody(nino, p800Reference)),
+      requiredHeaders = npsHeaders
+    )
+
   def checkReferenceReferenceDidntMatchNino(nino: Nino, p800Reference: P800Reference): StubMapping =
     WireMockHelpers.Post.stubForPost(
       url             = url,
