@@ -239,58 +239,47 @@ class VerifyingYourBankAccountController @Inject() (
   }
 
   private def handleDoNotPay(journey: Journey)(implicit request: RequestHeader): Future[(Result, Journey)] = {
-    journey.getBankAccountSummary.displayName match {
-      case Some(displayName) => {
-        journey.getBankAccountSummary.accountIdentification match {
-          case Some(accountIdentification) => {
-            val suspendOverpaymentRequest = SuspendOverpaymentRequest(
-              paymentNumber            = journey.getP800Reference.sanitiseReference,
-              currentOptimisticLock    = journey.getP800ReferenceChecked.currentOptimisticLock,
-              reconciliationIdentifier = journey.getP800ReferenceChecked.reconciliationIdentifier,
-              associatedPayableNumber  = journey.getP800ReferenceChecked.associatedPayableNumber,
-              payeeBankAccountNumber   = accountIdentification.asPayeeBankAccountNumber,
-              payeeBankSortCode        = accountIdentification.asPayeeBankSortCode,
-              payeeBankAccountName     = PayeeBankAccountName(displayName.value),
-              designatedPayeeAccount   = DesignatedPayeeAccount(false)
-            )
+    journey.getBankAccountSummary.accountIdentification match {
+      case Some(accountIdentification) => {
+        val suspendOverpaymentRequest = SuspendOverpaymentRequest(
+          paymentNumber            = journey.getP800Reference.sanitiseReference,
+          currentOptimisticLock    = journey.getP800ReferenceChecked.currentOptimisticLock,
+          reconciliationIdentifier = journey.getP800ReferenceChecked.reconciliationIdentifier,
+          associatedPayableNumber  = journey.getP800ReferenceChecked.associatedPayableNumber,
+          payeeBankAccountNumber   = accountIdentification.asPayeeBankAccountNumber,
+          payeeBankSortCode        = accountIdentification.asPayeeBankSortCode,
+          payeeBankAccountName     = PayeeBankAccountName(journey.getBankDescription.friendlyName.value),
+          designatedPayeeAccount   = DesignatedPayeeAccount(false)
+        )
 
-            for {
-              _ <- if (appConfig.FeatureFlags.isCaseManagementEnabled) notifyCaseManagement(journey) else Future.successful(())
-              _ <- p800RefundsBackendConnector.suspendOverpayment(journey.getNino, suspendOverpaymentRequest, journey.correlationId)
-            } yield {
-              auditService.auditBankClaimAttempt(
-                journey        = journey,
-                actionsOutcome = BankActionsOutcome(
-                  ecospendFraudCheckIsSuccessful = Some(IsSuccessful.yes),
-                  fuzzyNameMatchingIsSuccessful  = Some(IsSuccessful.yes),
-                  hmrcFraudCheckIsSuccessful     = Some(IsSuccessful.no)
-                ),
-                failureReasons = Some(Seq("EDH indicated DoNotPay"))
-              )
+        for {
+          _ <- if (appConfig.FeatureFlags.isCaseManagementEnabled) notifyCaseManagement(journey) else Future.successful(())
+          _ <- p800RefundsBackendConnector.suspendOverpayment(journey.getNino, suspendOverpaymentRequest, journey.correlationId)
+        } yield {
+          auditService.auditBankClaimAttempt(
+            journey        = journey,
+            actionsOutcome = BankActionsOutcome(
+              ecospendFraudCheckIsSuccessful = Some(IsSuccessful.yes),
+              fuzzyNameMatchingIsSuccessful  = Some(IsSuccessful.yes),
+              hmrcFraudCheckIsSuccessful     = Some(IsSuccessful.no)
+            ),
+            failureReasons = Some(Seq("EDH indicated DoNotPay"))
+          )
 
-              (
-                Redirect(routes.RequestReceivedController.getBankTransfer),
-                journey.update(hasFinished = HasFinished.YesSentToCaseManagement)
-              )
-            }
-          }
-          case None => {
-            Future.successful(
-              (
-                Redirect(routes.RefundRequestNotSubmittedController.get),
-                journey.update(hasFinished = HasFinished.YesRefundNotSubmitted)
-              )
-            )
-          }
+          (
+            Redirect(routes.RequestReceivedController.getBankTransfer),
+            journey.update(hasFinished = HasFinished.YesSentToCaseManagement)
+          )
         }
       }
-      case None =>
+      case None => {
         Future.successful(
           (
             Redirect(routes.RefundRequestNotSubmittedController.get),
             journey.update(hasFinished = HasFinished.YesRefundNotSubmitted)
           )
         )
+      }
     }
   }
 
@@ -415,42 +404,37 @@ class VerifyingYourBankAccountController @Inject() (
   }
 
   private def makeBacsRepayment(journey: Journey, bankAccountSummary: BankAccountSummary)(implicit request: RequestHeader): Future[Either[Unit, Unit]] = {
-    bankAccountSummary.displayName match {
-      case Some(displayName) => {
-        val p800ReferenceCheckResult: P800ReferenceChecked = journey.getP800ReferenceChecked
+    val p800ReferenceCheckResult: P800ReferenceChecked = journey.getP800ReferenceChecked
 
-        val makeBacsRepaymentRequest: MakeBacsRepaymentRequest = MakeBacsRepaymentRequest(
-          paymentNumber            = journey.getP800Reference.sanitiseReference,
-          currentOptimisticLock    = p800ReferenceCheckResult.currentOptimisticLock,
-          reconciliationIdentifier = p800ReferenceCheckResult.reconciliationIdentifier,
-          associatedPayableNumber  = p800ReferenceCheckResult.associatedPayableNumber,
-          payeeBankAccountNumber   = bankAccountSummary.getAccountIdentification.asPayeeBankAccountNumber,
-          payeeBankSortCode        = bankAccountSummary.getAccountIdentification.asPayeeBankSortCode,
-          payeeBankAccountName     = PayeeBankAccountName(displayName.value),
-          designatedPayeeAccount   = DesignatedPayeeAccount(true)
-        )
+    val makeBacsRepaymentRequest: MakeBacsRepaymentRequest = MakeBacsRepaymentRequest(
+      paymentNumber            = journey.getP800Reference.sanitiseReference,
+      currentOptimisticLock    = p800ReferenceCheckResult.currentOptimisticLock,
+      reconciliationIdentifier = p800ReferenceCheckResult.reconciliationIdentifier,
+      associatedPayableNumber  = p800ReferenceCheckResult.associatedPayableNumber,
+      payeeBankAccountNumber   = bankAccountSummary.getAccountIdentification.asPayeeBankAccountNumber,
+      payeeBankSortCode        = bankAccountSummary.getAccountIdentification.asPayeeBankSortCode,
+      payeeBankAccountName     = PayeeBankAccountName(journey.getBankDescription.friendlyName.value),
+      designatedPayeeAccount   = DesignatedPayeeAccount(true)
+    )
 
-        p800RefundsBackendConnector
-          .makeBacsRepayment(journey.getNino, makeBacsRepaymentRequest, journey.correlationId)
-          .recover {
-            case err @ (_: UpstreamErrorResponse | _: HttpException) =>
-              auditService.auditBankClaimAttempt(
-                journey        = journey,
-                actionsOutcome = BankActionsOutcome(
-                  ecospendFraudCheckIsSuccessful = Some(IsSuccessful.yes),
-                  fuzzyNameMatchingIsSuccessful  = Some(IsSuccessful.yes),
-                  hmrcFraudCheckIsSuccessful     = Some(IsSuccessful.yes),
-                  claimOverpaymentIsSuccessful   = Some(IsSuccessful.no)
-                ),
-                failureReasons = Some(Seq(err.getMessage))
-              )
+    p800RefundsBackendConnector
+      .makeBacsRepayment(journey.getNino, makeBacsRepaymentRequest, journey.correlationId)
+      .recover {
+        case err @ (_: UpstreamErrorResponse | _: HttpException) =>
+          auditService.auditBankClaimAttempt(
+            journey        = journey,
+            actionsOutcome = BankActionsOutcome(
+              ecospendFraudCheckIsSuccessful = Some(IsSuccessful.yes),
+              fuzzyNameMatchingIsSuccessful  = Some(IsSuccessful.yes),
+              hmrcFraudCheckIsSuccessful     = Some(IsSuccessful.yes),
+              claimOverpaymentIsSuccessful   = Some(IsSuccessful.no)
+            ),
+            failureReasons = Some(Seq(err.getMessage))
+          )
 
-              throw err
-          }
-          .map(_ => Right(()))
+          throw err
       }
-      case None => Future.successful(Left(()))
-    }
+      .map(_ => Right(()))
   }
 
   private def isEcospendFraudCheckIsSuccessful(eventValue: EventValue): Option[IsSuccessful] = eventValue match {

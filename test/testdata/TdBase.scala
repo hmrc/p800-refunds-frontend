@@ -196,7 +196,7 @@ trait TdBase {
     associatedPayableNumber  = associatedPayableNumber,
     payeeBankAccountNumber   = payeeBankAccountNumber,
     payeeBankSortCode        = payeeBankSortCode,
-    payeeBankAccountName     = PayeeBankAccountName("bank account display name"),
+    payeeBankAccountName     = PayeeBankAccountName("Barclays Personal"),
     designatedPayeeAccount   = DesignatedPayeeAccount(false)
   )
 
@@ -207,7 +207,7 @@ trait TdBase {
     associatedPayableNumber  = associatedPayableNumber,
     payeeBankAccountNumber   = payeeBankAccountNumber,
     payeeBankSortCode        = payeeBankSortCode,
-    payeeBankAccountName     = PayeeBankAccountName("bank account display name"),
+    payeeBankAccountName     = PayeeBankAccountName("Barclays Personal"),
     designatedPayeeAccount   = DesignatedPayeeAccount(true)
   )
 
