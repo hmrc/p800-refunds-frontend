@@ -45,7 +45,7 @@ class TraceIndividualService @Inject() (
       )
       .recover {
         case ex =>
-          JourneyLogger.warn(s"Trace trace individual call failed with exception: ${ex.getMessage}")
+          JourneyLogger.warn(s"Trace individual call failed with exception: ${ex.getMessage}")
           auditService.auditValidateUserDetails(
             journey                  = journey,
             attemptInfo              = None,

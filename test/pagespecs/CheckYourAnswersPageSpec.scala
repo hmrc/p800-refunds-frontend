@@ -20,10 +20,10 @@ import models.dateofbirth.{DateOfBirth, DayOfMonth, Month, Year}
 import models.journeymodels.{Journey, JourneyType}
 import models.{Nino, P800Reference, UserEnteredP800Reference}
 import nps.models.TraceIndividualRequest
-import play.api.libs.json.{Json, JsObject}
+import nps.models.TraceIndividualResponse.TraceIndividualNotFound
+import play.api.libs.json.{JsObject, Json}
 import testsupport.ItSpec
-import testsupport.stubs.AuditConnectorStub
-import testsupport.stubs.{TraceIndividualStub, VerifyP800ReferenceStub}
+import testsupport.stubs.{AuditConnectorStub, TraceIndividualStub, VerifyP800ReferenceStub}
 
 class CheckYourAnswersPageSpec extends ItSpec {
 
@@ -744,10 +744,9 @@ class CheckYourAnswersPageSpec extends ItSpec {
     pages.checkYourAnswersBankTransferPage.open()
     val j = tdAll.BankTransfer.AfterReferenceCheck.journeyReferenceChecked
     VerifyP800ReferenceStub.p800ReferenceChecked(j.nino.value, tdAll.p800Reference, j.getP800ReferenceChecked(request = tdAll.fakeRequest))
-    TraceIndividualStub.traceIndividualVariedResponseStub(
-      request = TraceIndividualRequest(j.nino.value, tdAll.`dateOfBirthFormatted YYYY-MM-DD`),
-      body    = "",
-      status  = 404
+    TraceIndividualStub.traceIndividual(
+      request  = TraceIndividualRequest(j.nino.value, tdAll.`dateOfBirthFormatted YYYY-MM-DD`),
+      response = TraceIndividualNotFound,
     )
 
     pages.checkYourAnswersBankTransferPage.clickSubmit()

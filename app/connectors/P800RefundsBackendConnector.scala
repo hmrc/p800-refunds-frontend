@@ -23,17 +23,15 @@ import edh.{ClaimId, GetBankDetailsRiskResultRequest, GetBankDetailsRiskResultRe
 import models.audit.IsSuccessful
 import models.journeymodels.Journey
 import models.{CorrelationId, Nino, P800Reference}
-import nps.models.TraceIndividualResponse.customTraceIndividualReads
 import nps.models._
+import play.api.libs.json.Json
 import play.api.mvc.RequestHeader
 import requests.RequestSupport.hc
 import services.AuditService
 import uk.gov.hmrc.http.HttpReads.Implicits._
-import uk.gov.hmrc.http.{HttpReads, HttpResponse, UpstreamErrorResponse}
-import util.{HttpResponseUtils, JourneyLogger}
-import uk.gov.hmrc.http.StringContextOps
 import uk.gov.hmrc.http.client.HttpClientV2
-import play.api.libs.json.Json
+import uk.gov.hmrc.http.{HttpReads, HttpResponse, StringContextOps, UpstreamErrorResponse}
+import util.{HttpResponseUtils, JourneyLogger}
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -59,7 +57,6 @@ class P800RefundsBackendConnector @Inject() (
   }
 
   def traceIndividual(traceIndividualRequest: TraceIndividualRequest, correlationId: CorrelationId)(implicit requestHeader: RequestHeader): Future[TraceIndividualResponse] = {
-    implicit val traceIndividualResponseReads: HttpReads[TraceIndividualResponse] = customTraceIndividualReads
     httpClient
       .post(url"$baseUrl/nps/trace-individual")
       .setHeader(makeHeaders(correlationId): _*)

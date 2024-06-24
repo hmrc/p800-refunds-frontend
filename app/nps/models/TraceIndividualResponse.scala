@@ -18,6 +18,7 @@ package nps.models
 
 import edh.Postcode
 import julienrf.json.derived
+import play.api.Logging
 import play.api.http.Status
 import play.api.libs.json.{Json, OFormat}
 import uk.gov.hmrc.http.{HttpErrorFunctions, HttpReads, HttpResponse, UpstreamErrorResponse}
@@ -25,14 +26,14 @@ import uk.gov.hmrc.http.HttpReads.Implicits._
 
 sealed trait TraceIndividualResponse
 
-object TraceIndividualResponse {
+object TraceIndividualResponse extends Logging {
 
   @SuppressWarnings(Array("org.wartremover.warts.Any"))
   implicit val format: OFormat[TraceIndividualResponse] = derived.oformat[TraceIndividualResponse]()
 
   case object TraceIndividualNotFound extends TraceIndividualResponse
 
-  def customTraceIndividualReads: HttpReads[TraceIndividualResponse] = HttpReads.ask.flatMap {
+  implicit val traceIndividualReads: HttpReads[TraceIndividualResponse] = HttpReads.ask.flatMap {
     case (method, url, response) =>
       response.status match {
         case Status.OK        => HttpReads[TracedIndividual].map((x: TraceIndividualResponse.TracedIndividual) => x: TracedIndividual)
