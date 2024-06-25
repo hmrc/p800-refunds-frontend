@@ -91,7 +91,8 @@ final case class Journey(
         traceIndividualResponse = maybeTraceIndividualResponse,
         bankDescription         = None,
         bankConsentResponse     = None,
-        bankAccountSummary      = None
+        bankAccountSummary      = None,
+        nameMatchingResult      = None
       )
 
   def update(bankDescription: BankDescription): Journey =
@@ -99,7 +100,8 @@ final case class Journey(
       .copy(
         bankDescription     = Some(bankDescription),
         bankConsentResponse = None,
-        bankAccountSummary  = None
+        bankAccountSummary  = None,
+        nameMatchingResult  = None
       //TODO: reset other API responses populated bankDescription
       )
 
@@ -107,7 +109,8 @@ final case class Journey(
     this
       .copy(
         bankConsentResponse = Some(bankConsentResponse),
-        bankAccountSummary  = None
+        bankAccountSummary  = None,
+        nameMatchingResult  = None
       //TODO: reset other API responses populated bankConsentResponse
       )
 
@@ -126,6 +129,7 @@ final case class Journey(
   def update(hasFinished: HasFinished): Journey = this.copy(hasFinished = hasFinished)
 
   private def resetAllApiResponses(): Journey = this.copy(
+    nameMatchingResult            = None,
     referenceCheckResult          = None,
     traceIndividualResponse       = None,
     bankDescription               = None,
