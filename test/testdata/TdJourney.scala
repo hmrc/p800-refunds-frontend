@@ -18,6 +18,7 @@ package testdata
 
 import models.journeymodels.HasFinished.hasFinished
 import models.journeymodels._
+import models.namematching.NameMatchingResult
 import nps.models.ValidateReferenceResult
 
 /**
@@ -38,6 +39,7 @@ trait TdJourney {
     nino                          = None,
     isChanging                    = IsChanging.No,
     dateOfBirth                   = None,
+    nameMatchingResult            = None,
     referenceCheckResult          = None,
     traceIndividualResponse       = None,
     bankDescription               = None,
@@ -142,7 +144,8 @@ trait TdJourney {
         // other APIs were made
         // and their responses were stored in the journey:
         bankDetailsRiskResultResponse = Some(dependencies.getBankDetailsRiskResultResponse),
-        bankAccountSummary            = Some(dependencies.bankAccountSummary)
+        bankAccountSummary            = Some(dependencies.bankAccountSummary),
+        nameMatchingResult            = Some(NameMatchingResult(true))
       )
 
     lazy val journeyReceivedNotificationFromEcospendValid: Journey =

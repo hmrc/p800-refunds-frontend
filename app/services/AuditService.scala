@@ -70,6 +70,9 @@ class AuditService @Inject() (
   def auditBankClaimAttempt(journey: Journey, actionsOutcome: BankActionsOutcome, failureReasons: Option[Seq[String]] = None)(implicit requestHeader: RequestHeader, hc: HeaderCarrier): Unit =
     audit(toBankClaimAttempt(journey, actionsOutcome, failureReasons))
 
+  def auditNameMatching(nameMatchingAudit: NameMatchingAudit)(implicit hc: HeaderCarrier): Unit =
+    audit(nameMatchingAudit)
+
   private def toValidateUserDetails(journey: Journey, attemptInfo: Option[AttemptInfo], isSuccessful: IsSuccessful, apiResponsibleForFailure: Option[ApiResponsibleForFailure], failureReasons: Option[Seq[String]])(implicit requestHeader: RequestHeader): ValidateUserDetails =
     ValidateUserDetails(
       outcome              = toOutcome(attemptInfo, isSuccessful, apiResponsibleForFailure, failureReasons.getOrElse(Seq.empty)),
@@ -190,7 +193,4 @@ class AuditService @Inject() (
     )
   }
 
-  def auditNameMatching(nameMatchingAudit: NameMatchingAudit)(implicit hc: HeaderCarrier): Unit = {
-    audit(nameMatchingAudit)
-  }
 }

@@ -21,6 +21,7 @@ import models.dateofbirth.DateOfBirth
 import models.ecospend.BankDescription
 import models.ecospend.account.BankAccountSummary
 import models.ecospend.consent.BankConsentResponse
+import models.namematching.NameMatchingResult
 import models.p800externalapi.EventValue
 import models.{AmountInPence, CorrelationId, Nino, UserEnteredP800Reference}
 import nps.models.TraceIndividualResponse.TracedIndividual
@@ -32,15 +33,16 @@ import util.Errors
 import java.time.{Clock, Instant}
 
 final case class Journey(
-    _id:           JourneyId,
-    createdAt:     Instant,
-    correlationId: CorrelationId,
-    hasFinished:   HasFinished,
-    journeyType:   Option[JourneyType],
-    p800Reference: Option[UserEnteredP800Reference],
-    nino:          Option[Nino],
-    isChanging:    IsChanging,
-    dateOfBirth:   Option[DateOfBirth],
+    createdAt:          Instant,
+    _id:                JourneyId,
+    correlationId:      CorrelationId,
+    hasFinished:        HasFinished,
+    journeyType:        Option[JourneyType],
+    p800Reference:      Option[UserEnteredP800Reference],
+    nino:               Option[Nino],
+    isChanging:         IsChanging,
+    dateOfBirth:        Option[DateOfBirth],
+    nameMatchingResult: Option[NameMatchingResult],
     // below, API Responses only
     referenceCheckResult:          Option[ValidateReferenceResult], //reset this field upon changes of dependant fields
     traceIndividualResponse:       Option[TracedIndividual], //reset this field upon changes of dependant fields
@@ -112,11 +114,13 @@ final case class Journey(
   def update(
       eventValue:                    EventValue,
       bankAccountSummary:            BankAccountSummary,
-      bankDetailsRiskResultResponse: GetBankDetailsRiskResultResponse
+      bankDetailsRiskResultResponse: GetBankDetailsRiskResultResponse,
+      nameMatchingResult:            NameMatchingResult
   ): Journey = copy(
     bankAccountSummary            = Some(bankAccountSummary),
     bankDetailsRiskResultResponse = Some(bankDetailsRiskResultResponse),
-    isValidEventValue             = Some(eventValue)
+    isValidEventValue             = Some(eventValue),
+    nameMatchingResult            = Some(nameMatchingResult)
   )
 
   def update(hasFinished: HasFinished): Journey = this.copy(hasFinished = hasFinished)

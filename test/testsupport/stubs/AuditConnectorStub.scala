@@ -47,10 +47,20 @@ object AuditConnectorStub {
         )
     )
 
+  def verifyExactlyAuditEvent(auditType: String, number: Int): Unit =
+    verify(
+      exactly(number),
+      postRequestedFor(urlPathEqualTo(auditUrl))
+        .withRequestBody(
+          equalToJson(s"""{ "auditType": "${auditType}" }""", true, true)
+        )
+    )
+
   val userLoginSelectionAuditType: String = "UserLoginSelection"
   val bankClaimAttemptMadeAuditType: String = "BankClaimAttemptMade"
   val validateUserDetailsAuditType: String = "ValidateUserDetails"
   val chequeClaimAttemptMadeAuditType: String = "ChequeClaimAttemptMade"
+  val nameMatchingAuditType: String = "FuzzyNameMatchingEvent"
 
   /*
    * Helper method to stop wiremock 'stub not found'
