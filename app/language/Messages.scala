@@ -488,7 +488,7 @@ object Messages {
 
     val `Start typing the name of a UK bank that you want your refund to be sent to.`: Message = Message(
       english = "Start typing the name of a UK bank that you want your refund to be sent to. The name on your bank account must match the name on your P800 letter.",
-      welsh   = "Dechreuwch deipio enw banc yn y DU yr ydych am i’ch ad-daliad gael ei anfon ato."
+      welsh   = "Dechreuwch deipio enw banc yn y DU yr ydych am i’ch ad-daliad gael ei anfon ato. Mae’n rhaid i’r enw ar eich cyfrif banc gyd-fynd â’r enw sydd ar eich llythyr P800."
     )
 
     val `My bank is not listed`: Message = Message(
