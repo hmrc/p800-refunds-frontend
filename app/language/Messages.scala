@@ -239,8 +239,8 @@ object Messages {
     )
 
     def `This can take up to a minute`(refreshLink: String): Message = Message(
-      english = s"""This can take up to a minute. You can <a href="$refreshLink" id="refresh-this-page" class="govuk-link">refresh this page</a> if it does not update automatically.""",
-      welsh   = s"""Mae hyn fel arfer yn cymryd ychydig eiliadau. Gallwch <a href="$refreshLink" id="refresh-this-page" class="govuk-link">adnewyddu’r dudalen hon</a> os nad yw’n diweddaru’n awtomatig."""
+      english = s"""This can take up to 1 minute. You can <a href="$refreshLink" id="refresh-this-page" class="govuk-link">refresh this page</a> if it does not update automatically.""",
+      welsh   = s"""Gall hyn gymryd hyd at 1 munud. Gallwch <a href="$refreshLink" id="refresh-this-page" class="govuk-link">adnewyddu’r dudalen hon</a> os nad yw’n diweddaru’n awtomatig."""
     )
   }
 
