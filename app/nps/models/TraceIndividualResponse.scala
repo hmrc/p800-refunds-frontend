@@ -18,7 +18,6 @@ package nps.models
 
 import edh.Postcode
 import julienrf.json.derived
-import play.api.Logging
 import play.api.http.Status
 import play.api.libs.json.{Json, OFormat}
 import uk.gov.hmrc.http.{HttpErrorFunctions, HttpReads, HttpResponse, UpstreamErrorResponse}
@@ -26,7 +25,7 @@ import uk.gov.hmrc.http.HttpReads.Implicits._
 
 sealed trait TraceIndividualResponse
 
-object TraceIndividualResponse extends Logging {
+object TraceIndividualResponse {
 
   @SuppressWarnings(Array("org.wartremover.warts.Any"))
   implicit val format: OFormat[TraceIndividualResponse] = derived.oformat[TraceIndividualResponse]()
