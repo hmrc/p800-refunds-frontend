@@ -32,7 +32,7 @@ object TraceIndividualResponse {
 
   case object TraceIndividualNotFound extends TraceIndividualResponse
 
-  def customTraceIndividualReads: HttpReads[TraceIndividualResponse] = HttpReads.ask.flatMap {
+  implicit val traceIndividualReads: HttpReads[TraceIndividualResponse] = HttpReads.ask.flatMap {
     case (method, url, response) =>
       response.status match {
         case Status.OK        => HttpReads[TracedIndividual].map((x: TraceIndividualResponse.TracedIndividual) => x: TracedIndividual)

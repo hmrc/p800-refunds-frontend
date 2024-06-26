@@ -19,15 +19,14 @@ package testsupport.stubs
 import com.github.tomakehurst.wiremock.client.WireMock._
 import com.github.tomakehurst.wiremock.stubbing.StubMapping
 import models.CorrelationId
-import nps.models.TraceIndividualRequest
-import nps.models.TraceIndividualResponse.TracedIndividual
+import nps.models.{TraceIndividualRequest, TraceIndividualResponse}
 import play.api.http.Status
 import play.api.libs.json.Json
 import testsupport.stubs.NpsHeaders.npsHeaders
 
 object TraceIndividualStub {
 
-  def traceIndividual(request: TraceIndividualRequest, response: TracedIndividual): StubMapping = {
+  def traceIndividual(request: TraceIndividualRequest, response: TraceIndividualResponse): StubMapping = {
     WireMockHelpers.Post.stubForPost(
       url             = url,
       responseBody    = Json.prettyPrint(Json.toJson(response)),
