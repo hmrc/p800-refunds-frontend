@@ -49,9 +49,6 @@ final case class BankAccountSummary(
 ) {
   def getAccountIdentification(implicit requestHeader: RequestHeader): BankAccountIdentification =
     accountIdentification.getOrElse(Errors.throwServerErrorException(s"Expected 'accountIdentification' to be defined but it was None [bankId: ${id.toString}]"))
-
-  def getDisplayName(implicit requestHeader: RequestHeader): BankAccountDisplayName =
-    displayName.getOrElse(Errors.throwServerErrorException(s"Expected 'displayName' to be defined but it was None [bankId: ${id.toString}]"))
 }
 
 @SuppressWarnings(Array("org.wartremover.warts.Any"))

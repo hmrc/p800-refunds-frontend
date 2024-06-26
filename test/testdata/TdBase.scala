@@ -223,7 +223,7 @@ trait TdBase {
     nino                  = nino,
     bankSortCode          = BankSortCode(sortCode),
     bankAccountNumber     = BankAccountNumber(bankAccountNumber),
-    bankAccountName       = BankAccountName(bankAccountSummary.displayName.map(_.value).getOrElse("")),
+    bankAccountName       = BankAccountName(bankDescription.friendlyName.value),
     designatedAccountFlag = 1,
     contact               = List(
       CaseManagementContact(
