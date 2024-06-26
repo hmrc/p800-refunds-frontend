@@ -1492,6 +1492,79 @@ class VerifyingYourBankAccountPageSpec extends ItSpec {
       ).as[JsObject]
     )
   }
+
+  "Name matching audit event is not triggered multiple times" in {
+    EcospendStub.AuthStubs.stubEcospendAuth2xxSucceeded
+    EcospendStub.AccountStub.stubAccountSummary2xxSucceeded(tdAll.consentId)
+    P800RefundsExternalApiStub.isValid(tdAll.consentId, EventValue.NotReceived)
+    MakeBacsRepaymentStub.`makeBacsRepayment 200 OK`(
+      nino     = tdAll.nino,
+      request  = tdAll.claimOverpaymentRequest,
+      response = tdAll.claimOverpaymentResponse
+    )
+    EdhStub.getBankDetailsRiskResult(tdAll.getBankDetailsRiskResultRequest, tdAll.getBankDetailsRiskResultResponse)
+
+    pages.verifyingBankAccountPage.open()
+    pages.verifyingBankAccountPage.assertPageIsDisplayed()
+
+    EdhStub.verifyGetBankDetailsRiskResult(tdAll.claimId, tdAll.correlationId)
+    P800RefundsExternalApiStub.verifyIsValid(tdAll.consentId)
+    MakeBacsRepaymentStub.verifyNone(tdAll.nino)
+    AuditConnectorStub.verifyNoAuditEvent(AuditConnectorStub.bankClaimAttemptMadeAuditType)
+    AuditConnectorStub.verifyEventAudited(
+      AuditConnectorStub.nameMatchingAuditType,
+      Json.parse(
+        //format=JSON
+        """
+        {
+          "outcome": {
+            "isSuccessful": true,
+            "category": "basic name match"
+          },
+          "rawNpsName": {
+            "firstForename": "Greg",
+            "secondForename": "Greggory",
+            "surname": "Greggson"
+          },
+          "rawBankName": "Sir. Greg Greggory Greggson",
+          "transformedNpsName": "greg greggory greggson",
+          "transformedBankName": "greg greggory greggson",
+          "partiesArrayUsed": true
+        }
+        """.stripMargin
+      ).as[JsObject]
+    )
+    AuditConnectorStub.verifyEventAudited(
+      AuditConnectorStub.nameMatchingAuditType,
+      Json.parse(
+        //format=JSON
+        """
+        {
+          "outcome": {
+            "isSuccessful": false,
+            "category": "comprehensive failed match"
+          },
+          "rawNpsName": {
+            "firstForename": "Greg",
+            "secondForename": "Greggory",
+            "surname": "Greggson"
+          },
+          "rawBankName": "Margaretta Greggson",
+          "transformedNpsName": "greg greggson",
+          "transformedBankName": "margaretta greggson",
+          "levenshteinDistance": 7,
+          "partiesArrayUsed": true
+        }
+        """.stripMargin
+      ).as[JsObject]
+    )
+
+    pages.verifyingBankAccountPage.clickRefreshThisPageLink()
+    pages.verifyingBankAccountPage.assertPageIsDisplayed()
+
+    AuditConnectorStub.verifyExactlyAuditEvent(AuditConnectorStub.nameMatchingAuditType, number = 2)
+  }
+
 }
 
 class VerifyingYourBankAccountFeatureFlagOffPageSpec extends ItSpec {

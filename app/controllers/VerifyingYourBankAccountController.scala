@@ -26,7 +26,7 @@ import models.ecospend.BankId
 import models.ecospend.account.{BankAccountOwnerName, BankAccountSummary}
 import models.ecospend.consent.{BankReferenceId, ConsentId, ConsentStatus}
 import models.journeymodels._
-import models.namematching.NameMatchingResponse
+import models.namematching.{NameMatchingResult, NameMatchingResponse}
 import models.p800externalapi.EventValue
 import nps.models.TraceIndividualResponse.TracedIndividual
 import nps.models.ValidateReferenceResult.P800ReferenceChecked
@@ -75,8 +75,8 @@ class VerifyingYourBankAccountController @Inject() (
     for {
       isValidEventValue: EventValue <- obtainIsValid(journey, bankAccountSummary)
       bankDetailsRiskResultResponse: GetBankDetailsRiskResultResponse <- getBankDetailsRiskResultService.getBankDetailsRiskResult(journey, bankAccountSummary, isValidEventValue)
-      didAnyNameMatch = doAnyNamesFromPartiesListMatch(journey.getTraceIndividualResponse, bankAccountSummary)
-      newJourney = journey.update(isValidEventValue, bankAccountSummary, bankDetailsRiskResultResponse)
+      didAnyNameMatch: Boolean = getNameMachingResult(journey.nameMatchingResult, journey.getTraceIndividualResponse, bankAccountSummary)
+      newJourney = journey.update(isValidEventValue, bankAccountSummary, bankDetailsRiskResultResponse, NameMatchingResult(didAnyNameMatch))
       (result, newJourney) <- next(newJourney, isValidEventValue, bankDetailsRiskResultResponse, bankAccountSummary, consentStatus, didAnyNameMatch)
       _ <- journeyService.upsert(newJourney)
     } yield result
@@ -87,7 +87,18 @@ class VerifyingYourBankAccountController @Inject() (
     } yield Redirect(routes.RefundRequestNotSubmittedController.get)
   }
 
-  def doAnyNamesFromPartiesListMatch(
+  private def getNameMachingResult(
+      maybeNameMatchingResult: Option[NameMatchingResult],
+      individualResponse:      TracedIndividual,
+      bankAccountSummary:      BankAccountSummary
+  )(implicit request: JourneyRequest[_]): Boolean = {
+    maybeNameMatchingResult match {
+      case Some(nameMachingResult) => nameMachingResult.value
+      case None                    => doAnyNamesFromPartiesListMatch(individualResponse, bankAccountSummary)
+    }
+  }
+
+  private def doAnyNamesFromPartiesListMatch(
       individualResponse: TracedIndividual,
       bankAccountSummary: BankAccountSummary
   )(implicit request: JourneyRequest[_]): Boolean = {
@@ -137,7 +148,7 @@ class VerifyingYourBankAccountController @Inject() (
 
         matchingResponseAndEcospendNameList.foreach{ response =>
           val (matchingResponse, ecoName) = response
-          auditService.auditNameMatching(matchingResponse._2.copy(rawBankName      = Some(ecoName), partiesArrayUsed = false))
+          auditService.auditNameMatching(matchingResponse._2.copy(rawBankName      = Some(ecoName), partiesArrayUsed = true))
         }
 
         matchingResponseAndEcospendNameList.exists(matchingResponse => matchingResponse._1._1.isSuccess)

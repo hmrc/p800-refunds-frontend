@@ -38,6 +38,7 @@ class JourneyFactory @Inject() (
     nino                          = None,
     isChanging                    = IsChanging.No,
     dateOfBirth                   = None,
+    nameMatchingResult            = None,
     referenceCheckResult          = None,
     traceIndividualResponse       = None,
     bankDescription               = None,
