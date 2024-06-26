@@ -354,7 +354,7 @@ class VerifyingYourBankAccountController @Inject() (
     val bankAccountSummary: BankAccountSummary = journey.getBankAccountSummary
     val accountNumber: BankAccountNumber = bankAccountSummary.getAccountIdentification.asBankAccountNumber
     val sortCode: BankSortCode = bankAccountSummary.getAccountIdentification.asBankSortCode
-    val bankAccountName: BankAccountName = BankAccountName(bankAccountSummary.getDisplayName.value)
+    val bankAccountName: BankAccountName = BankAccountName(journey.getBankDescription.friendlyName.value)
 
     val bankDetailsRiskResult: GetBankDetailsRiskResultResponse = journey.getBankDetailsRiskResultResponse
     val clientUId: ClientUId = ClientUId(bankDetailsRiskResult.header.transactionID.value)
