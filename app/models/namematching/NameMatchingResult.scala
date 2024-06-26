@@ -18,6 +18,12 @@ package models.namematching
 
 import play.api.libs.json.{Json, Format}
 
+/**
+ * Represents the result of a name maching check for storage in the Journey.
+ *
+ * true is a name matching success.
+ * false is a name matching failure.
+ */
 final case class NameMatchingResult(value: Boolean) extends AnyVal
 
 object NameMatchingResult {
