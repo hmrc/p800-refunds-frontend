@@ -102,7 +102,9 @@ class VerifyingYourBankAccountController @Inject() (
       individualResponse: TracedIndividual,
       bankAccountSummary: BankAccountSummary
   )(implicit request: JourneyRequest[_]): Boolean = {
-    val isAVariationsBank: Boolean = appConfig.NameParsing.bankIdMatchingVariationsList.contains(bankAccountSummary.bankId.getOrElse(BankId("NoBankId")).value)
+    val bankId = bankAccountSummary.bankId.getOrElse(BankId("NoBankId")).value
+    val isAVariationsBank: Boolean = appConfig.NameParsing.bankIdMatchingVariationsList.contains(bankId)
+    val shouldUsePartyName: Boolean = appConfig.NameParsing.bankIdsUsingPartyName.contains(bankId)
 
     (bankAccountSummary.parties.forall(_.isEmpty), bankAccountSummary.accountOwnerName.isEmpty, isAVariationsBank) match {
       case (true, true, _) =>
@@ -122,20 +124,35 @@ class VerifyingYourBankAccountController @Inject() (
         auditService.auditNameMatching(emptyListAudit)
         false
 
+      //No parties array, accountOwnerName not empty, isAVariationsBank true/false => fallback to accountOwnerName
       case (true, false, isAVariationsBank) =>
         handleNameMatchingFallback(bankAccountSummary, individualResponse, isAVariationsBank)
 
-      case (false, false, false) if bankAccountSummary.parties.getOrElse(List.empty).exists(_.fullLegalName.isEmpty) =>
+      //Parties array exists, accountOwnerName not empty, isAVariationsBank false.
+      //Some banks are sending name instead of fullLegalName in parties array => fallback to accountOwnerName for when the name is missing.
+      case (false, false, false) if shouldUsePartyName && bankAccountSummary.parties.getOrElse(List.empty).exists(_.name.isEmpty) =>
+        handleNameMatchingFallback(bankAccountSummary, individualResponse, isAVariationsBank = false)
+
+      //Parties array exists, accountOwnerName not empty, isAVariationsBank false.
+      //This is fallback to accountOwnerName for when the fullLegalName in parties array is missing.
+      case (false, false, false) if !shouldUsePartyName && bankAccountSummary.parties.getOrElse(List.empty).exists(_.fullLegalName.isEmpty) =>
         handleNameMatchingFallback(bankAccountSummary, individualResponse, isAVariationsBank = false)
 
       case (false, _, _) =>
-        //There is a parties list to iterate through
+        //There is a parties list to iterate through.
         val matchingResponseAndEcospendNameList: Seq[((NameMatchingResponse, NameMatchingAudit), String)] =
           bankAccountSummary
             .parties
             .getOrElse(List.empty)
             .map { party =>
-              val ecospendFullName = party.fullLegalName.map(_.value).getOrElse(Errors.throwServerErrorException("Expected party.fullLegalName, but was None"))
+
+              //Some banks do not send fullLegalName in the parties array, but name only.
+              val ecospendFullName = if (shouldUsePartyName) {
+                getEcospendPartyName(party.name.map(_.value), "party.name", bankId)
+              } else {
+                getEcospendPartyName(party.fullLegalName.map(_.value), "party.fullLegalName", bankId)
+              }
+
               val ecospendNameWithoutTitle = NameParsingUtil.removeTitleFromName(appConfig.NameParsing.titles, ecospendFullName)
 
               (NameMatchingService.fuzzyNameMatching(
@@ -152,6 +169,12 @@ class VerifyingYourBankAccountController @Inject() (
         }
 
         matchingResponseAndEcospendNameList.exists(matchingResponse => matchingResponse._1._1.isSuccess)
+    }
+  }
+
+  private def getEcospendPartyName(maybeName: Option[String], fieldName: String, bankId: String)(implicit request: JourneyRequest[_]): String = {
+    maybeName.getOrElse {
+      Errors.throwServerErrorException(s"Expected $fieldName, but was None for bankId: $bankId")
     }
   }
 

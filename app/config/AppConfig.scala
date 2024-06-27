@@ -32,6 +32,7 @@ class AppConfig @Inject() (servicesConfig: ServicesConfig, configuration: Config
   object NameParsing {
     val titles: Seq[String] = configuration.get[Seq[String]]("name-parsing.titles")
     val bankIdMatchingVariationsList: Seq[String] = configuration.get[Seq[String]]("name-parsing.bank-id-matching-variations")
+    val bankIdsUsingPartyName: Seq[String] = configuration.get[Seq[String]]("name-parsing.bank-id-name-matching-variations")
   }
 
   object FeatureFlags {

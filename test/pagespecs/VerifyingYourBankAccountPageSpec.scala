@@ -92,46 +92,46 @@ class VerifyingYourBankAccountPageSpec extends ItSpec {
       Json.parse(
         //format=JSON
         """
-        {
-          "outcome": {
-            "isSuccessful": false,
-            "actionsOutcome": {
-              "fuzzyNameMatchingIsSuccessful": false,
-              "hmrcFraudCheckIsSuccessful": true
+          {
+            "outcome": {
+              "isSuccessful": false,
+              "actionsOutcome": {
+                "fuzzyNameMatchingIsSuccessful": false,
+                "hmrcFraudCheckIsSuccessful": true
+              },
+              "failureReasons": [
+                "Ecospend names failed matching against NPS name"
+              ]
             },
-            "failureReasons": [
-              "Ecospend names failed matching against NPS name"
-            ]
-          },
-          "userEnteredDetails": {
-            "chosenBank": "Barclays Personal",
-            "p800Reference": 12345678,
-            "nino": "LM001014C",
-            "dob": "2000-01-01"
-          },
-          "repaymentAmount": 12.34,
-          "repaymentInformation": {
-            "reconciliationIdentifier": 123,
-            "paymentNumber": 12345678,
-            "payeNumber": "PayeNumber-123",
-            "taxDistrictNumber": 717,
-            "associatedPayableNumber": 1234,
-            "customerAccountNumber": "customerAccountNumber-1234",
-            "currentOptimisticLock": 15
-          },
-          "name": {
-            "title": "Sir",
-            "firstForename": "Greg",
-            "secondForename": "Greggory",
-            "surname": "Greggson"
-          },
-          "address": {
-            "addressLine1": "Flat 1 Rose House",
-            "addressLine2": "Worthing",
-            "addressPostcode": "BN12 4XL"
+            "userEnteredDetails": {
+              "chosenBank": "Barclays Personal",
+              "p800Reference": 12345678,
+              "nino": "LM001014C",
+              "dob": "2000-01-01"
+            },
+            "repaymentAmount": 12.34,
+            "repaymentInformation": {
+              "reconciliationIdentifier": 123,
+              "paymentNumber": 12345678,
+              "payeNumber": "PayeNumber-123",
+              "taxDistrictNumber": 717,
+              "associatedPayableNumber": 1234,
+              "customerAccountNumber": "customerAccountNumber-1234",
+              "currentOptimisticLock": 15
+            },
+            "name": {
+              "title": "Sir",
+              "firstForename": "Greg",
+              "secondForename": "Greggory",
+              "surname": "Greggson"
+            },
+            "address": {
+              "addressLine1": "Flat 1 Rose House",
+              "addressLine2": "Worthing",
+              "addressPostcode": "BN12 4XL"
+            }
           }
-        }
-        """.stripMargin
+          """.stripMargin
       ).as[JsObject]
     )
   }
@@ -156,46 +156,46 @@ class VerifyingYourBankAccountPageSpec extends ItSpec {
       Json.parse(
         //format=JSON
         """
-        {
-          "outcome": {
-            "isSuccessful": false,
-            "actionsOutcome": {
-              "fuzzyNameMatchingIsSuccessful": false,
-              "hmrcFraudCheckIsSuccessful": true
+          {
+            "outcome": {
+              "isSuccessful": false,
+              "actionsOutcome": {
+                "fuzzyNameMatchingIsSuccessful": false,
+                "hmrcFraudCheckIsSuccessful": true
+              },
+              "failureReasons": [
+                "Ecospend names failed matching against NPS name"
+              ]
             },
-            "failureReasons": [
-              "Ecospend names failed matching against NPS name"
-            ]
-          },
-          "userEnteredDetails": {
-            "chosenBank": "Barclays Personal",
-            "p800Reference": 12345678,
-            "nino": "LM001014C",
-            "dob": "2000-01-01"
-          },
-          "repaymentAmount": 12.34,
-          "repaymentInformation": {
-            "reconciliationIdentifier": 123,
-            "paymentNumber": 12345678,
-            "payeNumber": "PayeNumber-123",
-            "taxDistrictNumber": 717,
-            "associatedPayableNumber": 1234,
-            "customerAccountNumber": "customerAccountNumber-1234",
-            "currentOptimisticLock": 15
-          },
-          "name": {
-            "title": "Sir",
-            "firstForename": "Greg",
-            "secondForename": "Greggory",
-            "surname": "Greggson"
-          },
-          "address": {
-            "addressLine1": "Flat 1 Rose House",
-            "addressLine2": "Worthing",
-            "addressPostcode": "BN12 4XL"
+            "userEnteredDetails": {
+              "chosenBank": "Barclays Personal",
+              "p800Reference": 12345678,
+              "nino": "LM001014C",
+              "dob": "2000-01-01"
+            },
+            "repaymentAmount": 12.34,
+            "repaymentInformation": {
+              "reconciliationIdentifier": 123,
+              "paymentNumber": 12345678,
+              "payeNumber": "PayeNumber-123",
+              "taxDistrictNumber": 717,
+              "associatedPayableNumber": 1234,
+              "customerAccountNumber": "customerAccountNumber-1234",
+              "currentOptimisticLock": 15
+            },
+            "name": {
+              "title": "Sir",
+              "firstForename": "Greg",
+              "secondForename": "Greggory",
+              "surname": "Greggson"
+            },
+            "address": {
+              "addressLine1": "Flat 1 Rose House",
+              "addressLine2": "Worthing",
+              "addressPostcode": "BN12 4XL"
+            }
           }
-        }
-        """.stripMargin
+          """.stripMargin
       ).as[JsObject]
     )
   }
@@ -204,20 +204,20 @@ class VerifyingYourBankAccountPageSpec extends ItSpec {
     val responseBody =
       //language=JSON
       s"""[{
-          "id" : "${tdAll.consentId.value}",
-          "bank_id" : "obie-barclays-personal",
-          "type" : "Personal",
-          "sub_type" : "CurrentAccount",
-          "currency" : "GBP",
-          "account_format" : "SortCode",
-          "account_identification" : "44556610002333",
-          "calculated_owner_name" : "Mr Greg Greggson",
-          "account_owner_name" : "Greggson Gregory ",
-          "display_name" : "bank account display name",
-          "balance" : 123.7,
-          "last_update_time" : "2059-11-25T16:33:51.88",
-          "parties" : []
-        }]""".stripMargin
+            "id" : "${tdAll.consentId.value}",
+            "bank_id" : "obie-barclays-personal",
+            "type" : "Personal",
+            "sub_type" : "CurrentAccount",
+            "currency" : "GBP",
+            "account_format" : "SortCode",
+            "account_identification" : "44556610002333",
+            "calculated_owner_name" : "Mr Greg Greggson",
+            "account_owner_name" : "Greggson Gregory ",
+            "display_name" : "bank account display name",
+            "balance" : 123.7,
+            "last_update_time" : "2059-11-25T16:33:51.88",
+            "parties" : []
+          }]""".stripMargin
 
     EcospendStub.AuthStubs.stubEcospendAuth2xxSucceeded
     EcospendStub.AccountStub.stubAccountSummaryWithJson2xxSucceeded(tdAll.consentId, responseBody)
@@ -237,46 +237,46 @@ class VerifyingYourBankAccountPageSpec extends ItSpec {
       AuditConnectorStub.bankClaimAttemptMadeAuditType,
       Json.parse(
         """
-        {
-          "outcome": {
-            "isSuccessful": false,
-            "actionsOutcome": {
-              "fuzzyNameMatchingIsSuccessful": false,
-              "hmrcFraudCheckIsSuccessful": true
+          {
+            "outcome": {
+              "isSuccessful": false,
+              "actionsOutcome": {
+                "fuzzyNameMatchingIsSuccessful": false,
+                "hmrcFraudCheckIsSuccessful": true
+              },
+              "failureReasons": [
+                "Ecospend names failed matching against NPS name"
+              ]
             },
-            "failureReasons": [
-              "Ecospend names failed matching against NPS name"
-            ]
-          },
-          "userEnteredDetails": {
-            "chosenBank": "Barclays Personal",
-            "p800Reference": 12345678,
-            "nino": "LM001014C",
-            "dob": "2000-01-01"
-          },
-          "repaymentAmount": 12.34,
-          "repaymentInformation": {
-            "reconciliationIdentifier": 123,
-            "paymentNumber": 12345678,
-            "payeNumber": "PayeNumber-123",
-            "taxDistrictNumber": 717,
-            "associatedPayableNumber": 1234,
-            "customerAccountNumber": "customerAccountNumber-1234",
-            "currentOptimisticLock": 15
-          },
-          "name": {
-            "title": "Sir",
-            "firstForename": "Greg",
-            "secondForename": "Greggory",
-            "surname": "Greggson"
-          },
-          "address": {
-            "addressLine1": "Flat 1 Rose House",
-            "addressLine2": "Worthing",
-            "addressPostcode": "BN12 4XL"
+            "userEnteredDetails": {
+              "chosenBank": "Barclays Personal",
+              "p800Reference": 12345678,
+              "nino": "LM001014C",
+              "dob": "2000-01-01"
+            },
+            "repaymentAmount": 12.34,
+            "repaymentInformation": {
+              "reconciliationIdentifier": 123,
+              "paymentNumber": 12345678,
+              "payeNumber": "PayeNumber-123",
+              "taxDistrictNumber": 717,
+              "associatedPayableNumber": 1234,
+              "customerAccountNumber": "customerAccountNumber-1234",
+              "currentOptimisticLock": 15
+            },
+            "name": {
+              "title": "Sir",
+              "firstForename": "Greg",
+              "secondForename": "Greggory",
+              "surname": "Greggson"
+            },
+            "address": {
+              "addressLine1": "Flat 1 Rose House",
+              "addressLine2": "Worthing",
+              "addressPostcode": "BN12 4XL"
+            }
           }
-        }
-        """.stripMargin
+          """.stripMargin
       ).as[JsObject]
     )
   }
@@ -285,19 +285,19 @@ class VerifyingYourBankAccountPageSpec extends ItSpec {
     val responseBody =
       //language=JSON
       s"""[{
-          "id" : "${tdAll.consentId.value}",
-          "bank_id" : "obie-barclays-personal",
-          "type" : "Personal",
-          "sub_type" : "CurrentAccount",
-          "currency" : "GBP",
-          "account_format" : "SortCode",
-          "account_identification" : "44556610002333",
-          "calculated_owner_name" : "Mr Greg Greggson",
-          "display_name" : "bank account display name",
-          "balance" : 123.7,
-          "last_update_time" : "2059-11-25T16:33:51.88",
-          "parties" : []
-        }]""".stripMargin
+            "id" : "${tdAll.consentId.value}",
+            "bank_id" : "obie-barclays-personal",
+            "type" : "Personal",
+            "sub_type" : "CurrentAccount",
+            "currency" : "GBP",
+            "account_format" : "SortCode",
+            "account_identification" : "44556610002333",
+            "calculated_owner_name" : "Mr Greg Greggson",
+            "display_name" : "bank account display name",
+            "balance" : 123.7,
+            "last_update_time" : "2059-11-25T16:33:51.88",
+            "parties" : []
+          }]""".stripMargin
 
     EcospendStub.AuthStubs.stubEcospendAuth2xxSucceeded
     EcospendStub.AccountStub.stubAccountSummaryWithJson2xxSucceeded(tdAll.consentId, responseBody)
@@ -317,46 +317,46 @@ class VerifyingYourBankAccountPageSpec extends ItSpec {
       AuditConnectorStub.bankClaimAttemptMadeAuditType,
       Json.parse(
         """
-        {
-          "outcome": {
-            "isSuccessful": false,
-            "actionsOutcome": {
-              "fuzzyNameMatchingIsSuccessful": false,
-              "hmrcFraudCheckIsSuccessful": true
+          {
+            "outcome": {
+              "isSuccessful": false,
+              "actionsOutcome": {
+                "fuzzyNameMatchingIsSuccessful": false,
+                "hmrcFraudCheckIsSuccessful": true
+              },
+              "failureReasons": [
+                "Ecospend names failed matching against NPS name"
+              ]
             },
-            "failureReasons": [
-              "Ecospend names failed matching against NPS name"
-            ]
-          },
-          "userEnteredDetails": {
-            "chosenBank": "Barclays Personal",
-            "p800Reference": 12345678,
-            "nino": "LM001014C",
-            "dob": "2000-01-01"
-          },
-          "repaymentAmount": 12.34,
-          "repaymentInformation": {
-            "reconciliationIdentifier": 123,
-            "paymentNumber": 12345678,
-            "payeNumber": "PayeNumber-123",
-            "taxDistrictNumber": 717,
-            "associatedPayableNumber": 1234,
-            "customerAccountNumber": "customerAccountNumber-1234",
-            "currentOptimisticLock": 15
-          },
-          "name": {
-            "title": "Sir",
-            "firstForename": "Greg",
-            "secondForename": "Greggory",
-            "surname": "Greggson"
-          },
-          "address": {
-            "addressLine1": "Flat 1 Rose House",
-            "addressLine2": "Worthing",
-            "addressPostcode": "BN12 4XL"
+            "userEnteredDetails": {
+              "chosenBank": "Barclays Personal",
+              "p800Reference": 12345678,
+              "nino": "LM001014C",
+              "dob": "2000-01-01"
+            },
+            "repaymentAmount": 12.34,
+            "repaymentInformation": {
+              "reconciliationIdentifier": 123,
+              "paymentNumber": 12345678,
+              "payeNumber": "PayeNumber-123",
+              "taxDistrictNumber": 717,
+              "associatedPayableNumber": 1234,
+              "customerAccountNumber": "customerAccountNumber-1234",
+              "currentOptimisticLock": 15
+            },
+            "name": {
+              "title": "Sir",
+              "firstForename": "Greg",
+              "secondForename": "Greggory",
+              "surname": "Greggson"
+            },
+            "address": {
+              "addressLine1": "Flat 1 Rose House",
+              "addressLine2": "Worthing",
+              "addressPostcode": "BN12 4XL"
+            }
           }
-        }
-        """.stripMargin
+          """.stripMargin
       ).as[JsObject]
     )
   }
@@ -384,20 +384,20 @@ class VerifyingYourBankAccountPageSpec extends ItSpec {
     val responseBody =
       //language=JSON
       s"""[{
-          "id" : "${tdAll.consentId.value}",
-          "bank_id" : "obie-barclays-personal",
-          "type" : "Personal",
-          "sub_type" : "CurrentAccount",
-          "currency" : "GBP",
-          "account_format" : "SortCode",
-          "account_identification" : "44556610002333",
-          "calculated_owner_name" : "Mr Greg Greggson",
-          "account_owner_name" : "Margaretta Greggson,Greg Greggory Greggson",
-          "display_name" : "bank account display name",
-          "balance" : 123.7,
-          "last_update_time" : "2059-11-25T16:33:51.88",
-          "parties" : []
-        }]""".stripMargin
+            "id" : "${tdAll.consentId.value}",
+            "bank_id" : "obie-barclays-personal",
+            "type" : "Personal",
+            "sub_type" : "CurrentAccount",
+            "currency" : "GBP",
+            "account_format" : "SortCode",
+            "account_identification" : "44556610002333",
+            "calculated_owner_name" : "Mr Greg Greggson",
+            "account_owner_name" : "Margaretta Greggson,Greg Greggory Greggson",
+            "display_name" : "bank account display name",
+            "balance" : 123.7,
+            "last_update_time" : "2059-11-25T16:33:51.88",
+            "parties" : []
+          }]""".stripMargin
 
     EcospendStub.AuthStubs.stubEcospendAuth2xxSucceeded
     EcospendStub.AccountStub.stubAccountSummaryWithJson2xxSucceeded(tdAll.consentId, responseBody)
@@ -421,8 +421,85 @@ class VerifyingYourBankAccountPageSpec extends ItSpec {
     val responseBody =
       //language=JSON
       s"""[{
+            "id" : "${tdAll.consentId.value}",
+            "bank_id" : "obie-natwest-production",
+            "type" : "Personal",
+            "sub_type" : "CurrentAccount",
+            "currency" : "GBP",
+            "account_format" : "SortCode",
+            "account_identification" : "44556610002333",
+            "calculated_owner_name" : "Mr Greg Greggson",
+            "account_owner_name" : "Greggson M & G",
+            "display_name" : "bank account display name",
+            "balance" : 123.7,
+            "last_update_time" : "2059-11-25T16:33:51.88",
+            "parties" : []
+          }]""".stripMargin
+
+    EcospendStub.AuthStubs.stubEcospendAuth2xxSucceeded
+    EcospendStub.AccountStub.stubAccountSummaryWithJson2xxSucceeded(tdAll.consentId, responseBody)
+    P800RefundsExternalApiStub.isValid(tdAll.consentId, EventValue.NotReceived)
+    MakeBacsRepaymentStub.`makeBacsRepayment 200 OK`(
+      nino     = tdAll.nino,
+      request  = tdAll.claimOverpaymentRequest,
+      response = tdAll.claimOverpaymentResponse
+    )
+    EdhStub.getBankDetailsRiskResult(tdAll.getBankDetailsRiskResultRequest, tdAll.getBankDetailsRiskResultResponse)
+    pages.verifyingBankAccountPage.open()
+    pages.verifyingBankAccountPage.assertPageIsDisplayed()
+    EdhStub.verifyGetBankDetailsRiskResult(tdAll.claimId, tdAll.correlationId)
+    P800RefundsExternalApiStub.verifyIsValid(tdAll.consentId)
+    MakeBacsRepaymentStub.verifyNone(tdAll.nino)
+    AuditConnectorStub.verifyNoAuditEvent(AuditConnectorStub.bankClaimAttemptMadeAuditType)
+  }
+
+  "/verify-bank-account renders the 'We are verifying your bank account' page when using name instead of fullLegalName in parties list (single account)" in {
+    //santander is currently one of the banks that sends name in parties array rather than in fullLegalName
+    val responseBody =
+      //language=JSON
+      s"""[{
           "id" : "${tdAll.consentId.value}",
-          "bank_id" : "obie-natwest-production",
+          "bank_id" : "obie-santander-production",
+          "type" : "Personal",
+          "sub_type" : "CurrentAccount",
+          "currency" : "GBP",
+          "account_format" : "SortCode",
+          "account_identification" : "44556610002333",
+          "calculated_owner_name" : "Mr Greg Greggson",
+          "account_owner_name" : "Greggson G",
+          "display_name" : "bank account display name",
+          "balance" : 123.7,
+          "last_update_time" : "2059-11-25T16:33:51.88",
+          "parties" : [ {
+            "name" : "Greg Greggson",
+            "full_legal_name" : "Greg Greggory Greggson"
+          } ]
+        }]""".stripMargin
+
+    EcospendStub.AuthStubs.stubEcospendAuth2xxSucceeded
+    EcospendStub.AccountStub.stubAccountSummaryWithJson2xxSucceeded(tdAll.consentId, responseBody)
+    P800RefundsExternalApiStub.isValid(tdAll.consentId, EventValue.NotReceived)
+    MakeBacsRepaymentStub.`makeBacsRepayment 200 OK`(
+      nino     = tdAll.nino,
+      request  = tdAll.claimOverpaymentRequest,
+      response = tdAll.claimOverpaymentResponse
+    )
+    EdhStub.getBankDetailsRiskResult(tdAll.getBankDetailsRiskResultRequest, tdAll.getBankDetailsRiskResultResponse)
+    pages.verifyingBankAccountPage.open()
+    pages.verifyingBankAccountPage.assertPageIsDisplayed()
+    EdhStub.verifyGetBankDetailsRiskResult(tdAll.claimId, tdAll.correlationId)
+    P800RefundsExternalApiStub.verifyIsValid(tdAll.consentId)
+    MakeBacsRepaymentStub.verifyNone(tdAll.nino)
+    AuditConnectorStub.verifyNoAuditEvent(AuditConnectorStub.bankClaimAttemptMadeAuditType)
+  }
+
+  "/verify-bank-account renders the 'We are verifying your bank account' page when using name instead of fullLegalName in parties list (joint account)" in {
+    //santander is currently one of the banks that sends name in parties array rather than in fullLegalName
+    val responseBody =
+      //language=JSON
+      s"""[{
+          "id" : "${tdAll.consentId.value}",
+          "bank_id" : "obie-santander-production",
           "type" : "Personal",
           "sub_type" : "CurrentAccount",
           "currency" : "GBP",
@@ -433,7 +510,13 @@ class VerifyingYourBankAccountPageSpec extends ItSpec {
           "display_name" : "bank account display name",
           "balance" : 123.7,
           "last_update_time" : "2059-11-25T16:33:51.88",
-          "parties" : []
+          "parties" : [ {
+            "name" : "Greg Greggson",
+            "full_legal_name" : "Greg Greggory Greggson"
+          }, {
+            "name" : "Margaret Greggson",
+            "full_legal_name" : "Margaretta Greggson"
+          } ]
         }]""".stripMargin
 
     EcospendStub.AuthStubs.stubEcospendAuth2xxSucceeded
@@ -506,45 +589,45 @@ class VerifyingYourBankAccountPageSpec extends ItSpec {
       Json.parse(
         //format=JSON
         """
-        {
-          "outcome": {
-            "isSuccessful": true,
-            "actionsOutcome": {
-              "ecospendFraudCheckIsSuccessful": true,
-              "fuzzyNameMatchingIsSuccessful": true,
-              "hmrcFraudCheckIsSuccessful": true,
-              "claimOverpaymentIsSuccessful": true
+          {
+            "outcome": {
+              "isSuccessful": true,
+              "actionsOutcome": {
+                "ecospendFraudCheckIsSuccessful": true,
+                "fuzzyNameMatchingIsSuccessful": true,
+                "hmrcFraudCheckIsSuccessful": true,
+                "claimOverpaymentIsSuccessful": true
+              }
+            },
+            "userEnteredDetails": {
+              "chosenBank": "Barclays Personal",
+              "p800Reference": 12345678,
+              "nino": "LM001014C",
+              "dob": "2000-01-01"
+            },
+            "repaymentAmount": 12.34,
+            "repaymentInformation": {
+              "reconciliationIdentifier": 123,
+              "paymentNumber": 12345678,
+              "payeNumber": "PayeNumber-123",
+              "taxDistrictNumber": 717,
+              "associatedPayableNumber": 1234,
+              "customerAccountNumber": "customerAccountNumber-1234",
+              "currentOptimisticLock": 15
+            },
+            "name": {
+              "title": "Sir",
+              "firstForename": "Greg",
+              "secondForename": "Greggory",
+              "surname": "Greggson"
+            },
+            "address": {
+              "addressLine1": "Flat 1 Rose House",
+              "addressLine2": "Worthing",
+              "addressPostcode": "BN12 4XL"
             }
-          },
-          "userEnteredDetails": {
-            "chosenBank": "Barclays Personal",
-            "p800Reference": 12345678,
-            "nino": "LM001014C",
-            "dob": "2000-01-01"
-          },
-          "repaymentAmount": 12.34,
-          "repaymentInformation": {
-            "reconciliationIdentifier": 123,
-            "paymentNumber": 12345678,
-            "payeNumber": "PayeNumber-123",
-            "taxDistrictNumber": 717,
-            "associatedPayableNumber": 1234,
-            "customerAccountNumber": "customerAccountNumber-1234",
-            "currentOptimisticLock": 15
-          },
-          "name": {
-            "title": "Sir",
-            "firstForename": "Greg",
-            "secondForename": "Greggory",
-            "surname": "Greggson"
-          },
-          "address": {
-            "addressLine1": "Flat 1 Rose House",
-            "addressLine2": "Worthing",
-            "addressPostcode": "BN12 4XL"
           }
-        }
-        """.stripMargin
+          """.stripMargin
       ).as[JsObject]
     )
   }
@@ -579,47 +662,47 @@ class VerifyingYourBankAccountPageSpec extends ItSpec {
       Json.parse(
         //format=JSON
         """
-        {
-          "outcome": {
-            "isSuccessful": false,
-            "actionsOutcome": {
-              "ecospendFraudCheckIsSuccessful": false,
-              "fuzzyNameMatchingIsSuccessful": true,
-              "hmrcFraudCheckIsSuccessful": true
+          {
+            "outcome": {
+              "isSuccessful": false,
+              "actionsOutcome": {
+                "ecospendFraudCheckIsSuccessful": false,
+                "fuzzyNameMatchingIsSuccessful": true,
+                "hmrcFraudCheckIsSuccessful": true
+              },
+              "failureReasons": [
+                "Account assessment failed."
+              ]
             },
-            "failureReasons": [
-              "Account assessment failed."
-            ]
-          },
-          "userEnteredDetails": {
-            "chosenBank": "Barclays Personal",
-            "p800Reference": 12345678,
-            "nino": "LM001014C",
-            "dob": "2000-01-01"
-          },
-          "repaymentAmount": 12.34,
-          "repaymentInformation": {
-            "reconciliationIdentifier": 123,
-            "paymentNumber": 12345678,
-            "payeNumber": "PayeNumber-123",
-            "taxDistrictNumber": 717,
-            "associatedPayableNumber": 1234,
-            "customerAccountNumber": "customerAccountNumber-1234",
-            "currentOptimisticLock": 15
-          },
-          "name": {
-            "title": "Sir",
-            "firstForename": "Greg",
-            "secondForename": "Greggory",
-            "surname": "Greggson"
-          },
-          "address": {
-            "addressLine1": "Flat 1 Rose House",
-            "addressLine2": "Worthing",
-            "addressPostcode": "BN12 4XL"
+            "userEnteredDetails": {
+              "chosenBank": "Barclays Personal",
+              "p800Reference": 12345678,
+              "nino": "LM001014C",
+              "dob": "2000-01-01"
+            },
+            "repaymentAmount": 12.34,
+            "repaymentInformation": {
+              "reconciliationIdentifier": 123,
+              "paymentNumber": 12345678,
+              "payeNumber": "PayeNumber-123",
+              "taxDistrictNumber": 717,
+              "associatedPayableNumber": 1234,
+              "customerAccountNumber": "customerAccountNumber-1234",
+              "currentOptimisticLock": 15
+            },
+            "name": {
+              "title": "Sir",
+              "firstForename": "Greg",
+              "secondForename": "Greggory",
+              "surname": "Greggson"
+            },
+            "address": {
+              "addressLine1": "Flat 1 Rose House",
+              "addressLine2": "Worthing",
+              "addressPostcode": "BN12 4XL"
+            }
           }
-        }
-        """.stripMargin
+          """.stripMargin
       ).as[JsObject]
     )
   }
@@ -669,47 +752,47 @@ class VerifyingYourBankAccountPageSpec extends ItSpec {
       Json.parse(
         //format=JSON
         """
-        {
-          "outcome": {
-            "isSuccessful": false,
-            "actionsOutcome": {
-              "ecospendFraudCheckIsSuccessful": true,
-              "fuzzyNameMatchingIsSuccessful": true,
-              "hmrcFraudCheckIsSuccessful": false
+          {
+            "outcome": {
+              "isSuccessful": false,
+              "actionsOutcome": {
+                "ecospendFraudCheckIsSuccessful": true,
+                "fuzzyNameMatchingIsSuccessful": true,
+                "hmrcFraudCheckIsSuccessful": false
+              },
+              "failureReasons": [
+                "EDH indicated DoNotPay"
+              ]
             },
-            "failureReasons": [
-              "EDH indicated DoNotPay"
-            ]
-          },
-          "userEnteredDetails": {
-            "chosenBank": "Barclays Personal",
-            "p800Reference": 12345678,
-            "nino": "LM001014C",
-            "dob": "2000-01-01"
-          },
-          "repaymentAmount": 12.34,
-          "repaymentInformation": {
-            "reconciliationIdentifier": 123,
-            "paymentNumber": 12345678,
-            "payeNumber": "PayeNumber-123",
-            "taxDistrictNumber": 717,
-            "associatedPayableNumber": 1234,
-            "customerAccountNumber": "customerAccountNumber-1234",
-            "currentOptimisticLock": 15
-          },
-          "name": {
-            "title": "Sir",
-            "firstForename": "Greg",
-            "secondForename": "Greggory",
-            "surname": "Greggson"
-          },
-          "address": {
-            "addressLine1": "Flat 1 Rose House",
-            "addressLine2": "Worthing",
-            "addressPostcode": "BN12 4XL"
+            "userEnteredDetails": {
+              "chosenBank": "Barclays Personal",
+              "p800Reference": 12345678,
+              "nino": "LM001014C",
+              "dob": "2000-01-01"
+            },
+            "repaymentAmount": 12.34,
+            "repaymentInformation": {
+              "reconciliationIdentifier": 123,
+              "paymentNumber": 12345678,
+              "payeNumber": "PayeNumber-123",
+              "taxDistrictNumber": 717,
+              "associatedPayableNumber": 1234,
+              "customerAccountNumber": "customerAccountNumber-1234",
+              "currentOptimisticLock": 15
+            },
+            "name": {
+              "title": "Sir",
+              "firstForename": "Greg",
+              "secondForename": "Greggory",
+              "surname": "Greggson"
+            },
+            "address": {
+              "addressLine1": "Flat 1 Rose House",
+              "addressLine2": "Worthing",
+              "addressPostcode": "BN12 4XL"
+            }
           }
-        }
-        """.stripMargin
+          """.stripMargin
       ).as[JsObject]
     )
   }
@@ -733,49 +816,49 @@ class VerifyingYourBankAccountPageSpec extends ItSpec {
       Json.parse(
         //format=JSON
         """
-        {
-          "outcome": {
-            "isSuccessful": false,
-            "actionsOutcome": {
-              "ecospendFraudCheckIsSuccessful": true,
-              "fuzzyNameMatchingIsSuccessful": true,
-              "hmrcFraudCheckIsSuccessful": true,
-              "claimOverpaymentIsSuccessful": false
+          {
+            "outcome": {
+              "isSuccessful": false,
+              "actionsOutcome": {
+                "ecospendFraudCheckIsSuccessful": true,
+                "fuzzyNameMatchingIsSuccessful": true,
+                "hmrcFraudCheckIsSuccessful": true,
+                "claimOverpaymentIsSuccessful": false
+              },
+              "failureReasons": [
+                "POST of 'http://localhost:11112/p800-refunds-backend/nps/make-bacs-repayment/LM001014C' returned 422. Response body: '\n          {\n           \"failures\" : [\n             {\"reason\" : \"Reference \", \"code\": \"63480\"}\n           ]\n          }\n          '"
+              ]
             },
-            "failureReasons": [
-              "POST of 'http://localhost:11112/p800-refunds-backend/nps/make-bacs-repayment/LM001014C' returned 422. Response body: '\n          {\n           \"failures\" : [\n             {\"reason\" : \"Reference \", \"code\": \"63480\"}\n           ]\n          }\n          '"
-            ]
-          },
-          "userEnteredDetails": {
-            "repaymentMethod": "bank",
-            "chosenBank": "Barclays Personal",
-            "p800Reference": 12345678,
-            "nino": "LM001014C",
-            "dob": "2000-01-01"
-          },
-          "repaymentAmount": 12.34,
-          "repaymentInformation": {
-            "reconciliationIdentifier": 123,
-            "paymentNumber": 12345678,
-            "payeNumber": "PayeNumber-123",
-            "taxDistrictNumber": 717,
-            "associatedPayableNumber": 1234,
-            "customerAccountNumber": "customerAccountNumber-1234",
-            "currentOptimisticLock": 15
-          },
-          "name": {
-            "title": "Sir",
-            "firstForename": "Greg",
-            "secondForename": "Greggory",
-            "surname": "Greggson"
-          },
-          "address": {
-            "addressLine1": "Flat 1 Rose House",
-            "addressLine2": "Worthing",
-            "addressPostcode": "BN12 4XL"
+            "userEnteredDetails": {
+              "repaymentMethod": "bank",
+              "chosenBank": "Barclays Personal",
+              "p800Reference": 12345678,
+              "nino": "LM001014C",
+              "dob": "2000-01-01"
+            },
+            "repaymentAmount": 12.34,
+            "repaymentInformation": {
+              "reconciliationIdentifier": 123,
+              "paymentNumber": 12345678,
+              "payeNumber": "PayeNumber-123",
+              "taxDistrictNumber": 717,
+              "associatedPayableNumber": 1234,
+              "customerAccountNumber": "customerAccountNumber-1234",
+              "currentOptimisticLock": 15
+            },
+            "name": {
+              "title": "Sir",
+              "firstForename": "Greg",
+              "secondForename": "Greggory",
+              "surname": "Greggson"
+            },
+            "address": {
+              "addressLine1": "Flat 1 Rose House",
+              "addressLine2": "Worthing",
+              "addressPostcode": "BN12 4XL"
+            }
           }
-        }
-        """.stripMargin
+          """.stripMargin
       ).as[JsObject]
     )
   }
@@ -797,49 +880,49 @@ class VerifyingYourBankAccountPageSpec extends ItSpec {
       Json.parse(
         //format=JSON
         """
-        {
-          "outcome": {
-            "isSuccessful": false,
-            "actionsOutcome": {
-              "ecospendFraudCheckIsSuccessful": true,
-              "fuzzyNameMatchingIsSuccessful": true,
-              "hmrcFraudCheckIsSuccessful": true,
-              "claimOverpaymentIsSuccessful": false
+          {
+            "outcome": {
+              "isSuccessful": false,
+              "actionsOutcome": {
+                "ecospendFraudCheckIsSuccessful": true,
+                "fuzzyNameMatchingIsSuccessful": true,
+                "hmrcFraudCheckIsSuccessful": true,
+                "claimOverpaymentIsSuccessful": false
+              },
+              "failureReasons": [
+                "POST of 'http://localhost:11112/p800-refunds-backend/nps/make-bacs-repayment/LM001014C' returned 422. Response body: '\n          {\n           \"failures\" : [\n             {\"reason\" : \"Reference \", \"code\": \"63480\"}\n           ]\n          }\n          '"
+              ]
             },
-            "failureReasons": [
-              "POST of 'http://localhost:11112/p800-refunds-backend/nps/make-bacs-repayment/LM001014C' returned 422. Response body: '\n          {\n           \"failures\" : [\n             {\"reason\" : \"Reference \", \"code\": \"63480\"}\n           ]\n          }\n          '"
-            ]
-          },
-          "userEnteredDetails": {
-            "repaymentMethod": "bank",
-            "chosenBank": "Barclays Personal",
-            "p800Reference": 12345678,
-            "nino": "LM001014C",
-            "dob": "2000-01-01"
-          },
-          "repaymentAmount": 12.34,
-          "repaymentInformation": {
-            "reconciliationIdentifier": 123,
-            "paymentNumber": 12345678,
-            "payeNumber": "PayeNumber-123",
-            "taxDistrictNumber": 717,
-            "associatedPayableNumber": 1234,
-            "customerAccountNumber": "customerAccountNumber-1234",
-            "currentOptimisticLock": 15
-          },
-          "name": {
-            "title": "Sir",
-            "firstForename": "Greg",
-            "secondForename": "Greggory",
-            "surname": "Greggson"
-          },
-          "address": {
-            "addressLine1": "Flat 1 Rose House",
-            "addressLine2": "Worthing",
-            "addressPostcode": "BN12 4XL"
+            "userEnteredDetails": {
+              "repaymentMethod": "bank",
+              "chosenBank": "Barclays Personal",
+              "p800Reference": 12345678,
+              "nino": "LM001014C",
+              "dob": "2000-01-01"
+            },
+            "repaymentAmount": 12.34,
+            "repaymentInformation": {
+              "reconciliationIdentifier": 123,
+              "paymentNumber": 12345678,
+              "payeNumber": "PayeNumber-123",
+              "taxDistrictNumber": 717,
+              "associatedPayableNumber": 1234,
+              "customerAccountNumber": "customerAccountNumber-1234",
+              "currentOptimisticLock": 15
+            },
+            "name": {
+              "title": "Sir",
+              "firstForename": "Greg",
+              "secondForename": "Greggory",
+              "surname": "Greggson"
+            },
+            "address": {
+              "addressLine1": "Flat 1 Rose House",
+              "addressLine2": "Worthing",
+              "addressPostcode": "BN12 4XL"
+            }
           }
-        }
-        """.stripMargin
+          """.stripMargin
       ).as[JsObject]
     )
   }
@@ -862,49 +945,49 @@ class VerifyingYourBankAccountPageSpec extends ItSpec {
       Json.parse(
         //format=JSON
         """
-        {
-          "outcome": {
-            "isSuccessful": false,
-            "actionsOutcome": {
-              "ecospendFraudCheckIsSuccessful": true,
-              "fuzzyNameMatchingIsSuccessful": true,
-              "hmrcFraudCheckIsSuccessful": true,
-              "claimOverpaymentIsSuccessful": false
+          {
+            "outcome": {
+              "isSuccessful": false,
+              "actionsOutcome": {
+                "ecospendFraudCheckIsSuccessful": true,
+                "fuzzyNameMatchingIsSuccessful": true,
+                "hmrcFraudCheckIsSuccessful": true,
+                "claimOverpaymentIsSuccessful": false
+              },
+              "failureReasons": [
+                "POST of 'http://localhost:11112/p800-refunds-backend/nps/make-bacs-repayment/LM001014C' returned 500. Response body: ''"
+              ]
             },
-            "failureReasons": [
-              "POST of 'http://localhost:11112/p800-refunds-backend/nps/make-bacs-repayment/LM001014C' returned 500. Response body: ''"
-            ]
-          },
-          "userEnteredDetails": {
-            "repaymentMethod": "bank",
-            "chosenBank": "Barclays Personal",
-            "p800Reference": 12345678,
-            "nino": "LM001014C",
-            "dob": "2000-01-01"
-          },
-          "repaymentAmount": 12.34,
-          "repaymentInformation": {
-            "reconciliationIdentifier": 123,
-            "paymentNumber": 12345678,
-            "payeNumber": "PayeNumber-123",
-            "taxDistrictNumber": 717,
-            "associatedPayableNumber": 1234,
-            "customerAccountNumber": "customerAccountNumber-1234",
-            "currentOptimisticLock": 15
-          },
-          "name": {
-            "title": "Sir",
-            "firstForename": "Greg",
-            "secondForename": "Greggory",
-            "surname": "Greggson"
-          },
-          "address": {
-            "addressLine1": "Flat 1 Rose House",
-            "addressLine2": "Worthing",
-            "addressPostcode": "BN12 4XL"
+            "userEnteredDetails": {
+              "repaymentMethod": "bank",
+              "chosenBank": "Barclays Personal",
+              "p800Reference": 12345678,
+              "nino": "LM001014C",
+              "dob": "2000-01-01"
+            },
+            "repaymentAmount": 12.34,
+            "repaymentInformation": {
+              "reconciliationIdentifier": 123,
+              "paymentNumber": 12345678,
+              "payeNumber": "PayeNumber-123",
+              "taxDistrictNumber": 717,
+              "associatedPayableNumber": 1234,
+              "customerAccountNumber": "customerAccountNumber-1234",
+              "currentOptimisticLock": 15
+            },
+            "name": {
+              "title": "Sir",
+              "firstForename": "Greg",
+              "secondForename": "Greggory",
+              "surname": "Greggson"
+            },
+            "address": {
+              "addressLine1": "Flat 1 Rose House",
+              "addressLine2": "Worthing",
+              "addressPostcode": "BN12 4XL"
+            }
           }
-        }
-        """.stripMargin
+          """.stripMargin
       ).as[JsObject]
     )
   }
@@ -924,47 +1007,47 @@ class VerifyingYourBankAccountPageSpec extends ItSpec {
       Json.parse(
         //format=JSON
         """
-        {
-          "outcome": {
-            "isSuccessful": false,
-            "actionsOutcome": {
-              "ecospendFraudCheckIsSuccessful": true,
-              "hmrcFraudCheckIsSuccessful": false
+          {
+            "outcome": {
+              "isSuccessful": false,
+              "actionsOutcome": {
+                "ecospendFraudCheckIsSuccessful": true,
+                "hmrcFraudCheckIsSuccessful": false
+              },
+              "failureReasons": [
+                "POST of 'http://localhost:11112/p800-refunds-backend/risking/claims/a3d35e50-ea17-4865-a2d2-38b0069b2665/bank-details' returned 503. Response body: '{\"reason\" : \"Dependent systems are currently not responding\"}'"
+              ]
             },
-            "failureReasons": [
-              "POST of 'http://localhost:11112/p800-refunds-backend/risking/claims/a3d35e50-ea17-4865-a2d2-38b0069b2665/bank-details' returned 503. Response body: '{\"reason\" : \"Dependent systems are currently not responding\"}'"
-            ]
-          },
-          "userEnteredDetails": {
-            "repaymentMethod": "bank",
-            "chosenBank": "Barclays Personal",
-            "p800Reference": 12345678,
-            "nino": "LM001014C",
-            "dob": "2000-01-01"
-          },
-          "repaymentAmount": 12.34,
-          "repaymentInformation": {
-            "reconciliationIdentifier": 123,
-            "paymentNumber": 12345678,
-            "payeNumber": "PayeNumber-123",
-            "taxDistrictNumber": 717,
-            "associatedPayableNumber": 1234,
-            "customerAccountNumber": "customerAccountNumber-1234",
-            "currentOptimisticLock": 15
-          },
-          "name": {
-            "title": "Sir",
-            "firstForename": "Greg",
-            "secondForename": "Greggory",
-            "surname": "Greggson"
-          },
-          "address": {
-            "addressLine1": "Flat 1 Rose House",
-            "addressLine2": "Worthing",
-            "addressPostcode": "BN12 4XL"
+            "userEnteredDetails": {
+              "repaymentMethod": "bank",
+              "chosenBank": "Barclays Personal",
+              "p800Reference": 12345678,
+              "nino": "LM001014C",
+              "dob": "2000-01-01"
+            },
+            "repaymentAmount": 12.34,
+            "repaymentInformation": {
+              "reconciliationIdentifier": 123,
+              "paymentNumber": 12345678,
+              "payeNumber": "PayeNumber-123",
+              "taxDistrictNumber": 717,
+              "associatedPayableNumber": 1234,
+              "customerAccountNumber": "customerAccountNumber-1234",
+              "currentOptimisticLock": 15
+            },
+            "name": {
+              "title": "Sir",
+              "firstForename": "Greg",
+              "secondForename": "Greggory",
+              "surname": "Greggson"
+            },
+            "address": {
+              "addressLine1": "Flat 1 Rose House",
+              "addressLine2": "Worthing",
+              "addressPostcode": "BN12 4XL"
+            }
           }
-        }
-        """.stripMargin
+          """.stripMargin
       ).as[JsObject]
     )
   }
@@ -992,14 +1075,14 @@ class VerifyingYourBankAccountPageSpec extends ItSpec {
     val responseBody =
       //language=JSON
       s"""[{
-          "id" : "${tdAll.consentId.value}",
-          "type" : "Personal",
-          "sub_type" : "CurrentAccount",
-          "currency" : "GBP",
-          "account_format" : "SortCode",
-          "balance" : 123.7,
-          "last_update_time" : "2059-11-25T16:33:51.88"
-        }]""".stripMargin
+            "id" : "${tdAll.consentId.value}",
+            "type" : "Personal",
+            "sub_type" : "CurrentAccount",
+            "currency" : "GBP",
+            "account_format" : "SortCode",
+            "balance" : 123.7,
+            "last_update_time" : "2059-11-25T16:33:51.88"
+          }]""".stripMargin
 
     EcospendStub.AuthStubs.stubEcospendAuth2xxSucceeded
     EcospendStub.AccountStub.stubAccountSummaryWithJson2xxSucceeded(tdAll.consentId, responseBody)
@@ -1016,19 +1099,19 @@ class VerifyingYourBankAccountPageSpec extends ItSpec {
     val responseBody =
       //language=JSON
       s"""[{
-          "id" : "${tdAll.consentId.value}",
-          "bank_id" : "obie-barclays-personal",
-          "type" : "Personal",
-          "sub_type" : "CurrentAccount",
-          "currency" : "GBP",
-          "account_format" : "SortCode",
-          "account_identification" : "44556610002333",
-          "calculated_owner_name" : "Mr Greg Greggson",
-          "account_owner_name" : "Greggson Gregory ",
-          "balance" : 123.7,
-          "last_update_time" : "2059-11-25T16:33:51.88",
-          "parties" : []
-        }]""".stripMargin
+            "id" : "${tdAll.consentId.value}",
+            "bank_id" : "obie-barclays-personal",
+            "type" : "Personal",
+            "sub_type" : "CurrentAccount",
+            "currency" : "GBP",
+            "account_format" : "SortCode",
+            "account_identification" : "44556610002333",
+            "calculated_owner_name" : "Mr Greg Greggson",
+            "account_owner_name" : "Greggson Gregory ",
+            "balance" : 123.7,
+            "last_update_time" : "2059-11-25T16:33:51.88",
+            "parties" : []
+          }]""".stripMargin
 
     EcospendStub.AuthStubs.stubEcospendAuth2xxSucceeded
     EcospendStub.AccountStub.stubAccountSummaryWithJson2xxSucceeded(tdAll.consentId, responseBody)
@@ -1072,48 +1155,48 @@ class VerifyingYourBankAccountPageSpec extends ItSpec {
       AuditConnectorStub.bankClaimAttemptMadeAuditType,
       Json.parse(
         """
-        {
-          "outcome": {
-            "isSuccessful": false,
-            "actionsOutcome": {
-              "ecospendFraudCheckIsSuccessful": true,
-              "fuzzyNameMatchingIsSuccessful": false,
-              "hmrcFraudCheckIsSuccessful": true
+          {
+            "outcome": {
+              "isSuccessful": false,
+              "actionsOutcome": {
+                "ecospendFraudCheckIsSuccessful": true,
+                "fuzzyNameMatchingIsSuccessful": false,
+                "hmrcFraudCheckIsSuccessful": true
+              },
+              "failureReasons": [
+                "Ecospend names failed matching against NPS name"
+              ]
             },
-            "failureReasons": [
-              "Ecospend names failed matching against NPS name"
-            ]
-          },
-          "userEnteredDetails": {
-            "repaymentMethod": "bank",
-            "chosenBank": "Barclays Personal",
-            "p800Reference": 12345678,
-            "nino": "LM001014C",
-            "dob": "2000-01-01"
-          },
-          "repaymentAmount": 12.34,
-          "repaymentInformation": {
-            "reconciliationIdentifier": 123,
-            "paymentNumber": 12345678,
-            "payeNumber": "PayeNumber-123",
-            "taxDistrictNumber": 717,
-            "associatedPayableNumber": 1234,
-            "customerAccountNumber": "customerAccountNumber-1234",
-            "currentOptimisticLock": 15
-          },
-          "name": {
-            "title": "Sir",
-            "firstForename": "Greg",
-            "secondForename": "Greggory",
-            "surname": "Greggson"
-          },
-          "address": {
-            "addressLine1": "Flat 1 Rose House",
-            "addressLine2": "Worthing",
-            "addressPostcode": "BN12 4XL"
+            "userEnteredDetails": {
+              "repaymentMethod": "bank",
+              "chosenBank": "Barclays Personal",
+              "p800Reference": 12345678,
+              "nino": "LM001014C",
+              "dob": "2000-01-01"
+            },
+            "repaymentAmount": 12.34,
+            "repaymentInformation": {
+              "reconciliationIdentifier": 123,
+              "paymentNumber": 12345678,
+              "payeNumber": "PayeNumber-123",
+              "taxDistrictNumber": 717,
+              "associatedPayableNumber": 1234,
+              "customerAccountNumber": "customerAccountNumber-1234",
+              "currentOptimisticLock": 15
+            },
+            "name": {
+              "title": "Sir",
+              "firstForename": "Greg",
+              "secondForename": "Greggory",
+              "surname": "Greggson"
+            },
+            "address": {
+              "addressLine1": "Flat 1 Rose House",
+              "addressLine2": "Worthing",
+              "addressPostcode": "BN12 4XL"
+            }
           }
-        }
-        """.stripMargin
+          """.stripMargin
       ).as[JsObject]
     )
   }
@@ -1122,16 +1205,16 @@ class VerifyingYourBankAccountPageSpec extends ItSpec {
     val responseBody =
       //language=JSON
       s"""[{
-          "id" : "${tdAll.consentId.value}",
-          "type" : "Personal",
-          "sub_type" : "CurrentAccount",
-          "currency" : "GBP",
-          "account_format" : "SortCode",
-          "account_identification" : "44556610002333",
-          "display_name" : "bank account display name",
-          "balance" : 123.7,
-          "last_update_time" : "2059-11-25T16:33:51.88"
-        }]""".stripMargin
+            "id" : "${tdAll.consentId.value}",
+            "type" : "Personal",
+            "sub_type" : "CurrentAccount",
+            "currency" : "GBP",
+            "account_format" : "SortCode",
+            "account_identification" : "44556610002333",
+            "display_name" : "bank account display name",
+            "balance" : 123.7,
+            "last_update_time" : "2059-11-25T16:33:51.88"
+          }]""".stripMargin
 
     EcospendStub.AuthStubs.stubEcospendAuth2xxSucceeded
     EcospendStub.AccountStub.stubAccountSummaryWithJson2xxSucceeded(tdAll.consentId, responseBody)
@@ -1149,47 +1232,47 @@ class VerifyingYourBankAccountPageSpec extends ItSpec {
       Json.parse(
         //format=JSON
         """
-        {
-          "outcome": {
-            "isSuccessful": false,
-            "actionsOutcome": {
-              "ecospendFraudCheckIsSuccessful": true,
-              "hmrcFraudCheckIsSuccessful": true,
-              "fuzzyNameMatchingIsSuccessful": false
+          {
+            "outcome": {
+              "isSuccessful": false,
+              "actionsOutcome": {
+                "ecospendFraudCheckIsSuccessful": true,
+                "hmrcFraudCheckIsSuccessful": true,
+                "fuzzyNameMatchingIsSuccessful": false
+              },
+              "failureReasons": [
+                "Ecospend names failed matching against NPS name"
+              ]
             },
-            "failureReasons": [
-              "Ecospend names failed matching against NPS name"
-            ]
-          },
-          "userEnteredDetails": {
-            "chosenBank": "Barclays Personal",
-            "p800Reference": 12345678,
-            "nino": "LM001014C",
-            "dob": "2000-01-01"
-          },
-          "repaymentAmount": 12.34,
-          "repaymentInformation": {
-            "reconciliationIdentifier": 123,
-            "paymentNumber": 12345678,
-            "payeNumber": "PayeNumber-123",
-            "taxDistrictNumber": 717,
-            "associatedPayableNumber": 1234,
-            "customerAccountNumber": "customerAccountNumber-1234",
-            "currentOptimisticLock": 15
-          },
-          "name": {
-            "title": "Sir",
-            "firstForename": "Greg",
-            "secondForename": "Greggory",
-            "surname": "Greggson"
-          },
-          "address": {
-            "addressLine1": "Flat 1 Rose House",
-            "addressLine2": "Worthing",
-            "addressPostcode": "BN12 4XL"
+            "userEnteredDetails": {
+              "chosenBank": "Barclays Personal",
+              "p800Reference": 12345678,
+              "nino": "LM001014C",
+              "dob": "2000-01-01"
+            },
+            "repaymentAmount": 12.34,
+            "repaymentInformation": {
+              "reconciliationIdentifier": 123,
+              "paymentNumber": 12345678,
+              "payeNumber": "PayeNumber-123",
+              "taxDistrictNumber": 717,
+              "associatedPayableNumber": 1234,
+              "customerAccountNumber": "customerAccountNumber-1234",
+              "currentOptimisticLock": 15
+            },
+            "name": {
+              "title": "Sir",
+              "firstForename": "Greg",
+              "secondForename": "Greggory",
+              "surname": "Greggson"
+            },
+            "address": {
+              "addressLine1": "Flat 1 Rose House",
+              "addressLine2": "Worthing",
+              "addressPostcode": "BN12 4XL"
+            }
           }
-        }
-        """.stripMargin
+          """.stripMargin
       ).as[JsObject]
     )
   }
@@ -1198,19 +1281,19 @@ class VerifyingYourBankAccountPageSpec extends ItSpec {
     val responseBody =
       //language=JSON
       s"""[{
-          "id" : "${tdAll.consentId.value}",
-          "bank_id" : "obie-barclays-personal",
-          "type" : "Personal",
-          "sub_type" : "CurrentAccount",
-          "currency" : "GBP",
-          "account_format" : "SortCode",
-          "account_identification" : "44556610002333",
-          "calculated_owner_name" : "Mr Greg Greggson",
-          "account_owner_name" : "Margaretta Greggson,Greg Greggory Greggson",
-          "display_name" : "bank account display name",
-          "balance" : 123.7,
-          "last_update_time" : "2059-11-25T16:33:51.88"
-        }]""".stripMargin
+            "id" : "${tdAll.consentId.value}",
+            "bank_id" : "obie-barclays-personal",
+            "type" : "Personal",
+            "sub_type" : "CurrentAccount",
+            "currency" : "GBP",
+            "account_format" : "SortCode",
+            "account_identification" : "44556610002333",
+            "calculated_owner_name" : "Mr Greg Greggson",
+            "account_owner_name" : "Margaretta Greggson,Greg Greggory Greggson",
+            "display_name" : "bank account display name",
+            "balance" : 123.7,
+            "last_update_time" : "2059-11-25T16:33:51.88"
+          }]""".stripMargin
 
     EcospendStub.AuthStubs.stubEcospendAuth2xxSucceeded
     EcospendStub.AccountStub.stubAccountSummaryWithJson2xxSucceeded(tdAll.consentId, responseBody)
@@ -1233,20 +1316,20 @@ class VerifyingYourBankAccountPageSpec extends ItSpec {
     val responseBody =
       //language=JSON
       s"""[{
-          "id" : "${tdAll.consentId.value}",
-          "type" : "Personal",
-          "sub_type" : "CurrentAccount",
-          "currency" : "GBP",
-          "account_format" : "SortCode",
-          "account_identification" : "44556610002333",
-          "display_name" : "bank account display name",
-          "account_owner_name" : "Margaretta Greggson,Greg Greggory Greggson",
-          "balance" : 123.7,
-          "last_update_time" : "2059-11-25T16:33:51.88",
-          "parties" : [{
-            "name" : "Greg Greggson"
-          }]
-        }]""".stripMargin
+            "id" : "${tdAll.consentId.value}",
+            "type" : "Personal",
+            "sub_type" : "CurrentAccount",
+            "currency" : "GBP",
+            "account_format" : "SortCode",
+            "account_identification" : "44556610002333",
+            "display_name" : "bank account display name",
+            "account_owner_name" : "Margaretta Greggson,Greg Greggory Greggson",
+            "balance" : 123.7,
+            "last_update_time" : "2059-11-25T16:33:51.88",
+            "parties" : [{
+              "name" : "Greg Greggson"
+            }]
+          }]""".stripMargin
 
     EcospendStub.AuthStubs.stubEcospendAuth2xxSucceeded
     EcospendStub.AccountStub.stubAccountSummaryWithJson2xxSucceeded(tdAll.consentId, responseBody)
@@ -1270,45 +1353,45 @@ class VerifyingYourBankAccountPageSpec extends ItSpec {
       Json.parse(
         //format=JSON
         """
-        {
-          "outcome": {
-            "isSuccessful": true,
-            "actionsOutcome": {
-              "ecospendFraudCheckIsSuccessful": true,
-              "fuzzyNameMatchingIsSuccessful": true,
-              "hmrcFraudCheckIsSuccessful": true,
-              "claimOverpaymentIsSuccessful": true
+          {
+            "outcome": {
+              "isSuccessful": true,
+              "actionsOutcome": {
+                "ecospendFraudCheckIsSuccessful": true,
+                "fuzzyNameMatchingIsSuccessful": true,
+                "hmrcFraudCheckIsSuccessful": true,
+                "claimOverpaymentIsSuccessful": true
+              }
+            },
+            "userEnteredDetails": {
+              "chosenBank": "Barclays Personal",
+              "p800Reference": 12345678,
+              "nino": "LM001014C",
+              "dob": "2000-01-01"
+            },
+            "repaymentAmount": 12.34,
+            "repaymentInformation": {
+              "reconciliationIdentifier": 123,
+              "paymentNumber": 12345678,
+              "payeNumber": "PayeNumber-123",
+              "taxDistrictNumber": 717,
+              "associatedPayableNumber": 1234,
+              "customerAccountNumber": "customerAccountNumber-1234",
+              "currentOptimisticLock": 15
+            },
+            "name": {
+              "title": "Sir",
+              "firstForename": "Greg",
+              "secondForename": "Greggory",
+              "surname": "Greggson"
+            },
+            "address": {
+              "addressLine1": "Flat 1 Rose House",
+              "addressLine2": "Worthing",
+              "addressPostcode": "BN12 4XL"
             }
-          },
-          "userEnteredDetails": {
-            "chosenBank": "Barclays Personal",
-            "p800Reference": 12345678,
-            "nino": "LM001014C",
-            "dob": "2000-01-01"
-          },
-          "repaymentAmount": 12.34,
-          "repaymentInformation": {
-            "reconciliationIdentifier": 123,
-            "paymentNumber": 12345678,
-            "payeNumber": "PayeNumber-123",
-            "taxDistrictNumber": 717,
-            "associatedPayableNumber": 1234,
-            "customerAccountNumber": "customerAccountNumber-1234",
-            "currentOptimisticLock": 15
-          },
-          "name": {
-            "title": "Sir",
-            "firstForename": "Greg",
-            "secondForename": "Greggory",
-            "surname": "Greggson"
-          },
-          "address": {
-            "addressLine1": "Flat 1 Rose House",
-            "addressLine2": "Worthing",
-            "addressPostcode": "BN12 4XL"
           }
-        }
-        """.stripMargin
+          """.stripMargin
       ).as[JsObject]
     )
   }
@@ -1317,26 +1400,26 @@ class VerifyingYourBankAccountPageSpec extends ItSpec {
     val responseBody =
       //language=JSON
       s"""[{
-          "id" : "${tdAll.consentId.value}",
-          "type" : "Personal",
-          "sub_type" : "CurrentAccount",
-          "currency" : "GBP",
-          "account_format" : "SortCode",
-          "account_identification" : "44556610002333",
-          "display_name" : "bank account display name",
-          "account_owner_name" : "Margaretta Greggson,Greg Greggory Greggson",
-          "balance" : 123.7,
-          "last_update_time" : "2059-11-25T16:33:51.88",
-          "parties" : [
-            {
-              "name" : "Greg Greggson"
-            },
-            {
-              "name" : "Margaret Greggson",
-              "full_legal_name" : "Margaretta Greggson"
-            }
-          ]
-        }]""".stripMargin
+            "id" : "${tdAll.consentId.value}",
+            "type" : "Personal",
+            "sub_type" : "CurrentAccount",
+            "currency" : "GBP",
+            "account_format" : "SortCode",
+            "account_identification" : "44556610002333",
+            "display_name" : "bank account display name",
+            "account_owner_name" : "Margaretta Greggson,Greg Greggory Greggson",
+            "balance" : 123.7,
+            "last_update_time" : "2059-11-25T16:33:51.88",
+            "parties" : [
+              {
+                "name" : "Greg Greggson"
+              },
+              {
+                "name" : "Margaret Greggson",
+                "full_legal_name" : "Margaretta Greggson"
+              }
+            ]
+          }]""".stripMargin
 
     EcospendStub.AuthStubs.stubEcospendAuth2xxSucceeded
     EcospendStub.AccountStub.stubAccountSummaryWithJson2xxSucceeded(tdAll.consentId, responseBody)
@@ -1360,61 +1443,62 @@ class VerifyingYourBankAccountPageSpec extends ItSpec {
       Json.parse(
         //format=JSON
         """
-        {
-          "outcome": {
-            "isSuccessful": true,
-            "actionsOutcome": {
-              "ecospendFraudCheckIsSuccessful": true,
-              "fuzzyNameMatchingIsSuccessful": true,
-              "hmrcFraudCheckIsSuccessful": true,
-              "claimOverpaymentIsSuccessful": true
+          {
+            "outcome": {
+              "isSuccessful": true,
+              "actionsOutcome": {
+                "ecospendFraudCheckIsSuccessful": true,
+                "fuzzyNameMatchingIsSuccessful": true,
+                "hmrcFraudCheckIsSuccessful": true,
+                "claimOverpaymentIsSuccessful": true
+              }
+            },
+            "userEnteredDetails": {
+              "chosenBank": "Barclays Personal",
+              "p800Reference": 12345678,
+              "nino": "LM001014C",
+              "dob": "2000-01-01"
+            },
+            "repaymentAmount": 12.34,
+            "repaymentInformation": {
+              "reconciliationIdentifier": 123,
+              "paymentNumber": 12345678,
+              "payeNumber": "PayeNumber-123",
+              "taxDistrictNumber": 717,
+              "associatedPayableNumber": 1234,
+              "customerAccountNumber": "customerAccountNumber-1234",
+              "currentOptimisticLock": 15
+            },
+            "name": {
+              "title": "Sir",
+              "firstForename": "Greg",
+              "secondForename": "Greggory",
+              "surname": "Greggson"
+            },
+            "address": {
+              "addressLine1": "Flat 1 Rose House",
+              "addressLine2": "Worthing",
+              "addressPostcode": "BN12 4XL"
             }
-          },
-          "userEnteredDetails": {
-            "chosenBank": "Barclays Personal",
-            "p800Reference": 12345678,
-            "nino": "LM001014C",
-            "dob": "2000-01-01"
-          },
-          "repaymentAmount": 12.34,
-          "repaymentInformation": {
-            "reconciliationIdentifier": 123,
-            "paymentNumber": 12345678,
-            "payeNumber": "PayeNumber-123",
-            "taxDistrictNumber": 717,
-            "associatedPayableNumber": 1234,
-            "customerAccountNumber": "customerAccountNumber-1234",
-            "currentOptimisticLock": 15
-          },
-          "name": {
-            "title": "Sir",
-            "firstForename": "Greg",
-            "secondForename": "Greggory",
-            "surname": "Greggson"
-          },
-          "address": {
-            "addressLine1": "Flat 1 Rose House",
-            "addressLine2": "Worthing",
-            "addressPostcode": "BN12 4XL"
           }
-        }
-        """.stripMargin
+          """.stripMargin
       ).as[JsObject]
     )
   }
 
-  "Redirect to bank transfer 'Request received' page when unused optional BankAccountSummaryResponse field are None" in {
-
-    // Response body is missing "bank_id", "calculated_owner_name", "account_owner_name"
+  "Use name instead of fullLegalName for bankId in bank-id-account-name-matching-variations list when fullLegalName exists" in {
     val responseBody =
       //language=JSON
       s"""[{
           "id" : "${tdAll.consentId.value}",
+          "bank_id" : "obie-santander-production",
           "type" : "Personal",
           "sub_type" : "CurrentAccount",
           "currency" : "GBP",
           "account_format" : "SortCode",
           "account_identification" : "44556610002333",
+          "calculated_owner_name" : "Mr Greg Greggson",
+          "account_owner_name" : "Greggson M & G",
           "display_name" : "bank account display name",
           "balance" : 123.7,
           "last_update_time" : "2059-11-25T16:33:51.88",
@@ -1426,6 +1510,268 @@ class VerifyingYourBankAccountPageSpec extends ItSpec {
             "full_legal_name" : "Margaretta Greggson"
           } ]
         }]""".stripMargin
+
+    EcospendStub.AuthStubs.stubEcospendAuth2xxSucceeded
+    EcospendStub.AccountStub.stubAccountSummaryWithJson2xxSucceeded(tdAll.consentId, responseBody)
+    P800RefundsExternalApiStub.isValid(tdAll.consentId, EventValue.NotReceived)
+    MakeBacsRepaymentStub.`makeBacsRepayment 200 OK`(
+      nino     = tdAll.nino,
+      request  = tdAll.claimOverpaymentRequest,
+      response = tdAll.claimOverpaymentResponse
+    )
+    EdhStub.getBankDetailsRiskResult(tdAll.getBankDetailsRiskResultRequest, tdAll.getBankDetailsRiskResultResponse)
+    pages.verifyingBankAccountPage.open()
+    pages.verifyingBankAccountPage.assertPageIsDisplayed()
+    EdhStub.verifyGetBankDetailsRiskResult(tdAll.claimId, tdAll.correlationId)
+    P800RefundsExternalApiStub.verifyIsValid(tdAll.consentId)
+    MakeBacsRepaymentStub.verifyNone(tdAll.nino)
+    AuditConnectorStub.verifyNoAuditEvent(AuditConnectorStub.bankClaimAttemptMadeAuditType)
+  }
+
+  "Use name instead of fullLegalName for bankId in bank-id-account-name-matching-variations list when fullLegalName is None" in {
+    val responseBody =
+      //language=JSON
+      s"""[{
+          "id" : "${tdAll.consentId.value}",
+          "bank_id" : "obie-santander-production",
+          "type" : "Personal",
+          "sub_type" : "CurrentAccount",
+          "currency" : "GBP",
+          "account_format" : "SortCode",
+          "account_identification" : "44556610002333",
+          "calculated_owner_name" : "Mr Greg Greggson",
+          "account_owner_name" : "Greggson M & G",
+          "display_name" : "bank account display name",
+          "balance" : 123.7,
+          "last_update_time" : "2059-11-25T16:33:51.88",
+          "parties" : [ {
+            "name" : "Greg Greggson"
+          }, {
+            "name" : "Margaret Greggson"
+          } ]
+        }]""".stripMargin
+
+    EcospendStub.AuthStubs.stubEcospendAuth2xxSucceeded
+    EcospendStub.AccountStub.stubAccountSummaryWithJson2xxSucceeded(tdAll.consentId, responseBody)
+    P800RefundsExternalApiStub.isValid(tdAll.consentId, EventValue.NotReceived)
+    MakeBacsRepaymentStub.`makeBacsRepayment 200 OK`(
+      nino     = tdAll.nino,
+      request  = tdAll.claimOverpaymentRequest,
+      response = tdAll.claimOverpaymentResponse
+    )
+    EdhStub.getBankDetailsRiskResult(tdAll.getBankDetailsRiskResultRequest, tdAll.getBankDetailsRiskResultResponse)
+    pages.verifyingBankAccountPage.open()
+    pages.verifyingBankAccountPage.assertPageIsDisplayed()
+    EdhStub.verifyGetBankDetailsRiskResult(tdAll.claimId, tdAll.correlationId)
+    P800RefundsExternalApiStub.verifyIsValid(tdAll.consentId)
+    MakeBacsRepaymentStub.verifyNone(tdAll.nino)
+    AuditConnectorStub.verifyNoAuditEvent(AuditConnectorStub.bankClaimAttemptMadeAuditType)
+  }
+
+  "Fall back to 'account_owner_name' when using name instead fullLegalName and one 'parties.name' is None" in {
+    val responseBody =
+      //language=JSON
+      s"""[{
+            "id" : "${tdAll.consentId.value}",
+            "bank_id" : "obie-santander-production",
+            "type" : "Personal",
+            "sub_type" : "CurrentAccount",
+            "currency" : "GBP",
+            "account_format" : "SortCode",
+            "account_identification" : "44556610002333",
+            "display_name" : "bank account display name",
+            "account_owner_name" : "Margaretta Greggson,Greg Greggory Greggson",
+            "balance" : 123.7,
+            "last_update_time" : "2059-11-25T16:33:51.88",
+            "parties" : [
+              {
+                "full_legal_name" : "Greg Greggory Greggson"
+              },
+              {
+                "name" : "Margaret Greggson",
+                "full_legal_name" : "Margaretta Greggson"
+              }
+            ]
+          }]""".stripMargin
+
+    EcospendStub.AuthStubs.stubEcospendAuth2xxSucceeded
+    EcospendStub.AccountStub.stubAccountSummaryWithJson2xxSucceeded(tdAll.consentId, responseBody)
+    P800RefundsExternalApiStub.isValid(tdAll.consentId, EventValue.Valid)
+    DateCalculatorStub.addWorkingDays()
+    MakeBacsRepaymentStub.`makeBacsRepayment 200 OK`(
+      nino     = tdAll.nino,
+      request  = tdAll.claimOverpaymentRequest,
+      response = tdAll.claimOverpaymentResponse
+    )
+    EdhStub.getBankDetailsRiskResult(tdAll.getBankDetailsRiskResultRequest, tdAll.getBankDetailsRiskResultResponse)
+
+    pages.verifyingBankAccountPage.open()
+    pages.requestReceivedBankTransferPage.assertPageIsDisplayedForBankTransfer()
+
+    EdhStub.verifyGetBankDetailsRiskResult(tdAll.claimId, tdAll.correlationId)
+    P800RefundsExternalApiStub.verifyIsValid(tdAll.consentId)
+    MakeBacsRepaymentStub.verify(tdAll.nino, tdAll.correlationId)
+    AuditConnectorStub.verifyEventAudited(
+      AuditConnectorStub.bankClaimAttemptMadeAuditType,
+      Json.parse(
+        //format=JSON
+        """
+          {
+            "outcome": {
+              "isSuccessful": true,
+              "actionsOutcome": {
+                "ecospendFraudCheckIsSuccessful": true,
+                "fuzzyNameMatchingIsSuccessful": true,
+                "hmrcFraudCheckIsSuccessful": true,
+                "claimOverpaymentIsSuccessful": true
+              }
+            },
+            "userEnteredDetails": {
+              "chosenBank": "Barclays Personal",
+              "p800Reference": 12345678,
+              "nino": "LM001014C",
+              "dob": "2000-01-01"
+            },
+            "repaymentAmount": 12.34,
+            "repaymentInformation": {
+              "reconciliationIdentifier": 123,
+              "paymentNumber": 12345678,
+              "payeNumber": "PayeNumber-123",
+              "taxDistrictNumber": 717,
+              "associatedPayableNumber": 1234,
+              "customerAccountNumber": "customerAccountNumber-1234",
+              "currentOptimisticLock": 15
+            },
+            "name": {
+              "title": "Sir",
+              "firstForename": "Greg",
+              "secondForename": "Greggory",
+              "surname": "Greggson"
+            },
+            "address": {
+              "addressLine1": "Flat 1 Rose House",
+              "addressLine2": "Worthing",
+              "addressPostcode": "BN12 4XL"
+            }
+          }
+          """.stripMargin
+      ).as[JsObject]
+    )
+  }
+
+  "Fall back to 'account_owner_name' when using name instead fullLegalName and all 'parties.name' are None" in {
+    val responseBody =
+      //language=JSON
+      s"""[{
+            "id" : "${tdAll.consentId.value}",
+            "bank_id" : "obie-santander-production",
+            "type" : "Personal",
+            "sub_type" : "CurrentAccount",
+            "currency" : "GBP",
+            "account_format" : "SortCode",
+            "account_identification" : "44556610002333",
+            "display_name" : "bank account display name",
+            "account_owner_name" : "Margaretta Greggson,Greg Greggory Greggson",
+            "balance" : 123.7,
+            "last_update_time" : "2059-11-25T16:33:51.88",
+            "parties" : [
+              {
+                "full_legal_name" : "Greg Greggory Greggson"
+              },
+              {
+                "full_legal_name" : "Margaretta Greggson"
+              }
+            ]
+          }]""".stripMargin
+
+    EcospendStub.AuthStubs.stubEcospendAuth2xxSucceeded
+    EcospendStub.AccountStub.stubAccountSummaryWithJson2xxSucceeded(tdAll.consentId, responseBody)
+    P800RefundsExternalApiStub.isValid(tdAll.consentId, EventValue.Valid)
+    DateCalculatorStub.addWorkingDays()
+    MakeBacsRepaymentStub.`makeBacsRepayment 200 OK`(
+      nino     = tdAll.nino,
+      request  = tdAll.claimOverpaymentRequest,
+      response = tdAll.claimOverpaymentResponse
+    )
+    EdhStub.getBankDetailsRiskResult(tdAll.getBankDetailsRiskResultRequest, tdAll.getBankDetailsRiskResultResponse)
+
+    pages.verifyingBankAccountPage.open()
+    pages.requestReceivedBankTransferPage.assertPageIsDisplayedForBankTransfer()
+
+    EdhStub.verifyGetBankDetailsRiskResult(tdAll.claimId, tdAll.correlationId)
+    P800RefundsExternalApiStub.verifyIsValid(tdAll.consentId)
+    MakeBacsRepaymentStub.verify(tdAll.nino, tdAll.correlationId)
+    AuditConnectorStub.verifyEventAudited(
+      AuditConnectorStub.bankClaimAttemptMadeAuditType,
+      Json.parse(
+        //format=JSON
+        """
+          {
+            "outcome": {
+              "isSuccessful": true,
+              "actionsOutcome": {
+                "ecospendFraudCheckIsSuccessful": true,
+                "fuzzyNameMatchingIsSuccessful": true,
+                "hmrcFraudCheckIsSuccessful": true,
+                "claimOverpaymentIsSuccessful": true
+              }
+            },
+            "userEnteredDetails": {
+              "chosenBank": "Barclays Personal",
+              "p800Reference": 12345678,
+              "nino": "LM001014C",
+              "dob": "2000-01-01"
+            },
+            "repaymentAmount": 12.34,
+            "repaymentInformation": {
+              "reconciliationIdentifier": 123,
+              "paymentNumber": 12345678,
+              "payeNumber": "PayeNumber-123",
+              "taxDistrictNumber": 717,
+              "associatedPayableNumber": 1234,
+              "customerAccountNumber": "customerAccountNumber-1234",
+              "currentOptimisticLock": 15
+            },
+            "name": {
+              "title": "Sir",
+              "firstForename": "Greg",
+              "secondForename": "Greggory",
+              "surname": "Greggson"
+            },
+            "address": {
+              "addressLine1": "Flat 1 Rose House",
+              "addressLine2": "Worthing",
+              "addressPostcode": "BN12 4XL"
+            }
+          }
+          """.stripMargin
+      ).as[JsObject]
+    )
+  }
+
+  "Redirect to bank transfer 'Request received' page when unused optional BankAccountSummaryResponse field are None" in {
+
+    // Response body is missing "bank_id", "calculated_owner_name", "account_owner_name"
+    val responseBody =
+      //language=JSON
+      s"""[{
+            "id" : "${tdAll.consentId.value}",
+            "type" : "Personal",
+            "sub_type" : "CurrentAccount",
+            "currency" : "GBP",
+            "account_format" : "SortCode",
+            "account_identification" : "44556610002333",
+            "display_name" : "bank account display name",
+            "balance" : 123.7,
+            "last_update_time" : "2059-11-25T16:33:51.88",
+            "parties" : [ {
+              "name" : "Greg Greggson",
+              "full_legal_name" : "Greg Greggory Greggson"
+            }, {
+              "name" : "Margaret Greggson",
+              "full_legal_name" : "Margaretta Greggson"
+            } ]
+          }]""".stripMargin
 
     EcospendStub.AuthStubs.stubEcospendAuth2xxSucceeded
     EcospendStub.AccountStub.stubAccountSummaryWithJson2xxSucceeded(tdAll.consentId, responseBody)
@@ -1450,45 +1796,45 @@ class VerifyingYourBankAccountPageSpec extends ItSpec {
       Json.parse(
         //format=JSON
         """
-        {
-          "outcome": {
-            "isSuccessful": true,
-            "actionsOutcome": {
-              "ecospendFraudCheckIsSuccessful": true,
-              "fuzzyNameMatchingIsSuccessful": true,
-              "hmrcFraudCheckIsSuccessful": true,
-              "claimOverpaymentIsSuccessful": true
+          {
+            "outcome": {
+              "isSuccessful": true,
+              "actionsOutcome": {
+                "ecospendFraudCheckIsSuccessful": true,
+                "fuzzyNameMatchingIsSuccessful": true,
+                "hmrcFraudCheckIsSuccessful": true,
+                "claimOverpaymentIsSuccessful": true
+              }
+            },
+            "userEnteredDetails": {
+              "chosenBank": "Barclays Personal",
+              "p800Reference": 12345678,
+              "nino": "LM001014C",
+              "dob": "2000-01-01"
+            },
+            "repaymentAmount": 12.34,
+            "repaymentInformation": {
+              "reconciliationIdentifier": 123,
+              "paymentNumber": 12345678,
+              "payeNumber": "PayeNumber-123",
+              "taxDistrictNumber": 717,
+              "associatedPayableNumber": 1234,
+              "customerAccountNumber": "customerAccountNumber-1234",
+              "currentOptimisticLock": 15
+            },
+            "name": {
+              "title": "Sir",
+              "firstForename": "Greg",
+              "secondForename": "Greggory",
+              "surname": "Greggson"
+            },
+            "address": {
+              "addressLine1": "Flat 1 Rose House",
+              "addressLine2": "Worthing",
+              "addressPostcode": "BN12 4XL"
             }
-          },
-          "userEnteredDetails": {
-            "chosenBank": "Barclays Personal",
-            "p800Reference": 12345678,
-            "nino": "LM001014C",
-            "dob": "2000-01-01"
-          },
-          "repaymentAmount": 12.34,
-          "repaymentInformation": {
-            "reconciliationIdentifier": 123,
-            "paymentNumber": 12345678,
-            "payeNumber": "PayeNumber-123",
-            "taxDistrictNumber": 717,
-            "associatedPayableNumber": 1234,
-            "customerAccountNumber": "customerAccountNumber-1234",
-            "currentOptimisticLock": 15
-          },
-          "name": {
-            "title": "Sir",
-            "firstForename": "Greg",
-            "secondForename": "Greggory",
-            "surname": "Greggson"
-          },
-          "address": {
-            "addressLine1": "Flat 1 Rose House",
-            "addressLine2": "Worthing",
-            "addressPostcode": "BN12 4XL"
           }
-        }
-        """.stripMargin
+          """.stripMargin
       ).as[JsObject]
     )
   }
@@ -1516,22 +1862,22 @@ class VerifyingYourBankAccountPageSpec extends ItSpec {
       Json.parse(
         //format=JSON
         """
-        {
-          "outcome": {
-            "isSuccessful": true,
-            "category": "basic name match"
-          },
-          "rawNpsName": {
-            "firstForename": "Greg",
-            "secondForename": "Greggory",
-            "surname": "Greggson"
-          },
-          "rawBankName": "Sir. Greg Greggory Greggson",
-          "transformedNpsName": "greg greggory greggson",
-          "transformedBankName": "greg greggory greggson",
-          "partiesArrayUsed": true
-        }
-        """.stripMargin
+          {
+            "outcome": {
+              "isSuccessful": true,
+              "category": "basic name match"
+            },
+            "rawNpsName": {
+              "firstForename": "Greg",
+              "secondForename": "Greggory",
+              "surname": "Greggson"
+            },
+            "rawBankName": "Sir. Greg Greggory Greggson",
+            "transformedNpsName": "greg greggory greggson",
+            "transformedBankName": "greg greggory greggson",
+            "partiesArrayUsed": true
+          }
+          """.stripMargin
       ).as[JsObject]
     )
     AuditConnectorStub.verifyEventAudited(
@@ -1539,23 +1885,23 @@ class VerifyingYourBankAccountPageSpec extends ItSpec {
       Json.parse(
         //format=JSON
         """
-        {
-          "outcome": {
-            "isSuccessful": false,
-            "category": "comprehensive failed match"
-          },
-          "rawNpsName": {
-            "firstForename": "Greg",
-            "secondForename": "Greggory",
-            "surname": "Greggson"
-          },
-          "rawBankName": "Margaretta Greggson",
-          "transformedNpsName": "greg greggson",
-          "transformedBankName": "margaretta greggson",
-          "levenshteinDistance": 7,
-          "partiesArrayUsed": true
-        }
-        """.stripMargin
+          {
+            "outcome": {
+              "isSuccessful": false,
+              "category": "comprehensive failed match"
+            },
+            "rawNpsName": {
+              "firstForename": "Greg",
+              "secondForename": "Greggory",
+              "surname": "Greggson"
+            },
+            "rawBankName": "Margaretta Greggson",
+            "transformedNpsName": "greg greggson",
+            "transformedBankName": "margaretta greggson",
+            "levenshteinDistance": 7,
+            "partiesArrayUsed": true
+          }
+          """.stripMargin
       ).as[JsObject]
     )
 
