@@ -22,7 +22,7 @@ import testsupport.UnitSpec
 class PayeeBankAccountNameSpec extends UnitSpec {
 
   "sanitisePayeeBankAccountName" - {
-    "Succesfully remove non alphabetic characters and limit to 34 characters" in {
+    "Succesfully remove non alphabetic characters and limit to 50 characters" in {
       val input: PayeeBankAccountName = PayeeBankAccountName("NatWest Online & Mobile Banking.-, more chars than can fit")
       val expected: PayeeBankAccountName = PayeeBankAccountName("NatWest Online  Mobile Banking more chars than can")
 
@@ -31,7 +31,7 @@ class PayeeBankAccountNameSpec extends UnitSpec {
       input.sanitisePayeeBankAccountName.value.length should be <= 50
     }
 
-    "Reject input non alphabetic characters and limit to 34 characters" in {
+    "Reject input non alphabetic characters and limit to 50 characters" in {
       val input: PayeeBankAccountName = PayeeBankAccountName("NatWest Online & Mobile Banking.-,")
       val expected: PayeeBankAccountName = PayeeBankAccountName("NatWest Online  Mobile Banking")
 
