@@ -31,6 +31,8 @@ object ValidateReferenceResult {
 
   case object RefundAlreadyTaken extends ValidateReferenceResult
 
+  case object RefundNoLongerAvailable extends ValidateReferenceResult
+
   //TODO case object RefundSuspended extends ReferenceCheckResult
 
   final case class P800ReferenceChecked(

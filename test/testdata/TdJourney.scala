@@ -92,6 +92,18 @@ trait TdJourney {
         require(!j.isIdentityVerified, "this journey instance has to have NOT verified identity")
         j
       }
+
+      /**
+       * When response from Nps indicates that refund is no longer available
+       */
+      lazy val journeyRefundNotAvailable: Journey = {
+        val j = journeyEnteredDateOfBirth.copy(
+          referenceCheckResult = Some(ValidateReferenceResult.RefundNoLongerAvailable),
+          hasFinished          = HasFinished.YesRefundNoLongerAvailable
+        )
+        require(!j.isIdentityVerified, "this journey instance has to have NOT verified identity")
+        j
+      }
     }
 
     lazy val journeyLockedOutFromFailedAttempts: Journey = {
@@ -216,6 +228,18 @@ trait TdJourney {
         val j = journeyEnteredNino.copy(
           referenceCheckResult = Some(ValidateReferenceResult.RefundAlreadyTaken),
           hasFinished          = HasFinished.YesRefundAlreadyTaken
+        )
+        require(!j.isIdentityVerified, "this journey instance has to have NOT verified identity")
+        j
+      }
+
+      /**
+       * When response from Nps indicates that refund is no longer available
+       */
+      lazy val journeyRefundNotAvailable: Journey = {
+        val j = journeyEnteredNino.copy(
+          referenceCheckResult = Some(ValidateReferenceResult.RefundNoLongerAvailable),
+          hasFinished          = HasFinished.YesRefundNoLongerAvailable
         )
         require(!j.isIdentityVerified, "this journey instance has to have NOT verified identity")
         j

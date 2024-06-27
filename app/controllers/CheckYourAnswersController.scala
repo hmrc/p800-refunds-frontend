@@ -224,6 +224,20 @@ class CheckYourAnswersController @Inject() (
               )(request, hc)
               Some(Redirect(routes.ThereIsAProblemController.get))
             }
+        case ValidateReferenceResult.RefundNoLongerAvailable =>
+          journeyService
+            .upsert(r.journey.update(HasFinished.YesRefundNoLongerAvailable))
+            .map { j =>
+              JourneyLogger.info("NPS indicated that refund is no longer available")
+              auditService.auditValidateUserDetails(
+                journey                  = j,
+                attemptInfo              = None,
+                isSuccessful             = false,
+                apiResponsibleForFailure = Some(ApiResponsibleForFailure.P800ReferenceCheck),
+                failureReasons           = Some(Seq("NPS indicated that refund is no longer available"))
+              )(request, hc)
+              Some(Redirect(routes.ThereIsAProblemController.get))
+            }
         case ValidateReferenceResult.ReferenceDidntMatchNino =>
           for {
             (shouldBeLockedOut, attemptInfo) <- failedVerificationAttemptService.updateNumberOfFailedAttempts()

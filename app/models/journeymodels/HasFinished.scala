@@ -22,12 +22,13 @@ import play.api.libs.json.OFormat
 object HasFinished {
 
   def hasFinished(hasFinished: HasFinished): Boolean = hasFinished match {
-    case No                      => false
-    case YesSucceeded            => true
-    case YesSentToCaseManagement => true
-    case YesRefundNotSubmitted   => true
-    case YesLockedOut            => true
-    case YesRefundAlreadyTaken   => true
+    case No                         => false
+    case YesSucceeded               => true
+    case YesSentToCaseManagement    => true
+    case YesRefundNotSubmitted      => true
+    case YesLockedOut               => true
+    case YesRefundAlreadyTaken      => true
+    case YesRefundNoLongerAvailable => true
   }
 
   def isInProgress(hasFinished: HasFinished): Boolean = !HasFinished.hasFinished(hasFinished)
@@ -61,6 +62,11 @@ object HasFinished {
    * Response from p800 refund reference check api was a 422 with code indicating refund already claimed. They are locked out.
    */
   case object YesRefundAlreadyTaken extends HasFinished
+
+  /**
+   * Response from p800 refund reference check api was a 422 with code indicating refund is no longer available. They are locked out.
+   */
+  case object YesRefundNoLongerAvailable extends HasFinished
 
   @SuppressWarnings(Array("org.wartremover.warts.Any"))
   implicit val format: OFormat[HasFinished] = derived.oformat()

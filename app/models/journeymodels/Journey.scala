@@ -174,6 +174,7 @@ final case class Journey(
   def isIdentityVerified: Boolean = referenceCheckResult.exists {
     case _: ValidateReferenceResult.P800ReferenceChecked => true
     case ValidateReferenceResult.RefundAlreadyTaken      => false
+    case ValidateReferenceResult.RefundNoLongerAvailable => false
     case ValidateReferenceResult.ReferenceDidntMatchNino => false
   }
 

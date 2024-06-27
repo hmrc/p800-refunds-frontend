@@ -565,6 +565,91 @@ class CheckYourAnswersPageSpec extends ItSpec {
       }
   }
 
+  "clicking submit, resulting in Nps indicating that refund his no longer available, redirects to 'There is a problem' page" - {
+    "bank transfer" in {
+      val j: Journey = tdAll.BankTransfer.journeyEnteredDateOfBirth
+      VerifyP800ReferenceStub.refundNoLongerAvailable(j.nino.value, tdAll.p800Reference)
+      upsertJourneyToDatabase(j)
+
+      test(JourneyType.BankTransfer)
+
+      getJourneyFromDatabase(tdAll.journeyId) shouldBeLike tdAll.BankTransfer.AfterReferenceCheck.journeyRefundNotAvailable
+      VerifyP800ReferenceStub.verify(tdAll.correlationId)
+      TraceIndividualStub.verifyNoneTraceIndividual()
+
+      AuditConnectorStub.verifyEventAudited(
+        AuditConnectorStub.validateUserDetailsAuditType,
+        Json.parse(
+          //format=JSON
+          """
+          {
+            "outcome": {
+              "isSuccessful": false,
+              "lockout": false,
+              "apiResponsibleForFailure": "p800 reference check",
+              "reasons": [
+                "NPS indicated that refund is no longer available"
+              ]
+            },
+            "userEnteredDetails": {
+              "repaymentMethod": "bank",
+              "p800Reference": 12345678,
+              "nino": "LM001014C",
+              "dob": "2000-01-01"
+            }
+          }
+          """.stripMargin
+        ).as[JsObject]
+      )
+    }
+
+    "cheque" in {
+      val j: Journey = tdAll.Cheque.journeyEnteredNino
+      VerifyP800ReferenceStub.refundNoLongerAvailable(j.nino.value, tdAll.p800Reference)
+      upsertJourneyToDatabase(j)
+
+      test(JourneyType.Cheque)
+
+      getJourneyFromDatabase(tdAll.journeyId) shouldBeLike tdAll.Cheque.AfterReferenceCheck.journeyRefundNotAvailable
+      VerifyP800ReferenceStub.verify(tdAll.correlationId)
+      TraceIndividualStub.verifyNoneTraceIndividual()
+
+      AuditConnectorStub.verifyEventAudited(
+        AuditConnectorStub.validateUserDetailsAuditType,
+        Json.parse(
+          //format=JSON
+          """
+          {
+            "outcome": {
+              "isSuccessful": false,
+              "lockout": false,
+              "apiResponsibleForFailure": "p800 reference check",
+              "reasons": [
+                "NPS indicated that refund is no longer available"
+              ]
+            },
+            "userEnteredDetails": {
+              "repaymentMethod": "cheque",
+              "p800Reference": 12345678,
+              "nino": "LM001014C"
+            }
+          }
+          """.stripMargin
+        ).as[JsObject]
+      )
+    }
+
+      def test(journeyType: JourneyType): Unit = {
+        val startPage = journeyType match {
+          case JourneyType.Cheque       => pages.checkYourAnswersChequePage
+          case JourneyType.BankTransfer => pages.checkYourAnswersBankTransferPage
+        }
+        startPage.open()
+        startPage.clickSubmit()
+        pages.thereIsAProblemPage.assertPageIsDisplayed()
+      }
+  }
+
   "clicking submit redirects to 'We cannot confirm your identity' if P800 ref is outside of NPS spec number bounds (greater than 2147483646 - Int.MAX), but doesn't actually call NPS" in {
     val p800RefOutOfBounds = UserEnteredP800Reference("2147483648")
     val j = tdAll.BankTransfer.journeyEnteredDateOfBirth.copy(p800Reference = Some(p800RefOutOfBounds))
