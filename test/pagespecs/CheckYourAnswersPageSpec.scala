@@ -603,6 +603,42 @@ class CheckYourAnswersPageSpec extends ItSpec {
       )
     }
 
+    "cheque" in {
+      val j: Journey = tdAll.Cheque.journeyEnteredNino
+      VerifyP800ReferenceStub.refundNoLongerAvailable(j.nino.value, tdAll.p800Reference)
+      upsertJourneyToDatabase(j)
+
+      test(JourneyType.Cheque)
+
+      getJourneyFromDatabase(tdAll.journeyId) shouldBeLike tdAll.Cheque.AfterReferenceCheck.journeyRefundNotAvailable
+      VerifyP800ReferenceStub.verify(tdAll.correlationId)
+      TraceIndividualStub.verifyNoneTraceIndividual()
+
+      AuditConnectorStub.verifyEventAudited(
+        AuditConnectorStub.validateUserDetailsAuditType,
+        Json.parse(
+          //format=JSON
+          """
+          {
+            "outcome": {
+              "isSuccessful": false,
+              "lockout": false,
+              "apiResponsibleForFailure": "p800 reference check",
+              "reasons": [
+                "NPS indicated that refund is no longer available"
+              ]
+            },
+            "userEnteredDetails": {
+              "repaymentMethod": "cheque",
+              "p800Reference": 12345678,
+              "nino": "LM001014C"
+            }
+          }
+          """.stripMargin
+        ).as[JsObject]
+      )
+    }
+
       def test(journeyType: JourneyType): Unit = {
         val startPage = journeyType match {
           case JourneyType.Cheque       => pages.checkYourAnswersChequePage
