@@ -17,7 +17,8 @@
 package edh
 
 import models.Nino
-import play.api.libs.json._
+import play.api.libs.json.{Json, Format, OFormat, JsString, JsSuccess, JsValue, JsError, JsResult}
+import util.SafeEquals.EqualsOps
 
 import scala.util.matching.Regex
 
@@ -280,7 +281,22 @@ object BankSortCode {
   val regex: Regex = """^[0-9]*$""".r
 }
 
-final case class BankAccountName(value: String)
+final case class BankAccountName(value: String) {
+  def sanitiseBankAccountName: BankAccountName = {
+    val sanitisedValue: String =
+      value
+        .filter(x => x.isLetter || x === ' ')
+        .trim
+        .take(34)
+
+    require(
+      sanitisedValue.length > 0 && sanitisedValue.length <= 34,
+      s"Unable to sanitize BankAccountName [value: ${value}, sanitisedValue: ${sanitisedValue}]"
+    )
+
+    BankAccountName(sanitisedValue)
+  }
+}
 
 object BankAccountName {
   @SuppressWarnings(Array("org.wartremover.warts.Any"))

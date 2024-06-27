@@ -49,14 +49,14 @@ trait TdEdh { dependencies: TdBase =>
       bankDetails = Some(BankDetails(
         bankAccountNumber     = Some(BankAccountNumber(dependencies.bankAccountNumber)),
         bankSortCode          = Some(BankSortCode(dependencies.sortCode)),
-        bankAccountName       = Some(BankAccountName(dependencies.bankDescription.friendlyName.value)),
-        buildingSocietyRef    = None, //TODO: this has not been analysed
-        designatedAccountFlag = None, //TODO: according to the analysis: confirm this is not needed, Collected from user Journey, Is the same value as personType
-        currency              = None //TODO: according to the analysis: confirm this is not needed, Always "GBP"
+        bankAccountName       = None, // Note: Check the spec as this field is limited to 28 characters & has a regex
+        buildingSocietyRef    = None,
+        designatedAccountFlag = None,
+        currency              = None
       ))
     )),
-    bankValidationResults        = None, //as agreed we don't call BARS to obtain those data and won't pass anything here
-    transactionMonitoringResults = None //TODO: this has not been analysed so don't know what needs to passed here
+    bankValidationResults        = None, // NOTE: As we have agreed to not call BARS we can't pass anything here
+    transactionMonitoringResults = None
   )
 
   lazy val getBankDetailsRiskResultResponse: GetBankDetailsRiskResultResponse = GetBankDetailsRiskResultResponse(
