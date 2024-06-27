@@ -259,7 +259,7 @@ class VerifyingYourBankAccountController @Inject() (
           associatedPayableNumber  = journey.getP800ReferenceChecked.associatedPayableNumber,
           payeeBankAccountNumber   = accountIdentification.asPayeeBankAccountNumber,
           payeeBankSortCode        = accountIdentification.asPayeeBankSortCode,
-          payeeBankAccountName     = PayeeBankAccountName(journey.getBankDescription.friendlyName.value),
+          payeeBankAccountName     = PayeeBankAccountName(journey.getBankDescription.friendlyName.value).sanitisePayeeBankAccountName,
           designatedPayeeAccount   = DesignatedPayeeAccount(false)
         )
 
@@ -354,7 +354,9 @@ class VerifyingYourBankAccountController @Inject() (
     val bankAccountSummary: BankAccountSummary = journey.getBankAccountSummary
     val accountNumber: BankAccountNumber = bankAccountSummary.getAccountIdentification.asBankAccountNumber
     val sortCode: BankSortCode = bankAccountSummary.getAccountIdentification.asBankSortCode
-    val bankAccountName: BankAccountName = BankAccountName(journey.getBankDescription.friendlyName.value)
+    val bankAccountName: BankAccountName =
+      BankAccountName(journey.getBankDescription.friendlyName.value)
+        .sanitiseBankAccountName
 
     val bankDetailsRiskResult: GetBankDetailsRiskResultResponse = journey.getBankDetailsRiskResultResponse
     val clientUId: ClientUId = ClientUId(bankDetailsRiskResult.header.transactionID.value)
@@ -424,7 +426,7 @@ class VerifyingYourBankAccountController @Inject() (
       associatedPayableNumber  = p800ReferenceCheckResult.associatedPayableNumber,
       payeeBankAccountNumber   = bankAccountSummary.getAccountIdentification.asPayeeBankAccountNumber,
       payeeBankSortCode        = bankAccountSummary.getAccountIdentification.asPayeeBankSortCode,
-      payeeBankAccountName     = PayeeBankAccountName(journey.getBankDescription.friendlyName.value),
+      payeeBankAccountName     = PayeeBankAccountName(journey.getBankDescription.friendlyName.value).sanitisePayeeBankAccountName,
       designatedPayeeAccount   = DesignatedPayeeAccount(true)
     )
 

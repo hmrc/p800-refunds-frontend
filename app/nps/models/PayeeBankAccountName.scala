@@ -17,8 +17,24 @@
 package nps.models
 
 import play.api.libs.json.{Format, Json}
+import util.SafeEquals.EqualsOps
 
-final case class PayeeBankAccountName(value: String)
+final case class PayeeBankAccountName(value: String) {
+  def sanitisePayeeBankAccountName: PayeeBankAccountName = {
+    val sanitisedValue: String =
+      value
+        .filter(x => x.isLetter || x === ' ')
+        .trim
+        .take(50)
+
+    require(
+      sanitisedValue.length > 0 && sanitisedValue.length <= 50,
+      s"Unable to sanitize PayeeBankAccountName [value: ${value}, sanitisedValue: ${sanitisedValue}]"
+    )
+
+    PayeeBankAccountName(sanitisedValue)
+  }
+}
 
 @SuppressWarnings(Array("org.wartremover.warts.Any"))
 object PayeeBankAccountName {
