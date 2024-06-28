@@ -1486,7 +1486,7 @@ class VerifyingYourBankAccountPageSpec extends ItSpec {
     )
   }
 
-  "Use name instead of fullLegalName for bankId in bank-id-account-name-matching-variations list when fullLegalName exists" in {
+  "Use name instead of fullLegalName for bankId in bank-id-matching-using-parties-name list when fullLegalName exists" in {
     val responseBody =
       //language=JSON
       s"""[{
@@ -1528,7 +1528,7 @@ class VerifyingYourBankAccountPageSpec extends ItSpec {
     AuditConnectorStub.verifyNoAuditEvent(AuditConnectorStub.bankClaimAttemptMadeAuditType)
   }
 
-  "Use name instead of fullLegalName for bankId in bank-id-account-name-matching-variations list when fullLegalName is None" in {
+  "Use name instead of fullLegalName for bankId in bank-id-matching-using-parties-name list when fullLegalName is None" in {
     val responseBody =
       //language=JSON
       s"""[{
