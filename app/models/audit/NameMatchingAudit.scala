@@ -16,18 +16,24 @@
 
 package models.audit
 
+import models.ecospend.{BankId, BankFriendlyName, BankName}
 import play.api.libs.json.{Json, OWrites}
 
-object RawNpsName {
-  implicit val writes: OWrites[RawNpsName] = Json.writes[RawNpsName]
+final case class NameMatchingAudit(
+    outcome:             NameMatchOutcome,
+    rawNpsName:          RawNpsName,
+    rawBankName:         Option[String],
+    transformedNpsName:  Option[String],
+    transformedBankName: Option[String],
+    chosenBank:          ChosenBank,
+    levenshteinDistance: Option[Int]      = None,
+    partiesArrayUsed:    Boolean          = true
+) extends AuditDetail {
+  override val auditType: String = "FuzzyNameMatchingEvent"
 }
 
 object NameMatchingAudit {
   implicit val writes: OWrites[NameMatchingAudit] = Json.writes[NameMatchingAudit]
-}
-
-object NameMatchOutcome {
-  implicit val writes: OWrites[NameMatchOutcome] = Json.writes[NameMatchOutcome]
 }
 
 final case class RawNpsName(
@@ -36,17 +42,22 @@ final case class RawNpsName(
     surname:        Option[String]
 )
 
-final case class NameMatchOutcome(isSuccessful: Boolean, category: String)
-
-final case class NameMatchingAudit(
-    outcome:             NameMatchOutcome,
-    rawNpsName:          RawNpsName,
-    rawBankName:         Option[String],
-    transformedNpsName:  Option[String],
-    transformedBankName: Option[String],
-    levenshteinDistance: Option[Int]      = None,
-    partiesArrayUsed:    Boolean          = true
-) extends AuditDetail {
-  override val auditType: String = "FuzzyNameMatchingEvent"
+object RawNpsName {
+  implicit val writes: OWrites[RawNpsName] = Json.writes[RawNpsName]
 }
 
+final case class NameMatchOutcome(isSuccessful: Boolean, category: String)
+
+object NameMatchOutcome {
+  implicit val writes: OWrites[NameMatchOutcome] = Json.writes[NameMatchOutcome]
+}
+
+final case class ChosenBank(
+    bankId:       BankId,
+    name:         BankName,
+    friendlyName: BankFriendlyName
+)
+
+object ChosenBank {
+  implicit val writes: OWrites[ChosenBank] = Json.writes[ChosenBank]
+}
