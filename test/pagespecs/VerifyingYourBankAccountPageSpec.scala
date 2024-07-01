@@ -96,6 +96,7 @@ class VerifyingYourBankAccountPageSpec extends ItSpec {
             "outcome": {
               "isSuccessful": false,
               "actionsOutcome": {
+                "getAccountDetailsIsSuccessful": true,
                 "fuzzyNameMatchingIsSuccessful": false,
                 "hmrcFraudCheckIsSuccessful": true
               },
@@ -160,6 +161,7 @@ class VerifyingYourBankAccountPageSpec extends ItSpec {
             "outcome": {
               "isSuccessful": false,
               "actionsOutcome": {
+                "getAccountDetailsIsSuccessful": true,
                 "fuzzyNameMatchingIsSuccessful": false,
                 "hmrcFraudCheckIsSuccessful": true
               },
@@ -241,6 +243,7 @@ class VerifyingYourBankAccountPageSpec extends ItSpec {
             "outcome": {
               "isSuccessful": false,
               "actionsOutcome": {
+                "getAccountDetailsIsSuccessful": true,
                 "fuzzyNameMatchingIsSuccessful": false,
                 "hmrcFraudCheckIsSuccessful": true
               },
@@ -321,6 +324,7 @@ class VerifyingYourBankAccountPageSpec extends ItSpec {
             "outcome": {
               "isSuccessful": false,
               "actionsOutcome": {
+                "getAccountDetailsIsSuccessful": true,
                 "fuzzyNameMatchingIsSuccessful": false,
                 "hmrcFraudCheckIsSuccessful": true
               },
@@ -593,6 +597,7 @@ class VerifyingYourBankAccountPageSpec extends ItSpec {
             "outcome": {
               "isSuccessful": true,
               "actionsOutcome": {
+                "getAccountDetailsIsSuccessful": true,
                 "ecospendFraudCheckIsSuccessful": true,
                 "fuzzyNameMatchingIsSuccessful": true,
                 "hmrcFraudCheckIsSuccessful": true,
@@ -666,6 +671,7 @@ class VerifyingYourBankAccountPageSpec extends ItSpec {
             "outcome": {
               "isSuccessful": false,
               "actionsOutcome": {
+                "getAccountDetailsIsSuccessful": true,
                 "ecospendFraudCheckIsSuccessful": false,
                 "fuzzyNameMatchingIsSuccessful": true,
                 "hmrcFraudCheckIsSuccessful": true
@@ -756,6 +762,7 @@ class VerifyingYourBankAccountPageSpec extends ItSpec {
             "outcome": {
               "isSuccessful": false,
               "actionsOutcome": {
+                "getAccountDetailsIsSuccessful": true,
                 "ecospendFraudCheckIsSuccessful": true,
                 "fuzzyNameMatchingIsSuccessful": true,
                 "hmrcFraudCheckIsSuccessful": false
@@ -765,6 +772,65 @@ class VerifyingYourBankAccountPageSpec extends ItSpec {
               ]
             },
             "userEnteredDetails": {
+              "chosenBank": "Barclays Personal",
+              "p800Reference": 12345678,
+              "nino": "LM001014C",
+              "dob": "2000-01-01"
+            },
+            "repaymentAmount": 12.34,
+            "repaymentInformation": {
+              "reconciliationIdentifier": 123,
+              "paymentNumber": 12345678,
+              "payeNumber": "PayeNumber-123",
+              "taxDistrictNumber": 717,
+              "associatedPayableNumber": 1234,
+              "customerAccountNumber": "customerAccountNumber-1234",
+              "currentOptimisticLock": 15
+            },
+            "name": {
+              "title": "Sir",
+              "firstForename": "Greg",
+              "secondForename": "Greggory",
+              "surname": "Greggson"
+            },
+            "address": {
+              "addressLine1": "Flat 1 Rose House",
+              "addressLine2": "Worthing",
+              "addressPostcode": "BN12 4XL"
+            }
+          }
+          """.stripMargin
+      ).as[JsObject]
+    )
+  }
+
+  "Show technical difficulties error page when ecospend account summary call fails" in {
+    EcospendStub.AuthStubs.stubEcospendAuth2xxSucceeded
+    EcospendStub.AccountStub.stubAccountSummary5xxInternalServerError(tdAll.consentId)
+    P800RefundsExternalApiStub.isValid(tdAll.consentId, EventValue.NotReceived)
+
+    pages.verifyingBankAccountPage.open()
+    pages.verifyingBankAccountPage.assertPageIsDisplayedWithTechnicalDifficultiesError()
+    EdhStub.verifyGetBankDetailsRiskResult(tdAll.claimId, tdAll.correlationId, numberOfRequests = 0)
+    MakeBacsRepaymentStub.verifyNone(tdAll.nino)
+
+    AuditConnectorStub.verifyEventAudited(
+      AuditConnectorStub.bankClaimAttemptMadeAuditType,
+      Json.parse(
+        //format=JSON
+        """
+          {
+            "outcome": {
+              "isSuccessful": false,
+              "actionsOutcome": {
+                "getAccountDetailsIsSuccessful": false
+              },
+              "failureReasons": [
+                "GET of 'http://localhost:11112/api/v2.0/accounts/summary' returned 500. Response body: ''"
+              ]
+            },
+            "userEnteredDetails": {
+              "repaymentMethod": "bank",
               "chosenBank": "Barclays Personal",
               "p800Reference": 12345678,
               "nino": "LM001014C",
@@ -820,6 +886,7 @@ class VerifyingYourBankAccountPageSpec extends ItSpec {
             "outcome": {
               "isSuccessful": false,
               "actionsOutcome": {
+                "getAccountDetailsIsSuccessful": true,
                 "ecospendFraudCheckIsSuccessful": true,
                 "fuzzyNameMatchingIsSuccessful": true,
                 "hmrcFraudCheckIsSuccessful": true,
@@ -884,6 +951,7 @@ class VerifyingYourBankAccountPageSpec extends ItSpec {
             "outcome": {
               "isSuccessful": false,
               "actionsOutcome": {
+                "getAccountDetailsIsSuccessful": true,
                 "ecospendFraudCheckIsSuccessful": true,
                 "fuzzyNameMatchingIsSuccessful": true,
                 "hmrcFraudCheckIsSuccessful": true,
@@ -949,6 +1017,7 @@ class VerifyingYourBankAccountPageSpec extends ItSpec {
             "outcome": {
               "isSuccessful": false,
               "actionsOutcome": {
+                "getAccountDetailsIsSuccessful": true,
                 "ecospendFraudCheckIsSuccessful": true,
                 "fuzzyNameMatchingIsSuccessful": true,
                 "hmrcFraudCheckIsSuccessful": true,
@@ -1011,6 +1080,7 @@ class VerifyingYourBankAccountPageSpec extends ItSpec {
             "outcome": {
               "isSuccessful": false,
               "actionsOutcome": {
+                "getAccountDetailsIsSuccessful": true,
                 "ecospendFraudCheckIsSuccessful": true,
                 "hmrcFraudCheckIsSuccessful": false
               },
@@ -1159,6 +1229,7 @@ class VerifyingYourBankAccountPageSpec extends ItSpec {
             "outcome": {
               "isSuccessful": false,
               "actionsOutcome": {
+                "getAccountDetailsIsSuccessful": true,
                 "ecospendFraudCheckIsSuccessful": true,
                 "fuzzyNameMatchingIsSuccessful": false,
                 "hmrcFraudCheckIsSuccessful": true
@@ -1236,6 +1307,7 @@ class VerifyingYourBankAccountPageSpec extends ItSpec {
             "outcome": {
               "isSuccessful": false,
               "actionsOutcome": {
+                "getAccountDetailsIsSuccessful": true,
                 "ecospendFraudCheckIsSuccessful": true,
                 "hmrcFraudCheckIsSuccessful": true,
                 "fuzzyNameMatchingIsSuccessful": false
@@ -1357,6 +1429,7 @@ class VerifyingYourBankAccountPageSpec extends ItSpec {
             "outcome": {
               "isSuccessful": true,
               "actionsOutcome": {
+                "getAccountDetailsIsSuccessful": true,
                 "ecospendFraudCheckIsSuccessful": true,
                 "fuzzyNameMatchingIsSuccessful": true,
                 "hmrcFraudCheckIsSuccessful": true,
@@ -1447,6 +1520,7 @@ class VerifyingYourBankAccountPageSpec extends ItSpec {
             "outcome": {
               "isSuccessful": true,
               "actionsOutcome": {
+                "getAccountDetailsIsSuccessful": true,
                 "ecospendFraudCheckIsSuccessful": true,
                 "fuzzyNameMatchingIsSuccessful": true,
                 "hmrcFraudCheckIsSuccessful": true,
@@ -1620,6 +1694,7 @@ class VerifyingYourBankAccountPageSpec extends ItSpec {
             "outcome": {
               "isSuccessful": true,
               "actionsOutcome": {
+                "getAccountDetailsIsSuccessful": true,
                 "ecospendFraudCheckIsSuccessful": true,
                 "fuzzyNameMatchingIsSuccessful": true,
                 "hmrcFraudCheckIsSuccessful": true,
@@ -1710,6 +1785,7 @@ class VerifyingYourBankAccountPageSpec extends ItSpec {
             "outcome": {
               "isSuccessful": true,
               "actionsOutcome": {
+                "getAccountDetailsIsSuccessful": true,
                 "ecospendFraudCheckIsSuccessful": true,
                 "fuzzyNameMatchingIsSuccessful": true,
                 "hmrcFraudCheckIsSuccessful": true,
@@ -1800,6 +1876,7 @@ class VerifyingYourBankAccountPageSpec extends ItSpec {
             "outcome": {
               "isSuccessful": true,
               "actionsOutcome": {
+                "getAccountDetailsIsSuccessful": true,
                 "ecospendFraudCheckIsSuccessful": true,
                 "fuzzyNameMatchingIsSuccessful": true,
                 "hmrcFraudCheckIsSuccessful": true,
@@ -1951,6 +2028,7 @@ class VerifyingYourBankAccountFeatureFlagOffPageSpec extends ItSpec {
           "outcome": {
             "isSuccessful": false,
             "actionsOutcome": {
+              "getAccountDetailsIsSuccessful": true,
               "ecospendFraudCheckIsSuccessful": true,
               "fuzzyNameMatchingIsSuccessful": true,
               "hmrcFraudCheckIsSuccessful": false

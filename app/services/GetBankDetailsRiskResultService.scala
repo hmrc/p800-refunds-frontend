@@ -46,6 +46,7 @@ class GetBankDetailsRiskResultService @Inject() (
           auditService.auditBankClaimAttempt(
             journey        = journey,
             actionsOutcome = BankActionsOutcome(
+              getAccountDetailsIsSuccessful  = IsSuccessful.yes,
               ecospendFraudCheckIsSuccessful = eventValue match {
                 case EventValue.Valid       => Some(IsSuccessful.yes)
                 case EventValue.NotValid    => Some(IsSuccessful.no)

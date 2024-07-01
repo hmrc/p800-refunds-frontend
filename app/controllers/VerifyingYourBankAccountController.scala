@@ -244,6 +244,7 @@ class VerifyingYourBankAccountController @Inject() (
       auditService.auditBankClaimAttempt(
         journey        = journey,
         actionsOutcome = BankActionsOutcome(
+          getAccountDetailsIsSuccessful  = IsSuccessful.yes,
           ecospendFraudCheckIsSuccessful = isEcospendFraudCheckIsSuccessful(isValidEventValue),
           hmrcFraudCheckIsSuccessful     = isHmrcFraudCheckSuccessful(journey.bankDetailsRiskResultResponse),
           fuzzyNameMatchingIsSuccessful  = Some(IsSuccessful.no)
@@ -267,6 +268,7 @@ class VerifyingYourBankAccountController @Inject() (
       auditService.auditBankClaimAttempt(
         journey = journey,
         BankActionsOutcome(
+          getAccountDetailsIsSuccessful  = IsSuccessful.yes,
           ecospendFraudCheckIsSuccessful = Some(IsSuccessful.no),
           hmrcFraudCheckIsSuccessful     = isHmrcFraudCheckSuccessful(journey.bankDetailsRiskResultResponse),
           fuzzyNameMatchingIsSuccessful  = Some(IsSuccessful(didAnyNameMatch))
@@ -310,6 +312,7 @@ class VerifyingYourBankAccountController @Inject() (
           auditService.auditBankClaimAttempt(
             journey        = journey,
             actionsOutcome = BankActionsOutcome(
+              getAccountDetailsIsSuccessful  = IsSuccessful.yes,
               ecospendFraudCheckIsSuccessful = Some(IsSuccessful.yes),
               fuzzyNameMatchingIsSuccessful  = Some(IsSuccessful.yes),
               hmrcFraudCheckIsSuccessful     = Some(IsSuccessful.no)
@@ -340,6 +343,7 @@ class VerifyingYourBankAccountController @Inject() (
         makeBacsRepayment(journey, bankAccountSummary).map{
           case Right(_) =>
             auditService.auditBankClaimAttempt(journey, BankActionsOutcome(
+              getAccountDetailsIsSuccessful  = IsSuccessful.yes,
               ecospendFraudCheckIsSuccessful = Some(IsSuccessful.yes),
               fuzzyNameMatchingIsSuccessful  = Some(IsSuccessful.yes),
               hmrcFraudCheckIsSuccessful     = Some(IsSuccessful.yes),
@@ -386,7 +390,19 @@ class VerifyingYourBankAccountController @Inject() (
     journey
       .bankAccountSummary
       .map(Future.successful)
-      .getOrElse(ecospendService.getAccountSummary(journey))
+      .getOrElse {
+        ecospendService.getAccountSummary(journey)
+          .recover { err =>
+            auditService.auditBankClaimAttempt(
+              journey,
+              actionsOutcome = BankActionsOutcome(
+                getAccountDetailsIsSuccessful = IsSuccessful.no,
+              ),
+              failureReasons = Some(Seq(err.getMessage))
+            )
+            throw err
+          }
+      }
   }
 
   private def notifyCaseManagement(journey: Journey)(implicit requestHeader: RequestHeader): Future[Unit] = {
@@ -477,6 +493,7 @@ class VerifyingYourBankAccountController @Inject() (
           auditService.auditBankClaimAttempt(
             journey        = journey,
             actionsOutcome = BankActionsOutcome(
+              getAccountDetailsIsSuccessful  = IsSuccessful.yes,
               ecospendFraudCheckIsSuccessful = Some(IsSuccessful.yes),
               fuzzyNameMatchingIsSuccessful  = Some(IsSuccessful.yes),
               hmrcFraudCheckIsSuccessful     = Some(IsSuccessful.yes),
