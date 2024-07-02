@@ -995,7 +995,17 @@ class VerifyingYourBankAccountPageSpec extends ItSpec {
     )
   }
 
-  "Show technical difficulties error page when claim overpayments call returns 500 error" in {
+  "Show Your refund request has not been submitted page when bank account summary call returns 500 error" in {
+    EcospendStub.AuthStubs.stubEcospendAuth2xxSucceeded
+    EcospendStub.AccountStub.stubAccountSummary5xx()
+
+    pages.verifyingBankAccountPage.open()
+    pages.yourRefundRequestHasNotBeenSubmittedSpec.assertPageIsDisplayed()
+    EdhStub.verifyGetBankDetailsRiskResultNotCalled(tdAll.claimId, tdAll.correlationId)
+    MakeBacsRepaymentStub.verifyNone(tdAll.nino)
+  }
+
+  "Show Your refund request has not been submitted page when claim overpayments call returns 500 error" in {
     EcospendStub.AuthStubs.stubEcospendAuth2xxSucceeded
     EcospendStub.AccountStub.stubAccountSummary2xxSucceeded(tdAll.consentId)
     P800RefundsExternalApiStub.isValid(tdAll.consentId, EventValue.Valid)
@@ -1005,7 +1015,7 @@ class VerifyingYourBankAccountPageSpec extends ItSpec {
     )
 
     pages.verifyingBankAccountPage.open()
-    pages.verifyingBankAccountPage.assertPageIsDisplayedWithTechnicalDifficultiesError()
+    pages.yourRefundRequestHasNotBeenSubmittedSpec.assertPageIsDisplayed()
     EdhStub.verifyGetBankDetailsRiskResult(tdAll.claimId, tdAll.correlationId)
     MakeBacsRepaymentStub.verify(tdAll.nino, tdAll.correlationId)
     AuditConnectorStub.verifyEventAudited(
@@ -1061,14 +1071,14 @@ class VerifyingYourBankAccountPageSpec extends ItSpec {
     )
   }
 
-  "Show technical difficulties error page when EDH endpoint fails" in {
+  "Show Your refund request has not been submitted page when EDH endpoint fails" in {
     EcospendStub.AuthStubs.stubEcospendAuth2xxSucceeded
     EcospendStub.AccountStub.stubAccountSummary2xxSucceeded(tdAll.consentId)
     P800RefundsExternalApiStub.isValid(tdAll.consentId, EventValue.Valid)
     EdhStub.getBankDetailsRiskResult5xx(tdAll.getBankDetailsRiskResultRequest)
 
     pages.verifyingBankAccountPage.open()
-    pages.verifyingBankAccountPage.assertPageIsDisplayedWithTechnicalDifficultiesError()
+    pages.yourRefundRequestHasNotBeenSubmittedSpec.assertPageIsDisplayed()
     EdhStub.verifyGetBankDetailsRiskResult(tdAll.claimId, tdAll.correlationId)
     MakeBacsRepaymentStub.verifyNone(tdAll.nino)
     AuditConnectorStub.verifyEventAudited(

@@ -7,8 +7,8 @@ GET         /start                                                         contr
 
 GET         /you-cannot-confirm-your-identity-yet                          controllers.YouCannotConfirmYourIdentityYetController.get
 
-# techincal error page?
-GET         /your-refund-request-has-not-been-submitted                    controllers.YourRefundRequestHasNotBeenSubmittedController.get
+# technical difficulties page
+GET         /your-refund-request-has-not-been-submitted                    controllers.YourRefundRequestHasNotBeenSubmittedController.get(status: Option[models.ecospend.consent.ConsentStatus], consent_id: Option[ConsentId], bank_reference_id: Option[models.ecospend.consent.BankReferenceId])
 
 GET         /do-you-want-to-sign-in                                        controllers.DoYouWantToSignInController.get
 POST        /do-you-want-to-sign-in                                        controllers.DoYouWantToSignInController.post

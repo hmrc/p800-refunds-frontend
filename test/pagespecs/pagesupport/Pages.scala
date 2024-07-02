@@ -69,8 +69,7 @@ class Pages(baseUrl: String)(implicit webDriver: WebDriver) {
 
   val youCannotConfirmYourIdentityYetSpec = new YouCannotConfirmYourIdentityYetPage(baseUrl = baseUrl)
 
-  // for when techinical error occurs?
-  val yourRefundRequestHasNotBeenSubmittedSpec = new YourRefundRequestHasNotBeenSubmittedPage(baseUrl = baseUrl)
+  val yourRefundRequestHasNotBeenSubmittedSpec = new YourRefundRequestHasNotBeenSubmittedPage(baseUrl       = baseUrl, consentStatus = ConsentStatus.Authorised, TdAll.tdAll.consentId, TdAll.tdAll.bankReferenceId)
 
   val refundCancelledSpec = new RefundCancelledPage(baseUrl = baseUrl)
 

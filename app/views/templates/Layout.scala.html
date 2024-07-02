@@ -47,6 +47,7 @@
     headBlock: Option[Html] = None,
     additionalScripts: Option[Html] = None,
     showBackLink: Boolean = true,
+    backUrl: Option[String] = None,
     customBeforeContentBlock: Option[Html] = None,
     hasErrors: Boolean = false,
     customServiceName: Option[String] = None
@@ -90,7 +91,9 @@
         @hmrcLanguageSelectHelper()
       @{
         if(showBackLink) {
-            viewsHelpers.govukBackLink(BackLink.mimicsBrowserBackButtonViaJavaScript)
+            backUrl
+            .map{url => viewsHelpers.govukBackLink(BackLink(href = url))}
+            .getOrElse(viewsHelpers.govukBackLink(BackLink.mimicsBrowserBackButtonViaJavaScript))
         }
       }
     </div>

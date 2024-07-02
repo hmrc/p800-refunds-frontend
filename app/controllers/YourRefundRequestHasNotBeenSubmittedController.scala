@@ -17,6 +17,7 @@
 package controllers
 
 import action.Actions
+import models.ecospend.consent.{BankReferenceId, ConsentId, ConsentStatus}
 import play.api.mvc._
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import views.Views
@@ -30,9 +31,8 @@ class YourRefundRequestHasNotBeenSubmittedController @Inject() (
     actions: Actions
 ) extends FrontendController(mcc) {
 
-  def get: Action[AnyContent] = actions.default {
-    implicit request: Request[_] => Ok(views.yourRefundRequestHasNotBeenSubmitted())
+  def get(status: Option[ConsentStatus], consent_id: Option[ConsentId], bank_reference_id: Option[BankReferenceId]): Action[AnyContent] = actions.journeyInProgress {
+    implicit request: Request[_] =>
+      Ok(views.yourRefundRequestHasNotBeenSubmitted(status, consent_id, bank_reference_id))
   }
-
 }
-

@@ -16,12 +16,13 @@
 
 package pagespecs.pages
 
+import models.ecospend.consent.{BankReferenceId, ConsentId, ConsentStatus}
 import org.openqa.selenium.WebDriver
 import pagespecs.pagesupport.{ContentExpectation, Page, PageUtil}
 
-class YourRefundRequestHasNotBeenSubmittedPage(baseUrl: String)(implicit webDriver: WebDriver) extends Page(
+class YourRefundRequestHasNotBeenSubmittedPage(baseUrl: String, consentStatus: ConsentStatus, consentId: ConsentId, bankReferenceId: BankReferenceId)(implicit webDriver: WebDriver) extends Page(
   baseUrl,
-  path = "/get-an-income-tax-refund/your-refund-request-has-not-been-submitted"
+  path = s"/get-an-income-tax-refund/your-refund-request-has-not-been-submitted?status=${consentStatus.toString}&consent_id=${consentId.value}&bank_reference_id=${bankReferenceId.value}"
 ) {
 
   override def expectedH1: String = "Your refund request has not been submitted"
@@ -50,4 +51,8 @@ class YourRefundRequestHasNotBeenSubmittedPage(baseUrl: String)(implicit webDriv
     )
   }
 
+  def clickTryAgain()(implicit webDriver: WebDriver): Unit = PageUtil.clickByIdOrName("try-again")
+  def clickChooseAnother()(implicit webDriver: WebDriver): Unit = PageUtil.clickByIdOrName("choose-another")
+  def clickRefundGuidance()(implicit webDriver: WebDriver): Unit = PageUtil.clickByIdOrName("refund-guidance")
+  def getGuidanceUrl: String = PageUtil.getHrefById("refund-guidance")
 }
