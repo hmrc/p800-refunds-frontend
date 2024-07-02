@@ -20,14 +20,13 @@ import models.Nino
 import nps.models.PayeNumber
 import nps.models.ReconciliationIdentifier
 import nps.models.TaxDistrictNumber
-import play.api.libs.json.Format
-import play.api.libs.json.Json
-import play.api.libs.json.OFormat
+import play.api.libs.json.{Format, JsString, Json, OFormat, Writes}
 import util.CurrencyFormat
 
 import java.util.Currency
+import edh.{AddressType, BankAccountName, BankAccountNumber, BankSortCode, PersonType, Postcode}
 
-import edh.{BankSortCode, BankAccountNumber, BankAccountName, Postcode, PersonType, AddressType}
+import scala.math.BigDecimal.RoundingMode
 
 final case class CaseManagementRequest(
     clientUId:             ClientUId,
@@ -60,6 +59,10 @@ final case class CaseManagementRequest(
 object CaseManagementRequest {
   implicit val currencyFormat: Format[Currency] = CurrencyFormat.format
 
+  implicit val bigDecimalWrites: Writes[BigDecimal] = Writes[BigDecimal] { bigDecimal =>
+    JsString(bigDecimal.setScale(2, RoundingMode.HALF_UP).toString())
+  }
+  
   @SuppressWarnings(Array("org.wartremover.warts.Any"))
   implicit val format: OFormat[CaseManagementRequest] = Json.format[CaseManagementRequest]
 }
