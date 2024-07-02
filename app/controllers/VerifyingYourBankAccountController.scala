@@ -506,7 +506,7 @@ class VerifyingYourBankAccountController @Inject() (
       }
 
     bank_reference_id.fold(
-      Errors.throwBadRequestException("This endpoint requires a valid 'bank_reference_id' query parameter")
+      JourneyLogger.info("No 'bank_reference_id' query parameter provided.")
     ) { bankReferenceId: BankReferenceId =>
         Errors.require(
           journey.getBankConsent.bankReferenceId === bankReferenceId,
