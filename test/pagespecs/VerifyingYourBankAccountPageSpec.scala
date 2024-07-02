@@ -804,13 +804,13 @@ class VerifyingYourBankAccountPageSpec extends ItSpec {
     )
   }
 
-  "Show technical difficulties error page when ecospend account summary call fails" in {
+  "Show Your refund request has not been submitted page when ecospend account summary call fails" in {
     EcospendStub.AuthStubs.stubEcospendAuth2xxSucceeded
     EcospendStub.AccountStub.stubAccountSummary5xxInternalServerError(tdAll.consentId)
     P800RefundsExternalApiStub.isValid(tdAll.consentId, EventValue.NotReceived)
 
     pages.verifyingBankAccountPage.open()
-    pages.verifyingBankAccountPage.assertPageIsDisplayedWithTechnicalDifficultiesError()
+    pages.yourRefundRequestHasNotBeenSubmittedSpec.assertPageIsDisplayed()
     EdhStub.verifyGetBankDetailsRiskResult(tdAll.claimId, tdAll.correlationId, numberOfRequests = 0)
     MakeBacsRepaymentStub.verifyNone(tdAll.nino)
 
@@ -826,7 +826,7 @@ class VerifyingYourBankAccountPageSpec extends ItSpec {
                 "getAccountDetailsIsSuccessful": false
               },
               "failureReasons": [
-                "GET of 'http://localhost:11112/api/v2.0/accounts/summary' returned 500. Response body: ''"
+                "GET of 'http://localhost:11112/api/v2.0/accounts/summary' returned 500. Response body: '{\n      \"error\": \"InternalServerError\",\n      \"description\": \"Internal Server Error\",\n      \"details\": {}\n    }'"
               ]
             },
             "userEnteredDetails": {
@@ -997,7 +997,7 @@ class VerifyingYourBankAccountPageSpec extends ItSpec {
 
   "Show Your refund request has not been submitted page when bank account summary call returns 500 error" in {
     EcospendStub.AuthStubs.stubEcospendAuth2xxSucceeded
-    EcospendStub.AccountStub.stubAccountSummary5xx()
+    EcospendStub.AccountStub.stubAccountSummary5xxInternalServerError(tdAll.consentId)
 
     pages.verifyingBankAccountPage.open()
     pages.yourRefundRequestHasNotBeenSubmittedSpec.assertPageIsDisplayed()

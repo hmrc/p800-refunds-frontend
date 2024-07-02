@@ -19,14 +19,12 @@ package services
 import action.JourneyRequest
 import config.AppConfig
 import connectors.{EcospendAuthServerConnector, EcospendConnector}
-import models.EcospendApi5xxError
 import models.ecospend.BankDescription
 import models.ecospend.account.{BankAccountFormat, BankAccountSummary}
 import models.ecospend.consent._
 import models.journeymodels.Journey
 import org.apache.pekko.http.scaladsl.model.Uri
 import play.api.mvc.RequestHeader
-import uk.gov.hmrc.http.UpstreamErrorResponse
 import util.SafeEquals.EqualsOps
 import util.{Errors, JourneyLogger}
 
@@ -81,17 +79,12 @@ class EcospendService @Inject() (
   }
 
   def getAccountSummary(journey: Journey)(implicit r: RequestHeader): Future[BankAccountSummary] =
-    (for {
+    for {
       accessToken <- ecospendAuthServerConnector.accessToken
       consentId = journey.getBankConsent.id
       bankAccountSummaryResponse <- ecospendConnector.getAccountSummary(accessToken, consentId)
       summary = bankAccountSummaryResponse.value.headOption.getOrElse(Errors.throwServerErrorException("Failed to get BankAccountSummary from BankAccountSummaryResponse"))
       _ = Errors.require(bankAccountSummaryResponse.value.size === 1, s"More then 1 accounts in bankAccountSummaryResponse: [${bankAccountSummaryResponse.value.size.toString}]")
       _ = Errors.require(summary.accountFormat === BankAccountFormat.SortCode, s"Unexpected AccountFormat: [${summary.accountFormat.toString}]")
-    } yield summary)
-      .recover {
-        case error: UpstreamErrorResponse if UpstreamErrorResponse.Upstream5xxResponse.unapply(error).isDefined =>
-          throw EcospendApi5xxError(error.message, Some(error))
-        case ex => throw ex
-      }
+    } yield summary
 }

@@ -401,18 +401,25 @@ class VerifyingYourBankAccountController @Inject() (
       .map(Future.successful)
       .getOrElse {
         ecospendService.getAccountSummary(journey)
-          .recover { err =>
-            auditService.auditBankClaimAttempt(
-              journey,
-              actionsOutcome = BankActionsOutcome(
-                getAccountDetailsIsSuccessful = IsSuccessful.no,
-              ),
-              failureReasons = Some(Seq(err.getMessage))
-            )
-            throw err
+          .recover {
+            case error: UpstreamErrorResponse if UpstreamErrorResponse.Upstream5xxResponse.unapply(error).isDefined =>
+              auditErrorFromAccountSummary(journey, error)
+              throw EcospendApi5xxError(error.message, Some(error))
+            case error =>
+              auditErrorFromAccountSummary(journey, error)
+              throw error
           }
       }
   }
+
+  private def auditErrorFromAccountSummary(journey: Journey, error: Throwable)(implicit request: RequestHeader): Unit =
+    auditService.auditBankClaimAttempt(
+      journey,
+      actionsOutcome = BankActionsOutcome(
+        getAccountDetailsIsSuccessful = IsSuccessful.no,
+      ),
+      failureReasons = Some(Seq(error.getMessage))
+    )
 
   private def notifyCaseManagement(journey: Journey)(implicit requestHeader: RequestHeader): Future[Unit] = {
 
@@ -499,16 +506,16 @@ class VerifyingYourBankAccountController @Inject() (
       .makeBacsRepayment(journey.getNino, makeBacsRepaymentRequest, journey.correlationId)
       .recover {
         case error: UpstreamErrorResponse if UpstreamErrorResponse.Upstream5xxResponse.unapply(error).isDefined =>
-          auditError(journey, error)
+          auditErrorFromClaimOverpayment(journey, error)
           throw ClaimOverpaymentApi5xxError(error.message, Some(error))
         case error @ (_: UpstreamErrorResponse | _: HttpException) =>
-          auditError(journey, error)
+          auditErrorFromClaimOverpayment(journey, error)
           throw error
       }
       .map(_ => Right(()))
   }
 
-  private def auditError(journey: Journey, err: Throwable)(implicit request: RequestHeader) =
+  private def auditErrorFromClaimOverpayment(journey: Journey, err: Throwable)(implicit request: RequestHeader): Unit =
     auditService.auditBankClaimAttempt(
       journey        = journey,
       actionsOutcome = BankActionsOutcome(
