@@ -16,57 +16,88 @@
 
 package testdata
 
-import models.audit.{NameMatchingAudit, NameMatchOutcome, RawNpsName}
+import models.audit.{NameMatchingAudit, NameMatchOutcome, RawNpsName, ChosenBank}
+import models.ecospend.{BankId, BankName, BankFriendlyName}
 
 object TdAudit {
 
   val failedSurnameAudit: NameMatchingAudit = NameMatchingAudit(
-    NameMatchOutcome(isSuccessful = false, "surname failed match"),
-    RawNpsName(Some("Jennifer"), None, Some("Married")),
-    Some("Jennifer Maiden-Name"),
-    Some("jennifer married"),
-    Some("jennifer maiden name")
+    outcome             = NameMatchOutcome(isSuccessful = false, "surname failed match"),
+    rawNpsName          = RawNpsName(Some("Jennifer"), None, Some("Married")),
+    rawBankName         = Some("Jennifer Maiden-Name"),
+    transformedNpsName  = Some("jennifer married"),
+    transformedBankName = Some("jennifer maiden name"),
+    chosenBank          = ChosenBank(
+      bankId       = BankId("obie-barclays-personal"),
+      name         = BankName("Barclays Personal"),
+      friendlyName = BankFriendlyName("Barclays Personal")
+    )
   )
 
   val failedFirstAndMiddleNameAudit: NameMatchingAudit = NameMatchingAudit(
-    NameMatchOutcome(isSuccessful = false, "first and middle name failed match"),
-    RawNpsName(Some("K"), None, Some("Turner")),
-    Some("Jennifer Turner"),
-    Some("k turner"),
-    Some("j turner")
+    outcome             = NameMatchOutcome(isSuccessful = false, "first and middle name failed match"),
+    rawNpsName          = RawNpsName(Some("K"), None, Some("Turner")),
+    rawBankName         = Some("Jennifer Turner"),
+    transformedNpsName  = Some("k turner"),
+    transformedBankName = Some("j turner"),
+    chosenBank          = ChosenBank(
+      bankId       = BankId("obie-barclays-personal"),
+      name         = BankName("Barclays Personal"),
+      friendlyName = BankFriendlyName("Barclays Personal")
+    )
   )
 
   val failedComprehensiveAudit: NameMatchingAudit = NameMatchingAudit(
-    NameMatchOutcome(isSuccessful = false, "comprehensive failed match"),
-    RawNpsName(Some("Kate"), Some("Jenny"), Some("Turner")),
-    Some("Jennifer Kate Turner"),
-    Some("kate jenny turner"),
-    Some("jennifer kate turner"),
-    Some(12)
+    outcome             = NameMatchOutcome(isSuccessful = false, "comprehensive failed match"),
+    rawNpsName          = RawNpsName(Some("Kate"), Some("Jenny"), Some("Turner")),
+    rawBankName         = Some("Jennifer Kate Turner"),
+    transformedNpsName  = Some("kate jenny turner"),
+    transformedBankName = Some("jennifer kate turner"),
+    chosenBank          = ChosenBank(
+      bankId       = BankId("obie-barclays-personal"),
+      name         = BankName("Barclays Personal"),
+      friendlyName = BankFriendlyName("Barclays Personal")
+    ),
+    levenshteinDistance = Some(12)
   )
 
   val successfulBasicAudit: NameMatchingAudit = NameMatchingAudit(
-    NameMatchOutcome(isSuccessful = true, "basic name match"),
-    RawNpsName(Some("T"), None, Some("Patel")),
-    Some("T Patel"),
-    Some("t patel"),
-    Some("t patel")
+    outcome             = NameMatchOutcome(isSuccessful = true, "basic name match"),
+    rawNpsName          = RawNpsName(Some("T"), None, Some("Patel")),
+    rawBankName         = Some("T Patel"),
+    transformedNpsName  = Some("t patel"),
+    transformedBankName = Some("t patel"),
+    chosenBank          = ChosenBank(
+      bankId       = BankId("obie-barclays-personal"),
+      name         = BankName("Barclays Personal"),
+      friendlyName = BankFriendlyName("Barclays Personal")
+    )
   )
 
   val successfulFirstMiddleAudit: NameMatchingAudit = NameMatchingAudit(
-    NameMatchOutcome(isSuccessful = true, "first and middle name match"),
-    RawNpsName(Some("Paul"), Some("James"), Some("Rubens")),
-    Some("Paul James John Rubens"),
-    Some("paul james rubens"),
-    Some("paul james rubens")
+    outcome             = NameMatchOutcome(isSuccessful = true, "first and middle name match"),
+    rawNpsName          = RawNpsName(Some("Paul"), Some("James"), Some("Rubens")),
+    rawBankName         = Some("Paul James John Rubens"),
+    transformedNpsName  = Some("paul james rubens"),
+    transformedBankName = Some("paul james rubens"),
+    chosenBank          = ChosenBank(
+      bankId       = BankId("obie-barclays-personal"),
+      name         = BankName("Barclays Personal"),
+      friendlyName = BankFriendlyName("Barclays Personal")
+    )
   )
 
   val successfulLevenshteinAudit: NameMatchingAudit = NameMatchingAudit(
-    NameMatchOutcome(isSuccessful = true, "levenshtein name match"),
-    RawNpsName(Some("Paula"), Some("James"), Some("Rubens")),
-    Some("Paul James Rubens"),
-    Some("paula james rubens"),
-    Some("paul james rubens"),
-    Some(1)
+    outcome             = NameMatchOutcome(isSuccessful = true, "levenshtein name match"),
+    rawNpsName          = RawNpsName(Some("Paula"), Some("James"), Some("Rubens")),
+    rawBankName         = Some("Paul James Rubens"),
+    transformedNpsName  = Some("paula james rubens"),
+    transformedBankName = Some("paul james rubens"),
+    chosenBank          = ChosenBank(
+      bankId       = BankId("obie-barclays-personal"),
+      name         = BankName("Barclays Personal"),
+      friendlyName = BankFriendlyName("Barclays Personal")
+    ),
+    levenshteinDistance = Some(1)
   )
 }

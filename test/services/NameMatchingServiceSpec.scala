@@ -22,10 +22,13 @@ import play.api.mvc.RequestHeader
 import testdata.TdAudit._
 import testdata.TdRequest
 import testsupport.UnitSpec
+import testdata.TdAll
 
 class NameMatchingServiceSpec extends UnitSpec with TdRequest {
   implicit val requestHeader: RequestHeader = fakeRequest
   implicit def stringToOption(name: String): Option[String] = if (name === "") None else Some(name)
+
+  private val bankDescription = TdAll.tdAll.bankDescription
 
   // format: OFF
   val testScenarios = Seq(
@@ -84,7 +87,7 @@ class NameMatchingServiceSpec extends UnitSpec with TdRequest {
     val npsFullName = s"$npsFirstName $npsSecondName $npsSurname"
 
     s"fuzzy matching should return ${expectedOutput.toString} for NpsName:$npsFullName & EcospendName:$ecoName" in {
-      val (matchingResult, _) = NameMatchingService.fuzzyNameMatching(npsFirstName, npsSecondName, npsSurname, ecoName)
+      val (matchingResult, _) = NameMatchingService.fuzzyNameMatching(npsFirstName, npsSecondName, npsSurname, ecoName, bankDescription)
       matchingResult shouldBe expectedOutput
     }
   }
@@ -94,7 +97,7 @@ class NameMatchingServiceSpec extends UnitSpec with TdRequest {
     val npsFullName = s"$npsFirstName $npsSecondName $npsSurname"
 
     s"The AuditEvent should be for a ${expectedOutput.outcome.category} for NpsName:$npsFullName & EcospendName:$ecoName" in {
-      val (_, matchingAuditEvent) = NameMatchingService.fuzzyNameMatching(npsFirstName, npsSecondName, npsSurname, ecoName)
+      val (_, matchingAuditEvent) = NameMatchingService.fuzzyNameMatching(npsFirstName, npsSecondName, npsSurname, ecoName, bankDescription)
       matchingAuditEvent shouldBe expectedOutput
     }
   }

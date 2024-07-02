@@ -236,6 +236,17 @@ object EcospendStub {
         ) ++ ecospendHeaders
       )
 
+    def stubAccountSummary5xxInternalServerError(consentId: ConsentId): StubMapping =
+      WireMockHelpers.Get.stubForGetWithResponseBody(
+        url             = accountSummaryUrl,
+        responseBody    = "",
+        responseStatus  = Status.INTERNAL_SERVER_ERROR,
+        requiredHeaders = Seq(
+          consentIdHeaderKey -> matching(consentId.value),
+          developmentConsentIdHeaderKey -> matching(consentId.value)
+        ) ++ ecospendHeaders
+      )
+
     def accountSummaryValidate(numberOfRequests: Int = 1, consentId: ConsentId): Unit =
       WireMockHelpers.Get.verifyGetExactlyWithHeader(
         accountSummaryUrl,

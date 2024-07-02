@@ -22,8 +22,10 @@ import org.apache.commons.text.similarity.LevenshteinDetailedDistance
 import play.api.mvc.RequestHeader
 import util.JourneyLogger
 import util.SafeEquals.EqualsOps
+import models.ecospend.BankDescription
 
 import java.text.Normalizer
+import models.audit.ChosenBank
 
 object NameMatchingService {
 
@@ -31,7 +33,8 @@ object NameMatchingService {
       npsOptFirstName:  Option[String],
       npsOptSecondName: Option[String],
       npsOptSurname:    Option[String],
-      ecospendName:     String
+      ecospendName:     String,
+      bankDescription:  BankDescription
   )(implicit request: RequestHeader): (NameMatchingResponse, NameMatchingAudit) = {
 
     val npsSurname = npsOptSurname.getOrElse("")
@@ -49,15 +52,26 @@ object NameMatchingService {
     val doSanitisedNamesMatch = sanitisedNpsName === fullEcospendName
     val doSurnamesMatch = sanitisedNpsSurname === ecoSurname && sanitisedNpsSurname.nonEmpty && ecoSurname.nonEmpty
 
+    val chosenBank: ChosenBank = ChosenBank(
+      bankId       = bankDescription.bankId,
+      name         = bankDescription.name,
+      friendlyName = bankDescription.friendlyName
+    )
+
     (doSanitisedNamesMatch, doSurnamesMatch) match {
       case (true, _) => (
         BasicSuccessfulNameMatch,
         NameMatchingAudit(
-          NameMatchOutcome(isSuccessful = true, BasicSuccessfulNameMatch.auditString),
-          RawNpsName(npsOptFirstName, npsOptSecondName, npsOptSurname),
-          Some(ecospendName),
-          Some(sanitisedNpsName),
-          Some(fullEcospendName)
+          outcome             = NameMatchOutcome(isSuccessful = true, BasicSuccessfulNameMatch.auditString),
+          rawNpsName          = RawNpsName(npsOptFirstName, npsOptSecondName, npsOptSurname),
+          rawBankName         = Some(ecospendName),
+          transformedNpsName  = Some(sanitisedNpsName),
+          transformedBankName = Some(fullEcospendName),
+          chosenBank          = ChosenBank(
+            bankId       = bankDescription.bankId,
+            name         = bankDescription.name,
+            friendlyName = bankDescription.friendlyName
+          )
         )
       )
       case (false, false) =>
@@ -65,11 +79,12 @@ object NameMatchingService {
         (
           FailedSurnameMatch,
           NameMatchingAudit(
-            NameMatchOutcome(isSuccessful = false, FailedSurnameMatch.auditString),
-            RawNpsName(npsOptFirstName, npsOptSecondName, npsOptSurname),
-            Some(ecospendName),
-            Some(sanitisedNpsName),
-            Some(fullEcospendName)
+            outcome             = NameMatchOutcome(isSuccessful = false, FailedSurnameMatch.auditString),
+            rawNpsName          = RawNpsName(npsOptFirstName, npsOptSecondName, npsOptSurname),
+            rawBankName         = Some(ecospendName),
+            transformedNpsName  = Some(sanitisedNpsName),
+            transformedBankName = Some(fullEcospendName),
+            chosenBank          = chosenBank
           )
         )
       case (false, true) =>
@@ -79,11 +94,12 @@ object NameMatchingService {
           (
             FirstAndMiddleNameSuccessfulNameMatch,
             NameMatchingAudit(
-              NameMatchOutcome(isSuccessful = true, FirstAndMiddleNameSuccessfulNameMatch.auditString),
-              RawNpsName(npsOptFirstName, npsOptSecondName, npsOptSurname),
-              Some(ecospendName),
-              Some(s"${comparisonResult.npsNameWithInitials} $sanitisedNpsSurname"),
-              Some(s"${comparisonResult.ecospendNameWithInitials} $ecoSurname")
+              outcome             = NameMatchOutcome(isSuccessful = true, FirstAndMiddleNameSuccessfulNameMatch.auditString),
+              rawNpsName          = RawNpsName(npsOptFirstName, npsOptSecondName, npsOptSurname),
+              rawBankName         = Some(ecospendName),
+              transformedNpsName  = Some(s"${comparisonResult.npsNameWithInitials} $sanitisedNpsSurname"),
+              transformedBankName = Some(s"${comparisonResult.ecospendNameWithInitials} $ecoSurname"),
+              chosenBank          = chosenBank
             )
           )
         } else if (comparisonResult.validForLevenshtein) {
@@ -91,12 +107,13 @@ object NameMatchingService {
           (
             matchingResponse,
             NameMatchingAudit(
-              NameMatchOutcome(isSuccessful = isSuccessful, matchingResponse.auditString),
-              RawNpsName(npsOptFirstName, npsOptSecondName, npsOptSurname),
-              Some(ecospendName),
-              Some(s"${comparisonResult.npsNameWithInitials} $sanitisedNpsSurname"),
-              Some(s"${comparisonResult.ecospendNameWithInitials} $ecoSurname"),
-              Some(levenshteinDistance)
+              outcome             = NameMatchOutcome(isSuccessful = isSuccessful, matchingResponse.auditString),
+              rawNpsName          = RawNpsName(npsOptFirstName, npsOptSecondName, npsOptSurname),
+              rawBankName         = Some(ecospendName),
+              transformedNpsName  = Some(s"${comparisonResult.npsNameWithInitials} $sanitisedNpsSurname"),
+              transformedBankName = Some(s"${comparisonResult.ecospendNameWithInitials} $ecoSurname"),
+              chosenBank          = chosenBank,
+              levenshteinDistance = Some(levenshteinDistance)
             )
           )
         } else {
@@ -104,11 +121,12 @@ object NameMatchingService {
           (
             FailedFirstAndMiddleNameMatch,
             NameMatchingAudit(
-              NameMatchOutcome(isSuccessful = false, FailedFirstAndMiddleNameMatch.auditString),
-              RawNpsName(npsOptFirstName, npsOptSecondName, npsOptSurname),
-              Some(ecospendName),
-              Some(s"${comparisonResult.npsNameWithInitials} $sanitisedNpsSurname"),
-              Some(s"${comparisonResult.ecospendNameWithInitials} $ecoSurname")
+              outcome             = NameMatchOutcome(isSuccessful = false, FailedFirstAndMiddleNameMatch.auditString),
+              rawNpsName          = RawNpsName(npsOptFirstName, npsOptSecondName, npsOptSurname),
+              rawBankName         = Some(ecospendName),
+              transformedNpsName  = Some(s"${comparisonResult.npsNameWithInitials} $sanitisedNpsSurname"),
+              transformedBankName = Some(s"${comparisonResult.ecospendNameWithInitials} $ecoSurname"),
+              chosenBank          = chosenBank
             )
           )
         }

@@ -50,6 +50,7 @@ object BankClaimOutcome {
 }
 
 final case class BankActionsOutcome(
+    getAccountDetailsIsSuccessful:  IsSuccessful,
     ecospendFraudCheckIsSuccessful: Option[IsSuccessful] = None,
     fuzzyNameMatchingIsSuccessful:  Option[IsSuccessful] = None,
     hmrcFraudCheckIsSuccessful:     Option[IsSuccessful] = None,
