@@ -216,6 +216,14 @@ object EcospendStub {
     private val consentIdHeaderKey: String = "consent_id"
     private val developmentConsentIdHeaderKey: String = "consent-id"
 
+    val jsonResponseBodyServerError5xx: String =
+      //language=JSON
+      """{
+      "error": "InternalServerError",
+      "description": "Internal Server Error",
+      "details": {}
+    }""".stripMargin
+
     def stubAccountSummary2xxSucceeded(consentId: ConsentId, fullName: String = "Sir. Greg Greggory Greggson"): StubMapping =
       WireMockHelpers.Get.stubForGetWithResponseBody(
         url             = accountSummaryUrl,
@@ -239,7 +247,7 @@ object EcospendStub {
     def stubAccountSummary5xxInternalServerError(consentId: ConsentId): StubMapping =
       WireMockHelpers.Get.stubForGetWithResponseBody(
         url             = accountSummaryUrl,
-        responseBody    = "",
+        responseBody    = jsonResponseBodyServerError5xx,
         responseStatus  = Status.INTERNAL_SERVER_ERROR,
         requiredHeaders = Seq(
           consentIdHeaderKey -> matching(consentId.value),

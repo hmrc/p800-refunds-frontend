@@ -21,12 +21,13 @@ import casemanagement._
 import config.AppConfig
 import connectors.{P800RefundsBackendConnector, P800RefundsExternalApiConnector}
 import edh._
+import models.{ClaimOverpaymentApi5xxError, EcospendApi5xxError, EdhApi5xxError}
 import models.audit.{BankActionsOutcome, IsSuccessful, NameMatchOutcome, NameMatchingAudit, RawNpsName}
 import models.ecospend.BankId
 import models.ecospend.account.{BankAccountOwnerName, BankAccountSummary}
 import models.ecospend.consent.{BankReferenceId, ConsentId, ConsentStatus}
 import models.journeymodels._
-import models.namematching.{NameMatchingResult, NameMatchingResponse}
+import models.namematching.{NameMatchingResponse, NameMatchingResult}
 import models.p800externalapi.EventValue
 import nps.models.TraceIndividualResponse.TracedIndividual
 import nps.models.ValidateReferenceResult.P800ReferenceChecked
@@ -66,11 +67,19 @@ class VerifyingYourBankAccountController @Inject() (
     val consentStatus: ConsentStatus =
       status.getOrElse(Errors.throwServerErrorException("This endpoint requires a status parameter."))
 
-    for {
+    (for {
       bankAccountSummary: BankAccountSummary <- obtainBankAccountSummary(journey)
       result <- if (bankAccountSummary.accountIdentification.isDefined) process(journey, bankAccountSummary, consentStatus)
       else handleMissingAcccountIdentification(journey)
-    } yield result
+    } yield result)
+      .recoverWith {
+        case error @ (_: EcospendApi5xxError | _: EdhApi5xxError | _: ClaimOverpaymentApi5xxError) =>
+          JourneyLogger.warn("Received Upstream5xxResponse, redirecting the user to YourRefundRequestHasNotBeenSubmitted page", error)
+          Future.successful(Redirect(routes.YourRefundRequestHasNotBeenSubmittedController.get(status, consent_id, bank_reference_id)))
+        case ex =>
+          JourneyLogger.warn("Unexpected error occurred during bank account verification", ex)
+          throw ex
+      }
   }
 
   private def process(journey: Journey, bankAccountSummary: BankAccountSummary, consentStatus: ConsentStatus)(implicit request: JourneyRequest[_]): Future[Result] =
@@ -392,18 +401,25 @@ class VerifyingYourBankAccountController @Inject() (
       .map(Future.successful)
       .getOrElse {
         ecospendService.getAccountSummary(journey)
-          .recover { err =>
-            auditService.auditBankClaimAttempt(
-              journey,
-              actionsOutcome = BankActionsOutcome(
-                getAccountDetailsIsSuccessful = IsSuccessful.no,
-              ),
-              failureReasons = Some(Seq(err.getMessage))
-            )
-            throw err
+          .recover {
+            case error: UpstreamErrorResponse if UpstreamErrorResponse.Upstream5xxResponse.unapply(error).isDefined =>
+              auditErrorFromAccountSummary(journey, error)
+              throw EcospendApi5xxError(error.message, Some(error))
+            case error =>
+              auditErrorFromAccountSummary(journey, error)
+              throw error
           }
       }
   }
+
+  private def auditErrorFromAccountSummary(journey: Journey, error: Throwable)(implicit request: RequestHeader): Unit =
+    auditService.auditBankClaimAttempt(
+      journey,
+      actionsOutcome = BankActionsOutcome(
+        getAccountDetailsIsSuccessful = IsSuccessful.no,
+      ),
+      failureReasons = Some(Seq(error.getMessage))
+    )
 
   private def notifyCaseManagement(journey: Journey)(implicit requestHeader: RequestHeader): Future[Unit] = {
 
@@ -489,23 +505,28 @@ class VerifyingYourBankAccountController @Inject() (
     p800RefundsBackendConnector
       .makeBacsRepayment(journey.getNino, makeBacsRepaymentRequest, journey.correlationId)
       .recover {
-        case err @ (_: UpstreamErrorResponse | _: HttpException) =>
-          auditService.auditBankClaimAttempt(
-            journey        = journey,
-            actionsOutcome = BankActionsOutcome(
-              getAccountDetailsIsSuccessful  = IsSuccessful.yes,
-              ecospendFraudCheckIsSuccessful = Some(IsSuccessful.yes),
-              fuzzyNameMatchingIsSuccessful  = Some(IsSuccessful.yes),
-              hmrcFraudCheckIsSuccessful     = Some(IsSuccessful.yes),
-              claimOverpaymentIsSuccessful   = Some(IsSuccessful.no)
-            ),
-            failureReasons = Some(Seq(err.getMessage))
-          )
-
-          throw err
+        case error: UpstreamErrorResponse if UpstreamErrorResponse.Upstream5xxResponse.unapply(error).isDefined =>
+          auditErrorFromClaimOverpayment(journey, error)
+          throw ClaimOverpaymentApi5xxError(error.message, Some(error))
+        case error @ (_: UpstreamErrorResponse | _: HttpException) =>
+          auditErrorFromClaimOverpayment(journey, error)
+          throw error
       }
       .map(_ => Right(()))
   }
+
+  private def auditErrorFromClaimOverpayment(journey: Journey, err: Throwable)(implicit request: RequestHeader): Unit =
+    auditService.auditBankClaimAttempt(
+      journey        = journey,
+      actionsOutcome = BankActionsOutcome(
+        getAccountDetailsIsSuccessful  = IsSuccessful.yes,
+        ecospendFraudCheckIsSuccessful = Some(IsSuccessful.yes),
+        fuzzyNameMatchingIsSuccessful  = Some(IsSuccessful.yes),
+        hmrcFraudCheckIsSuccessful     = Some(IsSuccessful.yes),
+        claimOverpaymentIsSuccessful   = Some(IsSuccessful.no)
+      ),
+      failureReasons = Some(Seq(err.getMessage))
+    )
 
   private def isEcospendFraudCheckIsSuccessful(eventValue: EventValue): Option[IsSuccessful] = eventValue match {
     case EventValue.Valid       => Some(IsSuccessful.yes)

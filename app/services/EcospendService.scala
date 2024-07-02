@@ -87,5 +87,4 @@ class EcospendService @Inject() (
       _ = Errors.require(bankAccountSummaryResponse.value.size === 1, s"More then 1 accounts in bankAccountSummaryResponse: [${bankAccountSummaryResponse.value.size.toString}]")
       _ = Errors.require(summary.accountFormat === BankAccountFormat.SortCode, s"Unexpected AccountFormat: [${summary.accountFormat.toString}]")
     } yield summary
-
 }

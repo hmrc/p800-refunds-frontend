@@ -53,6 +53,10 @@ object EdhStub {
         .withHeader("correlationid", matching(correlationId.value.toString))
     )
 
+  def verifyGetBankDetailsRiskResultNotCalled(claimId: ClaimId, correlationId: CorrelationId): Unit =
+    verify(exactly(0), postRequestedFor(urlPathEqualTo(url(claimId)))
+      .withHeader("correlationid", matching(correlationId.value.toString)))
+
   private def url(claimId: ClaimId) = s"/p800-refunds-backend/risking/claims/${claimId.value}/bank-details"
 
   private val requiredHeaders: Seq[(String, StringValuePattern)] = Seq(

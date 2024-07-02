@@ -747,7 +747,7 @@ object Messages {
 
     val chooseAnother: Message = Message(
       english = "choose another way to get your refund",
-      welsh   = "dewiswch ffordd arall o gael fy ad-daliad"
+      welsh   = "dewis ffordd arall o gael eich ad-daliad"
     )
 
     val calculateTax: Message = Message(

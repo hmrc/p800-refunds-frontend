@@ -16,13 +16,20 @@
 
 @import views.html.templates.Layout
 @import language.Messages
+@import models.ecospend.consent.BankReferenceId
+@import models.ecospend.consent.ConsentId
+@import models.ecospend.consent.ConsentStatus
 
 @this(
         layout: Layout,
         viewsHelpers: views.ViewsHelpers
 )
 
-@()(implicit request: Request[_])
+@(
+        status: Option[ConsentStatus],
+        consentId: Option[ConsentId],
+        bankReferenceId: Option[BankReferenceId]
+)(implicit request: RequestHeader)
 
     @import viewsHelpers.requestSupport._
 
@@ -30,21 +37,20 @@
         Messages.YourRefundRequestHasNotBeenSubmitted.`yourRefundRequest`.show
     }
 
-
-    @layout(pageTitle = Some(heading)) {
+    @layout(pageTitle = Some(heading), showBackLink = true, backUrl = Some(routes.VerifyingYourBankAccountController.get(status, consentId, bankReferenceId).url)) {
         <h1 class="govuk-heading-xl">@heading</h1>
 
         <p class="govuk-body">@{Messages.YourRefundRequestHasNotBeenSubmitted.`technicalIssue`.show}</p>
 
         <ul class="govuk-list govuk-list--bullet">
             <li>
-                <a class="govuk-link" href="#">@{Messages.YourRefundRequestHasNotBeenSubmitted.`tryAgain`.show}</a>
+                <a class="govuk-link" id="try-again" href="@routes.VerifyingYourBankAccountController.get(status, consentId, bankReferenceId).url">@{Messages.YourRefundRequestHasNotBeenSubmitted.`tryAgain`.show}</a>
             </li>
             <li>
-                <a class="govuk-link" href="#">@{Messages.YourRefundRequestHasNotBeenSubmitted.`chooseAnother`.show}</a>
+                <a class="govuk-link" id="choose-another" href="@controllers.routes.ChooseAnotherWayToReceiveYourRefundController.getBankTransfer.url">@{Messages.YourRefundRequestHasNotBeenSubmitted.`chooseAnother`.show}</a>
             </li>
             <li>
-                <a class="govuk-link" href="#">@{Messages.YourRefundRequestHasNotBeenSubmitted.`calculateTax`.show}</a> @{Messages.YourRefundRequestHasNotBeenSubmitted.`andTryAgain`.show}
+                <a class="govuk-link"  id="refund-guidance" href="https://www.gov.uk/tax-overpayments-and-underpayments/if-youre-due-a-refund">@{Messages.YourRefundRequestHasNotBeenSubmitted.`calculateTax`.show}</a> @{Messages.YourRefundRequestHasNotBeenSubmitted.`andTryAgain`.show}
             </li>
         </ul>
     }

@@ -18,6 +18,7 @@ package services
 
 import connectors.P800RefundsBackendConnector
 import edh._
+import models.EdhApi5xxError
 import models.audit.{BankActionsOutcome, IsSuccessful}
 import models.ecospend.account.BankAccountSummary
 import models.journeymodels.Journey
@@ -42,22 +43,28 @@ class GetBankDetailsRiskResultService @Inject() (
   def getBankDetailsRiskResult(journey: Journey, bankAccountSummary: BankAccountSummary, eventValue: EventValue)(implicit reqest: Request[_]): Future[GetBankDetailsRiskResultResponse] =
     obtainGetBankDetailsRiskResultResponse(journey, bankAccountSummary)
       .recover {
+        case error: UpstreamErrorResponse if UpstreamErrorResponse.Upstream5xxResponse.unapply(error).isDefined =>
+          auditError(journey, eventValue, error)
+          throw EdhApi5xxError(error.message, Some(error))
         case err @ (_: UpstreamErrorResponse | _: HttpException) =>
-          auditService.auditBankClaimAttempt(
-            journey        = journey,
-            actionsOutcome = BankActionsOutcome(
-              getAccountDetailsIsSuccessful  = IsSuccessful.yes,
-              ecospendFraudCheckIsSuccessful = eventValue match {
-                case EventValue.Valid       => Some(IsSuccessful.yes)
-                case EventValue.NotValid    => Some(IsSuccessful.no)
-                case EventValue.NotReceived => None
-              },
-              hmrcFraudCheckIsSuccessful     = Some(IsSuccessful.no)
-            ),
-            failureReasons = Some(Seq(err.getMessage))
-          )
+          auditError(journey, eventValue, err)
           throw err
       }
+
+  private def auditError(journey: Journey, eventValue: EventValue, err: Throwable)(implicit request: Request[_]) =
+    auditService.auditBankClaimAttempt(
+      journey        = journey,
+      actionsOutcome = BankActionsOutcome(
+        getAccountDetailsIsSuccessful  = IsSuccessful.yes,
+        ecospendFraudCheckIsSuccessful = eventValue match {
+          case EventValue.Valid       => Some(IsSuccessful.yes)
+          case EventValue.NotValid    => Some(IsSuccessful.no)
+          case EventValue.NotReceived => None
+        },
+        hmrcFraudCheckIsSuccessful     = Some(IsSuccessful.no)
+      ),
+      failureReasons = Some(Seq(err.getMessage))
+    )
 
   //See https://confluence.tools.tax.service.gov.uk/pages/viewpage.action?pageId=770835142 for data mapping
   private def obtainGetBankDetailsRiskResultResponse(journey: Journey, bankAccountSummary: BankAccountSummary)(implicit request: Request[_]): Future[GetBankDetailsRiskResultResponse] = {
